@@ -416,7 +416,9 @@ $("startPass").onclick=()=>{
  if(existing?.phase==="open")return alert("Дверь уже открыта");
  if(blocked().has(d.id) && !existing)return alert("Проход запрещён блокировкой двери "+d.id);
  if(existing) active=active.filter(s=>s.id!==existing.id);
- active.push({id:sessionNo++,type:"passage",from,to,via:d.id,phase:"open",openedAt:now,purgeSec:Math.max(1,room(to).purgeSec)});
+ const managedIds=AirlockEngine.rooms(model,{type:"passage",from,to,via:d.id});
+ const secs=managedIds.length?Math.max(...managedIds.map(id=>Number(room(id).purgeSec)||30)):Math.max(1,Number(room(to).purgeSec)||30);
+ active.push({id:sessionNo++,type:"passage",from,to,via:d.id,phase:"open",openedAt:now,purgeSec:Math.max(1,secs)});
  render();
 };
 $("closePass").onclick=()=>{
