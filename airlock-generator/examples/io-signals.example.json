@@ -1,0 +1,599 @@
+{
+  "schema": "airlock-hmi-bindings/0.1",
+  "project": "Конструктор помещений и шлюзов — пример 1–6",
+  "controllers": [],
+  "notes": [
+    "Адреса и контроллеры пустые. До настройки реального ПР этот документ является только списком требуемых сигналов.",
+    "Светофоры каждой зоны могут иметь несколько физических указателей и общие релейные выходы по согласованной схеме.",
+    "Включение зеленого только при подтвержденном разрешении доступа, а не по отсутствию питания или BUSY.",
+    "Монитор получает статусы только на чтение через отдельный шлюз телеметрии. Управление замками с экрана запрещено.",
+    "Пожарное отпирание выполняется независимой аппаратной цепью."
+  ],
+  "signals": [
+    {
+      "signal": "SYSTEM.FireAlarm",
+      "kind": "input",
+      "source": "aps",
+      "address": null,
+      "controllerId": null,
+      "description": "Сигнал пожарной тревоги; аппаратная эвакуационная цепь отдельная"
+    },
+    {
+      "signal": "SYSTEM.PlcOnline",
+      "kind": "diagnostic",
+      "source": "telemetry",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждение связи и актуальности контроллера"
+    },
+    {
+      "signal": "ROOM_6.State",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "UNKNOWN | READY | BUSY | PURGE | FAULT | FIRE"
+    },
+    {
+      "signal": "ROOM_6.TimerRemaining",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Остаток выдержки, секунды, если используется"
+    },
+    {
+      "signal": "ROOM_5.State",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "UNKNOWN | READY | BUSY | PURGE | FAULT | FIRE"
+    },
+    {
+      "signal": "ROOM_5.TimerRemaining",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Остаток выдержки, секунды, если используется"
+    },
+    {
+      "signal": "ROOM_4.State",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "UNKNOWN | READY | BUSY | PURGE | FAULT | FIRE"
+    },
+    {
+      "signal": "ROOM_4.TimerRemaining",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Остаток выдержки, секунды, если используется"
+    },
+    {
+      "signal": "TL_ROOM_4.Green",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Зелёный сигнал: только при READY и исправном контроле"
+    },
+    {
+      "signal": "TL_ROOM_4.Red",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Красный сигнал: занято, открыта, продувка или запрет"
+    },
+    {
+      "signal": "ROOM_3.State",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "UNKNOWN | READY | BUSY | PURGE | FAULT | FIRE"
+    },
+    {
+      "signal": "ROOM_3.TimerRemaining",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Остаток выдержки, секунды, если используется"
+    },
+    {
+      "signal": "ROOM_1.State",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "UNKNOWN | READY | BUSY | PURGE | FAULT | FIRE"
+    },
+    {
+      "signal": "ROOM_1.TimerRemaining",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Остаток выдержки, секунды, если используется"
+    },
+    {
+      "signal": "TL_ROOM_1.Green",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Зелёный сигнал: только при READY и исправном контроле"
+    },
+    {
+      "signal": "TL_ROOM_1.Red",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Красный сигнал: занято, открыта, продувка или запрет"
+    },
+    {
+      "signal": "ROOM_2.State",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "UNKNOWN | READY | BUSY | PURGE | FAULT | FIRE"
+    },
+    {
+      "signal": "ROOM_2.TimerRemaining",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Остаток выдержки, секунды, если используется"
+    },
+    {
+      "signal": "DOOR_5-6.Closed",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждение закрытия геркона (нормальная логика требует проверки)"
+    },
+    {
+      "signal": "DOOR_5-6.Open",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждённый статус открытия"
+    },
+    {
+      "signal": "DOOR_5-6.BlockRequested",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Логическая блокировка доступа"
+    },
+    {
+      "signal": "DOOR_5-6.LockFeedback",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Фактическое запирание при наличии контакта"
+    },
+    {
+      "signal": "DOOR_5-6.LockCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Команда на замок, если им управляет ПР"
+    },
+    {
+      "signal": "DOOR_5-6.BusyCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Сухой контакт BUSY к С2000-2 при использовании"
+    },
+    {
+      "signal": "DOOR_4-6.Closed",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждение закрытия геркона (нормальная логика требует проверки)"
+    },
+    {
+      "signal": "DOOR_4-6.Open",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждённый статус открытия"
+    },
+    {
+      "signal": "DOOR_4-6.BlockRequested",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Логическая блокировка доступа"
+    },
+    {
+      "signal": "DOOR_4-6.LockFeedback",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Фактическое запирание при наличии контакта"
+    },
+    {
+      "signal": "DOOR_4-6.LockCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Команда на замок, если им управляет ПР"
+    },
+    {
+      "signal": "DOOR_4-6.BusyCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Сухой контакт BUSY к С2000-2 при использовании"
+    },
+    {
+      "signal": "DOOR_1-5.Closed",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждение закрытия геркона (нормальная логика требует проверки)"
+    },
+    {
+      "signal": "DOOR_1-5.Open",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждённый статус открытия"
+    },
+    {
+      "signal": "DOOR_1-5.BlockRequested",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Логическая блокировка доступа"
+    },
+    {
+      "signal": "DOOR_1-5.LockFeedback",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Фактическое запирание при наличии контакта"
+    },
+    {
+      "signal": "DOOR_1-5.LockCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Команда на замок, если им управляет ПР"
+    },
+    {
+      "signal": "DOOR_1-5.BusyCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Сухой контакт BUSY к С2000-2 при использовании"
+    },
+    {
+      "signal": "DOOR_1-4.Closed",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждение закрытия геркона (нормальная логика требует проверки)"
+    },
+    {
+      "signal": "DOOR_1-4.Open",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждённый статус открытия"
+    },
+    {
+      "signal": "DOOR_1-4.BlockRequested",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Логическая блокировка доступа"
+    },
+    {
+      "signal": "DOOR_1-4.LockFeedback",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Фактическое запирание при наличии контакта"
+    },
+    {
+      "signal": "DOOR_1-4.LockCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Команда на замок, если им управляет ПР"
+    },
+    {
+      "signal": "DOOR_1-4.BusyCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Сухой контакт BUSY к С2000-2 при использовании"
+    },
+    {
+      "signal": "DOOR_2-4.Closed",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждение закрытия геркона (нормальная логика требует проверки)"
+    },
+    {
+      "signal": "DOOR_2-4.Open",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждённый статус открытия"
+    },
+    {
+      "signal": "DOOR_2-4.BlockRequested",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Логическая блокировка доступа"
+    },
+    {
+      "signal": "DOOR_2-4.LockFeedback",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Фактическое запирание при наличии контакта"
+    },
+    {
+      "signal": "DOOR_2-4.LockCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Команда на замок, если им управляет ПР"
+    },
+    {
+      "signal": "DOOR_2-4.BusyCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Сухой контакт BUSY к С2000-2 при использовании"
+    },
+    {
+      "signal": "DOOR_3-4.Closed",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждение закрытия геркона (нормальная логика требует проверки)"
+    },
+    {
+      "signal": "DOOR_3-4.Open",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждённый статус открытия"
+    },
+    {
+      "signal": "DOOR_3-4.BlockRequested",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Логическая блокировка доступа"
+    },
+    {
+      "signal": "DOOR_3-4.LockFeedback",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Фактическое запирание при наличии контакта"
+    },
+    {
+      "signal": "DOOR_3-4.LockCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Команда на замок, если им управляет ПР"
+    },
+    {
+      "signal": "DOOR_3-4.BusyCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Сухой контакт BUSY к С2000-2 при использовании"
+    },
+    {
+      "signal": "DOOR_2-3.Closed",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждение закрытия геркона (нормальная логика требует проверки)"
+    },
+    {
+      "signal": "DOOR_2-3.Open",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждённый статус открытия"
+    },
+    {
+      "signal": "DOOR_2-3.BlockRequested",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Логическая блокировка доступа"
+    },
+    {
+      "signal": "DOOR_2-3.LockFeedback",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Фактическое запирание при наличии контакта"
+    },
+    {
+      "signal": "DOOR_2-3.LockCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Команда на замок, если им управляет ПР"
+    },
+    {
+      "signal": "DOOR_2-3.BusyCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Сухой контакт BUSY к С2000-2 при использовании"
+    },
+    {
+      "signal": "DOOR_1-2.Closed",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждение закрытия геркона (нормальная логика требует проверки)"
+    },
+    {
+      "signal": "DOOR_1-2.Open",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Подтверждённый статус открытия"
+    },
+    {
+      "signal": "DOOR_1-2.BlockRequested",
+      "kind": "status",
+      "source": "PLC",
+      "address": null,
+      "controllerId": null,
+      "description": "Логическая блокировка доступа"
+    },
+    {
+      "signal": "DOOR_1-2.LockFeedback",
+      "kind": "input",
+      "source": "PLC_DI",
+      "address": null,
+      "controllerId": null,
+      "description": "Фактическое запирание при наличии контакта"
+    },
+    {
+      "signal": "DOOR_1-2.LockCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Команда на замок, если им управляет ПР"
+    },
+    {
+      "signal": "DOOR_1-2.BusyCommand",
+      "kind": "output",
+      "source": "PLC_DO",
+      "address": null,
+      "controllerId": null,
+      "description": "Сухой контакт BUSY к С2000-2 при использовании"
+    }
+  ],
+  "lightGroups": [
+    {
+      "id": "TL_ROOM_4",
+      "roomId": "4",
+      "mode": "mutual",
+      "fixtures": [
+        {
+          "doorId": "4-6",
+          "sideRoomId": "4",
+          "position": "со стороны помещения"
+        },
+        {
+          "doorId": "1-4",
+          "sideRoomId": "4",
+          "position": "со стороны помещения"
+        },
+        {
+          "doorId": "2-4",
+          "sideRoomId": "4",
+          "position": "со стороны помещения"
+        },
+        {
+          "doorId": "3-4",
+          "sideRoomId": "4",
+          "position": "со стороны помещения"
+        }
+      ],
+      "redOutputSignal": "TL_ROOM_4.Red",
+      "greenOutputSignal": "TL_ROOM_4.Green",
+      "wiring": "Оба цвета требуют подтвержденного проекта питания, реле и безопасных состояний"
+    },
+    {
+      "id": "TL_ROOM_1",
+      "roomId": "1",
+      "mode": "purge",
+      "fixtures": [
+        {
+          "doorId": "1-5",
+          "sideRoomId": "1",
+          "position": "со стороны помещения"
+        },
+        {
+          "doorId": "1-4",
+          "sideRoomId": "1",
+          "position": "со стороны помещения"
+        },
+        {
+          "doorId": "1-2",
+          "sideRoomId": "1",
+          "position": "со стороны помещения"
+        }
+      ],
+      "redOutputSignal": "TL_ROOM_1.Red",
+      "greenOutputSignal": "TL_ROOM_1.Green",
+      "wiring": "Оба цвета требуют подтвержденного проекта питания, реле и безопасных состояний"
+    }
+  ]
+}
