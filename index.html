@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Браузерные инженерные инструменты: геометрия, 3D-печать, SUP и свет.">
+<title>Мастерская · Браузерные инструменты</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#e8f0e9;background:#101713;--bg:#101713;--panel:#19251e;--line:#34483a;--muted:#b3c6b7;--accent:#a4e7b0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 100% 0%,#274331 0,transparent 40%),var(--bg);min-height:100vh}
+.wrap{width:min(1080px,calc(100% - 36px));margin:auto}header{padding:29px 0;border-bottom:1px solid var(--line)}
+.eyebrow{color:var(--accent);text-transform:uppercase;letter-spacing:.13em;font-size:12px;font-weight:750}
+h1{font-size:clamp(34px,6vw,61px);line-height:1.1;letter-spacing:-.04em;margin:17px 0}h2{font-size:21px;margin:0}
+p{color:var(--muted);line-height:1.6}.hero{padding:56px 0 35px}.hero p{max-width:670px}
+.tools{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding-bottom:22px}
+input{flex:1;min-width:210px;padding:13px 15px;background:#111a14;color:#fff;border:1px solid var(--line);border-radius:12px;font:inherit}
+button{font:inherit;background:var(--panel);color:var(--muted);cursor:pointer;border:1px solid var(--line);border-radius:30px;padding:11px 15px}
+button[aria-pressed=true]{background:var(--accent);color:#102315;font-weight:750}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:17px;padding:0 0 65px}
+.card{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:23px;min-height:260px}
+.card:hover{border-color:#62876b}.symbol{font-size:30px;margin-bottom:17px}.meta{color:var(--accent);font-size:12px;letter-spacing:.04em;margin-bottom:10px}
+.card p{font-size:14px;flex:1;margin:12px 0 20px}.action{align-self:flex-start;background:var(--accent);color:#102315;border-radius:10px;padding:11px 15px;text-decoration:none;font-weight:750;font-size:14px}
+.pending{color:var(--muted);font-size:13px}footer{border-top:1px solid var(--line);padding:22px 0 42px;color:var(--muted);font-size:13px}.empty{padding:15px 0 55px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><div class="wrap"><span class="eyebrow">Проекты / Инженерная мастерская</span></div></header>
+<main class="wrap">
+<section class="hero"><div class="eyebrow">Приложения в браузере</div><h1>Инструменты, которые<br>работают без установки.</h1>
+<p>Калькуляторы, конфигураторы и генераторы моделей. Открывайте инструменты по ссылке с компьютера или телефона.</p></section>
+<section aria-label="Каталог проектов">
+<div class="tools"><input id="search" type="search" aria-label="Поиск инструментов" placeholder="Поиск по инструментам…" autocomplete="off">
+<button type="button" data-filter="all" aria-pressed="true">Все</button>
+<button type="button" data-filter="geometry" aria-pressed="false">Геометрия</button>
+<button type="button" data-filter="light" aria-pressed="false">Освещение</button>
+<button type="button" data-filter="travel" aria-pressed="false">Вода</button></div>
+<div id="grid" class="grid"></div><p id="empty" class="empty" hidden>Ничего не найдено.</p>
+</section></main>
+<footer><div class="wrap">Каталог общедоступных инструментов. Серверные проекты, закрытая документация и секреты здесь не размещаются.</div></footer>
+<script>
+'use strict';
+const items=[
+{title:'Правильный многоугольник',symbol:'⬡',category:'geometry',meta:'Геометрия · демонстрация',text:'Расчёт стороны, периметра и апофемы. Экспорт чертежа SVG и таблицы CSV.',url:'tools/polygon/'},
+{title:'Геокупол',symbol:'◌',category:'geometry',meta:'Геометрия · переносится',text:'Параметрический геокупол, соединители, шканты и детали для печати. Существующее приложение будет перенесено отдельно.'},
+{title:'Генераторы деталей',symbol:'▤',category:'geometry',meta:'3D-печать · планируется',text:'Конфигураторы моделей для CAD и 3D-печати с экспортом файлов.'},
+{title:'Калькулятор фитосвета',symbol:'☀',category:'light',meta:'Освещение · планируется',text:'Расчёт освещённости, параметров светильников и схем размещения.'},
+{title:'Водные маршруты',symbol:'≈',category:'travel',meta:'SUP · планируется',text:'Публичный просмотр маршрутов и GPX. Закрытые данные останутся на сервере.'}
+];
+const grid=document.getElementById('grid');
+const search=document.getElementById('search');
+const empty=document.getElementById('empty');
+let category='all';
+function render(){
+ const query=search.value.toLocaleLowerCase('ru').trim();
+ const filtered=items.filter(t=>(category==='all'||t.category===category)&&(t.title+' '+t.text+' '+t.meta).toLocaleLowerCase('ru').includes(query));
+ grid.replaceChildren();empty.hidden=filtered.length!==0;
+ for(const t of filtered){
+  const card=document.createElement('article');card.className='card';
+  const symbol=document.createElement('span');symbol.className='symbol';symbol.textContent=t.symbol;
+  const meta=document.createElement('div');meta.className='meta';meta.textContent=t.meta;
+  const h=document.createElement('h2');h.textContent=t.title;
+  const p=document.createElement('p');p.textContent=t.text;card.append(symbol,meta,h,p);
+  if(t.url){const a=document.createElement('a');a.className='action';a.href=t.url;a.textContent='Открыть инструмент ↗';card.append(a)}
+  else{const s=document.createElement('span');s.className='pending';s.textContent='Готовится к публикации';card.append(s)}
+  grid.append(card);
+ }
+}
+search.addEventListener('input',render);
+document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{
+ category=b.dataset.filter;
+ document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+ render();
+}));
+render();
+</script>
+</body></html>
