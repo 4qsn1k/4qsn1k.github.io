@@ -21,10 +21,10 @@
 - Web-конструктор: https://4qsn1k.github.io/airlock-generator/ (наличие файлов в GitHub подтверждено; публикация Pages отдельно не проверялась).
 - Экран отдела: https://4qsn1k.github.io/airlock-generator/monitor.html — прототип без телеметрии.
 - Рабочий ПК с Owen Logic: Z4559; Windows; Owen Logic `ProgramRelayFBD.exe`.
-- **Исходный файл (не изменять):** `C:\Users\m.hazgaliev\Desktop\Airlock_CNC_D.owle`.
-- **Резервная копия:** `C:\Users\m.hazgaliev\Desktop\Airlock_CNC_D.pre-generator-20261016.owle`.
-- **Отдельная копия для симуляции:** `C:\Users\m.hazgaliev\Desktop\AirlockGeneratorTest\Airlock_SIMULATION_TEST.owle`.
-- **Созданные ST-файлы** также находятся в `C:\Users\m.hazgaliev\Desktop\AirlockGeneratorTest\FB_Room_N1.st` и `FB_Room_N4.st`.
+- **Исходный файл (не изменять):** `%USERPROFILE%\Desktop\Airlock_CNC_D.owle`.
+- **Резервная копия:** `%USERPROFILE%\Desktop\Airlock_CNC_D.pre-generator-20261016.owle`.
+- **Отдельная копия для симуляции:** `%USERPROFILE%\Desktop\AirlockGeneratorTest\Airlock_SIMULATION_TEST.owle`.
+- **Созданные ST-файлы** также находятся в `%USERPROFILE%\Desktop\AirlockGeneratorTest\FB_Room_N1.st` и `FB_Room_N4.st`.
 - Экспериментальный сборщик формата `.owle`: [build-native-owle.py](../experimental/build-native-owle.py). Проверен только на открытие одной тестовой копии, не на полной компиляции/работе в реальном контроллере.
 
 ## Что за проект
