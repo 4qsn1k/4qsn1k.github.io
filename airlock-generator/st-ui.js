@@ -31,7 +31,12 @@
  ].join("");
  const place=$("plan").closest("section");
  place.insertAdjacentElement("afterend",note);
- let compiled=null,bench=null,selectedId=null;
+ let compiled=null,bench=null,selectedId=null,selectedSignature=null;
+ const signature=id=>{
+   const r=model.rooms.find(r=>r.id===id);
+   return JSON.stringify({id,mode:r?.interlockMode,purge:r?.purgeSec,alarm:model.defaultOpenDoorAlarmSec,
+     doors:model.doors.filter(d=>d.a===id||d.b===id).map(d=>d.id).sort()});
+ };
  const eligible=()=>model.rooms.filter(r=>["purge","mutual"].includes(AirlockEngine.roomMode(r))&&
    model.doors.filter(d=>d.a===r.id||d.b===r.id).length>=2);
  function file(name,content,type="text/plain;charset=utf-8"){
@@ -43,13 +48,13 @@
    try{
      compiled=AirlockStGenerator.build(model,id);
      bench=AirlockStTestbench.create(model,id);
-     selectedId=id;$("stCode").textContent=compiled.st;
+     selectedId=id;selectedSignature=signature(id);$("stCode").textContent=compiled.st;
      $("stWarnings").textContent=compiled.warnings.join(" · ");
      $("stStatus").textContent="Модель подготовлена";
      $("stDownload").disabled=false;$("stCsv").disabled=false;$("stCopy").disabled=false;$("stManual").disabled=false;
      drawInputs();renderOutputs();
    }catch(err){
-     bench=null;compiled=null;$("stStatus").textContent="Ошибка: "+err.message;
+     bench=null;compiled=null;selectedSignature=null;$("stStatus").textContent="Ошибка: "+err.message;
      $("stCode").textContent="";$("stInputs").textContent="";$("stOutput").textContent="";
      $("stDownload").disabled=true;$("stCsv").disabled=true;$("stCopy").disabled=true;$("stManual").disabled=true;
    }
@@ -63,7 +68,7 @@
    const id=ids.find(r=>r.id===current)?.id||ids[0].id;
    $("stRoom").value=id;
    // Rebuild only if topology/parameters change, not on every status render.
-   if(id!==selectedId)build(id);
+   if(id!==selectedId||signature(id)!==selectedSignature)build(id);
  }
  function drawInputs(){
    if(!bench)return;
