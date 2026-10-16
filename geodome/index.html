@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Геокупол 2V — интерактивный конструктор деталей v4.1</title>
+<title>Геокупол 2V — интерактивный конструктор деталей v5</title>
 <style>
 :root{color-scheme:light;--ink:#14283a;--mut:#52697a;--line:#d5e0e8;--brand:#076d66;--blue:#1b7ba4;--bg:#eff4f7;--amber:#a15e08}*{box-sizing:border-box}body{font:15px/1.48 system-ui,-apple-system,'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ink);margin:0}main{max-width:1200px;margin:auto;padding:24px 16px 50px}header{margin-bottom:20px}.eyebrow{font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);font-size:12px}h1{font-size:clamp(27px,4.5vw,38px);letter-spacing:-.035em;line-height:1.12;margin:5px 0}h2{font-size:20px;margin:0 0 11px}h3{font-size:16px;margin:14px 0 10px}p{margin:7px 0 12px}small,.muted{color:var(--mut)}.layout{display:grid;grid-template-columns:minmax(285px,380px) minmax(0,1fr);gap:18px;align-items:start}.pane{background:white;border:1px solid var(--line);border-radius:15px;padding:19px;margin-bottom:16px;box-shadow:0 2px 4px #17354a09}.steps{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0 18px}.steps span{border:1px solid #c8dedb;padding:5px 10px;background:#e5f4f0;border-radius:30px;font-size:12px;font-weight:700;color:#135b51}.field{border-bottom:1px solid #e7eef3;padding:0 0 11px;margin-bottom:11px}.field:last-child{border-bottom:0;margin-bottom:0}.field>label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:650;font-size:14px}.field input[type=number]{border:2px solid #bbd6e3;border-radius:8px;background:#f6fbfe;padding:8px 7px;width:95px;text-align:right;font-weight:800;font-size:17px;color:#165c7c;min-width:0}.field input:focus,.field select:focus{outline:2px solid #66c6b5;outline-offset:1px}.field .right{white-space:nowrap;font-size:13px;color:#3a5a69}.hint{font-size:12px;color:var(--mut);line-height:1.45;margin-top:4px}.field select{width:100%;border:1px solid var(--line);border-radius:8px;padding:11px 9px;margin-top:5px;background:white;font-size:14px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.stat{background:#eaf3f7;border-radius:9px;padding:10px}.stat small{display:block;font-size:11px}.stat b{font-size:21px;font-variant-numeric:tabular-nums}.svgarea{border:1px solid var(--line);border-radius:12px;background:linear-gradient(160deg,#e5f2f6,white)}svg{display:block;width:100%;height:auto;max-height:430px}.legend{display:flex;flex-wrap:wrap;gap:11px;font-size:12px;color:var(--mut);margin-top:7px}.legend i{display:inline-block;vertical-align:middle;width:17px;height:4px;margin-right:5px;background:#087f78}.legend .b{background:#d08e2f}.legend .c{background:#6d8491}.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid #e6edf2;padding:9px 7px;vertical-align:top;text-align:left}th{font-size:12px;color:#516d7c;white-space:nowrap}td.r,th.r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.actions{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}button{font:650 14px/1.25 system-ui;cursor:pointer;background:white;border:1px solid #b9cfd9;border-radius:9px;padding:11px 14px;color:#143449}button.primary{color:white;background:var(--brand);border-color:var(--brand)}button:disabled{opacity:.45;cursor:default}button:hover:not(:disabled){filter:brightness(.96)}.note{background:#e9f6f1;border-left:4px solid var(--brand);padding:10px 13px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}.warning{background:#fff5e7;border-left:4px solid var(--amber);padding:10px 13px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}.outgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.outgrid>div{background:#f3f8fa;border:1px solid #e0eaf0;border-radius:8px;padding:9px}.outgrid b{display:block;font-size:17px}.outgrid small{display:block;font-size:12px}.model{border-top:1px solid #e6edf2;padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.model strong{display:block}.model p{margin:3px 0;color:var(--mut);font-size:12px}.model button{padding:9px 12px}.meter{height:12px;border-radius:10px;overflow:hidden;background:#e0eaf1;margin:8px 0}.meter>div{height:100%;background:var(--brand);width:0%;transition:width .15s}.message{font-size:13px;color:var(--mut);padding:7px 0;min-height:28px}.error{color:#a23222}.footer{color:var(--mut);font-size:13px;padding:10px 0}.checkline{display:flex;gap:9px;align-items:center;font-size:14px;margin:10px 0}.checkline input{width:18px;height:18px;accent-color:var(--brand)}@media(max-width:850px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:450px){main{padding:14px 10px}.pane{padding:14px}.stat b{font-size:19px}.outgrid{grid-template-columns:1fr}.field input[type=number]{width:80px}}@media print{button,.actions,.meter{display:none}body{background:white}}
 
@@ -12,11 +12,11 @@
 #partTitle{font-size:13px}#partDim,#portAngle,#partScrews{font-size:15px}
 @media (max-width:600px){.modelcanvas canvas{aspect-ratio:4/3}.tooltabs{flex-wrap:wrap}.tooltabs select{min-width:100%}.viewhelp{font-size:10px}.toolbar{gap:8px}.viewrow button{padding:10px}}
 </style></head>
-<body><main><header><div class="eyebrow">Расчёт + готовые файлы для 3D-печати</div><h1>Геодезический купол 2V <span style="font-size:13px;color:#087b73;font-weight:700;vertical-align:middle">КОНСТРУКТОР v4.2</span></h1><p class="muted">Палатка или сезонная теплица Ø3–4 м · деревянные шканты Ø20–30 мм · генерация STL прямо в браузере</p><div class="steps"><span>1. Измени размеры</span><span>2. Выбери деталь</span><span>3. Поверни 3D-модель</span><span>4. Создай STL</span></div></header>
+<body><main><header><div class="eyebrow">Расчёт + готовые файлы для 3D-печати</div><h1>Геодезический купол 2V <span style="font-size:13px;color:#087b73;font-weight:700;vertical-align:middle">КОНСТРУКТОР v5</span></h1><p class="muted">Полусфера, вытянутый купол или сезонная теплица Ø3–4 м · деревянные шканты Ø20–30 мм · генерация STL прямо в браузере</p><div class="steps"><span>1. Измени размеры</span><span>2. Выбери деталь</span><span>3. Поверни 3D-модель</span><span>4. Создай STL</span></div></header>
 <div class="layout"><div>
 <section class="pane"><h2>1. Размер купола</h2>
 <div class="field"><label>Диаметр купола <span class="right"><input id="diam" type="number" min="3" max="4" step="0.1" value="3.5"> м</span></label><div class="hint">Ширина конструкции по самым удалённым точкам.</div></div>
-<div class="field"><label>Основание купола</label><div class="base-switch" role="group" aria-label="Как купол опирается на землю"><button type="button" data-base-mode="ground" aria-pressed="true">До земли</button><button type="button" data-base-mode="stands" aria-pressed="false">На стойках</button></div><input type="hidden" id="baseMode" value="ground"><div id="baseHint" class="hint">Полусфера 2V опирается на землю. Нижние стойки и обвязка не создаются.</div></div>
+<div class="field"><label>Основание купола</label><div class="base-switch" role="group" aria-label="Как купол опирается на землю"><button type="button" data-base-mode="ground" aria-pressed="true">Полусфера до земли</button><button type="button" data-base-mode="elongated" aria-pressed="false">Вытянутый до земли</button><button type="button" data-base-mode="stands" aria-pressed="false">На стойках</button></div><input type="hidden" id="baseMode" value="ground"><div id="baseHint" class="hint">Полусфера 2V опирается на землю. Нижние стойки и обвязка не создаются.</div></div>
 <div class="field"><label>Полная высота <span class="right"><input id="height" type="number" min="1.5" max="3" step="0.05" value="1.75" disabled> м</span></label><div class="hint" id="heightHint">Для полусферы без стоек высота равна половине диаметра. Чтобы увеличить высоту, включи стойки.</div></div>
 <div class="note">Важно: даже у купола 2V, опирающегося на землю, остаются 10 крайних узлов с 4 направлениями (5 левых и 5 правых), а выше — соединители с 5 и 6 направлениями.</div>
 <div class="field"><label>Диаметр шканта <span class="right"><input id="dowel" type="number" min="15" max="40" step="0.1" value="25"> мм</span></label><div class="hint">Измерь реальный диаметр дерева штангенциркулем.</div></div>
@@ -53,67 +53,84 @@
 <div class="viewrow"><button id="viewTop">Сверху</button><button id="viewSide">Сбоку</button><button id="precise" class="primary">Построить точный 3D STL</button><button id="previewBack" hidden>Эскиз</button></div>
 <div id="renderMsg" class="hint" role="status">Эскиз обновляется сразу. Точная 3D-сетка строится по тем же данным, что и STL для печати.</div>
 <div class="port-panel"><h3>Гнёзда выбранного соединителя</h3><div id="portList" class="portlist"></div><div class="outgrid" style="margin-top:10px"><div><small>Узел</small><b id="partTitle">—</b></div><div><small>Габарит (оценка)</small><b id="partDim">—</b></div><div><small>Угол выбранного луча к вертикали</small><b id="portAngle">—</b></div><div><small>Саморезов на узел</small><b id="partScrews">—</b></div></div></div>
-<div class="actions"><button class="primary" id="downloadPicked">Скачать выбранный STL</button><button id="downloadObj">OBJ</button><button id="download3mf">3MF</button><button id="saveConfig">Сохранить настройки JSON</button><button id="loadConfig">Загрузить настройки JSON</button><input type="file" id="configFile" accept=".json,application/json" hidden></div>
-<div class="note">В эскизе показаны ориентировочные формы гнёзд и крепежа. Кнопка «Построить точный 3D STL» выводит действительную сетку модели. OBJ и 3MF создаются из той же сетки, что и STL. STEP требует отдельного CAD-генератора.</div>
+<div class="actions"><button class="primary" id="downloadPicked">Скачать выбранную модель</button><select id="modelFormat" aria-label="Формат 3D-файла" style="padding:9px;border:1px solid #b9cfd9;border-radius:9px"><option value="stl">STL · печать</option><option value="obj">OBJ · просмотр</option><option value="3mf">3MF · слайсер</option></select><button id="saveConfig">Сохранить настройки JSON</button><button id="loadConfig">Загрузить настройки JSON</button><input type="file" id="configFile" accept=".json,application/json" hidden></div>
+<div class="note">Выбор формата: STL, OBJ и 3MF — сеточные файлы. Для точного STEP нужен отдельный CAD-генератор; HTML не превращает сетку в точные поверхности. Кнопка «Построить точный 3D STL» показывает исходную сетку.</div>
 </section>
 <section class="pane"><h2>Схема и ведомость</h2>
 <div class="stats"><div class="stat"><small>Диаметр</small><b id="viewD">3,50 м</b></div><div class="stat"><small>Высота</small><b id="viewH">2,25 м</b></div><div class="stat"><small>Узлов купола</small><b>26</b></div><div class="stat"><small>Шкантов купола</small><b>65</b></div></div>
 <div class="svgarea"><svg id="drawing" viewBox="0 0 700 440" role="img" aria-label="Схема каркаса 2V в перспективе"></svg></div>
-<div id="domePicked" class="hint" style="margin:8px 0 5px">Нажми на точку узла или линию шканта на схеме для просмотра параметров.</div><div class="legend"><span><i></i>A — длинные</span><span><i class="b"></i>B — короткие</span><span><i class="c"></i>C/D — нижний каркас</span></div>
+<div id="domePicked" class="hint" style="margin:8px 0 5px">Нажми на точку узла или линию шканта на схеме для просмотра параметров.</div><div class="legend"><span id="typeLegend">A — длинные, B — короткие</span><span><i class="c"></i>ST/OB — стойки/обвязка</span></div>
 <div id="invalid" class="warning" hidden></div>
 <h3>Длина распила</h3><div class="tablewrap"><table><thead><tr><th>Шкант</th><th class="r">Шт.</th><th class="r">По осям</th><th class="r">Резать</th></tr></thead><tbody id="cutlist"></tbody></table></div>
 <div class="outgrid" style="margin-top:12px"><div><small>Всего саморезов в узлах</small><b id="screwCount">170 шт.</b></div><div><small>Посадочный диаметр</small><b id="inner">25,5 мм</b></div><div><small>Наружный диаметр гнезда</small><b id="outer">37,5 мм</b></div><div><small>Расстояние до входа в гнездо</small><b id="reach">85 мм</b></div><div><small>Плёнка с запасом 20%</small><b id="cover">28 м²</b></div></div>
-<div class="note">Пространственные углы соединителей определяются геометрией 2V. При изменении только диаметра купола эти углы <b>не меняются</b>. Меняется длина шкантов. STL перестраиваются при изменении размеров самих гнёзд.</div></section>
-<section class="pane" id="models"><h2>3. Создать готовые соединители STL</h2><p class="muted">В каждом луче предусмотрена площадка и одностороннее отверстие для фиксации шканта саморезом. Скачай комплект ZIP или только нужную модель. Файлы открываются в Creality Slicer и Fusion 360 как сетки.</p>
+<div class="note"><span id="geometryHint">Для полусферы углы фиксированы. Для вытянутого купола углы рассчитываются заново.</span></div></section>
+<section class="pane" id="models"><h2>3. Создать соединители и 3D-файлы</h2><p class="muted">В каждом луче предусмотрена площадка и одностороннее отверстие для фиксации шканта саморезом. Скачай комплект ZIP или только нужную модель. Файлы открываются в Creality Slicer и Fusion 360 как сетки.</p>
 <div id="modellist"></div>
 <div class="actions"><button class="primary" id="all">Создать ZIP со всеми STL + CSV</button><button id="csv">Только ведомость CSV</button></div>
 <div class="meter"><div id="bar"></div></div><div role="status" aria-live="polite" class="message" id="msg">Готов к генерации. Выбери соединитель в 3D-просмотре.</div>
 <div class="warning"><b>Прежде чем печатать комплект.</b> Это опытные соединители, а не проверенный расчёт прочности. Сделай один пробный узел и испытай его со шкантами. При укрытии плёнкой необходимы анкеры, нижняя обвязка и ветровые растяжки. Не оставляй сезонную палатку под снегом.</div>
 </section>
-</div></div><div class="footer">Независимая HTML-страница. Без интернета и внешних библиотек. На телефоне построение точных STL может занимать заметное время. Размеры отверстий и геометрия требуют проверки после печати. STEP эта версия не создаёт. Для узлов у земли требуется крепление основания к анкерам или обвязке.</div></main>
+</div></div><div class="footer">Независимая HTML-страница. Без интернета и внешних библиотек. На телефоне экспорт моделей может быть долгим. STL/OBJ/3MF — сетка; STEP создаётся отдельным CAD-генератором. Для узлов у земли необходимы анкеры или обвязка. Параметры требуют пробной печати.</div></main>
 <script>
 const POINTS=[[0.5257311121, 0.0, 0.8506508084], [0.1624598481, 0.5, 0.8506508084], [-0.4253254042, 0.3090169944, 0.8506508084], [-0.4253254042, -0.3090169944, 0.8506508084], [0.1624598481, -0.5, 0.8506508084], [0.6881909602, 0.5, 0.5257311121], [0.6881909602, -0.5, 0.5257311121], [0.9510565163, 0.3090169944, 0.0], [0.9510565163, -0.3090169944, 0.0], [-0.2628655561, 0.8090169944, 0.5257311121], [0.5877852523, 0.8090169944, 0.0], [0.0, 1.0, 0.0], [-0.8506508084, 0.0, 0.5257311121], [-0.5877852523, 0.8090169944, 0.0], [-0.9510565163, 0.3090169944, 0.0], [-0.2628655561, -0.8090169944, 0.5257311121], [-0.9510565163, -0.3090169944, 0.0], [-0.5877852523, -0.8090169944, 0.0], [-0.0, -1.0, 0.0], [0.5877852523, -0.8090169944, 0.0], [0.0, 0.0, 1.0], [0.894427191, 0.0, 0.4472135955], [0.2763932023, 0.8506508084, 0.4472135955], [-0.7236067977, 0.5257311121, 0.4472135955], [-0.7236067977, -0.5257311121, 0.4472135955], [0.2763932023, -0.8506508084, 0.4472135955]];
 const EDGES=[[0, 1], [0, 4], [0, 5], [0, 6], [0, 20], [0, 21], [1, 2], [1, 5], [1, 9], [1, 20], [1, 22], [2, 3], [2, 9], [2, 12], [2, 20], [2, 23], [3, 4], [3, 12], [3, 15], [3, 20], [3, 24], [4, 6], [4, 15], [4, 20], [4, 25], [5, 7], [5, 10], [5, 21], [5, 22], [6, 8], [6, 19], [6, 21], [6, 25], [7, 8], [7, 10], [7, 21], [8, 19], [8, 21], [9, 11], [9, 13], [9, 22], [9, 23], [10, 11], [10, 22], [11, 13], [11, 22], [12, 14], [12, 16], [12, 23], [12, 24], [13, 14], [13, 23], [14, 16], [14, 23], [15, 17], [15, 18], [15, 24], [15, 25], [16, 17], [16, 24], [17, 18], [17, 24], [18, 19], [18, 25], [19, 25]];
 const BASE=[16, 17, 18, 19, 8, 7, 10, 11, 13, 14];
 const $=id=>document.getElementById(id);
 const num=id=>Number($(id).value)
-let savedStandsHeight=2.25;
-function syncBaseControls(){const ground=$('baseMode').value==='ground';const h=$('height');if(ground){h.value=Number.isFinite(num('diam'))?(num('diam')/2).toFixed(2):'';}h.disabled=ground;$('heightHint').textContent=ground?'Без стоек высота всегда равна половине диаметра; поле пересчитывается автоматически.':'Полная высота = половина диаметра + высота нижних стоек.';$('baseHint').textContent=ground?'До земли: только 65 стержней и 26 соединителей купола; без стоек и нижней обвязки.':'На стойках: добавлены 10 вертикальных стоек, 10 стержней обвязки и 10 нижних узлов.';for(const btn of document.querySelectorAll('[data-base-mode]'))btn.setAttribute('aria-pressed',String(btn.dataset.baseMode===(ground?'ground':'stands')))};
+let savedStandsHeight=2.25, savedElongatedHeight=2.25;
+function syncBaseControls(){const mode=$('baseMode').value,ground=mode==='ground';const h=$('height');if(ground){h.value=Number.isFinite(num('diam'))?(num('diam')/2).toFixed(2):'';}h.disabled=ground;$('heightHint').textContent=ground?'Полусфера: высота равна половине диаметра.':mode==='elongated'?'Высота вытянутого купола. Изменяет длины стержней и пространственные углы соединителей.':'Полная высота = половина диаметра + высота нижних стоек.';$('baseHint').textContent=ground?'Полусфера до земли: 65 стержней, 26 узлов, 2 длины.':mode==='elongated'?'Вытянутый купол: 65 стержней, 26 узлов; больше типов размеров и углов, чем у полусферы.':'На стойках: добавлены 10 вертикальных стоек, 10 стержней обвязки и 10 нижних узлов.';for(const btn of document.querySelectorAll('[data-base-mode]'))btn.setAttribute('aria-pressed',String(btn.dataset.baseMode===mode))};
 const mm=x=>x.toLocaleString('ru-RU',{maximumFractionDigits:1,minimumFractionDigits:1})+' мм';
 const meter=x=>x.toLocaleString('ru-RU',{maximumFractionDigits:2,minimumFractionDigits:2})+' м';
 const neigh=POINTS.map(()=>[]);for(const [a,b] of EDGES){neigh[a].push(b);neigh[b].push(a)}
 function norm(v){const len=Math.hypot(...v);return v.map(x=>x/len)}
 function diff(a,b){return a.map((x,i)=>x-b[i])}
-function ports(i,vertical=false){const a=POINTS[i],res=neigh[i].map(j=>{const o=diff(POINTS[j],a);return {type:Math.hypot(...o)>.58?'A':'B',axis:norm(o)}});if(vertical)res.push({type:'C',axis:[0,0,-1]});return res}
-function footPorts(){const i=BASE[0], ip=BASE.at(-1), inext=BASE[1];return [{type:'C',axis:[0,0,1]},{type:'D',axis:norm(diff(POINTS[ip],POINTS[i]))},{type:'D',axis:norm(diff(POINTS[inext],POINTS[i]))}]}
+// Ellipsoidal stretching changes both edge lengths and three-dimensional ray angles.
+const edgeId=(a,b)=>Math.min(a,b)+':'+Math.max(a,b);
+function domePoints(p){const zScale=p.mode==='elongated'?p.H/(p.D/2):1;return POINTS.map(([x,y,z])=>[x,y,z*zScale])}
+function edgeGroups(p){const pts=domePoints(p),r=p.D*500,arr=[];const groups=[];
+ for(const [a,b] of EDGES){const len=Math.hypot(...diff(pts[a],pts[b]))*r;let g=groups.find(t=>Math.abs(t.length-len)<.04);if(!g){g={length:len,edges:[]};groups.push(g)}g.edges.push([a,b]);arr.push([a,b,g])}
+ groups.sort((a,b)=>b.length-a.length);const map=new Map();for(const [i,g] of groups.entries()){g.type='ABCDEFGHJKLMNOPQRSTUVWXYZ'[i];g.count=g.edges.length;for(const [a,b] of g.edges)map.set(edgeId(a,b),g.type)}return {groups,map}}
+function ports(i,p,vertical=false){const pts=domePoints(p),a=pts[i],labels=edgeGroups(p).map,res=neigh[i].map(j=>({type:labels.get(edgeId(i,j)),axis:norm(diff(pts[j],a))}));if(vertical)res.push({type:'ST',axis:[0,0,-1]});return res}
+function footPorts(p){const pts=domePoints(p),i=BASE[0],ip=BASE.at(-1),inext=BASE[1];return [{type:'ST',axis:[0,0,1]},{type:'OB',axis:norm(diff(pts[ip],pts[i]))},{type:'OB',axis:norm(diff(pts[inext],pts[i]))}]}
 const baseA=BASE.filter(i=>[7,11,14,17,19].includes(i));
 const baseB=BASE.filter(i=>!baseA.includes(i));
-const five=neigh.findIndex(n=>n.length===5), six=neigh.findIndex(n=>n.length===6);
-function specs(withStands){const list=withStands?[
-{id:'05_krai_4_levyi_so_stoikoi',title:'Крайний 4 луча · левый + стойка',qty:5,ports:ports(7,true)},
-{id:'06_krai_4_pravyi_so_stoikoi',title:'Крайний 4 луча · правый + стойка',qty:5,ports:ports(baseB[0],true)},
-{id:'03_uzel_5',title:'Верхний узел · 5 лучей',qty:6,ports:ports(five)},
-{id:'04_uzel_6',title:'Промежуточный узел · 6 лучей',qty:10,ports:ports(six)},
-{id:'07_niz_3',title:'Нижняя обвязка · 3 гнезда',qty:10,ports:footPorts()}]:[
-{id:'01_krai_4_levyi',title:'Крайний 4 луча · левый',qty:5,ports:ports(7)},
-{id:'02_krai_4_pravyi',title:'Крайний 4 луча · правый',qty:5,ports:ports(baseB[0])},
-{id:'03_uzel_5',title:'Верхний узел · 5 лучей',qty:6,ports:ports(five)},
-{id:'04_uzel_6',title:'Промежуточный узел · 6 лучей',qty:10,ports:ports(six)}];const mIdx={'05_krai_4_levyi_so_stoikoi':7,'06_krai_4_pravyi_so_stoikoi':baseB[0],'01_krai_4_levyi':7,'02_krai_4_pravyi':baseB[0],'03_uzel_5':five,'04_uzel_6':six,'07_niz_3':BASE[0]};
-for(const model of list){const outward=POINTS[mIdx[model.id]];for(const port of model.ports){const d=port.axis,dot=d[0]*outward[0]+d[1]*outward[1]+d[2]*outward[2];let s=outward.map((v,i)=>v-dot*d[i]);if(Math.hypot(...s)<.01){s=[-d[1],d[0],0];if(Math.hypot(...s)<.01)s=[1,0,0]};port.screwDir=norm(s)}}return list}
+const five=neigh.findIndex(n=>n.length===5),six=neigh.findIndex(n=>n.length===6);
+function specs(p){const stand=p.mode==='stands',stretch=p.mode==='elongated';const list=[];
+function add(id,title,ids,withStand=false){list.push({id,title,qty:ids.length,nodeIds:ids,ports:ports(ids[0],p,withStand),ref:ids[0]})}
+ if(stand){add('05_krai_4_levyi_so_stoikoi','Крайний 4 луча · левый + стойка',baseA,true);add('06_krai_4_pravyi_so_stoikoi','Крайний 4 луча · правый + стойка',baseB,true)}
+ else{add('01_krai_4_levyi','Крайний 4 луча · левый',baseA);add('02_krai_4_pravyi','Крайний 4 луча · правый',baseB)}
+ if(stretch){
+  add('03_verh_5','Верхний 5 лучей · вершина',[20]);
+  add('03_niz_5','Пятилучевой · нижний ярус',[21,22,23,24,25]);
+  add('04_verh_6','Шестилучевой · верхний ярус',[0,1,2,3,4]);
+  add('04_sered_6','Шестилучевой · средний ярус',[5,6,9,12,15]);
+ }else{add('03_uzel_5','Верхний узел · 5 лучей',[20,21,22,23,24,25]);add('04_uzel_6','Промежуточный узел · 6 лучей',[0,1,2,3,4,5,6,9,12,15])}
+ if(stand)list.push({id:'07_niz_3',title:'Нижняя обвязка · 3 гнезда',qty:10,nodeIds:[],ports:footPorts(p),ref:BASE[0]});
+ const pts=domePoints(p);
+ for(const model of list){const outward=pts[model.ref];for(const port of model.ports){const d=port.axis,dot=d.reduce((a,v,i)=>a+v*outward[i],0);let s=outward.map((v,i)=>v-dot*d[i]);if(Math.hypot(...s)<.01){s=[-d[1],d[0],0];if(Math.hypot(...s)<.01)s=[1,0,0]}port.screwDir=norm(s)}}
+ return list;
+}
 function params(){return {screwQty:num('screwQty'),screwPitch:num('screwPitch'),bossDiam:num('bossDiam'),D:num('diam'),H:num('height'),mode:$('baseMode').value,dowel:num('dowel'),clearance:num('clearance'),wall:num('wall'),depth:num('depth'),setback:num('setback'),core:num('core'),fasten:$('fasten').checked,screwDiam:num('screwDiam'),screwFromMouth:num('screwFromMouth'),mark:$('mark').checked,step:num('quality')}}
-function check(p){if(Object.values(p).some(v=>typeof v==='number'&&!Number.isFinite(v)))return 'Заполни все числовые поля.';if(p.D<3||p.D>4)return 'Диаметр должен быть от 3 до 4 м.';if(!['ground','stands'].includes(p.mode))return 'Неизвестный тип основания.';if(p.mode==='ground'&&Math.abs(p.H-p.D/2)>.011)return 'Без стоек высота должна быть равна половине диаметра.';if(p.mode==='stands'&&p.H<p.D/2-1e-6)return 'Высота меньше полусферы. Увеличь высоту или уменьши диаметр.';if(p.dowel<15||p.dowel>40||p.clearance<0||p.clearance>2||p.wall<3||p.wall>12||p.depth<25||p.depth>75)return 'Проверь диаметр шканта, зазор, стенку или глубину гнезда.';if(p.fasten&&(p.wall<5||p.depth<35||p.screwDiam<3||p.screwDiam>5||p.bossDiam<p.screwDiam+5||p.bossDiam>19||![1,2].includes(p.screwQty)||p.screwPitch<10||p.screwPitch>32||p.screwFromMouth-p.screwPitch*(p.screwQty-1)/2<12||p.screwFromMouth+p.screwPitch*(p.screwQty-1)/2>p.depth-13))return 'Саморезы слишком близко к краю гнезда, стенка тонкая или неверны размеры площадки. Увеличь глубину или уменьши шаг крепежа.';if(p.core<24||p.core>55||p.setback<p.core+5)return 'Отступ торца должен быть больше радиуса сердцевины минимум на 5 мм.';if(p.setback<(p.dowel+p.clearance)/2+6)return 'Отступ слишком мал для выбранного диаметра шканта.';if(p.setback + p.depth>185)return 'Гнездо слишком длинное для этого генератора.';if(p.mode==='stands' && (p.H-p.D/2)*1000-2*p.setback<50)return 'Вертикальная стойка получится слишком короткой. Измени высоту или отступ.';return ''}
+function check(p){if(Object.values(p).some(v=>typeof v==='number'&&!Number.isFinite(v)))return 'Заполни все числовые поля.';if(p.D<3||p.D>4)return 'Диаметр должен быть от 3 до 4 м.';if(!['ground','elongated','stands'].includes(p.mode))return 'Неизвестный тип основания.';if(p.mode==='ground'&&Math.abs(p.H-p.D/2)>.011)return 'Без стоек высота должна быть равна половине диаметра.';if((p.mode==='stands'||p.mode==='elongated')&&p.H<p.D/2-1e-6)return 'Высота меньше полусферы. Увеличь высоту или уменьши диаметр.';if(p.H>3)return 'Максимальная высота — 3 м.';if(p.dowel<15||p.dowel>40||p.clearance<0||p.clearance>2||p.wall<3||p.wall>12||p.depth<25||p.depth>75)return 'Проверь диаметр шканта, зазор, стенку или глубину гнезда.';if(p.fasten&&(p.wall<5||p.depth<35||p.screwDiam<3||p.screwDiam>5||p.bossDiam<p.screwDiam+5||p.bossDiam>19||![1,2].includes(p.screwQty)||p.screwPitch<10||p.screwPitch>32||p.screwFromMouth-p.screwPitch*(p.screwQty-1)/2<12||p.screwFromMouth+p.screwPitch*(p.screwQty-1)/2>p.depth-13))return 'Саморезы слишком близко к краю гнезда, стенка тонкая или неверны размеры площадки. Увеличь глубину или уменьши шаг крепежа.';if(p.core<24||p.core>55||p.setback<p.core+5)return 'Отступ торца должен быть больше радиуса сердцевины минимум на 5 мм.';if(p.setback<(p.dowel+p.clearance)/2+6)return 'Отступ слишком мал для выбранного диаметра шканта.';if(p.setback + p.depth>185)return 'Гнездо слишком длинное для этого генератора.';if(p.mode==='stands' && (p.H-p.D/2)*1000-2*p.setback<50)return 'Вертикальная стойка получится слишком короткой. Измени высоту или отступ.';return ''}
 const mul=(a,k)=>a.map(t=>t*k);
 const sg=(t)=>t.toLocaleString('ru-RU',{maximumFractionDigits:0});
-function update(){syncBaseControls();const p=params();$('viewD').textContent=meter(p.D);$('viewH').textContent=meter(p.H);const msg=check(p);$('invalid').hidden=!msg;$('invalid').textContent=msg;$('all').disabled=!!msg;const R=p.D*500,w=(p.H-p.D/2)*1000,stand=p.mode==='stands';
-const A=R*.618033988749895,B=R*.5465330578253433;
-const pieces=[['A · длинный',35,A,A-2*p.setback],['B · короткий',30,B,B-2*p.setback]];
-if(stand){pieces.push(['C · нижняя стойка',10,w,w-2*p.setback]);pieces.push(['D · нижняя обвязка',10,A,A-2*p.setback])}
-$('cutlist').innerHTML=pieces.map(r=>`<tr><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${mm(r[2])}</td><td class="r"><b>${mm(r[3])}</b></td></tr>`).join('');
-$('inner').textContent=mm(p.dowel+p.clearance);$('outer').textContent=mm(p.dowel+p.clearance+2*p.wall);$('reach').textContent=mm(p.setback+p.depth);
-const area=5.832965695859*(p.D/2)**2+10*(p.D/2)*.618033988749895*Math.max(0,p.H-p.D/2);$('cover').textContent=sg(area*1.2)+' м²';
-const models=specs(stand);$('screwCount').textContent=p.fasten?models.reduce((v,m)=>v+m.qty*m.ports.length*p.screwQty,0)+' шт.':'без саморезов';$('modellist').innerHTML=models.map((s,i)=>`<div class="model"><div><strong>${s.title}</strong><p>${s.qty} шт. · Гнёзда: ${s.ports.map(t=>t.type).join('')}</p></div><div class="model-btns"><button class="viewpart" data-i="${i}">3D</button><button class="single" data-i="${i}" ${msg?'disabled':''}>STL</button></div></div>`).join('');
-$('modellist').querySelectorAll('button.single').forEach(btn=>btn.addEventListener('click',()=>run([models[Number(btn.dataset.i)]],false)));$('modellist').querySelectorAll('button.viewpart').forEach(btn=>btn.addEventListener('click',()=>{selectModel(Number(btn.dataset.i));$('previewPanel').scrollIntoView({behavior:'smooth',block:'start'})}));
-draw(p,stand);
+function facetArea(p){const pts=domePoints(p).map(v=>v.map(x=>x*p.D*500));let area=0;
+ const edgeSet=new Set(EDGES.map(e=>edgeId(...e)));
+ for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++)if(edgeSet.has(edgeId(i,j)))for(let k=j+1;k<pts.length;k++)if(edgeSet.has(edgeId(i,k))&&edgeSet.has(edgeId(j,k))){const u=diff(pts[j],pts[i]),v=diff(pts[k],pts[i]);const cross=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];area+=Math.hypot(...cross)/2}
+ if(p.mode==='stands')area+=10*(p.H-p.D/2)*1000*p.D*500*.618033988749895;return area/1e6}
+function cutRows(p){const r=p.D*500,g=edgeGroups(p).groups,rows=g.map(e=>[e.type+' · купол',e.count,e.length,e.length-2*p.setback]);if(p.mode==='stands'){const w=(p.H-p.D/2)*1000;rows.push(['ST · стойка',10,w,w-2*p.setback]);const bottom=r*.618033988749895;rows.push(['OB · обвязка',10,bottom,bottom-2*p.setback])}return rows}
+function update(){syncBaseControls();const p=params();$('viewD').textContent=meter(p.D);$('viewH').textContent=meter(p.H);const msg=check(p);$('invalid').hidden=!msg;$('invalid').textContent=msg;$('all').disabled=!!msg;const stand=p.mode==='stands';
+ const pieces=cutRows(p);
+ $('cutlist').innerHTML=pieces.map(r=>`<tr><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${mm(r[2])}</td><td class="r"><b>${mm(r[3])}</b></td></tr>`).join('');
+ $('inner').textContent=mm(p.dowel+p.clearance);$('outer').textContent=mm(p.dowel+p.clearance+2*p.wall);$('reach').textContent=mm(p.setback+p.depth);
+ $('cover').textContent=sg(facetArea(p)*1.2)+' м²';
+ const models=specs(p);$('screwCount').textContent=p.fasten?models.reduce((v,m)=>v+m.qty*m.ports.length*p.screwQty,0)+' шт.':'без саморезов';
+ $('modellist').innerHTML=models.map((s,i)=>`<div class="model"><div><strong>${s.title}</strong><p>${s.qty} шт. · Гнёзда: ${s.ports.map(t=>t.type).join(' · ')}</p></div><div class="model-btns"><button class="viewpart" data-i="${i}">3D</button><button class="single" data-i="${i}" ${msg?'disabled':''}>Файл</button></div></div>`).join('');
+ $('modellist').querySelectorAll('button.single').forEach(btn=>btn.addEventListener('click',()=>run([models[Number(btn.dataset.i)]],false)));
+ $('modellist').querySelectorAll('button.viewpart').forEach(btn=>btn.addEventListener('click',()=>{selectModel(Number(btn.dataset.i));$('previewPanel').scrollIntoView({behavior:'smooth',block:'start'})}));
+ $('typeLegend').textContent=p.mode==='elongated'?'A–G — длины шкантов по убыванию (точные значения в ведомости).':'A — длинные, B — короткие';
+ $('geometryHint').textContent=p.mode==='elongated'?'Вытягивание по вертикали изменяет длины и углы соединителей. Для каждого уровня строятся свои STL.':'У полусферы 2V углы фиксированы. При изменении только диаметра меняются длины шкантов.';
+ draw(p,stand);
 }
 let selectedDomeNode=-1,selectedDomeLine=-1;
 function draw(p,stand){
@@ -121,7 +138,7 @@ function draw(p,stand){
   const ns='http://www.w3.org/2000/svg';
   const el=(tag,a={})=>{const e=document.createElementNS(ns,tag);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));return e};
   const r=p.D/2*1e3,w=Math.max(0,p.H-p.D/2)*1e3;
-  const pts=POINTS.map(v=>[r*v[0],r*v[1],w+r*v[2]]),feet=BASE.map(i=>[pts[i][0],pts[i][1],0]);
+  const pts=domePoints(p).map(v=>[r*v[0],r*v[1],(stand?w:0)+r*v[2]]),feet=BASE.map(i=>[pts[i][0],pts[i][1],0]);
   const az=.34,cz=Math.cos(az),sz=Math.sin(az),theta=.45;
   const proj=v=>{const x=cz*v[0]-sz*v[1],y=sz*v[0]+cz*v[1];return[x,(y*Math.sin(theta)-v[2]*Math.cos(theta))*.9]};
   const all=pts.concat(feet).map(proj),xs=all.map(v=>v[0]),ys=all.map(v=>v[1]);
@@ -129,18 +146,18 @@ function draw(p,stand){
   const scale=Math.min(620/(Math.max(...xs)-Math.min(...xs)),390/(Math.max(...ys)-Math.min(...ys)));
   const pos=v=>{const q=proj(v);return[350+(q[0]-mid[0])*scale,220+(q[1]-mid[1])*scale]};
   const lines=[];
-  for(const [a,b] of EDGES){const q=pts[a],v=pts[b],kind=Math.hypot(...diff(q,v))/r>.58?'A':'B';lines.push([q,v,kind])}
-  if(stand)for(let k=0;k<BASE.length;k++){lines.push([pts[BASE[k]],feet[k],'C']);lines.push([feet[k],feet[(k+1)%10],'D'])}
+  const groupMap=edgeGroups(p).map;for(const [a,b] of EDGES){lines.push([pts[a],pts[b],groupMap.get(edgeId(a,b))])}
+  if(stand)for(let k=0;k<BASE.length;k++){lines.push([pts[BASE[k]],feet[k],'ST']);lines.push([feet[k],feet[(k+1)%10],'OB'])}
   for(const [lineNo,[u,v,t]] of lines.entries()){
     const a=pos(u),b=pos(v);
-    const ln=el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:lineNo===selectedDomeLine?'#c23640':t==='A'?'#087f78':t==='B'?'#d08e2f':'#6d8491','stroke-width':lineNo===selectedDomeLine?6:3.1,'stroke-linecap':'round'});
+    const ln=el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:lineNo===selectedDomeLine?'#c23640':t==='ST'||t==='OB'?'#6d8491':(t.charCodeAt(0)-65)%2?'#d08e2f':'#087f78','stroke-width':lineNo===selectedDomeLine?6:3.1,'stroke-linecap':'round'});
     svg.appendChild(ln);
     const hit=el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'transparent','stroke-width':14,'pointer-events':'stroke'});
     hit.style.cursor='pointer';
     hit.addEventListener('click',()=>{
       selectedDomeLine=lineNo;selectedDomeNode=-1;
-      const length=(t==='A'||t==='D'?r*.618033988749895:t==='B'?r*.5465330578253433:w)-2*p.setback;
-      $('domePicked').textContent='Шкант '+t+' — длина реза '+mm(length)+'. '+({A:'Длинный',B:'Короткий',C:'Нижняя стойка',D:'Нижняя обвязка'}[t])+'.';
+      const length=Math.hypot(...diff(u,v))-2*p.setback;
+      $('domePicked').textContent='Шкант '+t+' — длина реза '+mm(length)+'. '+(t==='ST'?'Нижняя стойка':t==='OB'?'Нижняя обвязка':'Стержень купола')+'.';
       draw(params(),params().mode==='stands');
     });svg.appendChild(hit);
   }
@@ -150,15 +167,15 @@ function draw(p,stand){
     c.style.cursor='pointer';
     c.addEventListener('click',()=>{
       selectedDomeNode=i;selectedDomeLine=-1;
-      const models=specs(stand);
-      const target=BASE.includes(i)?(baseA.includes(i)?models[0]:models[1]):models.find(m=>m.id===(neigh[i].length===5?'03_uzel_5':'04_uzel_6'));
+      const models=specs(p);
+      const target=models.find(m=>m.nodeIds.includes(i));
       if(target){designer.id=target.id;designer.ray=0;invalidateExact();syncPartUI();requestDraw()}
       $('domePicked').textContent='Узел №'+(i+1)+' — '+neigh[i].length+' лучей купола'+(BASE.includes(i)&&stand?' и нижняя стойка':'')+'. Выбрана модель '+(target?target.title:'не определена')+'.';
       draw(params(),params().mode==='stands');
     });svg.appendChild(c);
   }
 }
-function csvText(){const p=params(),R=p.D*500,w=(p.H-p.D/2)*1000;const A=R*.618033988749895,B=R*.5465330578253433;const rows=[['Тип','Количество','Осевая длина, мм','Резать, мм'],['A',35,A.toFixed(1),(A-2*p.setback).toFixed(1)],['B',30,B.toFixed(1),(B-2*p.setback).toFixed(1)]];if(p.mode==='stands')rows.push(['C',10,w.toFixed(1),(w-2*p.setback).toFixed(1)],['D',10,A.toFixed(1),(A-2*p.setback).toFixed(1)]);return '\ufeff'+rows.map(x=>x.join(';')).join('\r\n')}
+function csvText(){const rows=[['Тип','Количество','Осевая длина, мм','Резать, мм'],...cutRows(params()).map(r=>[r[0],r[1],r[2].toFixed(1),r[3].toFixed(1)])];return '\ufeff'+rows.map(x=>x.join(';')).join('\r\n')}
 function trigger(name,data,type){const blob=data instanceof Blob?data:new Blob([data],{type});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
 $('csv').addEventListener('click',()=>trigger('kupol_2V_rezka.csv',csvText(),'text/csv;charset=utf-8'));
 const field=(x,y,z,ports,p)=>{
@@ -252,17 +269,32 @@ async function zipBlob(files){
   v.setUint16(8,files.length,true);v.setUint16(10,files.length,true);v.setUint32(12,cs,true);v.setUint32(16,offset,true);
   return new Blob([...parts,...central,tail],{type:'application/zip'});
 }
-function readme(p,models){return `КУПОЛ 2V — ФАЙЛЫ СОЕДИНИТЕЛЕЙ\\r\\nРазмеры каркаса: диаметр ${p.D} м, высота ${p.H} м. Основание: ${p.mode==='ground'?'до земли без стоек':'с нижними стойками'}.\\r\\nШкант Ø${p.dowel} мм, посадочное отверстие Ø${p.dowel+p.clearance} мм.\\r\\nСтенка ${p.wall} мм, глубина гнезда ${p.depth} мм, отступ торца ${p.setback} мм.\r\nБоковые отверстия под саморезы: ${p.fasten?'ВКЛ, по '+p.screwQty+' на гнездо, Ø'+p.screwDiam+' мм, от входа '+p.screwFromMouth+' мм, шаг '+p.screwPitch+' мм':'ВЫКЛ'}.\r\nВсего саморезов: ${p.fasten?models.reduce((s,m)=>s+m.qty*m.ports.length*p.screwQty,0):0}.\\r\\nSTL: триангулированные сетки; точность шага сетки ${p.step} мм.\\r\\n\\r\\nИзготовить деталей:\\r\\n${models.map(m=>m.id+' — '+m.qty+' шт.').join('\\r\\n')}\\r\\n\\r\\nПеред серийной печатью проверить размеры гнёзд и пробный узел.\\r\\nПод саморезы Ø3,5 мм сначала сверлить древесину по диаметру сердечника; длину самореза проверить на образце.\r\nНе применять длинные саморезы, способные выйти с противоположной стороны шканта.\r\nДля сезонной теплицы предусмотрите анкеровку и усиление дверного проёма.\\r\\nМодели опытные, расчёт прочности не выполнен.\\r\\n`}
+// STL is the master mesh. OBJ and 3MF are interoperable mesh exports, NOT analytic CAD STEP.
+function indexedSTL(raw){const dat=new DataView(raw.buffer,raw.byteOffset,raw.byteLength);const num=dat.getUint32(80,true);const vertices=[],triangles=[],indices=new Map();let offset=84;
+ for(let i=0;i<num;i++){offset+=12;const t=[];for(let k=0;k<3;k++){
+ const xyz=[dat.getFloat32(offset,true),dat.getFloat32(offset+4,true),dat.getFloat32(offset+8,true)];offset+=12;
+ const key=xyz.map(v=>Math.round(v*10000)).join(',');let idx=indices.get(key);
+ if(idx===undefined){idx=vertices.length;vertices.push(xyz);indices.set(key,idx)}t.push(idx)
+ }offset+=2;if(new Set(t).size===3)triangles.push(t)}return {vertices,triangles}}
+function objText(mesh,title){const lines=['# GeoDome 2V mesh - millimeters','o '+title];for(const v of mesh.vertices)lines.push('v '+v.join(' '));for(const t of mesh.triangles)lines.push('f '+t.map(x=>x+1).join(' '));return lines.join('\n')+'\n'}
+async function model3mf(mesh){const xml='<?xml version="1.0" encoding="UTF-8"?>'+
+ '<model unit="millimeter" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><resources><object id="1" type="model"><mesh><vertices>'+
+ mesh.vertices.map(v=>`<vertex x="${v[0]}" y="${v[1]}" z="${v[2]}"/>`).join('')+'</vertices><triangles>'+
+ mesh.triangles.map(t=>`<triangle v1="${t[0]}" v2="${t[1]}" v3="${t[2]}"/>`).join('')+'</triangles></mesh></object></resources><build><item objectid="1"/></build></model>';
+ return zipBlob([{name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="utf-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>'},
+ {name:'_rels/.rels',data:'<?xml version="1.0" encoding="utf-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>'},
+ {name:'3D/3dmodel.model',data:xml}])}
+function readme(p,models){return `КУПОЛ 2V — ФАЙЛЫ СОЕДИНИТЕЛЕЙ\\r\\nРазмеры каркаса: диаметр ${p.D} м, высота ${p.H} м. Основание: ${p.mode==='ground'?'полусфера до земли':p.mode==='elongated'?'вытянутый до земли':'с нижними стойками'}.\\r\\nШкант Ø${p.dowel} мм, посадочное отверстие Ø${p.dowel+p.clearance} мм.\\r\\nСтенка ${p.wall} мм, глубина гнезда ${p.depth} мм, отступ торца ${p.setback} мм.\r\nБоковые отверстия под саморезы: ${p.fasten?'ВКЛ, по '+p.screwQty+' на гнездо, Ø'+p.screwDiam+' мм, от входа '+p.screwFromMouth+' мм, шаг '+p.screwPitch+' мм':'ВЫКЛ'}.\r\nВсего саморезов: ${p.fasten?models.reduce((s,m)=>s+m.qty*m.ports.length*p.screwQty,0):0}.\\r\\nSTL: триангулированные сетки; точность шага сетки ${p.step} мм.\\r\\n\\r\\nИзготовить деталей:\\r\\n${models.map(m=>m.id+' — '+m.qty+' шт.').join('\\r\\n')}\\r\\n\\r\\nПеред серийной печатью проверить размеры гнёзд и пробный узел.\\r\\nПод саморезы Ø3,5 мм сначала сверлить древесину по диаметру сердечника; длину самореза проверить на образце.\r\nНе применять длинные саморезы, способные выйти с противоположной стороны шканта.\r\nДля сезонной теплицы предусмотрите анкеровку и усиление дверного проёма.\\r\\nМодели опытные, расчёт прочности не выполнен.\\r\\n`}
 let busy=false;
 async function run(models,zip){if(busy)return;const p=params(),err=check(p);if(err){$('msg').textContent=err;return}busy=true;$('all').disabled=true;document.querySelectorAll('.single').forEach(b=>b.disabled=true);const files=[];const msg=$('msg');try{let total=0;for(const [i,s] of models.entries()){msg.textContent=`Модель ${i+1}/${models.length}: ${s.title} — создаю STL…`;$('bar').style.width=(i/models.length*100)+'%';await tick();const res=await buildSTL(s,p,q=>{$('bar').style.width=(((i+q)/models.length)*100).toFixed(1)+'%';msg.textContent=`${s.title}: ${Math.round(q*100)} % (сетка)`.replace(' (сетка)','')});files.push({name:s.id+'.stl',data:res.data});msg.textContent=`Создан ${s.id}.stl · ${res.triangles.toLocaleString('ru-RU')} треугольников.`;await tick()}
- const prefix=`geokupol_2V_v4_1_${p.mode}_D${Math.round(p.D*100)}_dowel${p.dowel}`;
- if(zip){files.push({name:'vedomost_shkantov.csv',data:csvText()},{name:'README_RU.txt',data:readme(p,models)});trigger(prefix+'.zip',await zipBlob(files),'application/zip')}else trigger(models[0].id+'_d'+p.dowel+'.stl',files[0].data,'model/stl');$('bar').style.width='100%';msg.textContent='Готово: '+(zip?'скачан комплект ZIP':'скачан STL')+'. Проверь файлы в слайсере.';
+ const prefix=`geokupol_2V_v5_${p.mode}_D${Math.round(p.D*100)}_dowel${p.dowel}`;
+ if(zip){files.push({name:'vedomost_shkantov.csv',data:csvText()},{name:'README_RU.txt',data:readme(p,models)});trigger(prefix+'.zip',await zipBlob(files),'application/zip')}else{const format=$('modelFormat').value,name=models[0].id+'_d'+p.dowel; if(format==='stl'){trigger(name+'.stl',files[0].data,'model/stl')}else{const mesh=indexedSTL(files[0].data);if(format==='obj')trigger(name+'.obj',objText(mesh,name),'text/plain');else trigger(name+'.3mf',await model3mf(mesh),'model/3mf')}}$('bar').style.width='100%';msg.textContent='Готово: '+(zip?'скачан комплект ZIP':'скачана модель')+'. Проверь файл в CAD или слайсере.';
  }catch(e){console.error(e);msg.textContent='Ошибка генерации: '+e.message;msg.classList.add('error')}finally{busy=false;update();$('all').disabled=!!check(params())}}
-// VIEWER v4: offline previews + exact STL WebGL display. No external JS dependencies.
+// VIEWER v5: offline previews + exact STL WebGL display. No external JS dependencies.
 const designer={id:'04_uzel_6',ray:0,yaw:.60,pitch:.45,zoom:1,explode:0,accurate:false,exactKey:'',gl:null,glShader:null,meshes:null,drag:false,moved:false,last:[0,0],clicks:[],scheduled:false};
 const PREVIEW_INPUTS=['baseMode','diam','height','dowel','clearance','wall','depth','setback','core','fasten','screwDiam','screwFromMouth','screwQty','screwPitch','bossDiam','mark','quality'];
 const SCALE_FIELDS={};
-function listModels(){const p=params();return specs(p.mode==='stands')}
+function listModels(){return specs(params())}
 function part(){return listModels().find(m=>m.id===designer.id)||listModels()[0]}
 function selectModel(i){const arr=listModels(),n=Math.max(0,Math.min(i,arr.length-1));designer.id=arr[n].id;designer.ray=0;designer.accurate=false;syncPartUI(true);requestDraw()}
 function selectedPort(){const m=part();return m.ports[Math.min(designer.ray,m.ports.length-1)]}
@@ -272,7 +304,7 @@ const select=$('modelSelect'),ids=models.map(m=>m.id).join('|');if(select.datase
 const m=part(),p=params();designer.ray=Math.min(designer.ray,m.ports.length-1);
 $('partTitle').textContent=m.title;const tip=p.setback+p.depth;$('partDim').textContent='≈'+Math.round(2*tip)+' мм';$('partScrews').textContent=p.fasten?m.ports.length*p.screwQty+' шт.':'0';
 $('portAngle').textContent=(Math.acos(Math.max(-1,Math.min(1,selectedPort().axis[2])))*180/Math.PI).toFixed(1)+'°';
-$('portList').replaceChildren();for(const [i,port] of m.ports.entries()){const b=document.createElement('button');b.type='button';b.className=i===designer.ray?'active':'';b.textContent=(i+1)+'. '+port.type+' ('+({A:'длинный',B:'короткий',C:'стойка',D:'обвязка'}[port.type]||'')+')';b.onclick=()=>{designer.ray=i;syncPartUI();requestDraw()};$('portList').appendChild(b)}
+$('portList').replaceChildren();for(const [i,port] of m.ports.entries()){const b=document.createElement('button');b.type='button';b.className=i===designer.ray?'active':'';b.textContent=(i+1)+'. '+port.type+' ('+({ST:'стойка',OB:'обвязка'}[port.type]||'размер '+port.type)+')';b.onclick=()=>{designer.ray=i;syncPartUI();requestDraw()};$('portList').appendChild(b)}
 $('explodeVal').textContent=designer.explode;$('zoomVal').textContent=Math.round(designer.zoom*100);
 $('modeTag').textContent=designer.accurate?'Точная поверхность · STL':'Эскиз · форма приближённая';
 }
@@ -329,9 +361,9 @@ panel.addEventListener('pointerup',e=>{if(!designer.drag)return;designer.drag=fa
 panel.addEventListener('pointercancel',()=>{designer.drag=false;panel.classList.remove('dragging')});
 panel.addEventListener('wheel',e=>{e.preventDefault();designer.zoom=Math.max(.4,Math.min(1.8,designer.zoom*(e.deltaY>0?.92:1.08)));$('zoomView').value=Math.round(designer.zoom*100/5)*5;syncPartUI();requestDraw()},{passive:false});
 $('downloadPicked').addEventListener('click',()=>run([part()],false));
-$('saveConfig').addEventListener('click',()=>{const obj={version:'4.1',inputs:Object.fromEntries(PREVIEW_INPUTS.map(k=>[k,($(k).type==='checkbox'?$(k).checked:$(k).value)])),selected:designer.id};trigger('kupol_2V_nastroiki_v4_1.json',JSON.stringify(obj,null,2),'application/json')});
+$('saveConfig').addEventListener('click',()=>{const obj={version:'5',inputs:Object.fromEntries(PREVIEW_INPUTS.map(k=>[k,($(k).type==='checkbox'?$(k).checked:$(k).value)])),selected:designer.id};trigger('kupol_2V_nastroiki_v5.json',JSON.stringify(obj,null,2),'application/json')});
 $('loadConfig').addEventListener('click',()=>$('configFile').click());
-$('configFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const obj=JSON.parse(await file.text());if(!obj.inputs||typeof obj.inputs!=='object')throw Error('Нет параметров');for(const k of PREVIEW_INPUTS){if(!(k in obj.inputs))continue;const t=$(k),v=obj.inputs[k];if(t.type==='checkbox'){t.checked=!!v}else if(t.type==='number'){if(!Number.isFinite(Number(v)))continue;t.value=v}else if(t.type==='select-one'){if([...t.options].some(o=>o.value===String(v)))t.value=v}else if(t.type==='hidden'&&k==='baseMode'&&['ground','stands'].includes(v)){t.value=v}}
+$('configFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const obj=JSON.parse(await file.text());if(!obj.inputs||typeof obj.inputs!=='object')throw Error('Нет параметров');for(const k of PREVIEW_INPUTS){if(!(k in obj.inputs))continue;const t=$(k),v=obj.inputs[k];if(t.type==='checkbox'){t.checked=!!v}else if(t.type==='number'){if(!Number.isFinite(Number(v)))continue;t.value=v}else if(t.type==='select-one'){if([...t.options].some(o=>o.value===String(v)))t.value=v}else if(t.type==='hidden'&&k==='baseMode'&&['ground','elongated','stands'].includes(v)){t.value=v}}
 if(typeof obj.selected==='string')designer.id=obj.selected;update();$('renderMsg').textContent='Параметры загружены. Проверь размеры и заново сформируй STL.'}catch(err){$('renderMsg').textContent='Не удалось прочитать настройки JSON: '+err.message}finally{e.target.value=''}});
 $('precise').addEventListener('click',generatePrecise);
 $('previewBack').addEventListener('click',()=>{designer.accurate=false;$('precise').hidden=false;$('previewBack').hidden=true;$('exactCanvas').style.display='none';$('partCanvas').style.display='block';syncPartUI();requestDraw()});
@@ -357,50 +389,9 @@ try{n=setGLMesh(result.data)}catch(displayError){
   throw displayError;
 }
 designer.accurate=true;$('partCanvas').style.display='none';$('exactCanvas').style.display='block';$('precise').hidden=true;$('previewBack').hidden=false;syncPartUI();requestDraw();$('renderMsg').textContent='Точная STL-модель готова: '+n.toLocaleString('ru-RU')+' треугольников. Здесь показан только пластик; шканты и саморезы — в режиме эскиза.'}catch(e){console.error(e);$('renderMsg').textContent='Ошибка точного просмотра: '+e.message}finally{generatingPreview=false;$('precise').disabled=false}}
-
-/* Formats: OBJ and 3MF from the exact same binary STL triangles. */
-function readBinaryTriangles(raw){
- const d=new DataView(raw.buffer,raw.byteOffset,raw.byteLength),n=d.getUint32(80,true);
- if(raw.byteLength!==84+n*50)throw Error('Неверная длина STL');
- let p=84;const verts=[],faces=[],ids=new Map();
- for(let i=0;i<n;i++){p+=12;const f=[];
- for(let j=0;j<3;j++){const v=[d.getFloat32(p,true),d.getFloat32(p+4,true),d.getFloat32(p+8,true)];p+=12;
- const key=v.map(x=>Math.round(x*1e5)).join(',');let idx=ids.get(key);
- if(idx===undefined){idx=verts.length;verts.push(v);ids.set(key,idx)}f.push(idx)}
- p+=2;if(new Set(f).size===3)faces.push(f)}
- return {verts,faces};
-}
-function encodeOBJ(mesh){
- return ['# GeoDome mesh, mm','o connector',...mesh.verts.map(v=>'v '+v.join(' ')),
- ...mesh.faces.map(f=>'f '+f.map(i=>i+1).join(' '))].join('\n')+'\n';
-}
-async function encode3MF(mesh){
- const content='<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>';
- const rels='<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>';
- const model='<?xml version="1.0" encoding="UTF-8"?><model unit="millimeter" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><resources><object id="1" type="model"><mesh><vertices>'+
- mesh.verts.map(v=>'<vertex x="'+v[0]+'" y="'+v[1]+'" z="'+v[2]+'"/>').join('')+
- '</vertices><triangles>'+mesh.faces.map(f=>'<triangle v1="'+f[0]+'" v2="'+f[1]+'" v3="'+f[2]+'"/>').join('')+
- '</triangles></mesh></object></resources><build><item objectid="1"/></build></model>';
- return zipBlob([{name:'[Content_Types].xml',data:content},{name:'_rels/.rels',data:rels},{name:'3D/3dmodel.model',data:model}]);
-}
-async function exportMeshFormat(kind){
- if(busy)return;const p=params(),err=check(p);if(err){$('renderMsg').textContent=err;return}
- busy=true;$('downloadObj').disabled=$('download3mf').disabled=true;
- try{const model=part();$('renderMsg').textContent='Генерирую '+kind+'…';
- const stl=await buildSTL(model,p,x=>{$('renderMsg').textContent='Генерирую '+kind+': '+Math.round(x*100)+'%'});
- const mesh=readBinaryTriangles(stl.data),filename=model.id+'_d'+p.dowel+'.'+kind.toLowerCase();
- if(kind==='OBJ')trigger(filename,encodeOBJ(mesh),'text/plain;charset=utf-8');
- else trigger(filename,await encode3MF(mesh),'model/3mf');
- $('renderMsg').textContent='Готово: '+filename+' — сеточная модель.';
- }catch(e){console.error(e);$('renderMsg').textContent='Ошибка '+kind+': '+e.message}
- finally{busy=false;$('downloadObj').disabled=$('download3mf').disabled=false}
-}
-$('downloadObj').addEventListener('click',()=>exportMeshFormat('OBJ'));
-$('download3mf').addEventListener('click',()=>exportMeshFormat('3MF'));
-
 initViewer();
-for(const btn of document.querySelectorAll('[data-base-mode]'))btn.addEventListener('click',()=>{const next=btn.dataset.baseMode,prev=$('baseMode').value;if(next===prev)return;if(prev==='stands')savedStandsHeight=num('height');$('baseMode').value=next;if(next==='stands')$('height').value=Math.max(savedStandsHeight,num('diam')/2+.15).toFixed(2);if(!busy)update()});
-$('all').addEventListener('click',()=>run(specs(params().mode==='stands'),true));
+for(const btn of document.querySelectorAll('[data-base-mode]'))btn.addEventListener('click',()=>{const next=btn.dataset.baseMode,prev=$('baseMode').value;if(next===prev)return;if(prev==='stands')savedStandsHeight=num('height');if(prev==='elongated')savedElongatedHeight=num('height');$('baseMode').value=next;if(next==='stands')$('height').value=Math.max(savedStandsHeight,num('diam')/2+.15).toFixed(2);if(next==='elongated')$('height').value=Math.max(savedElongatedHeight,num('diam')/2+.05).toFixed(2);if(!busy)update()});
+$('all').addEventListener('click',()=>run(specs(params()),true));
 for(const id of ['diam','height','dowel','clearance','wall','depth','setback','core','fasten','screwDiam','screwFromMouth','screwQty','screwPitch','bossDiam','mark','quality'])$(id).addEventListener('input',()=>{if(!busy)update()});
 update();
 </script></body></html>
