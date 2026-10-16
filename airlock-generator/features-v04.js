@@ -87,8 +87,10 @@ draw=function(){
   const main=group.querySelector("text");
   if(main){
    const name=r.name||"Помещение "+r.id;
-   main.setAttribute("font-size",String(Math.max(11,Math.min(26,r.w/Math.max(5,name.length*0.56)))));
-   main.textContent=name;
+   const label=name.length>29?name.slice(0,28)+"…":name;
+   main.setAttribute("font-size",String(Math.max(11,Math.min(26,r.w/Math.max(5,label.length*0.56)))));
+   main.textContent=label;
+   const tooltip=svgEl("title",{},group);tooltip.textContent="№ "+r.id+" · "+name;
   }
   const tag=svgEl("text",{x:r.x+12,y:r.y+20,"text-anchor":"start","font-size":12,
    "font-weight":700,fill:"#346579","pointer-events":"none"},group);
