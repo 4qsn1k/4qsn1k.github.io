@@ -1,0 +1,61 @@
+name: Airlock Generator QA (headless)
+
+on:
+  push:
+    paths:
+      - 'airlock-generator/**'
+      - '.github/workflows/airlock-generator-qa.yml'
+  pull_request:
+    paths:
+      - 'airlock-generator/**'
+      - '.github/workflows/airlock-generator-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  model-tests:
+    name: Independent logic model and generator
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: airlock-generator
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check source syntax
+        run: |
+          node --check st-generator.js
+          node --check st-testbench.js
+          node --check bridge/headless-qa.js
+
+      - name: Run repository unit tests
+        run: |
+          node tests/st-generator.test.js
+          node tests/pressure-and-interlocks.test.js
+          node tests/hmi.test.js
+          node tests/snap.test.js
+
+      - name: Run repeatable headless model scenarios
+        run: node bridge/headless-qa.js --out ./qa-reports
+
+      - name: Publish QA reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: airlock-model-qa
+          path: airlock-generator/qa-reports/
+          if-no-files-found: warn
+          retention-days: 30
+
+# Deliberately NO PLC communication, no GUI/Owen Logic simulation,
+# no Windows machine connection, and no secrets are required.
