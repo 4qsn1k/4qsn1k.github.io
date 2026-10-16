@@ -1,6 +1,6 @@
 {
   "schema": "airlock-generator-continuity/1",
-  "savedDate": "2026-10-16",
+  "savedDate": "2026-10-17",
   "project": "Airlock Generator — граф помещений, блокировки дверей, красно-зелёные светофоры, HMI, Owen Logic ST",
   "repository": "4qsn1k/4qsn1k.github.io",
   "projectPath": "airlock-generator",
@@ -44,7 +44,7 @@
     "QA-OL-011"
   ],
   "nextTest": "QA-OL-012",
-  "nextAction": "Разместить FB_Room_N1 и FB_Room_N4 на FBD тестовой копии, объединить блокировки общей двери 1–4 через OR и подтвердить совместное исполнение. Физические ПР не программировать.",
+  "nextAction": "В тестовой копии Airlock_FBD_PROBE_ONLY.owle получить пример GUI-сохранённой FBD-линии и элемента OR, затем выполнить схему двух экземпляров с общей дверью 1-4. Параллельно подключить Codex через отдельную авторизацию GitHub и передать Issue #3. Не объявлять нативную QA-OL-012 PASS до компиляции и реальной симуляции.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
@@ -234,5 +234,45 @@
     "scheduledFor": "2026-10-17T01:34:20+03:00",
     "installationCompleted": false,
     "notes": "Approval received 2026-10-17; installation task scheduled. Do not claim installed before verified."
+  },
+  "codex": {
+    "repoScope": "airlock-generator/**",
+    "instructions": "airlock-generator/AGENTS.md",
+    "environmentGuide": "airlock-generator/docs/CODEX-ENVIRONMENT.md",
+    "taskQueue": "airlock-generator/docs/CODEX-TASKS.md",
+    "setupScript": "airlock-generator/scripts/codex-setup.sh",
+    "checkScript": "airlock-generator/scripts/codex-check.sh",
+    "nodeVersion": "22",
+    "firstIssue": "https://github.com/4qsn1k/4qsn1k.github.io/issues/3",
+    "repositoryPrepared": true,
+    "cloudEnvironmentCreated": false,
+    "githubAuthStillRequiresUserAction": true,
+    "invocableCodexToolAvailableInCurrentChat": false
+  },
+  "nativeFbdProbe": {
+    "fileOnZ4559": "%USERPROFILE%\\Desktop\\AirlockGeneratorTest\\Airlock_FBD_PROBE_ONLY.owle",
+    "targetVersion": "Owen Logic 3.3.378",
+    "sourceTestCopyUnchanged": true,
+    "savedByOwenLogicGui": true,
+    "elementCount": 24,
+    "functionalBlockInstances": [
+      {
+        "name": "FB_Room_N1",
+        "inputs": 5,
+        "outputs": 13,
+        "portCount": 18
+      },
+      {
+        "name": "FB_Room_N4",
+        "inputs": 6,
+        "outputs": 15,
+        "portCount": 21
+      }
+    ],
+    "connectorCount": 0,
+    "fixture": "airlock-generator/experimental/fixtures/fbd-two-native-blocks.sample.json",
+    "fixtureShapeTest": "airlock-generator/tests/native-fbd-fixture.test.js",
+    "fullFbdConnectionsVerified": false,
+    "fullNativeSimulationVerified": false
   }
 }
