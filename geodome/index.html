@@ -12,7 +12,7 @@
 #partTitle{font-size:13px}#partDim,#portAngle,#partScrews{font-size:15px}
 @media (max-width:600px){.modelcanvas canvas{aspect-ratio:4/3}.tooltabs{flex-wrap:wrap}.tooltabs select{min-width:100%}.viewhelp{font-size:10px}.toolbar{gap:8px}.viewrow button{padding:10px}}
 </style></head>
-<body><main><header><div class="eyebrow">Расчёт + готовые файлы для 3D-печати</div><h1>Геодезический купол 2V <span style="font-size:13px;color:#087b73;font-weight:700;vertical-align:middle">КОНСТРУКТОР v4.1</span></h1><p class="muted">Палатка или сезонная теплица Ø3–4 м · деревянные шканты Ø20–30 мм · генерация STL прямо в браузере</p><div class="steps"><span>1. Измени размеры</span><span>2. Выбери деталь</span><span>3. Поверни 3D-модель</span><span>4. Создай STL</span></div></header>
+<body><main><header><div class="eyebrow">Расчёт + готовые файлы для 3D-печати</div><h1>Геодезический купол 2V <span style="font-size:13px;color:#087b73;font-weight:700;vertical-align:middle">КОНСТРУКТОР v4.2</span></h1><p class="muted">Палатка или сезонная теплица Ø3–4 м · деревянные шканты Ø20–30 мм · генерация STL прямо в браузере</p><div class="steps"><span>1. Измени размеры</span><span>2. Выбери деталь</span><span>3. Поверни 3D-модель</span><span>4. Создай STL</span></div></header>
 <div class="layout"><div>
 <section class="pane"><h2>1. Размер купола</h2>
 <div class="field"><label>Диаметр купола <span class="right"><input id="diam" type="number" min="3" max="4" step="0.1" value="3.5"> м</span></label><div class="hint">Ширина конструкции по самым удалённым точкам.</div></div>
@@ -53,8 +53,8 @@
 <div class="viewrow"><button id="viewTop">Сверху</button><button id="viewSide">Сбоку</button><button id="precise" class="primary">Построить точный 3D STL</button><button id="previewBack" hidden>Эскиз</button></div>
 <div id="renderMsg" class="hint" role="status">Эскиз обновляется сразу. Точная 3D-сетка строится по тем же данным, что и STL для печати.</div>
 <div class="port-panel"><h3>Гнёзда выбранного соединителя</h3><div id="portList" class="portlist"></div><div class="outgrid" style="margin-top:10px"><div><small>Узел</small><b id="partTitle">—</b></div><div><small>Габарит (оценка)</small><b id="partDim">—</b></div><div><small>Угол выбранного луча к вертикали</small><b id="portAngle">—</b></div><div><small>Саморезов на узел</small><b id="partScrews">—</b></div></div></div>
-<div class="actions"><button class="primary" id="downloadPicked">Скачать выбранный STL</button><button id="saveConfig">Сохранить настройки JSON</button><button id="loadConfig">Загрузить настройки JSON</button><input type="file" id="configFile" accept=".json,application/json" hidden></div>
-<div class="note">В эскизе показаны ориентировочные формы гнёзд и крепежа. Кнопка «Построить точный 3D STL» выводит действительную сетку модели. STEP пока не экспортируется. Изменения размеров учитываются при создании STL.</div>
+<div class="actions"><button class="primary" id="downloadPicked">Скачать выбранный STL</button><button id="downloadObj">OBJ</button><button id="download3mf">3MF</button><button id="saveConfig">Сохранить настройки JSON</button><button id="loadConfig">Загрузить настройки JSON</button><input type="file" id="configFile" accept=".json,application/json" hidden></div>
+<div class="note">В эскизе показаны ориентировочные формы гнёзд и крепежа. Кнопка «Построить точный 3D STL» выводит действительную сетку модели. OBJ и 3MF создаются из той же сетки, что и STL. STEP требует отдельного CAD-генератора.</div>
 </section>
 <section class="pane"><h2>Схема и ведомость</h2>
 <div class="stats"><div class="stat"><small>Диаметр</small><b id="viewD">3,50 м</b></div><div class="stat"><small>Высота</small><b id="viewH">2,25 м</b></div><div class="stat"><small>Узлов купола</small><b>26</b></div><div class="stat"><small>Шкантов купола</small><b>65</b></div></div>
@@ -357,6 +357,47 @@ try{n=setGLMesh(result.data)}catch(displayError){
   throw displayError;
 }
 designer.accurate=true;$('partCanvas').style.display='none';$('exactCanvas').style.display='block';$('precise').hidden=true;$('previewBack').hidden=false;syncPartUI();requestDraw();$('renderMsg').textContent='Точная STL-модель готова: '+n.toLocaleString('ru-RU')+' треугольников. Здесь показан только пластик; шканты и саморезы — в режиме эскиза.'}catch(e){console.error(e);$('renderMsg').textContent='Ошибка точного просмотра: '+e.message}finally{generatingPreview=false;$('precise').disabled=false}}
+
+/* Formats: OBJ and 3MF from the exact same binary STL triangles. */
+function readBinaryTriangles(raw){
+ const d=new DataView(raw.buffer,raw.byteOffset,raw.byteLength),n=d.getUint32(80,true);
+ if(raw.byteLength!==84+n*50)throw Error('Неверная длина STL');
+ let p=84;const verts=[],faces=[],ids=new Map();
+ for(let i=0;i<n;i++){p+=12;const f=[];
+ for(let j=0;j<3;j++){const v=[d.getFloat32(p,true),d.getFloat32(p+4,true),d.getFloat32(p+8,true)];p+=12;
+ const key=v.map(x=>Math.round(x*1e5)).join(',');let idx=ids.get(key);
+ if(idx===undefined){idx=verts.length;verts.push(v);ids.set(key,idx)}f.push(idx)}
+ p+=2;if(new Set(f).size===3)faces.push(f)}
+ return {verts,faces};
+}
+function encodeOBJ(mesh){
+ return ['# GeoDome mesh, mm','o connector',...mesh.verts.map(v=>'v '+v.join(' ')),
+ ...mesh.faces.map(f=>'f '+f.map(i=>i+1).join(' '))].join('\n')+'\n';
+}
+async function encode3MF(mesh){
+ const content='<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>';
+ const rels='<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>';
+ const model='<?xml version="1.0" encoding="UTF-8"?><model unit="millimeter" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><resources><object id="1" type="model"><mesh><vertices>'+
+ mesh.verts.map(v=>'<vertex x="'+v[0]+'" y="'+v[1]+'" z="'+v[2]+'"/>').join('')+
+ '</vertices><triangles>'+mesh.faces.map(f=>'<triangle v1="'+f[0]+'" v2="'+f[1]+'" v3="'+f[2]+'"/>').join('')+
+ '</triangles></mesh></object></resources><build><item objectid="1"/></build></model>';
+ return zipBlob([{name:'[Content_Types].xml',data:content},{name:'_rels/.rels',data:rels},{name:'3D/3dmodel.model',data:model}]);
+}
+async function exportMeshFormat(kind){
+ if(busy)return;const p=params(),err=check(p);if(err){$('renderMsg').textContent=err;return}
+ busy=true;$('downloadObj').disabled=$('download3mf').disabled=true;
+ try{const model=part();$('renderMsg').textContent='Генерирую '+kind+'…';
+ const stl=await buildSTL(model,p,x=>{$('renderMsg').textContent='Генерирую '+kind+': '+Math.round(x*100)+'%'});
+ const mesh=readBinaryTriangles(stl.data),filename=model.id+'_d'+p.dowel+'.'+kind.toLowerCase();
+ if(kind==='OBJ')trigger(filename,encodeOBJ(mesh),'text/plain;charset=utf-8');
+ else trigger(filename,await encode3MF(mesh),'model/3mf');
+ $('renderMsg').textContent='Готово: '+filename+' — сеточная модель.';
+ }catch(e){console.error(e);$('renderMsg').textContent='Ошибка '+kind+': '+e.message}
+ finally{busy=false;$('downloadObj').disabled=$('download3mf').disabled=false}
+}
+$('downloadObj').addEventListener('click',()=>exportMeshFormat('OBJ'));
+$('download3mf').addEventListener('click',()=>exportMeshFormat('3MF'));
+
 initViewer();
 for(const btn of document.querySelectorAll('[data-base-mode]'))btn.addEventListener('click',()=>{const next=btn.dataset.baseMode,prev=$('baseMode').value;if(next===prev)return;if(prev==='stands')savedStandsHeight=num('height');$('baseMode').value=next;if(next==='stands')$('height').value=Math.max(savedStandsHeight,num('diam')/2+.15).toFixed(2);if(!busy)update()});
 $('all').addEventListener('click',()=>run(specs(params().mode==='stands'),true));
