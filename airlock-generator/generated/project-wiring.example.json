@@ -1,5 +1,5 @@
 {
-  "schema": "airlock-project-wiring/0.1",
+  "schema": "airlock-project-wiring/0.2",
   "activeRoomIds": [
     "4",
     "1"
@@ -186,28 +186,32 @@
       "note": "Request; not a direct lock output"
     },
     {
-      "id": "ROOM_4_RED",
+      "id": "ROOM_4_SIGNAL_RELAY",
       "kind": "DO_LOGICAL",
-      "source": "FB_Room_N4.O_Red",
-      "terminal": null
+      "scope": "ROOM_STATUS_NOT_DOOR_ACCESS",
+      "source": "FB_Room_N4.O_Ready",
+      "terminal": null,
+      "contactWiring": {
+        "com": "lamp supply",
+        "nc": "RED",
+        "no": "GREEN"
+      },
+      "energizeFor": "GREEN",
+      "deenergized": "RED_IF_LAMP_SUPPLY_AVAILABLE"
     },
     {
-      "id": "ROOM_4_GREEN",
+      "id": "ROOM_1_SIGNAL_RELAY",
       "kind": "DO_LOGICAL",
-      "source": "FB_Room_N4.O_Green",
-      "terminal": null
-    },
-    {
-      "id": "ROOM_1_RED",
-      "kind": "DO_LOGICAL",
-      "source": "FB_Room_N1.O_Red",
-      "terminal": null
-    },
-    {
-      "id": "ROOM_1_GREEN",
-      "kind": "DO_LOGICAL",
-      "source": "FB_Room_N1.O_Green",
-      "terminal": null
+      "scope": "ROOM_STATUS_NOT_DOOR_ACCESS",
+      "source": "FB_Room_N1.O_Ready",
+      "terminal": null,
+      "contactWiring": {
+        "com": "lamp supply",
+        "nc": "RED",
+        "no": "GREEN"
+      },
+      "energizeFor": "GREEN",
+      "deenergized": "RED_IF_LAMP_SUPPLY_AVAILABLE"
     },
     {
       "id": "ANY_ALARM",
@@ -216,18 +220,162 @@
       "terminal": null
     }
   ],
+  "trafficLightOptions": {
+    "roomGroups": [
+      {
+        "id": "ROOM_4_SIGNAL_RELAY",
+        "kind": "DO_LOGICAL",
+        "scope": "ROOM_STATUS_NOT_DOOR_ACCESS",
+        "source": "FB_Room_N4.O_Ready",
+        "terminal": null,
+        "contactWiring": {
+          "com": "lamp supply",
+          "nc": "RED",
+          "no": "GREEN"
+        },
+        "energizeFor": "GREEN",
+        "deenergized": "RED_IF_LAMP_SUPPLY_AVAILABLE"
+      },
+      {
+        "id": "ROOM_1_SIGNAL_RELAY",
+        "kind": "DO_LOGICAL",
+        "scope": "ROOM_STATUS_NOT_DOOR_ACCESS",
+        "source": "FB_Room_N1.O_Ready",
+        "terminal": null,
+        "contactWiring": {
+          "com": "lamp supply",
+          "nc": "RED",
+          "no": "GREEN"
+        },
+        "energizeFor": "GREEN",
+        "deenergized": "RED_IF_LAMP_SUPPLY_AVAILABLE"
+      }
+    ],
+    "perDoor": [
+      {
+        "id": "DOOR_D_4_6_SIGNAL_RELAY",
+        "kind": "OPTIONAL_DO_LOGICAL",
+        "doorId": "4-6",
+        "terminal": null,
+        "roomIds": [
+          "4"
+        ],
+        "greenExpression": "FireNormal AND CLOSED_D_4_6 AND NOT FINAL_BLOCK_D_4_6 AND FB_Room_N4.O_Ready",
+        "contactWiring": {
+          "com": "lamp supply",
+          "nc": "RED",
+          "no": "GREEN"
+        },
+        "energizeFor": "GREEN",
+        "deenergized": "RED_IF_LAMP_SUPPLY_AVAILABLE"
+      },
+      {
+        "id": "DOOR_D_1_5_SIGNAL_RELAY",
+        "kind": "OPTIONAL_DO_LOGICAL",
+        "doorId": "1-5",
+        "terminal": null,
+        "roomIds": [
+          "1"
+        ],
+        "greenExpression": "FireNormal AND CLOSED_D_1_5 AND NOT FINAL_BLOCK_D_1_5 AND FB_Room_N1.O_Ready",
+        "contactWiring": {
+          "com": "lamp supply",
+          "nc": "RED",
+          "no": "GREEN"
+        },
+        "energizeFor": "GREEN",
+        "deenergized": "RED_IF_LAMP_SUPPLY_AVAILABLE"
+      },
+      {
+        "id": "DOOR_D_1_4_SIGNAL_RELAY",
+        "kind": "OPTIONAL_DO_LOGICAL",
+        "doorId": "1-4",
+        "terminal": null,
+        "roomIds": [
+          "1",
+          "4"
+        ],
+        "greenExpression": "FireNormal AND CLOSED_D_1_4 AND NOT FINAL_BLOCK_D_1_4 AND FB_Room_N1.O_Ready AND FB_Room_N4.O_Ready",
+        "contactWiring": {
+          "com": "lamp supply",
+          "nc": "RED",
+          "no": "GREEN"
+        },
+        "energizeFor": "GREEN",
+        "deenergized": "RED_IF_LAMP_SUPPLY_AVAILABLE"
+      },
+      {
+        "id": "DOOR_D_2_4_SIGNAL_RELAY",
+        "kind": "OPTIONAL_DO_LOGICAL",
+        "doorId": "2-4",
+        "terminal": null,
+        "roomIds": [
+          "4"
+        ],
+        "greenExpression": "FireNormal AND CLOSED_D_2_4 AND NOT FINAL_BLOCK_D_2_4 AND FB_Room_N4.O_Ready",
+        "contactWiring": {
+          "com": "lamp supply",
+          "nc": "RED",
+          "no": "GREEN"
+        },
+        "energizeFor": "GREEN",
+        "deenergized": "RED_IF_LAMP_SUPPLY_AVAILABLE"
+      },
+      {
+        "id": "DOOR_D_3_4_SIGNAL_RELAY",
+        "kind": "OPTIONAL_DO_LOGICAL",
+        "doorId": "3-4",
+        "terminal": null,
+        "roomIds": [
+          "4"
+        ],
+        "greenExpression": "FireNormal AND CLOSED_D_3_4 AND NOT FINAL_BLOCK_D_3_4 AND FB_Room_N4.O_Ready",
+        "contactWiring": {
+          "com": "lamp supply",
+          "nc": "RED",
+          "no": "GREEN"
+        },
+        "energizeFor": "GREEN",
+        "deenergized": "RED_IF_LAMP_SUPPLY_AVAILABLE"
+      },
+      {
+        "id": "DOOR_D_1_2_SIGNAL_RELAY",
+        "kind": "OPTIONAL_DO_LOGICAL",
+        "doorId": "1-2",
+        "terminal": null,
+        "roomIds": [
+          "1"
+        ],
+        "greenExpression": "FireNormal AND CLOSED_D_1_2 AND NOT FINAL_BLOCK_D_1_2 AND FB_Room_N1.O_Ready",
+        "contactWiring": {
+          "com": "lamp supply",
+          "nc": "RED",
+          "no": "GREEN"
+        },
+        "energizeFor": "GREEN",
+        "deenergized": "RED_IF_LAMP_SUPPLY_AVAILABLE"
+      }
+    ]
+  },
   "planningCounts": {
     "controlledRooms": 2,
     "uniqueReedInputs": 6,
     "commonInputs": 2,
     "logicalBlockingRequests": 6,
-    "roomLightChannels": 4,
-    "aggregatedAlarmChannels": 1
+    "roomLightChannels": 2,
+    "roomTrafficRelays": 2,
+    "doorTrafficRelays": 6,
+    "aggregatedAlarmChannels": 1,
+    "estimatedDOWithRoomSignals": 9,
+    "estimatedDOWithDoorSignals": 13
   },
   "warnings": [
     "Это список потенциальных физических сигналов, а не проверка ресурсов конкретной модели ПР.",
     "Два FB могут управлять общей дверью только через OR с правильными приоритетами и аппаратным интерфейсом.",
     "Сигнал заблокировать нельзя подключать напрямую к замку без определения поведения при пропадании питания.",
+    "Перекидное реле на одну пару красный/зелёный: COM питание, NC красный, NO зелёный, зелёный только при включённой катушке.",
+    "При потере управляющего сигнала реле выбирает красный только если сохранено питание ламп; потеря питания обеих ламп не даёт индикации.",
+    "Один светофор на помещение показывает состояние помещения, а не разрешение конкретной общей двери. Для двери между двумя зонами нужен расчёт отдельного разрешения с учётом обеих зон и FINAL_BLOCK.",
     "Фактические светофоры и питание рассчитываются отдельно от виртуального выходного сигнала.",
     "Отдельная цепь аварийной эвакуации обязательна."
   ]
