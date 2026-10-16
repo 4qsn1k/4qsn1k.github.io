@@ -45,6 +45,7 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 <button id="addRoom">+ Помещение</button>
 <button id="addDoor">+ Дверь</button>
 <button id="exportJSON" class="primary">Скачать JSON</button>
+<button id="importJSON">Загрузить JSON</button><input type="file" id="fileJSON" accept=".json,application/json" style="display:none">
 <button id="exportCSV">Таблица правил CSV</button>
 <button id="reset">Исходный пример</button>
 </div>
@@ -103,7 +104,7 @@ const initial = {
  rules:[{id:"enter-A",from:"*",to:"A",via:"*",block:["AB","AE","AD"],comment:"Любой вход в A"},{id:"F-to-D",from:"F",to:"D",via:"DF",block:["CD","BD","AD"],comment:"Переход F → D"}],
  exemptions:[],defaultRule:"other-incident-doors-except-entry",defaultOpenDoorAlarmSec:30
 };
-let model=structuredClone(initial),selected=null,selectedRule=null,active=[],fire=false,drag=null,now=Date.now(),sessionNo=1;
+let model=structuredClone(initial),selected=null,selectedRule=null,active=[],fire=false,drag=null,now=Date.now(),timeOffset=0,sessionNo=1;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const room=id=>model.rooms.find(r=>r.id===id);
@@ -152,6 +153,8 @@ function draw(){
   const g=svgEl("g",{class:"room","data-id":r.id},svg);
   svgEl("rect",{x:r.x,y:r.y,width:r.w,height:r.h,rx:1,fill:busy?"#fae8d8":selected?.type==="room"&&selected.id===r.id?"#e1f0fc":"#fff",stroke:busy?"#b56e36":"#244352"},g);
   const txt=svgEl("text",{x:r.x+r.w/2,y:r.y+r.h/2,"text-anchor":"middle","dominant-baseline":"middle","font-size":Math.max(21,Math.min(37,r.w/5)),fill:"#152c3c"},g);txt.textContent=r.name;
+  const meta=[r.cleanClass?"Класс "+r.cleanClass:null,r.pressurePa==null?null:r.pressurePa+" Па"].filter(Boolean).join(" · ");
+  if(meta){const label=svgEl("text",{x:r.x+r.w/2,y:r.y+r.h/2+32,"text-anchor":"middle","font-size":13,fill:"#687b89"},g);label.textContent=meta;}
   g.addEventListener("pointerdown",e=>{if(e.button!==0)return;drag={id:r.id,x:e.clientX,y:e.clientY,oldX:r.x,oldY:r.y};svg.setPointerCapture(e.pointerId);select("room",r.id);});
  }
  const limits=blocked();
@@ -180,11 +183,17 @@ function renderProperties(){
  if(!selected){box.innerHTML='<p class="muted">Выбери помещение или дверь.</p>';return;}
  if(selected.type==="room"){
   const r=room(selected.id);if(!r){selected=null;renderProperties();return;}
-  box.innerHTML='<h3>Помещение '+esc(r.id)+'</h3><label>Название</label><input id="roomName" value="'+esc(r.name)+'"><div class="grid2"><div><label>Класс чистоты</label><input id="cleanClass" placeholder="например D" value="'+esc(r.cleanClass||"")+'"></div><div><label>Давление, Па</label><input id="pressure" type="number" value="'+esc(r.pressurePa??"")+'"></div></div><label>Продувка, с</label><input id="purge" type="number" min="1" max="3600" value="'+r.purgeSec+'"><h3>Связанные двери</h3><p>'+adjacent(r.id).map(d=>esc(d.id)).join(" · ")+'</p><button class="danger" id="deleteRoom">Удалить помещение</button>';
+  box.innerHTML='<h3>Помещение '+esc(r.id)+'</h3><label>Название</label><input id="roomName" value="'+esc(r.name)+'"><div class="grid2"><div><label>Класс чистоты</label><input id="cleanClass" placeholder="например D" value="'+esc(r.cleanClass||"")+'"></div><div><label>Давление, Па</label><input id="pressure" type="number" value="'+esc(r.pressurePa??"")+'"></div></div><label>Продувка, с</label><input id="purge" type="number" min="1" max="3600" value="'+r.purgeSec+'"><h3>Связанные двери</h3><p>'+adjacent(r.id).map(d=>esc(d.id)).join(" · ")+'</p><h3>Исключения из блокировки</h3><p class="muted">Отметь дверь, которая может остаться доступной в этом помещении. Проверь класс чистоты и перепад давления отдельно.</p><div class="checks">'+adjacent(r.id).map(d=>'<label><input type="checkbox" data-except="'+esc(d.id)+'" '+(model.exemptions.some(e=>e.room===r.id&&e.door===d.id)?"checked":"")+'> '+esc(d.id)+'</label>').join('')+'</div><button class="danger" id="deleteRoom">Удалить помещение</button>';
   $("roomName").onchange=e=>{r.name=e.target.value;draw();refreshSelects()};
-  $("cleanClass").onchange=e=>{r.cleanClass=e.target.value||null};
-  $("pressure").onchange=e=>{r.pressurePa=e.target.value===""?null:Number(e.target.value)};
+  $("cleanClass").onchange=e=>{r.cleanClass=e.target.value||null;draw()};
+  $("pressure").onchange=e=>{r.pressurePa=e.target.value===""?null:Number(e.target.value);draw()};
   $("purge").onchange=e=>{r.purgeSec=Math.max(1,Number(e.target.value)||30)};
+  box.querySelectorAll('input[data-except]').forEach(el=>el.onchange=e=>{
+    const did=e.target.dataset.except;
+    model.exemptions=model.exemptions.filter(x=>!(x.room===r.id&&x.door===did));
+    if(e.target.checked)model.exemptions.push({room:r.id,door:did,reason:"explicit engineering exemption"});
+    draw();renderSim();
+  });
   $("deleteRoom").onclick=()=>{if(!confirm("Удалить помещение вместе с его дверьми?"))return;const ids=adjacent(r.id).map(d=>d.id);model.rooms=model.rooms.filter(x=>x.id!==r.id);model.doors=model.doors.filter(d=>!ids.includes(d.id));model.rules=model.rules.filter(x=>x.to!==r.id&&x.from!==r.id).map(x=>({...x,block:x.block.filter(d=>!ids.includes(d))}));active=[];selected=null;render()};
  }else{
   const d=model.doors.find(x=>x.id===selected.id);if(!d){selected=null;renderProperties();return;}
@@ -245,8 +254,8 @@ $("closePass").onclick=()=>{
  s.phase="purge";s.purgeFrom=now;render();
 };
 function tick(ms){now+=ms;active=active.filter(s=>s.phase!=="purge"||(now-s.purgeFrom)/1000<s.purgeSec);draw();renderSim()}
-$("advance").onclick=()=>tick(30000);
-setInterval(()=>{now=Date.now();active=active.filter(s=>s.phase!=="purge"||(now-s.purgeFrom)/1000<s.purgeSec);draw();renderSim()},1000);
+$("advance").onclick=()=>{timeOffset+=30000;tick(30000)};
+setInterval(()=>{now=Date.now()+timeOffset;active=active.filter(s=>s.phase!=="purge"||(now-s.purgeFrom)/1000<s.purgeSec);draw();renderSim()},1000);
 $("fire").onclick=()=>{fire=!fire;if(fire)active=[];render()};
 $("addRoom").onclick=()=>{
  const id=prompt("Короткое обозначение нового помещения (например G):");if(!id)return;
@@ -275,6 +284,17 @@ function save(name,body,type){
  const a=document.createElement("a");a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);
 }
 $("exportJSON").onclick=()=>save("airlock-model.json",JSON.stringify(model,null,2)+"\n","application/json");
+$("importJSON").onclick=()=>$("fileJSON").click();
+$("fileJSON").onchange=async e=>{
+ try{
+  const data=JSON.parse(await e.target.files[0].text());
+  if(!Array.isArray(data.rooms)||!Array.isArray(data.doors)||!Array.isArray(data.rules))throw Error("Нет rooms, doors или rules");
+  const ids=new Set(data.rooms.map(r=>r.id));
+  if(data.doors.some(d=>!ids.has(d.a)||!ids.has(d.b)))throw Error("Дверь ссылается на отсутствующее помещение");
+  model={...data,exemptions:data.exemptions||[],defaultOpenDoorAlarmSec:data.defaultOpenDoorAlarmSec||30};
+  active=[];selected=null;selectedRule=null;render();
+ }catch(err){alert("Ошибка импорта JSON: "+err.message)}finally{e.target.value=""}
+};
 $("exportCSV").onclick=()=>{
  const lines=[["rule","from","to","via","blocked_doors"],...model.rules.map(r=>[r.id,r.from,r.to,r.via,r.block.join(" ")])];
  save("airlock-rules.csv","\uFEFF"+lines.map(arr=>arr.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(";")).join("\r\n"),"text/csv;charset=utf-8");
