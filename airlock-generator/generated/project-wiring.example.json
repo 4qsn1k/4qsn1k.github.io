@@ -1,0 +1,234 @@
+{
+  "schema": "airlock-project-wiring/0.1",
+  "activeRoomIds": [
+    "4",
+    "1"
+  ],
+  "inputs": [
+    {
+      "id": "FireNormal",
+      "kind": "DI",
+      "terminal": null,
+      "controllers": [
+        "FB_Room_N4",
+        "FB_Room_N1"
+      ]
+    },
+    {
+      "id": "ResetFault",
+      "kind": "DI",
+      "terminal": null,
+      "controllers": [
+        "FB_Room_N4",
+        "FB_Room_N1"
+      ]
+    },
+    {
+      "id": "CLOSED_D_4_6",
+      "kind": "DI",
+      "doorId": "4-6",
+      "terminal": null,
+      "controllers": [
+        "FB_Room_N4"
+      ]
+    },
+    {
+      "id": "CLOSED_D_1_5",
+      "kind": "DI",
+      "doorId": "1-5",
+      "terminal": null,
+      "controllers": [
+        "FB_Room_N1"
+      ]
+    },
+    {
+      "id": "CLOSED_D_1_4",
+      "kind": "DI",
+      "doorId": "1-4",
+      "terminal": null,
+      "controllers": [
+        "FB_Room_N1",
+        "FB_Room_N4"
+      ]
+    },
+    {
+      "id": "CLOSED_D_2_4",
+      "kind": "DI",
+      "doorId": "2-4",
+      "terminal": null,
+      "controllers": [
+        "FB_Room_N4"
+      ]
+    },
+    {
+      "id": "CLOSED_D_3_4",
+      "kind": "DI",
+      "doorId": "3-4",
+      "terminal": null,
+      "controllers": [
+        "FB_Room_N4"
+      ]
+    },
+    {
+      "id": "CLOSED_D_1_2",
+      "kind": "DI",
+      "doorId": "1-2",
+      "terminal": null,
+      "controllers": [
+        "FB_Room_N1"
+      ]
+    }
+  ],
+  "blockRequests": [
+    {
+      "doorId": "4-6",
+      "sources": [
+        "FB_Room_N4.O_D_4_6_Block"
+      ],
+      "operator": "OR",
+      "result": "FINAL_BLOCK_D_4_6",
+      "implementation": null,
+      "terminal": null,
+      "caution": "Interface could be BUSY to access controller or lock inhibit; design separately"
+    },
+    {
+      "doorId": "1-5",
+      "sources": [
+        "FB_Room_N1.O_D_1_5_Block"
+      ],
+      "operator": "OR",
+      "result": "FINAL_BLOCK_D_1_5",
+      "implementation": null,
+      "terminal": null,
+      "caution": "Interface could be BUSY to access controller or lock inhibit; design separately"
+    },
+    {
+      "doorId": "1-4",
+      "sources": [
+        "FB_Room_N1.O_D_1_4_Block",
+        "FB_Room_N4.O_D_1_4_Block"
+      ],
+      "operator": "OR",
+      "result": "FINAL_BLOCK_D_1_4",
+      "implementation": null,
+      "terminal": null,
+      "caution": "Interface could be BUSY to access controller or lock inhibit; design separately"
+    },
+    {
+      "doorId": "2-4",
+      "sources": [
+        "FB_Room_N4.O_D_2_4_Block"
+      ],
+      "operator": "OR",
+      "result": "FINAL_BLOCK_D_2_4",
+      "implementation": null,
+      "terminal": null,
+      "caution": "Interface could be BUSY to access controller or lock inhibit; design separately"
+    },
+    {
+      "doorId": "3-4",
+      "sources": [
+        "FB_Room_N4.O_D_3_4_Block"
+      ],
+      "operator": "OR",
+      "result": "FINAL_BLOCK_D_3_4",
+      "implementation": null,
+      "terminal": null,
+      "caution": "Interface could be BUSY to access controller or lock inhibit; design separately"
+    },
+    {
+      "doorId": "1-2",
+      "sources": [
+        "FB_Room_N1.O_D_1_2_Block"
+      ],
+      "operator": "OR",
+      "result": "FINAL_BLOCK_D_1_2",
+      "implementation": null,
+      "terminal": null,
+      "caution": "Interface could be BUSY to access controller or lock inhibit; design separately"
+    }
+  ],
+  "logicalOutputs": [
+    {
+      "id": "FINAL_BLOCK_D_4_6",
+      "kind": "DO_LOGICAL",
+      "terminal": null,
+      "note": "Request; not a direct lock output"
+    },
+    {
+      "id": "FINAL_BLOCK_D_1_5",
+      "kind": "DO_LOGICAL",
+      "terminal": null,
+      "note": "Request; not a direct lock output"
+    },
+    {
+      "id": "FINAL_BLOCK_D_1_4",
+      "kind": "DO_LOGICAL",
+      "terminal": null,
+      "note": "Request; not a direct lock output"
+    },
+    {
+      "id": "FINAL_BLOCK_D_2_4",
+      "kind": "DO_LOGICAL",
+      "terminal": null,
+      "note": "Request; not a direct lock output"
+    },
+    {
+      "id": "FINAL_BLOCK_D_3_4",
+      "kind": "DO_LOGICAL",
+      "terminal": null,
+      "note": "Request; not a direct lock output"
+    },
+    {
+      "id": "FINAL_BLOCK_D_1_2",
+      "kind": "DO_LOGICAL",
+      "terminal": null,
+      "note": "Request; not a direct lock output"
+    },
+    {
+      "id": "ROOM_4_RED",
+      "kind": "DO_LOGICAL",
+      "source": "FB_Room_N4.O_Red",
+      "terminal": null
+    },
+    {
+      "id": "ROOM_4_GREEN",
+      "kind": "DO_LOGICAL",
+      "source": "FB_Room_N4.O_Green",
+      "terminal": null
+    },
+    {
+      "id": "ROOM_1_RED",
+      "kind": "DO_LOGICAL",
+      "source": "FB_Room_N1.O_Red",
+      "terminal": null
+    },
+    {
+      "id": "ROOM_1_GREEN",
+      "kind": "DO_LOGICAL",
+      "source": "FB_Room_N1.O_Green",
+      "terminal": null
+    },
+    {
+      "id": "ANY_ALARM",
+      "kind": "DO_LOGICAL",
+      "source": "FB_Room_N4.O_Alarm OR FB_Room_N1.O_Alarm",
+      "terminal": null
+    }
+  ],
+  "planningCounts": {
+    "controlledRooms": 2,
+    "uniqueReedInputs": 6,
+    "commonInputs": 2,
+    "logicalBlockingRequests": 6,
+    "roomLightChannels": 4,
+    "aggregatedAlarmChannels": 1
+  },
+  "warnings": [
+    "Это список потенциальных физических сигналов, а не проверка ресурсов конкретной модели ПР.",
+    "Два FB могут управлять общей дверью только через OR с правильными приоритетами и аппаратным интерфейсом.",
+    "Сигнал заблокировать нельзя подключать напрямую к замку без определения поведения при пропадании питания.",
+    "Фактические светофоры и питание рассчитываются отдельно от виртуального выходного сигнала.",
+    "Отдельная цепь аварийной эвакуации обязательна."
+  ]
+}
