@@ -12,6 +12,7 @@ from aiogram.types import BufferedInputFile, CallbackQuery, InlineKeyboardButton
 import db
 import rich_ui
 import dashboard
+import tenancy
 
 TOKEN = os.getenv('BOT_TOKEN', '').strip()
 OWNER = os.getenv('OWNER_TELEGRAM_ID', '').strip()
@@ -36,7 +37,7 @@ def safe(v):
 def d(v):
     return datetime.fromisoformat(v).strftime('%d.%m.%Y') if v else 'Не указана'
 
-def owner_id():
+def legacy_owner_id():
     if OWNER.isdecimal():
         return int(OWNER)
     if OWNER_FILE.is_file():
@@ -44,9 +45,11 @@ def owner_id():
         return int(value) if value.isdecimal() else None
     return None
 
+def owner_id():
+    return tenancy.current_owner()
+
 def allowed(user_id):
-    primary = owner_id()
-    return primary is not None and (user_id == primary or user_id in ADDITIONAL_USERS)
+    return tenancy.active_owner(user_id) is not None and (tenancy.actor_id() in (None, user_id))
 
 def status(p):
     due = db.next_feed_date(p)
@@ -131,16 +134,32 @@ def home_kb():
       [('🍽 Накормил', 'menu:feeding', 'primary'),
        ('🔄 Обновить', 'menu:home')],
       [('🐾 Мои питомцы', 'menu:pets'),
-       ('🛠 Управление', 'manage:home')])
+       ('🛠 Управление', 'manage:home')],
+      [('👥 Семья и коллекции', 'family:list')])
 
 async def start(message: Message):
-    if owner_id() is None:
-        await message.answer('🦎 ЭкзоТека\nДля первого запуска нужна команда активации владельца.')
+    parts = (message.text or '').split()
+    if len(parts)==2 and parts[1].startswith('join_'):
+        code=parts[1][5:]
+        info=tenancy.invitation(code)
+        if not info:
+            await rich_ui.send_screen(message,
+                "⚠️ <b>Приглашение недействительно.</b>\nПопроси владельца создать новую ссылку.",
+                parse_mode='HTML',
+                reply_markup=kb([('👥 Мои коллекции','family:list')]))
+        else:
+            await rich_ui.send_screen(message,
+                "🔗 <b>ПРИГЛАШЕНИЕ В КОЛЛЕКЦИЮ</b>\n"
+                f"<b>{safe(info['title'])}</b>\n"
+                "Тебя приглашают вместе ухаживать за животными.\n"
+                "Можно изменять карточки и отмечать кормления.\n"
+                "Своя коллекция при подключении сохранится.",
+                parse_mode='HTML',
+                reply_markup=kb([('✅ Присоединиться',f'family:accept:{code}','success')],
+                                [('✖️ Не сейчас','family:list')]))
         return
     if not allowed(message.from_user.id):
-        await message.answer('🔒 Это личная коллекция. Доступ закрыт.')
-        return
-    parts = (message.text or '').split()
+        return await tenancy.welcome(message)
     if len(parts) == 2 and parts[1].startswith('pet_') and parts[1][4:].isdigit():
         p = db.pet_by_id(int(parts[1][4:]), owner_id())
         if p:
@@ -165,19 +184,7 @@ async def myid(message: Message):
     await message.answer(f'Ваш Telegram ID: {message.from_user.id}')
 
 async def activate(message: Message):
-    if owner_id() is not None:
-        await message.answer('🔒 ЭкзоТека уже активирована.')
-        return
-    parts = (message.text or '').split()
-    if len(parts) != 2 or not ACTIVATION_CODE or not secrets.compare_digest(parts[1], ACTIVATION_CODE):
-        await message.answer('Неверный код активации.')
-        return
-    OWNER_FILE.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-    fd = os.open(str(OWNER_FILE), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-    with os.fdopen(fd, 'w', encoding='utf-8') as f:
-        f.write(str(message.from_user.id) + '\n')
-    db.bind_imported_pets(message.from_user.id)
-    await message.answer('✅ ЭкзоТека активирована.\nВ коллекции: ' + str(len(db.pets(message.from_user.id))) + ' питомцев.\nНажми /start')
+    await message.answer('Создай коллекцию через /start или подключись по приглашению.')
 
 async def custom_period(message: Message):
     if not allowed(message.from_user.id): return
@@ -329,18 +336,22 @@ async def click(c: CallbackQuery, bot: Bot, state):
         await c.answer('Некорректные данные', show_alert=True)
 
 async def main():
-    if not TOKEN or (owner_id() is None and not ACTIVATION_CODE):
-        raise SystemExit('Set BOT_TOKEN and ACTIVATION_CODE before starting the bot')
+    if not TOKEN:
+        raise SystemExit('Set BOT_TOKEN before starting the bot')
     db.init_db()
     rich_ui.init()
     import pet_admin_db
     pet_admin_db.migrate()
     db.import_pets(db.BASE / 'pets_import.json')
-    if owner_id() is not None:
-        db.bind_imported_pets(owner_id())
+    original=legacy_owner_id()
+    if original is not None:
+        db.bind_imported_pets(original)
+    tenancy.migrate(original,ADDITIONAL_USERS)
     dp = Dispatcher()
     import management
     import settings
+    dp.update.outer_middleware(tenancy.TenantMiddleware())
+    dp.include_router(tenancy.router)
     dp.include_router(management.router)
     dp.include_router(settings.router)
     dp.message.register(myid, Command('id'))
@@ -351,7 +362,7 @@ async def main():
     dp.message.register(start, CommandStart(deep_link=True))
     dp.message.register(start, CommandStart())
     from aiogram import F
-    dp.callback_query.register(click, ~F.data.startswith('manage:'), ~F.data.startswith('settings:'))
+    dp.callback_query.register(click, ~F.data.startswith('manage:'), ~F.data.startswith('settings:'), ~F.data.startswith('family:'))
     async with Bot(TOKEN) as bot:
         await dp.start_polling(bot)
 
