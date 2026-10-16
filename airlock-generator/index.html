@@ -34,7 +34,7 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 </head>
 <body>
 <header>
-<div><h1>Конструктор сан-шлюзов</h1><small>Помещения · двери · локальные блокировки · прототип v0.3</small></div>
+<div><h1>Конструктор сан-шлюзов</h1><small>Помещения · двери · локальные блокировки · прототип v0.4</small></div>
 <div><a href="https://github.com/4qsn1k/4qsn1k.github.io/tree/main/airlock-generator" style="color:#d5f2ff">Исходники на GitHub ↗</a></div>
 </header>
 <main>
@@ -58,7 +58,7 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 <span><i class="dot" style="background:#e9a332"></i> Открыта в симуляции</span>
 <span><i class="dot" style="background:#fae8d8"></i> Помещение занято / продувается</span>
 </div>
-<p class="muted">Номера помещений не являются классами чистоты. Перетаскивай помещения мышью. При включённом магните соседние стены и близкие углы выравниваются без зазоров. Удерживай Alt для свободного перемещения. Нажми на блок или зелёную дверь, чтобы изменить параметры. Двери привязаны к общим стенам автоматически.</p>
+<p class="muted">Добавляй помещение с номером, названием, типом, классом чистоты и условным давлением в Па. Это маркировка на плане, не расчёт вентиляции. Перетаскивай помещения мышью. При включённом магните соседние стены и близкие углы выравниваются без зазоров. Удерживай Alt для свободного перемещения. Нажми на блок или зелёную дверь, чтобы изменить параметры. Двери привязаны к общим стенам автоматически.</p>
 </section>
 <section class="panel" style="margin-top:16px">
 <h2>Симулятор прохода</h2>
@@ -97,20 +97,19 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 </aside>
 </main>
 <footer>Демонстрационный проектировщик — не система управления доступом. Изменения в браузере не отправляются автоматически в GitHub. Сохраняй их кнопкой «Скачать JSON».</footer>
-<script src="./pressure-cascade.js"></script>
 <script src="./engine.js"></script>
 <script src="./wall-snap.js"></script>
 <script>
 "use strict";
 const initial = {
- "version": "0.3.0",
- "name": "Конструктор шлюзов и каскада давления — пример 1–6",
+ "version": "0.4.0",
+ "name": "Конструктор помещений и шлюзов — пример 1–6",
  "units": "px",
  "defaultOpenDoorAlarmSec": 30,
  "rooms": [
   {
    "id": "6",
-   "name": "6",
+   "name": "Помещение 6",
    "x": 150,
    "y": 10,
    "w": 490,
@@ -120,12 +119,11 @@ const initial = {
    "purgeSec": 30,
    "interlockEnabled": false,
    "interlockMode": "none",
-   "pressureTolerancePa": 2,
-   "pressurePurpose": "protect"
+   "roomType": "corridor"
   },
   {
    "id": "5",
-   "name": "5",
+   "name": "Помещение 5",
    "x": 160,
    "y": 200,
    "w": 240,
@@ -135,12 +133,11 @@ const initial = {
    "purgeSec": 30,
    "interlockEnabled": false,
    "interlockMode": "none",
-   "pressureTolerancePa": 2,
-   "pressurePurpose": "protect"
+   "roomType": "cleanroom"
   },
   {
    "id": "4",
-   "name": "4",
+   "name": "Помещение 4",
    "x": 400,
    "y": 200,
    "w": 240,
@@ -150,12 +147,11 @@ const initial = {
    "purgeSec": 30,
    "interlockEnabled": true,
    "interlockMode": "mutual",
-   "pressureTolerancePa": 2,
-   "pressurePurpose": "protect"
+   "roomType": "cleanroom"
   },
   {
    "id": "3",
-   "name": "3",
+   "name": "Помещение 3",
    "x": 640,
    "y": 200,
    "w": 150,
@@ -165,12 +161,11 @@ const initial = {
    "purgeSec": 30,
    "interlockEnabled": false,
    "interlockMode": "none",
-   "pressureTolerancePa": 2,
-   "pressurePurpose": "protect"
+   "roomType": "cleanroom"
   },
   {
    "id": "1",
-   "name": "1",
+   "name": "Помещение 1",
    "x": 290,
    "y": 400,
    "w": 220,
@@ -180,12 +175,11 @@ const initial = {
    "purgeSec": 30,
    "interlockEnabled": true,
    "interlockMode": "purge",
-   "pressureTolerancePa": 2,
-   "pressurePurpose": "protect"
+   "roomType": "airlock"
   },
   {
    "id": "2",
-   "name": "2",
+   "name": "Помещение 2",
    "x": 510,
    "y": 400,
    "w": 280,
@@ -195,8 +189,7 @@ const initial = {
    "purgeSec": 30,
    "interlockEnabled": false,
    "interlockMode": "none",
-   "pressureTolerancePa": 2,
-   "pressurePurpose": "protect"
+   "roomType": "cleanroom"
   }
  ],
  "doors": [
@@ -210,9 +203,7 @@ const initial = {
    "access": "unconfigured",
    "reedInput": null,
    "lockOutput": null,
-   "busyOutput": null,
-   "expectedFlow": "auto",
-   "minPressureDiffPa": null
+   "busyOutput": null
   },
   {
    "id": "4-6",
@@ -224,9 +215,7 @@ const initial = {
    "access": "unconfigured",
    "reedInput": null,
    "lockOutput": null,
-   "busyOutput": null,
-   "expectedFlow": "auto",
-   "minPressureDiffPa": null
+   "busyOutput": null
   },
   {
    "id": "1-5",
@@ -238,9 +227,7 @@ const initial = {
    "access": "unconfigured",
    "reedInput": null,
    "lockOutput": null,
-   "busyOutput": null,
-   "expectedFlow": "auto",
-   "minPressureDiffPa": null
+   "busyOutput": null
   },
   {
    "id": "1-4",
@@ -252,9 +239,7 @@ const initial = {
    "access": "unconfigured",
    "reedInput": null,
    "lockOutput": null,
-   "busyOutput": null,
-   "expectedFlow": "auto",
-   "minPressureDiffPa": null
+   "busyOutput": null
   },
   {
    "id": "2-4",
@@ -266,9 +251,7 @@ const initial = {
    "access": "unconfigured",
    "reedInput": null,
    "lockOutput": null,
-   "busyOutput": null,
-   "expectedFlow": "auto",
-   "minPressureDiffPa": null
+   "busyOutput": null
   },
   {
    "id": "3-4",
@@ -280,9 +263,7 @@ const initial = {
    "access": "unconfigured",
    "reedInput": null,
    "lockOutput": null,
-   "busyOutput": null,
-   "expectedFlow": "auto",
-   "minPressureDiffPa": null
+   "busyOutput": null
   },
   {
    "id": "2-3",
@@ -294,9 +275,7 @@ const initial = {
    "access": "unconfigured",
    "reedInput": null,
    "lockOutput": null,
-   "busyOutput": null,
-   "expectedFlow": "auto",
-   "minPressureDiffPa": null
+   "busyOutput": null
   },
   {
    "id": "1-2",
@@ -308,9 +287,7 @@ const initial = {
    "access": "unconfigured",
    "reedInput": null,
    "lockOutput": null,
-   "busyOutput": null,
-   "expectedFlow": "auto",
-   "minPressureDiffPa": null
+   "busyOutput": null
   }
  ],
  "rules": [],
@@ -318,12 +295,7 @@ const initial = {
  "defaultRule": "interlock-managed-rooms-on-each-incident-door",
  "fireMode": "all-electrical-interlocks-off",
  "disclaimer": "Simulation only. Direction and room occupancy events are not inferred from reed switches. Independent fire-release hardware required.",
- "pressureDefaults": {
-  "minGradeDiffPa": 10,
-  "pressureUnits": "Pa",
-  "reference": "Общая точка отсчёта давления",
-  "description": "Расчётные уставки, не измерения"
- }
+ "pressureNote": "Условное значение для маркировки каскада на плане; расчёт перепадов, автоматика вентиляции и контроль давления отключены."
 };
 let model=structuredClone(initial),selected=null,selectedRule=null,active=[],fire=false,drag=null,now=Date.now(),timeOffset=0,sessionNo=1;
 const $=id=>document.getElementById(id);
@@ -585,6 +557,6 @@ $("exportCSV").onclick=()=>{
 $("reset").onclick=()=>{if(!confirm("Сбросить изменения и восстановить пример 1–6?"))return;model=structuredClone(initial);active=[];selected=null;selectedRule=null;render()};
 render();
 </script>
-<script src="./features-v03.js"></script>
+<script src="./features-v04.js"></script>
 </body>
 </html>
