@@ -16,18 +16,18 @@
   "inputs": {
     "FireNormal": true,
     "ResetFault": false,
-    "I_D_1_2_Closed": false,
+    "I_D_1_2_Closed": true,
     "I_D_1_4_Closed": true,
     "I_D_1_5_Closed": true
   },
   "lastObservedOutputs": {
-    "O_State": 20,
-    "O_Ready": false,
-    "O_Red": true,
-    "O_Green": false,
+    "O_State": 10,
+    "O_Ready": true,
+    "O_Red": false,
+    "O_Green": true,
     "O_D_1_2_Block": false,
-    "O_D_1_4_Block": true,
-    "O_D_1_5_Block": true,
+    "O_D_1_4_Block": false,
+    "O_D_1_5_Block": false,
     "O_Fault": false
   },
   "passed": [
@@ -36,10 +36,14 @@
     "QA-OL-002",
     "QA-OL-003",
     "QA-OL-004",
-    "QA-OL-005"
+    "QA-OL-005",
+    "QA-OL-006",
+    "QA-OL-007",
+    "QA-OL-008",
+    "QA-OL-009"
   ],
-  "nextTest": "QA-OL-006",
-  "nextAction": "После восстановления интерактивного RDP сеанса №2 проверить состояние Owen Logic, затем выполнить %USERPROFILE%\\Desktop\\AirlockGeneratorTest\\qa006_run_v3.ps1. GUI мост должен отказаться от изменения входа при GetForegroundWindow()==0. QA006 не считать завершённым до подтверждения таймера в реальном симуляторе.",
+  "nextTest": "QA-OL-011",
+  "nextAction": "Испытать FB_Room_N4 в штатном симуляторе Owen Logic (четыре двери, mutual); затем объединить общий запрос блокировки двери 1–4 на FBD. QA-OL-010: восстановление после пожара наблюдалось автоматически; правила ручного подтверждения не согласованы.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Full ST QA and safety review",
@@ -62,21 +66,21 @@
     "readingVerified": true,
     "currentReadings": {
       "FireNormal": "TRUE",
-      "I_D_1_2_Closed": "FALSE",
+      "I_D_1_2_Closed": "TRUE",
       "I_D_1_4_Closed": "TRUE",
       "I_D_1_5_Closed": "TRUE",
-      "O_State": "20",
-      "O_Red": "TRUE",
-      "O_Green": "FALSE",
+      "O_State": "10",
+      "O_Red": "FALSE",
+      "O_Green": "TRUE",
       "O_D_1_2_Block": "FALSE",
-      "O_D_1_4_Block": "TRUE",
-      "O_D_1_5_Block": "TRUE",
+      "O_D_1_4_Block": "FALSE",
+      "O_D_1_5_Block": "FALSE",
       "O_Fault": "FALSE"
     },
     "inputMutationVerified": true,
     "inputMutationBlocker": "Foreground focus required; failed safe with FOREGROUND_NOT_OWEN when Firefox focused",
     "outputWriteDenied": true,
-    "nextAction": "После восстановления интерактивного RDP сеанса №2 проверить состояние Owen Logic, затем выполнить %USERPROFILE%\\Desktop\\AirlockGeneratorTest\\qa006_run_v3.ps1. GUI мост должен отказаться от изменения входа при GetForegroundWindow()==0. QA006 не считать завершённым до подтверждения таймера в реальном симуляторе.",
+    "nextAction": "Испытать FB_Room_N4 в штатном симуляторе Owen Logic (четыре двери, mutual); затем объединить общий запрос блокировки двери 1–4 на FBD. QA-OL-010: восстановление после пожара наблюдалось автоматически; правила ручного подтверждения не согласованы.",
     "launchWithoutClosingConsole": "%USERPROFILE%\\Desktop\\AirlockGeneratorTest\\owen-bridge-status.cmd",
     "lastSuccessfulWrite": {
       "signal": "I_D_1_2_Closed",
@@ -90,7 +94,7 @@
     "remoteQa006Script": "%USERPROFILE%\\Desktop\\AirlockGeneratorTest\\qa006_run_v3.ps1"
   },
   "rdp": {
-    "status": "Session 2 disconnected at last check; only session 2 exists after approved logoff 7",
+    "status": "Session 2 reconnected and active at test time; user reported RDP currently works. Disconnects may recur.",
     "threeHourSessionLimitDetected": false,
     "limits": {
       "MaxConnectionTime": 0,
@@ -134,5 +138,46 @@
       "openDoor": "1-2",
       "confirmed": true
     }
-  ]
+  ],
+  "modelHeadlessQA": {
+    "runner": "airlock-generator/bridge/headless-qa.js",
+    "completedOnZ4559": true,
+    "passed": 8,
+    "failed": 0,
+    "kind": "Independent reference model, not native Owen Logic"
+  },
+  "githubActions": {
+    "workflow": ".github/workflows/airlock-generator-qa.yml",
+    "trigger": "push / pull_request for airlock-generator/** and manual workflow_dispatch",
+    "requiresLocalPc": false,
+    "lastRunVerified": false,
+    "note": "Workflow configuration committed; connector returned no workflow runs for checked commits. Activation and a cloud run must be verified separately."
+  },
+  "nativeQA": {
+    "QA-OL-006": {
+      "status": "PASS",
+      "log": "qa006-latest.jsonl on Z4559",
+      "scope": "timed purge restart"
+    },
+    "QA-OL-007": {
+      "status": "PASS",
+      "log": "qa007-latest.jsonl on Z4559",
+      "scope": "door overtime >30s and clear on close"
+    },
+    "QA-OL-008": {
+      "status": "PASS",
+      "log": "qa008-latest.jsonl on Z4559",
+      "scope": "multiple open doors fault latch and manual ResetFault"
+    },
+    "QA-OL-009": {
+      "status": "PASS_LOGIC_ONLY",
+      "log": "qa009-latest.jsonl on Z4559",
+      "scope": "fire software release; NOT physical release"
+    },
+    "QA-OL-010": {
+      "status": "OBSERVED_NOT_APPROVED",
+      "scope": "automatic purge restart when FireNormal restores; needs engineering safety review"
+    },
+    "next": "QA-OL-011 FB_Room_N4 real native ST simulation"
+  }
 }
