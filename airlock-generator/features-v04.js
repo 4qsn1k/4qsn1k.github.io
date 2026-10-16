@@ -108,7 +108,7 @@ renderProperties=function(){
  $("roomType").onchange=e=>{r.roomType=e.target.value;draw()};
  const checkbox=$("interlock");
  if(checkbox)checkbox.closest("label")?.remove();
- $("purge").insertAdjacentHTML("beforebegin",
+ $("purge").previousElementSibling.insertAdjacentHTML("beforebegin",
   '<label for="roomMode">Режим дверей</label><select id="roomMode">'+modeOptions(roomMode(r))+'</select>');
  $("roomMode").onchange=e=>{r.interlockMode=e.target.value;r.interlockEnabled=e.target.value!=="none";active=[];render()};
  $("purge").disabled=roomMode(r)!=="purge";
