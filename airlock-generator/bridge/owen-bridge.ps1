@@ -97,8 +97,15 @@ public static class OwenBridgeWin32 {
     }
     "status" {
       $readings=@{}
-      foreach($signal in @("FireNormal","I_D_1_2_Closed","I_D_1_4_Closed","I_D_1_5_Closed",
-         "O_State","O_Ready","O_Red","O_Green","O_D_1_2_Block","O_D_1_4_Block","O_D_1_5_Block","O_Fault")){
+      $signals=@("FireNormal","ResetFault","O_State","O_Ready","O_Red","O_Green","O_Fault","O_Fire","O_Alarm")
+      if($block -eq "FB_Room_N4"){
+        $signals+=@("I_D_1_4_Closed","I_D_2_4_Closed","I_D_3_4_Closed","I_D_4_6_Closed",
+          "O_D_1_4_Block","O_D_2_4_Block","O_D_3_4_Block","O_D_4_6_Block")
+      }elseif($block -eq "FB_Room_N1"){
+        $signals+=@("I_D_1_2_Closed","I_D_1_4_Closed","I_D_1_5_Closed",
+          "O_D_1_2_Block","O_D_1_4_Block","O_D_1_5_Block")
+      }else{throw "UNSUPPORTED_BLOCK_FOR_STATUS: "+$block}
+      foreach($signal in $signals){
         try{$loc=SignalLocation $signal;$readings[$signal]=$loc.Value}
         catch{$readings[$signal]="UNAVAILABLE"}
       }
