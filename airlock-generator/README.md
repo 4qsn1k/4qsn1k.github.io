@@ -51,6 +51,7 @@
 ```bash
 node tests/snap.test.js
 node tests/pressure-and-interlocks.test.js
+node tests/hmi.test.js
 ```
 
 Испытания реального ПР100 и алгоритмов эвакуации остаются отдельной задачей.
