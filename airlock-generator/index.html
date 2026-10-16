@@ -102,7 +102,7 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 <script>
 "use strict";
 const initial = {
- "version": "0.4.0",
+ "version": "0.5.0",
  "name": "Конструктор помещений и шлюзов — пример 1–6",
  "units": "px",
  "defaultOpenDoorAlarmSec": 30,
@@ -295,7 +295,24 @@ const initial = {
  "defaultRule": "interlock-managed-rooms-on-each-incident-door",
  "fireMode": "all-electrical-interlocks-off",
  "disclaimer": "Simulation only. Direction and room occupancy events are not inferred from reed switches. Independent fire-release hardware required.",
- "pressureNote": "Условное значение для маркировки каскада на плане; расчёт перепадов, автоматика вентиляции и контроль давления отключены."
+ "pressureNote": "Условное значение для маркировки каскада на плане; расчёт перепадов, автоматика вентиляции и контроль давления отключены.",
+ "monitor": {
+  "display": "room-traffic-lights",
+  "source": "unconnected",
+  "staleAfterMs": 10000,
+  "title": "Состояние дверей производственного отдела",
+  "colors": {
+   "ready": "green",
+   "open": "red",
+   "busy": "red",
+   "blocked": "red",
+   "purge": "red",
+   "fault": "orange",
+   "fire": "red",
+   "unknown": "gray"
+  },
+  "safetyNote": "Показаны только подтвержденные телеметрией состояния. При потере связи индикация UNKNOWN, не READY."
+ }
 };
 let model=structuredClone(initial),selected=null,selectedRule=null,active=[],fire=false,drag=null,now=Date.now(),timeOffset=0,sessionNo=1;
 const $=id=>document.getElementById(id);
