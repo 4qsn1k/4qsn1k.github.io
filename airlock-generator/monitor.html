@@ -305,7 +305,11 @@ function effectiveDoorStatus(door){
  if(state.source==="demo"){
   for(const rid of [door.a,door.b]){
    const r=ROOMS.get(String(rid)),status=statusOf("rooms",String(rid));
-   if(roomMode(r)!=="none"&&["busy","purge"].includes(status))return "blocked";
+   if(roomMode(r)==="none")continue;
+   const otherDoorOpen=MODEL.doors.some(other=>String(other.id)!==String(door.id)&&
+     (String(other.a)===String(rid)||String(other.b)===String(rid))&&
+     statusOf("doors",String(other.id))==="open");
+   if(["busy","purge"].includes(status)||otherDoorOpen)return "blocked";
   }
  }
  return result;
