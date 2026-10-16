@@ -1,0 +1,57 @@
+{
+  "schema": "airlock-generator-continuity/1",
+  "savedDate": "2026-10-16",
+  "project": "Airlock Generator — граф помещений, блокировки дверей, красно-зелёные светофоры, HMI, Owen Logic ST",
+  "repository": "4qsn1k/4qsn1k.github.io",
+  "projectPath": "airlock-generator",
+  "chatHandoff": "airlock-generator/docs/CHAT_CONTINUITY.md",
+  "qaLog": "airlock-generator/docs/QA-OWEN-2026-10-16.md",
+  "originalProject": "C:\\Users\\m.hazgaliev\\Desktop\\Airlock_CNC_D.owle",
+  "testProject": "C:\\Users\\m.hazgaliev\\Desktop\\AirlockGeneratorTest\\Airlock_SIMULATION_TEST.owle",
+  "targetDevice": "Овен ПР100-24.1208.03.1 M02",
+  "testEngine": "Owen Logic built-in ST simulator",
+  "activeBlock": "FB_Room_N1",
+  "testScope": "simulation only",
+  "uploadToPlcAuthorized": false,
+  "inputs": {
+    "FireNormal": true,
+    "ResetFault": false,
+    "I_D_1_2_Closed": false,
+    "I_D_1_4_Closed": true,
+    "I_D_1_5_Closed": true
+  },
+  "lastObservedOutputs": {
+    "O_State": 20,
+    "O_Ready": false,
+    "O_Red": true,
+    "O_Green": false,
+    "O_D_1_2_Block": false,
+    "O_D_1_4_Block": true,
+    "O_D_1_5_Block": true,
+    "O_Fault": false,
+    "O_Alarm": false,
+    "O_D_1_2_Overtime": false
+  },
+  "passed": [
+    "QA-OL-000",
+    "QA-OL-001",
+    "QA-OL-002",
+    "QA-OL-003"
+  ],
+  "nextTest": "QA-OL-004",
+  "nextAction": "Изменить I_D_1_2_Closed на TRUE, остальные герконы и FireNormal оставить TRUE; проверить переход State=30, O_Red=TRUE, все три O_*_Block=TRUE. Прислать скриншот, затем перейти к QA-OL-005.",
+  "incomplete": [
+    "Owen Logic complete FBD integration / shared-door OR",
+    "Full ST QA and safety review",
+    "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
+    "Actual hardware controller commissioning (not authorized)",
+    "HMI live telemetry",
+    "Wall resizing and building floor-plan underlay"
+  ],
+  "disclaimers": [
+    "PASS refers to specific Owen Logic simulation snapshots, not certified industrial validation",
+    "O_*_Block denotes software inhibit request, not physical door lock confirmation",
+    "Independent fire release and emergency egress hardware required",
+    "All screenshots in original chat, not yet archived to GitHub as binaries"
+  ]
+}
