@@ -53,5 +53,29 @@
     "O_*_Block denotes software inhibit request, not physical door lock confirmation",
     "Independent fire release and emergency egress hardware required",
     "All screenshots in original chat, not yet archived to GitHub as binaries"
-  ]
+  ],
+  "bridge": {
+    "version": "0.1",
+    "repoPath": "airlock-generator/bridge/owen-bridge.ps1",
+    "remotePath": "%USERPROFILE%\\Desktop\\AirlockGeneratorTest\\owen-bridge.ps1",
+    "interface": "Windows UI Automation invoked via Remote Desktop Commander",
+    "readingVerified": true,
+    "currentReadings": {
+      "FireNormal": "TRUE",
+      "I_D_1_2_Closed": "FALSE",
+      "I_D_1_4_Closed": "TRUE",
+      "I_D_1_5_Closed": "TRUE",
+      "O_State": "20",
+      "O_Red": "TRUE",
+      "O_Green": "FALSE",
+      "O_D_1_2_Block": "FALSE",
+      "O_D_1_4_Block": "TRUE",
+      "O_D_1_5_Block": "TRUE",
+      "O_Fault": "FALSE"
+    },
+    "inputMutationVerified": false,
+    "inputMutationBlocker": "FOREGROUND_NOT_OWEN",
+    "outputWriteDenied": true,
+    "nextAction": "Активировать тестовое окно Owen Logic на Z4559 и повторить строго ограниченную команду установки I_D_1_2_Closed=TRUE; либо изменить сигнал вручную. Затем считать status через мост и выполнить QA-OL-004."
+  }
 }
