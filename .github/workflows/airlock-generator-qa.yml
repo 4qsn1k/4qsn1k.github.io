@@ -36,6 +36,9 @@ jobs:
         run: |
           node --check st-generator.js
           node --check st-testbench.js
+          node --check project-wiring.js
+          node --check project-wiring-ui.js
+          node --check tests/project-wiring.test.js
           node --check bridge/headless-qa.js
 
       - name: Run repository unit tests
