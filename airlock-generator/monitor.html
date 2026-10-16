@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Экран состояния отдела — шаблон HMI</title>
+<style>
+:root{font-family:system-ui,"Segoe UI",Arial,sans-serif;color:#e7f1f4;background:#0d1d2a}
+*{box-sizing:border-box}body{margin:0;min-height:100vh}header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 18px;background:#112c3c;border-bottom:1px solid #355566}
+h1{font-size:19px;margin:0}p{margin:6px 0}small{font-size:12px;color:#abc0ca}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button{font:inherit;font-size:13px;padding:7px 11px;border:1px solid #567587;border-radius:6px;color:#eff9fc;background:#183d52;cursor:pointer}
+button:hover{background:#215778}button:focus-visible{outline:3px solid #ffcf44}
+button.active{border-color:#77e4ad;background:#165738}
+label{font-size:13px;color:#c1d7df}
+main{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:12px;padding:12px}
+section{border:1px solid #395567;border-radius:10px;padding:12px;background:#122938}
+.svgWrap{overflow:auto;border:1px solid #3c596a;border-radius:8px;background:#0f2330}
+svg{display:block;width:100%;height:auto;max-height:72vh;min-height:250px}
+.room{cursor:pointer}.door{cursor:pointer}
+.room-name{font-size:15px;font-weight:750;fill:#f3fafc;pointer-events:none}
+.room-info{font-size:11px;fill:#eff8fc;pointer-events:none}
+.status-text{font-size:11px;font-weight:700;fill:#fff;pointer-events:none}
+.room rect{stroke-width:2.5;stroke:#72909f}
+.room rect.light-ready{fill:#1e683f;stroke:#7be5a0}
+.room rect.light-red{fill:#83282d;stroke:#ff7d79}
+.room rect.light-unknown{fill:#394b54;stroke:#8ba2ad}
+.room rect.light-fault{fill:#983619;stroke:#ffa95c}
+.room rect.light-fire{fill:#8a1d25;stroke:#ffbd22;stroke-width:5}
+.door rect{stroke:#dde9ef;stroke-width:2}
+.light-ready{fill:#1d9c51}.light-red{fill:#e44749}.light-unknown{fill:#6e8993}.light-fault{fill:#ec8b22}.light-fire{fill:#d62a35}
+.led{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-2px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:7px;border-bottom:1px solid #365465}
+.rowList{max-height:42vh;overflow:auto}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0 0;font-size:12px;color:#c9dde6}
+.badge{font-size:12px;padding:4px 8px;border-radius:5px;background:#576873;font-weight:700}
+.badge.demo{background:#9c6524}.badge.live{background:#226244}.badge.offline{background:#80502e}
+aside section+section{margin-top:12px}
+.notice{font-size:12px;color:#cbd5da;line-height:1.5}
+@media(max-width:860px){main{grid-template-columns:1fr}svg{max-height:60vh}}
+@media(max-width:400px){header{padding:10px}h1{font-size:16px}}
+</style>
+</head>
+<body>
+<header>
+<div><h1>План помещений · мониторинг дверей</h1><small id="subtitle">Состояние шлюзов и взаимоблокировок</small></div>
+<div class="toolbar">
+<span id="sourceBadge" class="badge offline">НЕТ СВЯЗИ</span>
+<button id="demoBtn">Демо-режим</button>
+<button id="clearBtn" title="Отключить демонстрацию и показать неизвестные сигналы">Отключить демо</button>
+</div>
+</header>
+<main>
+<section>
+<div class="svgWrap"><svg id="floor" role="img" aria-label="План производственных помещений со световыми статусами"></svg></div>
+<div class="legend">
+<span><span class="led light-ready"></span>ЗЕЛЁНЫЙ · готово</span>
+<span><span class="led light-red"></span>КРАСНЫЙ · занято / блокировка / продувка</span>
+<span><span class="led light-fault"></span>ОРАНЖЕВЫЙ · неисправность</span>
+<span><span class="led light-unknown"></span>СЕРЫЙ · нет достоверного статуса</span>
+</div>
+<p class="notice" id="statusTip">Без подключения телеметрии комнаты серые. Зелёный означает подтверждённое состояние «доступ разрешён», а не доказательство отсутствия людей.</p>
+</section>
+<aside>
+<section>
+<h2 style="font-size:15px;margin:0 0 8px">Состояния помещений</h2>
+<div class="rowList"><table><thead><tr><th>№ / Название</th><th>Индикатор</th></tr></thead><tbody id="roomsList"></tbody></table></div>
+</section>
+<section>
+<h2 style="font-size:15px;margin:0 0 8px">Двери</h2>
+<div class="rowList"><table><thead><tr><th>Дверь</th><th>Состояние</th></tr></thead><tbody id="doorsList"></tbody></table></div>
+</section>
+<section>
+<h2 style="font-size:15px;margin:0 0 8px">Источник данных</h2>
+<p class="notice">Это независимый экран отображения. Он не управляет замками, пожарной автоматикой, считывателями или BUSY.</p>
+<p class="notice">Для реальных значений требуется адаптер ПЛК/SCADA с контролем актуальности, диагностикой связи и подтверждением состояния. Нельзя автоматически считать отсутствие сигнала зелёным статусом.</p>
+<p id="lastFrame" class="notice">Последний пакет: отсутствует</p>
+</section>
+</aside>
+</main>
+<script id="modelData" type="application/json">{
+  "version": "0.4.0",
+  "name": "Конструктор помещений и шлюзов — пример 1–6",
+  "units": "px",
+  "defaultOpenDoorAlarmSec": 30,
+  "rooms": [
+    {
+      "id": "6",
+      "name": "Помещение 6",
+      "x": 150,
+      "y": 10,
+      "w": 490,
+      "h": 190,
+      "cleanClass": null,
+      "pressurePa": 10,
+      "purgeSec": 30,
+      "interlockEnabled": false,
+      "interlockMode": "none",
+      "roomType": "corridor"
+    },
+    {
+      "id": "5",
+      "name": "Помещение 5",
+      "x": 160,
+      "y": 200,
+      "w": 240,
+      "h": 200,
+      "cleanClass": "D",
+      "pressurePa": 15,
+      "purgeSec": 30,
+      "interlockEnabled": false,
+      "interlockMode": "none",
+      "roomType": "cleanroom"
+    },
+    {
+      "id": "4",
+      "name": "Помещение 4",
+      "x": 400,
+      "y": 200,
+      "w": 240,
+      "h": 200,
+      "cleanClass": "C",
+      "pressurePa": 25,
+      "purgeSec": 30,
+      "interlockEnabled": true,
+      "interlockMode": "mutual",
+      "roomType": "cleanroom"
+    },
+    {
+      "id": "3",
+      "name": "Помещение 3",
+      "x": 640,
+      "y": 200,
+      "w": 150,
+      "h": 200,
+      "cleanClass": "B",
+      "pressurePa": 45,
+      "purgeSec": 30,
+      "interlockEnabled": false,
+      "interlockMode": "none",
+      "roomType": "cleanroom"
+    },
+    {
+      "id": "1",
+      "name": "Помещение 1",
+      "x": 290,
+      "y": 400,
+      "w": 220,
+      "h": 190,
+      "cleanClass": "C",
+      "pressurePa": 30,
+      "purgeSec": 30,
+      "interlockEnabled": true,
+      "interlockMode": "purge",
+      "roomType": "airlock"
+    },
+    {
+      "id": "2",
+      "name": "Помещение 2",
+      "x": 510,
+      "y": 400,
+      "w": 280,
+      "h": 190,
+      "cleanClass": "C",
+      "pressurePa": 30,
+      "purgeSec": 30,
+      "interlockEnabled": false,
+      "interlockMode": "none",
+      "roomType": "cleanroom"
+    }
+  ],
+  "doors": [
+    {
+      "id": "5-6",
+      "a": "5",
+      "b": "6",
+      "x": 300,
+      "y": 200,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "4-6",
+      "a": "4",
+      "b": "6",
+      "x": 500,
+      "y": 200,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "1-5",
+      "a": "1",
+      "b": "5",
+      "x": 350,
+      "y": 400,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "1-4",
+      "a": "1",
+      "b": "4",
+      "x": 456,
+      "y": 400,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "2-4",
+      "a": "2",
+      "b": "4",
+      "x": 565,
+      "y": 400,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "3-4",
+      "a": "3",
+      "b": "4",
+      "x": 640,
+      "y": 285,
+      "axis": "vertical",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "2-3",
+      "a": "2",
+      "b": "3",
+      "x": 710,
+      "y": 400,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "1-2",
+      "a": "1",
+      "b": "2",
+      "x": 510,
+      "y": 500,
+      "axis": "vertical",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    }
+  ],
+  "rules": [],
+  "exemptions": [],
+  "defaultRule": "interlock-managed-rooms-on-each-incident-door",
+  "fireMode": "all-electrical-interlocks-off",
+  "disclaimer": "Simulation only. Direction and room occupancy events are not inferred from reed switches. Independent fire-release hardware required.",
+  "pressureNote": "Условное значение для маркировки каскада на плане; расчёт перепадов, автоматика вентиляции и контроль давления отключены."
+}</script>
+<script>
+"use strict";
+const MODEL=JSON.parse(document.getElementById("modelData").textContent);
+const ROOMS=new Map(MODEL.rooms.map(x=>[String(x.id),x]));
+const DOORS=new Map(MODEL.doors.map(x=>[String(x.id),x]));
+const STATES=["ready","busy","purge","fault"], DOOR_STATES=["ready","open","blocked","fault"];
+const INFO={
+ ready:["Готово","light-ready"],busy:["Занято","light-red"],
+ open:["Открыта","light-red"],blocked:["Заблокирована","light-red"],
+ purge:["Продувка","light-red"],fault:["Неисправность","light-fault"],
+ fire:["ПОЖАР","light-fire"],unknown:["Нет связи","light-unknown"]
+};
+const NS="http://www.w3.org/2000/svg";
+const $=id=>document.getElementById(id);
+let state={source:"offline",rooms:{},doors:{},updatedAt:0,fire:false};
+const demo={rooms:{},doors:{}};
+const E=(tag,attrs,parent)=>{const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,String(v));parent.append(e);return e};
+const roomMode=r=>r?.interlockMode||(r?.interlockEnabled?"purge":"none");
+function statusOf(kind,id){
+ if(state.source==="offline")return "unknown";
+ const status=state[kind]?.[id]?.state;
+ return INFO[status]?status:"unknown";
+}
+function effectiveDoorStatus(door){
+ if(state.fire)return "fire";
+ let result=statusOf("doors",String(door.id));
+ if(result==="fault"||result==="open"||result==="blocked"||result==="unknown")return result;
+ // If a room has an active local interlock, all incident doors may be blocked;
+ // there is no proof that a particular door is released without PLC telemetry.
+ if(state.source==="demo"){
+  for(const rid of [door.a,door.b]){
+   const r=ROOMS.get(String(rid)),status=statusOf("rooms",String(rid));
+   if(roomMode(r)!=="none"&&["busy","purge"].includes(status))return "blocked";
+  }
+ }
+ return result;
+}
+function effectiveRoomStatus(room){
+ if(state.fire)return "fire";
+ let result=statusOf("rooms",String(room.id));
+ if(result==="fault"||result==="busy"||result==="purge"||result==="unknown")return result;
+ // Any door confirmed open means the room is not safely available.
+ if(MODEL.doors.some(d=>(d.a===room.id||d.b===room.id)&&statusOf("doors",String(d.id))==="open"))return "busy";
+ if(MODEL.doors.some(d=>(d.a===room.id||d.b===room.id)&&effectiveDoorStatus(d)==="blocked"))return "blocked";
+ return result;
+}
+function doorPosition(d){
+ const a=ROOMS.get(String(d.a)),b=ROOMS.get(String(d.b));
+ if(!a||!b)return{x:d.x||0,y:d.y||0,axis:d.axis||"horizontal"};
+ const minX=Math.max(a.x,b.x),maxX=Math.min(a.x+a.w,b.x+b.w);
+ const minY=Math.max(a.y,b.y),maxY=Math.min(a.y+a.h,b.y+b.h);
+ if(maxX-minX>20&&Math.abs(a.y+a.h-b.y)<12)return{x:(minX+maxX)/2,y:b.y,axis:"horizontal"};
+ if(maxX-minX>20&&Math.abs(b.y+b.h-a.y)<12)return{x:(minX+maxX)/2,y:a.y,axis:"horizontal"};
+ if(maxY-minY>20&&Math.abs(a.x+a.w-b.x)<12)return{x:b.x,y:(minY+maxY)/2,axis:"vertical"};
+ if(maxY-minY>20&&Math.abs(b.x+b.w-a.x)<12)return{x:a.x,y:(minY+maxY)/2,axis:"vertical"};
+ return{x:d.x||((a.x+b.x)/2),y:d.y||((a.y+b.y)/2),axis:d.axis||"horizontal"};
+}
+function draw(){
+ const svg=$("floor");svg.replaceChildren();
+ const rs=MODEL.rooms, minX=Math.min(0,...rs.map(r=>r.x))-20,minY=Math.min(0,...rs.map(r=>r.y))-20,
+ maxX=Math.max(800,...rs.map(r=>r.x+r.w))+20,maxY=Math.max(610,...rs.map(r=>r.y+r.h))+20;
+ svg.setAttribute("viewBox",[minX,minY,maxX-minX,maxY-minY].join(" "));
+ for(const r of rs){
+  const id=String(r.id),st=effectiveRoomStatus(r);
+  const g=E("g",{class:"room","data-id":id,tabindex:0,role:"button","aria-label":"Помещение "+id},svg);
+  E("rect",{x:r.x,y:r.y,width:r.w,height:r.h,rx:3,class:INFO[st][1]},g);
+  const idLabel=E("text",{x:r.x+10,y:r.y+19,class:"room-info","font-weight":700},g);idLabel.textContent="№ "+id;
+  const n=E("text",{x:r.x+r.w/2,y:r.y+r.h/2-9,"text-anchor":"middle",class:"room-name"},g);
+  const name=String(r.name||"Помещение "+id);n.textContent=name.length>23?name.slice(0,22)+"…":name;
+  const meta=E("text",{x:r.x+r.w/2,y:r.y+r.h/2+12,"text-anchor":"middle",class:"room-info"},g);
+  meta.textContent=[r.cleanClass?"Класс "+r.cleanClass:null,r.pressurePa!=null?(r.pressurePa>=0?"+":"")+r.pressurePa+" Па":null].filter(Boolean).join(" · ");
+  const label=E("text",{x:r.x+r.w/2,y:r.y+r.h-12,"text-anchor":"middle",class:"status-text"},g);
+  label.textContent=INFO[st][0].toUpperCase();
+  g.addEventListener("click",()=>cycle("rooms",id));
+  g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();cycle("rooms",id)}});
+ }
+ for(const d of MODEL.doors){
+  const id=String(d.id),st=effectiveDoorStatus(d),p=doorPosition(d);
+  const g=E("g",{class:"door","data-id":id,tabindex:0,role:"button","aria-label":"Дверь "+id},svg);
+  E("rect",{x:p.x-(p.axis==="horizontal"?28:8),y:p.y-(p.axis==="horizontal"?8:28),
+   width:p.axis==="horizontal"?56:16,height:p.axis==="horizontal"?16:56,rx:2,class:INFO[st][1]},g);
+  const t=E("text",{x:p.axis==="horizontal"?p.x:p.x+20,
+   y:p.axis==="horizontal"?p.y-13:p.y+4,"text-anchor":p.axis==="horizontal"?"middle":"start",
+   fill:"#edf9ff","font-size":13,"font-weight":700,"pointer-events":"none"},g);t.textContent=id;
+  g.addEventListener("click",()=>cycle("doors",id));
+  g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();cycle("doors",id)}});
+ }
+ $("roomsList").replaceChildren();
+ for(const r of rs){
+  const tr=document.createElement("tr"),id=String(r.id),st=effectiveRoomStatus(r);
+  const name=document.createElement("td");name.textContent=id+" · "+(r.name||"Помещение");
+  const stat=document.createElement("td");const led=document.createElement("span");led.className="led "+INFO[st][1];
+  stat.append(led,document.createTextNode(INFO[st][0]));tr.append(name,stat);$("roomsList").append(tr);
+ }
+ $("doorsList").replaceChildren();
+ for(const d of MODEL.doors){
+  const tr=document.createElement("tr"),st=effectiveDoorStatus(d);
+  const idCell=document.createElement("td");idCell.textContent=String(d.id);
+  const stat=document.createElement("td"),led=document.createElement("span");
+  led.className="led "+INFO[st][1];stat.append(led,document.createTextNode(INFO[st][0]));
+  tr.append(idCell,stat);$("doorsList").append(tr);
+ }
+ const text=state.source==="demo"?"ДЕМО":state.source==="live"?"ТЕЛЕМЕТРИЯ":"НЕТ СВЯЗИ";
+ $("sourceBadge").textContent=text;$("sourceBadge").className="badge "+(state.source==="offline"?"offline":state.source);
+ $("demoBtn").classList.toggle("active",state.source==="demo");
+ $("statusTip").textContent=state.source==="offline"?
+  "Нет подтверждённых данных от контроллера: все индикаторы серые.":state.source==="demo"?
+  "ДЕМО. Нажми на помещение или дверь, чтобы менять их статус. Это не показания ПЛК.":"Данные поступают от внешнего адаптера. Экран только отображает статусы.";
+ $("lastFrame").textContent="Последний пакет: "+(state.updatedAt?new Date(state.updatedAt).toLocaleString("ru-RU"):"отсутствует");
+}
+function enableDemo(){
+ for(const r of MODEL.rooms)demo.rooms[String(r.id)]={state:"ready"};
+ for(const d of MODEL.doors)demo.doors[String(d.id)]={state:"ready"};
+ state={source:"demo",rooms:demo.rooms,doors:demo.doors,updatedAt:Date.now(),fire:false};draw();
+}
+function cycle(kind,id){
+ if(state.source!=="demo")return;
+ const sequence=kind==="rooms"?STATES:DOOR_STATES;
+ const old=state[kind][id]?.state||"ready";
+ state[kind][id]={state:sequence[(sequence.indexOf(old)+1)%sequence.length]};
+ state.updatedAt=Date.now();draw();
+}
+$("demoBtn").onclick=enableDemo;
+$("clearBtn").onclick=()=>{
+ state={source:"offline",rooms:{},doors:{},updatedAt:0,fire:false};draw();
+};
+// Integration interface for a future authenticated PLC gateway.
+// frame: {timestamp: ISO or Unix epoch ms, rooms: {"1":{state:"ready"}},
+//         doors: {"1-2":{state:"blocked"}}, fire: false}.
+// All rooms and doors omitted from a frame are UNKNOWN, never green.
+window.airlockHmi=Object.freeze({applyFrame(frame){
+ if(!frame||typeof frame!=="object")throw Error("Invalid status frame");
+ const time=typeof frame.timestamp==="number"?frame.timestamp:Date.parse(frame.timestamp);
+ if(!Number.isFinite(time)||Math.abs(Date.now()-time)>10000){
+  state={source:"offline",rooms:{},doors:{},updatedAt:0,fire:false};draw();
+  throw Error("Timestamp missing or stale");
+ }
+ const allowed=new Set(Object.keys(INFO));
+ const filter=(items,ids)=>Object.fromEntries(Object.entries(items||{}).filter(([id,v])=>
+   ids.has(String(id))&&v&&allowed.has(v.state)).map(([id,v])=>[id,{state:v.state}]));
+ state={source:"live",rooms:filter(frame.rooms,new Set(ROOMS.keys())),
+  doors:filter(frame.doors,new Set(DOORS.keys())),fire:frame.fire===true,updatedAt:time};
+ draw();
+}});
+setInterval(()=>{
+ if(state.source==="live"&&Date.now()-state.updatedAt>10000){
+  state={source:"offline",rooms:{},doors:{},updatedAt:0,fire:false};draw();
+ }
+},2000);
+draw();
+</script>
+</body>
+</html>
