@@ -10,7 +10,7 @@
   "testProject": "%USERPROFILE%\\Desktop\\AirlockGeneratorTest\\Airlock_SIMULATION_TEST.owle",
   "targetDevice": "Овен ПР100-24.1208.03.1 M02",
   "testEngine": "Owen Logic built-in ST simulator",
-  "activeBlock": "FB_Room_N1",
+  "activeBlock": "FB_Room_N4",
   "testScope": "simulation only",
   "uploadToPlcAuthorized": false,
   "inputs": {
@@ -40,17 +40,18 @@
     "QA-OL-006",
     "QA-OL-007",
     "QA-OL-008",
-    "QA-OL-009"
+    "QA-OL-009",
+    "QA-OL-011"
   ],
-  "nextTest": "QA-OL-011",
-  "nextAction": "Испытать FB_Room_N4 в штатном симуляторе Owen Logic (четыре двери, mutual); затем объединить общий запрос блокировки двери 1–4 на FBD. QA-OL-010: восстановление после пожара наблюдалось автоматически; правила ручного подтверждения не согласованы.",
+  "nextTest": "QA-OL-012",
+  "nextAction": "В отдельной тестовой копии Owen Logic собрать FBD из FB_Room_N1 и FB_Room_N4 и объединить блокировку общей двери 1-4 через OR. Проверить I/O ресурсы и блокировки. Не трогать физические выходы и реальный ПР100. Перед FBD сохранить .owle отдельно.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
-    "Full ST QA and safety review",
     "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
     "Actual hardware controller commissioning (not authorized)",
     "HMI live telemetry",
-    "Wall resizing and building floor-plan underlay"
+    "Wall resizing and building floor-plan underlay",
+    "Remaining native safety and FBD integration QA (physical hardware not tested)"
   ],
   "disclaimers": [
     "PASS refers to specific Owen Logic simulation snapshots, not certified industrial validation",
@@ -59,28 +60,32 @@
     "All screenshots in original chat, not yet archived to GitHub as binaries"
   ],
   "bridge": {
-    "version": "0.2",
+    "version": "0.3",
     "repoPath": "airlock-generator/bridge/owen-bridge.ps1",
     "remotePath": "%USERPROFILE%\\Desktop\\AirlockGeneratorTest\\owen-bridge.ps1",
     "interface": "Windows UI Automation invoked via Remote Desktop Commander",
     "readingVerified": true,
     "currentReadings": {
       "FireNormal": "TRUE",
-      "I_D_1_2_Closed": "TRUE",
+      "ResetFault": "FALSE",
       "I_D_1_4_Closed": "TRUE",
-      "I_D_1_5_Closed": "TRUE",
+      "I_D_2_4_Closed": "TRUE",
+      "I_D_3_4_Closed": "TRUE",
+      "I_D_4_6_Closed": "TRUE",
       "O_State": "10",
-      "O_Red": "FALSE",
+      "O_Ready": "TRUE",
       "O_Green": "TRUE",
-      "O_D_1_2_Block": "FALSE",
+      "O_Red": "FALSE",
       "O_D_1_4_Block": "FALSE",
-      "O_D_1_5_Block": "FALSE",
+      "O_D_2_4_Block": "FALSE",
+      "O_D_3_4_Block": "FALSE",
+      "O_D_4_6_Block": "FALSE",
       "O_Fault": "FALSE"
     },
     "inputMutationVerified": true,
     "inputMutationBlocker": "Foreground focus required; failed safe with FOREGROUND_NOT_OWEN when Firefox focused",
     "outputWriteDenied": true,
-    "nextAction": "Испытать FB_Room_N4 в штатном симуляторе Owen Logic (четыре двери, mutual); затем объединить общий запрос блокировки двери 1–4 на FBD. QA-OL-010: восстановление после пожара наблюдалось автоматически; правила ручного подтверждения не согласованы.",
+    "nextAction": "В отдельной тестовой копии Owen Logic собрать FBD из FB_Room_N1 и FB_Room_N4 и объединить блокировку общей двери 1-4 через OR. Проверить I/O ресурсы и блокировки. Не трогать физические выходы и реальный ПР100. Перед FBD сохранить .owle отдельно.",
     "launchWithoutClosingConsole": "%USERPROFILE%\\Desktop\\AirlockGeneratorTest\\owen-bridge-status.cmd",
     "lastSuccessfulWrite": {
       "signal": "I_D_1_2_Closed",
@@ -188,6 +193,13 @@
       "status": "OBSERVED_NOT_APPROVED",
       "scope": "automatic purge restart when FireNormal restores; needs engineering safety review"
     },
-    "next": "QA-OL-011 FB_Room_N4 real native ST simulation"
-  }
+    "next": "QA-OL-011 FB_Room_N4 real native ST simulation",
+    "QA-OL-011": {
+      "status": "PASS",
+      "scope": "Four-door mutual interlock FB_Room_N4: 3-4 and 4-6 open, other doors blocked, close => ready without purge",
+      "log": "qa011-latest.jsonl on Z4559",
+      "verifiedAt": "2026-10-16T20:54:58Z"
+    }
+  },
+  "currentTestProject": "Airlock_SIMULATION_TEST.owle"
 }
