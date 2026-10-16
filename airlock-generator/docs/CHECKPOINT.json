@@ -28,18 +28,18 @@
     "O_D_1_2_Block": false,
     "O_D_1_4_Block": true,
     "O_D_1_5_Block": true,
-    "O_Fault": false,
-    "O_Alarm": false,
-    "O_D_1_2_Overtime": false
+    "O_Fault": false
   },
   "passed": [
     "QA-OL-000",
     "QA-OL-001",
     "QA-OL-002",
-    "QA-OL-003"
+    "QA-OL-003",
+    "QA-OL-004",
+    "QA-OL-005"
   ],
-  "nextTest": "QA-OL-004",
-  "nextAction": "Изменить I_D_1_2_Closed на TRUE, остальные герконы и FireNormal оставить TRUE; проверить переход State=30, O_Red=TRUE, все три O_*_Block=TRUE. Прислать скриншот, затем перейти к QA-OL-005.",
+  "nextTest": "QA-OL-006",
+  "nextAction": "Завершить QA-OL-006: вывести окно тестового Owen Logic на передний план, через мост v0.2 закрыть дверь 1–2 (I_D_1_2_Closed=TRUE) и проверить State=30; затем повторно открыть во время продувки, закрыть, проверить новые полные 30 с.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Full ST QA and safety review",
@@ -55,7 +55,7 @@
     "All screenshots in original chat, not yet archived to GitHub as binaries"
   ],
   "bridge": {
-    "version": "0.1",
+    "version": "0.2",
     "repoPath": "airlock-generator/bridge/owen-bridge.ps1",
     "remotePath": "%USERPROFILE%\\Desktop\\AirlockGeneratorTest\\owen-bridge.ps1",
     "interface": "Windows UI Automation invoked via Remote Desktop Commander",
@@ -73,9 +73,17 @@
       "O_D_1_5_Block": "TRUE",
       "O_Fault": "FALSE"
     },
-    "inputMutationVerified": false,
-    "inputMutationBlocker": "FOREGROUND_NOT_OWEN",
+    "inputMutationVerified": true,
+    "inputMutationBlocker": "Foreground focus required; failed safe with FOREGROUND_NOT_OWEN when Firefox focused",
     "outputWriteDenied": true,
-    "nextAction": "Активировать тестовое окно Owen Logic на Z4559 и повторить строго ограниченную команду установки I_D_1_2_Closed=TRUE; либо изменить сигнал вручную. Затем считать status через мост и выполнить QA-OL-004."
+    "nextAction": "Завершить QA-OL-006: вывести окно тестового Owen Logic на передний план, через мост v0.2 закрыть дверь 1–2 (I_D_1_2_Closed=TRUE) и проверить State=30; затем повторно открыть во время продувки, закрыть, проверить новые полные 30 с.",
+    "launchWithoutClosingConsole": "%USERPROFILE%\\Desktop\\AirlockGeneratorTest\\owen-bridge-status.cmd",
+    "lastSuccessfulWrite": {
+      "signal": "I_D_1_2_Closed",
+      "before": "TRUE",
+      "after": "FALSE",
+      "verified": true,
+      "note": "CHANGED_AND_VERIFIED"
+    }
   }
 }
