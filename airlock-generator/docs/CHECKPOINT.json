@@ -148,10 +148,20 @@
   },
   "githubActions": {
     "workflow": ".github/workflows/airlock-generator-qa.yml",
-    "trigger": "push / pull_request for airlock-generator/** and manual workflow_dispatch",
-    "requiresLocalPc": false,
-    "lastRunVerified": false,
-    "note": "Workflow configuration committed; connector returned no workflow runs for checked commits. Activation and a cloud run must be verified separately."
+    "id": 387090436,
+    "state": "active",
+    "lastVerifiedRunId": 38962515493,
+    "lastVerifiedRunConclusion": "success",
+    "lastVerifiedRunUrl": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/38962515493",
+    "lastVerifiedJob": "Independent logic model and generator",
+    "modelTests": "success",
+    "repositoryTests": "success",
+    "artifact": {
+      "name": "airlock-model-qa",
+      "id": 12073441853,
+      "available": true
+    },
+    "requiresLocalPc": false
   },
   "nativeQA": {
     "QA-OL-006": {
