@@ -1,0 +1,10 @@
+# Generated QA output; GitHub Actions uploads an artifact instead
+qa-reports/
+bridge/reports/
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+# Local experimental native project files must never be committed implicitly
+*.owle
