@@ -1,0 +1,2483 @@
+{
+  "schema": "airlock-owle-fbd-elements/1",
+  "createdFrom": "Owen Logic 3.3.378 GUI user ST functional block placement in a separate TEST COPY",
+  "validation": "GUI saved and ZIP metadata observed; NOT compiled and NOT deployed",
+  "noProjectSettings": true,
+  "originalProjectUnmodified": true,
+  "notACompleteOwleProject": true,
+  "warning": "Only 2 source-generated example GUI FBD element structures; UUIDs must be regenerated when cloning.",
+  "elements": [
+    {
+      "ElementBlockStoreModel": {
+        "ElementModel": {
+          "Version": 0,
+          "UniqueId": "a850cce4-49bd-4258-9c9d-3585140ac2a4",
+          "Title": "FB_Room_N1",
+          "Descriptor": " ",
+          "Location": {
+            "IsEmpty": false,
+            "X": 22.499996,
+            "Y": 0.0000038146973
+          },
+          "IsInvertOutput": false,
+          "FontSize": 8,
+          "Comment": "",
+          "PropertyNames": [],
+          "OldDisplayNames": [],
+          "NewDisplayNames": [],
+          "FbType": -1,
+          "Primitives": [
+            {
+              "Points": [
+                {
+                  "IsEmpty": false,
+                  "X": 24.999996,
+                  "Y": 0.7000048
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 24.999996,
+                  "Y": 0.3134056
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 25.313396,
+                  "Y": 0.0000047683716
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 25.699995,
+                  "Y": 0.0000044107437
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 25.699997,
+                  "Y": 0.0000044703484
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.299995,
+                  "Y": 0.0000044703484
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.29999,
+                  "Y": 0.0000044703484
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.686584,
+                  "Y": 0.0000038146973
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.999985,
+                  "Y": 0.31340402
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.999985,
+                  "Y": 0.7000042
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.999985,
+                  "Y": 0.70000434
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.999985,
+                  "Y": 0.7000045
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.999985,
+                  "Y": 0.70000464
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 85,
+                  "Y": 0.70000446
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 85,
+                  "Y": 69.30001
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.999985,
+                  "Y": 69.299995
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.999985,
+                  "Y": 69.6866
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.686584,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.29999,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 84.299995,
+                  "Y": 70.00001
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 25.699997,
+                  "Y": 70.00001
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 25.699997,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 25.313396,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 24.999996,
+                  "Y": 69.6866
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 24.999996,
+                  "Y": 69.3
+                }
+              ],
+              "PointTypes": "AAMDAwEBAQMDAwMDAwEBAQMDAwEBAQMDgw==",
+              "StyleSheetName": "QUESTION",
+              "Discriminator": 1
+            },
+            {
+              "StartPointX": 24.999996,
+              "StartPointY": 5.000004,
+              "EndPointX": 85,
+              "EndPointY": 5.000004,
+              "Discriminator": 4
+            },
+            {
+              "StartPointX": 54.6,
+              "StartPointY": 5.000004,
+              "EndPointX": 54.6,
+              "EndPointY": 70,
+              "Discriminator": 4
+            },
+            {
+              "StartPointX": 55.399994,
+              "StartPointY": 5.000004,
+              "EndPointX": 55.399994,
+              "EndPointY": 70,
+              "Discriminator": 4
+            },
+            {
+              "Text": "FireNormal",
+              "Name": "TextPrimitive",
+              "X": 24.999996,
+              "Y": 5.000004,
+              "Width": 28.288914,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 1,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": false,
+                  "X": 2,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 22.499996,
+                "StartPointY": 7.500004,
+                "EndPointX": 24.999996,
+                "EndPointY": 7.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "febba67a-6807-4cb2-a29c-7a818bc002ef",
+              "Name": "Input0",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "ResetFault",
+              "Name": "TextPrimitive_2",
+              "X": 24.999996,
+              "Y": 10.000004,
+              "Width": 28.288914,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 1,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": false,
+                  "X": 2,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 22.499996,
+                "StartPointY": 12.500004,
+                "EndPointX": 24.999996,
+                "EndPointY": 12.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "3e950549-e6ea-4c2a-93d1-fa115b6a06c5",
+              "Name": "Input1",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "I_D_1_2_Closed",
+              "Name": "TextPrimitive_3",
+              "X": 24.999996,
+              "Y": 15.000004,
+              "Width": 28.288914,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 1,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": false,
+                  "X": 2,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 22.499996,
+                "StartPointY": 17.500004,
+                "EndPointX": 24.999996,
+                "EndPointY": 17.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "18b58e9c-093c-422a-81d5-e32c50795440",
+              "Name": "Input2",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "I_D_1_4_Closed",
+              "Name": "TextPrimitive_4",
+              "X": 24.999996,
+              "Y": 20.000004,
+              "Width": 28.288914,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 1,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": false,
+                  "X": 2,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 22.499996,
+                "StartPointY": 22.500004,
+                "EndPointX": 24.999996,
+                "EndPointY": 22.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "56f47d1e-12ac-4ea7-81b4-0e37f854296d",
+              "Name": "Input3",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "I_D_1_5_Closed",
+              "Name": "TextPrimitive_5",
+              "X": 24.999996,
+              "Y": 25.000004,
+              "Width": 28.288914,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 1,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": false,
+                  "X": 2,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 22.499996,
+                "StartPointY": 27.500004,
+                "EndPointX": 24.999996,
+                "EndPointY": 27.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "2356f786-73e0-4b1f-82d1-9ee97f7ecd3b",
+              "Name": "Input4",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Ready",
+              "Name": "TextPrimitive_6",
+              "X": 56.711082,
+              "Y": 5.000004,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 7.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 7.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "82bed64b-e1b0-457e-b436-8259624f47c7",
+              "Name": "Output0",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Red",
+              "Name": "TextPrimitive_7",
+              "X": 56.711082,
+              "Y": 10.000004,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 12.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 12.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "4667ca5d-c697-4352-91fb-2aefa9128d06",
+              "Name": "Output1",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Green",
+              "Name": "TextPrimitive_8",
+              "X": 56.711082,
+              "Y": 15.000004,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 17.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 17.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "0c153ba6-655a-4b02-a1ff-98cf4bcf5add",
+              "Name": "Output2",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Fault",
+              "Name": "TextPrimitive_9",
+              "X": 56.711082,
+              "Y": 20.000004,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 22.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 22.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "40f4c3c1-8cc2-45d5-9227-79e2cd633629",
+              "Name": "Output3",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Fire",
+              "Name": "TextPrimitive_10",
+              "X": 56.711082,
+              "Y": 25.000004,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 27.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 27.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "1228c5e0-75fb-4f0a-bcb2-644cd5871402",
+              "Name": "Output4",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Alarm",
+              "Name": "TextPrimitive_11",
+              "X": 56.711082,
+              "Y": 30.000004,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 32.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 32.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "9ec2d584-d715-47c4-b6b1-42cd2bf5562d",
+              "Name": "Output5",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_State",
+              "Name": "TextPrimitive_12",
+              "X": 56.711082,
+              "Y": 35.000004,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 37.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 37.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "693448e1-de65-4b9e-94c6-731b74f68ed4",
+              "Name": "Output6",
+              "Color": -47872,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_1_2_Block",
+              "Name": "TextPrimitive_13",
+              "X": 56.711082,
+              "Y": 40.000004,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 42.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 42.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "b61fbcf8-9fb4-4a2e-8bbf-599b9285f825",
+              "Name": "Output7",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_1_4_Block",
+              "Name": "TextPrimitive_14",
+              "X": 56.711082,
+              "Y": 45.000004,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 47.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 47.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "e73a615d-1750-4277-83cf-86ba0d0d4049",
+              "Name": "Output8",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_1_5_Block",
+              "Name": "TextPrimitive_15",
+              "X": 56.711082,
+              "Y": 50.000004,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 52.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 52.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "94a9d22b-fba5-4856-b339-8dfc2c0b6edf",
+              "Name": "Output9",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_1_2_Overtime",
+              "Name": "TextPrimitive_16",
+              "X": 56.711082,
+              "Y": 55.000004,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 57.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 57.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "6afce065-cf79-4881-adc6-43ed944d25a4",
+              "Name": "Output10",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_1_4_Overtime",
+              "Name": "TextPrimitive_17",
+              "X": 56.711082,
+              "Y": 60.000004,
+              "Width": 28.288918,
+              "Height": 4.999996,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 62.500004,
+                "EndPointX": 87.5,
+                "EndPointY": 62.500004,
+                "Discriminator": 4
+              },
+              "UniqueId": "e4f4e3b0-9c00-4e31-aa69-53f6a5bd0140",
+              "Name": "Output11",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_1_5_Overtime",
+              "Name": "TextPrimitive_18",
+              "X": 56.711082,
+              "Y": 65,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 85,
+                "StartPointY": 67.5,
+                "EndPointX": 87.5,
+                "EndPointY": 67.5,
+                "Discriminator": 4
+              },
+              "UniqueId": "dae7f3b3-5335-46d9-abe0-0da8b68526f8",
+              "Name": "Output12",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "FB_Room_N11",
+              "Name": "textIdentificator",
+              "X": 24.999996,
+              "Y": 0.0000038146973,
+              "Width": 60.000004,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 0,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            }
+          ],
+          "Ports": [
+            {
+              "UniqueId": "8bfac245-fd5a-4077-aa18-1e88ebfe9ab8",
+              "AnchorUniqueId": "febba67a-6807-4cb2-a29c-7a818bc002ef",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input0",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "ac77abc6-6642-4877-b2b9-bf0b7f46dbd4",
+              "AnchorUniqueId": "3e950549-e6ea-4c2a-93d1-fa115b6a06c5",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input1",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "9e48f9f7-2008-4db2-bcbf-7ad7b862ba87",
+              "AnchorUniqueId": "18b58e9c-093c-422a-81d5-e32c50795440",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input2",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "7bc468b4-8673-4d51-8a82-7a616e355643",
+              "AnchorUniqueId": "56f47d1e-12ac-4ea7-81b4-0e37f854296d",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input3",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "919fd2f5-0fe4-4400-b314-a115044ab3e8",
+              "AnchorUniqueId": "2356f786-73e0-4b1f-82d1-9ee97f7ecd3b",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input4",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "9523e8e6-a4e7-4d36-91bd-05c3f39147da",
+              "AnchorUniqueId": "82bed64b-e1b0-457e-b436-8259624f47c7",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output0",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "5770641b-8b95-454a-93e3-4aaa1b1b8ceb",
+              "AnchorUniqueId": "4667ca5d-c697-4352-91fb-2aefa9128d06",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output1",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "7f95c3d0-554c-4594-8cfe-cc4d4b8f186f",
+              "AnchorUniqueId": "0c153ba6-655a-4b02-a1ff-98cf4bcf5add",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output2",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "e2a3840a-9e86-42c3-a1b9-9f95f0961343",
+              "AnchorUniqueId": "40f4c3c1-8cc2-45d5-9227-79e2cd633629",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output3",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "4fafb6dd-47f0-4c87-a1af-50c1d8526363",
+              "AnchorUniqueId": "1228c5e0-75fb-4f0a-bcb2-644cd5871402",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output4",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "1a37b12b-f959-4275-bc61-e4a543596c19",
+              "AnchorUniqueId": "9ec2d584-d715-47c4-b6b1-42cd2bf5562d",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output5",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "9a52b471-7866-47fb-a3b5-06dd7a0e82b1",
+              "AnchorUniqueId": "693448e1-de65-4b9e-94c6-731b74f68ed4",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 3,
+              "IsFloating": false,
+              "Name": "Output6",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "7e73c38e-94c6-4da5-ae1c-a523cc48baf5",
+              "AnchorUniqueId": "b61fbcf8-9fb4-4a2e-8bbf-599b9285f825",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output7",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "39bb988b-a912-424e-94a2-d72ef7140266",
+              "AnchorUniqueId": "e73a615d-1750-4277-83cf-86ba0d0d4049",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output8",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "ff1921ad-c1b6-4d5a-bd2c-07908bc830e3",
+              "AnchorUniqueId": "94a9d22b-fba5-4856-b339-8dfc2c0b6edf",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output9",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "ef904bdb-5872-4d57-af69-408328cabe19",
+              "AnchorUniqueId": "6afce065-cf79-4881-adc6-43ed944d25a4",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output10",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "87907d96-9438-46b5-b798-5fe4cc7a4d2f",
+              "AnchorUniqueId": "e4f4e3b0-9c00-4e31-aa69-53f6a5bd0140",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output11",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "3b9f2d3c-cb24-46d6-93f8-533fb89f6d90",
+              "AnchorUniqueId": "dae7f3b3-5335-46d9-abe0-0da8b68526f8",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output12",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            }
+          ],
+          "IsAddToMacroProperty": false,
+          "ZOrder": 22
+        },
+        "Identificator": 1
+      },
+      "FunctionBlockUId": "59ab3d63-3874-4b69-abdc-45991ed7a5e6",
+      "LastModificationId": "0e6f83f9-c18e-47fa-8ca2-3be41ff59bc1",
+      "FunctionalBlocksDirectorStoreModel": {
+        "InputNames": [
+          "FireNormal",
+          "ResetFault",
+          "I_D_1_2_Closed",
+          "I_D_1_4_Closed",
+          "I_D_1_5_Closed"
+        ],
+        "InputDataTypes": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "InputArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ],
+        "OutputNames": [
+          "O_Ready",
+          "O_Red",
+          "O_Green",
+          "O_Fault",
+          "O_Fire",
+          "O_Alarm",
+          "O_State",
+          "O_D_1_2_Block",
+          "O_D_1_4_Block",
+          "O_D_1_5_Block",
+          "O_D_1_2_Overtime",
+          "O_D_1_4_Overtime",
+          "O_D_1_5_Overtime"
+        ],
+        "OutputDataTypes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "OutputArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ]
+      },
+      "Name": "FB_Room_N1",
+      "Discriminator": 41
+    },
+    {
+      "ElementBlockStoreModel": {
+        "ElementModel": {
+          "Version": 0,
+          "UniqueId": "fef31717-e168-46e4-92ad-3b7d821127d7",
+          "Title": "FB_Room_N4",
+          "Descriptor": " ",
+          "Location": {
+            "IsEmpty": false,
+            "X": 25,
+            "Y": 42.5
+          },
+          "IsInvertOutput": false,
+          "FontSize": 8,
+          "Comment": "",
+          "PropertyNames": [],
+          "OldDisplayNames": [],
+          "NewDisplayNames": [],
+          "FbType": -1,
+          "Primitives": [
+            {
+              "Points": [
+                {
+                  "IsEmpty": false,
+                  "X": 27.5,
+                  "Y": 43.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 27.5,
+                  "Y": 42.8134
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 27.8134,
+                  "Y": 42.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 28.199999,
+                  "Y": 42.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 28.2,
+                  "Y": 42.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 86.8,
+                  "Y": 42.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 86.79999,
+                  "Y": 42.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 87.18659,
+                  "Y": 42.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 87.49999,
+                  "Y": 42.8134
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 87.49999,
+                  "Y": 43.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 87.49999,
+                  "Y": 43.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 87.49999,
+                  "Y": 43.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 87.49999,
+                  "Y": 43.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 87.5,
+                  "Y": 43.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 87.5,
+                  "Y": 121.8
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 87.49999,
+                  "Y": 121.79999
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 87.49999,
+                  "Y": 122.18659
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 87.18659,
+                  "Y": 122.49999
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 86.799995,
+                  "Y": 122.49999
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 86.8,
+                  "Y": 122.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 28.2,
+                  "Y": 122.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 28.2,
+                  "Y": 122.49999
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 27.8134,
+                  "Y": 122.49999
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 27.5,
+                  "Y": 122.18659
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 27.5,
+                  "Y": 121.799995
+                }
+              ],
+              "PointTypes": "AAMDAwEBAQMDAwMDAwEBAQMDAwEBAQMDgw==",
+              "StyleSheetName": "QUESTION",
+              "Discriminator": 1
+            },
+            {
+              "StartPointX": 27.5,
+              "StartPointY": 47.5,
+              "EndPointX": 87.5,
+              "EndPointY": 47.5,
+              "Discriminator": 4
+            },
+            {
+              "StartPointX": 57.1,
+              "StartPointY": 47.5,
+              "EndPointX": 57.1,
+              "EndPointY": 122.5,
+              "Discriminator": 4
+            },
+            {
+              "StartPointX": 57.9,
+              "StartPointY": 47.5,
+              "EndPointX": 57.9,
+              "EndPointY": 122.5,
+              "Discriminator": 4
+            },
+            {
+              "Text": "FireNormal",
+              "Name": "TextPrimitive",
+              "X": 27.5,
+              "Y": 47.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 1,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": false,
+                  "X": 2,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 25,
+                "StartPointY": 50,
+                "EndPointX": 27.5,
+                "EndPointY": 50,
+                "Discriminator": 4
+              },
+              "UniqueId": "f8d21ea9-a002-4b0b-84e2-5535df2ad5af",
+              "Name": "Input0",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "ResetFault",
+              "Name": "TextPrimitive_2",
+              "X": 27.5,
+              "Y": 52.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 1,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": false,
+                  "X": 2,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 25,
+                "StartPointY": 55,
+                "EndPointX": 27.5,
+                "EndPointY": 55,
+                "Discriminator": 4
+              },
+              "UniqueId": "e296c931-1887-4c25-a7db-8a1e5d897f63",
+              "Name": "Input1",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "I_D_1_4_Closed",
+              "Name": "TextPrimitive_3",
+              "X": 27.5,
+              "Y": 57.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 1,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": false,
+                  "X": 2,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 25,
+                "StartPointY": 60,
+                "EndPointX": 27.5,
+                "EndPointY": 60,
+                "Discriminator": 4
+              },
+              "UniqueId": "559a0aac-2907-4531-aa74-f0a2c01cbab0",
+              "Name": "Input2",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "I_D_2_4_Closed",
+              "Name": "TextPrimitive_4",
+              "X": 27.5,
+              "Y": 62.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 1,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": false,
+                  "X": 2,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 25,
+                "StartPointY": 65,
+                "EndPointX": 27.5,
+                "EndPointY": 65,
+                "Discriminator": 4
+              },
+              "UniqueId": "a5e32363-2aab-4fe9-86eb-e654ad1296b5",
+              "Name": "Input3",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "I_D_3_4_Closed",
+              "Name": "TextPrimitive_5",
+              "X": 27.5,
+              "Y": 67.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 1,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": false,
+                  "X": 2,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 25,
+                "StartPointY": 70,
+                "EndPointX": 27.5,
+                "EndPointY": 70,
+                "Discriminator": 4
+              },
+              "UniqueId": "fff5414a-4c83-4224-b4b3-ce12c23c85d9",
+              "Name": "Input4",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "I_D_4_6_Closed",
+              "Name": "TextPrimitive_6",
+              "X": 27.5,
+              "Y": 72.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 1,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": false,
+                  "X": 2,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 25,
+                "StartPointY": 75,
+                "EndPointX": 27.5,
+                "EndPointY": 75,
+                "Discriminator": 4
+              },
+              "UniqueId": "693b3091-3ed0-4ecc-a558-dfdf3644d159",
+              "Name": "Input5",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Ready",
+              "Name": "TextPrimitive_7",
+              "X": 59.211082,
+              "Y": 47.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 50,
+                "EndPointX": 90,
+                "EndPointY": 50,
+                "Discriminator": 4
+              },
+              "UniqueId": "b8e9bb0e-ce9e-466f-9a1c-f4226502a1b6",
+              "Name": "Output0",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Red",
+              "Name": "TextPrimitive_8",
+              "X": 59.211082,
+              "Y": 52.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 55,
+                "EndPointX": 90,
+                "EndPointY": 55,
+                "Discriminator": 4
+              },
+              "UniqueId": "c2aa018c-4e04-40f0-a4ef-8d92d0d3270b",
+              "Name": "Output1",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Green",
+              "Name": "TextPrimitive_9",
+              "X": 59.211082,
+              "Y": 57.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 60,
+                "EndPointX": 90,
+                "EndPointY": 60,
+                "Discriminator": 4
+              },
+              "UniqueId": "9aaf552c-fdd4-4b0e-9b79-dca155e72b6a",
+              "Name": "Output2",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Fault",
+              "Name": "TextPrimitive_10",
+              "X": 59.211082,
+              "Y": 62.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 65,
+                "EndPointX": 90,
+                "EndPointY": 65,
+                "Discriminator": 4
+              },
+              "UniqueId": "73a4bed9-b3e4-4147-94cf-2266692ca27a",
+              "Name": "Output3",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Fire",
+              "Name": "TextPrimitive_11",
+              "X": 59.211082,
+              "Y": 67.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 70,
+                "EndPointX": 90,
+                "EndPointY": 70,
+                "Discriminator": 4
+              },
+              "UniqueId": "22705e18-cc1c-4438-90fa-d976ffe71e7f",
+              "Name": "Output4",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_Alarm",
+              "Name": "TextPrimitive_12",
+              "X": 59.211082,
+              "Y": 72.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 75,
+                "EndPointX": 90,
+                "EndPointY": 75,
+                "Discriminator": 4
+              },
+              "UniqueId": "7954e2a4-32fa-47e4-9f72-72fffd8822fb",
+              "Name": "Output5",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_State",
+              "Name": "TextPrimitive_13",
+              "X": 59.211082,
+              "Y": 77.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 80,
+                "EndPointX": 90,
+                "EndPointY": 80,
+                "Discriminator": 4
+              },
+              "UniqueId": "4cf27908-d361-409c-aad1-9701c8216259",
+              "Name": "Output6",
+              "Color": -47872,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_1_4_Block",
+              "Name": "TextPrimitive_14",
+              "X": 59.211082,
+              "Y": 82.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 85,
+                "EndPointX": 90,
+                "EndPointY": 85,
+                "Discriminator": 4
+              },
+              "UniqueId": "dd187183-9edd-4b19-aac6-31d37d6ca501",
+              "Name": "Output7",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_2_4_Block",
+              "Name": "TextPrimitive_15",
+              "X": 59.211082,
+              "Y": 87.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 90,
+                "EndPointX": 90,
+                "EndPointY": 90,
+                "Discriminator": 4
+              },
+              "UniqueId": "f1f6ee42-805a-4c0c-adf1-171962214b82",
+              "Name": "Output8",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_3_4_Block",
+              "Name": "TextPrimitive_16",
+              "X": 59.211082,
+              "Y": 92.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 95,
+                "EndPointX": 90,
+                "EndPointY": 95,
+                "Discriminator": 4
+              },
+              "UniqueId": "5750d931-3550-4e1d-902d-8e1cbf951958",
+              "Name": "Output9",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_4_6_Block",
+              "Name": "TextPrimitive_17",
+              "X": 59.211082,
+              "Y": 97.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 100,
+                "EndPointX": 90,
+                "EndPointY": 100,
+                "Discriminator": 4
+              },
+              "UniqueId": "c5f59eb5-5182-43a5-b27a-863fb1df9c8a",
+              "Name": "Output10",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_1_4_Overtime",
+              "Name": "TextPrimitive_18",
+              "X": 59.211082,
+              "Y": 102.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 105,
+                "EndPointX": 90,
+                "EndPointY": 105,
+                "Discriminator": 4
+              },
+              "UniqueId": "5dac14b1-001a-4f3b-85c0-fa59f11a5362",
+              "Name": "Output11",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_2_4_Overtime",
+              "Name": "TextPrimitive_19",
+              "X": 59.211082,
+              "Y": 107.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 110,
+                "EndPointX": 90,
+                "EndPointY": 110,
+                "Discriminator": 4
+              },
+              "UniqueId": "d7565676-2a61-4a5f-8705-2149292c6b85",
+              "Name": "Output12",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_3_4_Overtime",
+              "Name": "TextPrimitive_20",
+              "X": 59.211082,
+              "Y": 112.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 115,
+                "EndPointX": 90,
+                "EndPointY": 115,
+                "Discriminator": 4
+              },
+              "UniqueId": "fd695626-a2e5-4bf2-a1fd-3cf605d08393",
+              "Name": "Output13",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "O_D_4_6_Overtime",
+              "Name": "TextPrimitive_21",
+              "X": 59.211082,
+              "Y": 117.5,
+              "Width": 28.288918,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 2,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 87.5,
+                "StartPointY": 120,
+                "EndPointX": 90,
+                "EndPointY": 120,
+                "Discriminator": 4
+              },
+              "UniqueId": "c7dc607d-655e-4453-90e7-e8194a6578dd",
+              "Name": "Output14",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": "FB_Room_N41",
+              "Name": "textIdentificator",
+              "X": 27.5,
+              "Y": 42.5,
+              "Width": 60,
+              "Height": 5,
+              "TextStyleModel": {
+                "HorzAlign": 0,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": "Consolas",
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            }
+          ],
+          "Ports": [
+            {
+              "UniqueId": "d67ab11a-9787-4213-817e-8dca6daabc33",
+              "AnchorUniqueId": "f8d21ea9-a002-4b0b-84e2-5535df2ad5af",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input0",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "e5be0c5b-d487-4d87-bfdf-3cdfe28857ef",
+              "AnchorUniqueId": "e296c931-1887-4c25-a7db-8a1e5d897f63",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input1",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "3016a841-e8d7-4735-a577-801fea3cfd7b",
+              "AnchorUniqueId": "559a0aac-2907-4531-aa74-f0a2c01cbab0",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input2",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "3fefd330-ac7f-4eff-a38d-825fc4042146",
+              "AnchorUniqueId": "a5e32363-2aab-4fe9-86eb-e654ad1296b5",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input3",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "7606dc6c-42ce-46a6-bfcd-ba8d0318a512",
+              "AnchorUniqueId": "fff5414a-4c83-4224-b4b3-ce12c23c85d9",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input4",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "63959a41-5161-419d-a051-a53566e5026d",
+              "AnchorUniqueId": "693b3091-3ed0-4ecc-a558-dfdf3644d159",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input5",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "2dcbf86f-bec9-4ebd-b61b-a904865905bc",
+              "AnchorUniqueId": "b8e9bb0e-ce9e-466f-9a1c-f4226502a1b6",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output0",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "264e89db-5173-4208-8c8f-9f80e2a5d742",
+              "AnchorUniqueId": "c2aa018c-4e04-40f0-a4ef-8d92d0d3270b",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output1",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "471764ad-425e-4066-9f29-cbd87fd0735c",
+              "AnchorUniqueId": "9aaf552c-fdd4-4b0e-9b79-dca155e72b6a",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output2",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "91cc0498-5289-4acf-89a5-fec602dfc2f6",
+              "AnchorUniqueId": "73a4bed9-b3e4-4147-94cf-2266692ca27a",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output3",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "20ef6d1c-2cb1-4daf-a545-f7c99610cf83",
+              "AnchorUniqueId": "22705e18-cc1c-4438-90fa-d976ffe71e7f",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output4",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "998a6d74-2af7-4935-91a9-e574eb35869f",
+              "AnchorUniqueId": "7954e2a4-32fa-47e4-9f72-72fffd8822fb",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output5",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "7cdf9672-0431-4f71-8ed6-2bae5716017f",
+              "AnchorUniqueId": "4cf27908-d361-409c-aad1-9701c8216259",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 3,
+              "IsFloating": false,
+              "Name": "Output6",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "862bf34e-64ce-4db3-9de5-e70cca6d6738",
+              "AnchorUniqueId": "dd187183-9edd-4b19-aac6-31d37d6ca501",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output7",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "9c7cf20b-a9eb-41b3-bb9e-6192709991b0",
+              "AnchorUniqueId": "f1f6ee42-805a-4c0c-adf1-171962214b82",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output8",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "27ffc720-a4d6-406b-8756-9d45c164f939",
+              "AnchorUniqueId": "5750d931-3550-4e1d-902d-8e1cbf951958",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output9",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "5d4d870e-ddf0-4f15-bb1e-48dfbf768795",
+              "AnchorUniqueId": "c5f59eb5-5182-43a5-b27a-863fb1df9c8a",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output10",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "ff72bf98-d900-4611-aff3-259d97888f29",
+              "AnchorUniqueId": "5dac14b1-001a-4f3b-85c0-fa59f11a5362",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output11",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "2da17d65-2198-4fc7-8fc5-629b088f2045",
+              "AnchorUniqueId": "d7565676-2a61-4a5f-8705-2149292c6b85",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output12",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "8b788f73-8a09-41f0-8513-f1398382a538",
+              "AnchorUniqueId": "fd695626-a2e5-4bf2-a1fd-3cf605d08393",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output13",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "40fed8fd-d8bb-42d7-8860-ee0a295e76e4",
+              "AnchorUniqueId": "c7dc607d-655e-4453-90e7-e8194a6578dd",
+              "ElementOwnerUId": "00000000-0000-0000-0000-000000000000",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output14",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            }
+          ],
+          "IsAddToMacroProperty": false,
+          "ZOrder": 23
+        },
+        "Identificator": 1
+      },
+      "FunctionBlockUId": "51d424f5-d944-42b1-a8e1-13f760d93df9",
+      "LastModificationId": "6eb170eb-9476-4401-ae91-b97e6b6fab40",
+      "FunctionalBlocksDirectorStoreModel": {
+        "InputNames": [
+          "FireNormal",
+          "ResetFault",
+          "I_D_1_4_Closed",
+          "I_D_2_4_Closed",
+          "I_D_3_4_Closed",
+          "I_D_4_6_Closed"
+        ],
+        "InputDataTypes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "InputArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ],
+        "OutputNames": [
+          "O_Ready",
+          "O_Red",
+          "O_Green",
+          "O_Fault",
+          "O_Fire",
+          "O_Alarm",
+          "O_State",
+          "O_D_1_4_Block",
+          "O_D_2_4_Block",
+          "O_D_3_4_Block",
+          "O_D_4_6_Block",
+          "O_D_1_4_Overtime",
+          "O_D_2_4_Overtime",
+          "O_D_3_4_Overtime",
+          "O_D_4_6_Overtime"
+        ],
+        "OutputDataTypes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "OutputArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ]
+      },
+      "Name": "FB_Room_N4",
+      "Discriminator": 41
+    }
+  ]
+}
