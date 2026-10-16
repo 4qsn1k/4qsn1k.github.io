@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Геокупол 2V — интерактивный конструктор деталей v4</title>
+<style>
+:root{color-scheme:light;--ink:#14283a;--mut:#52697a;--line:#d5e0e8;--brand:#076d66;--blue:#1b7ba4;--bg:#eff4f7;--amber:#a15e08}*{box-sizing:border-box}body{font:15px/1.48 system-ui,-apple-system,'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ink);margin:0}main{max-width:1200px;margin:auto;padding:24px 16px 50px}header{margin-bottom:20px}.eyebrow{font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);font-size:12px}h1{font-size:clamp(27px,4.5vw,38px);letter-spacing:-.035em;line-height:1.12;margin:5px 0}h2{font-size:20px;margin:0 0 11px}h3{font-size:16px;margin:14px 0 10px}p{margin:7px 0 12px}small,.muted{color:var(--mut)}.layout{display:grid;grid-template-columns:minmax(285px,380px) minmax(0,1fr);gap:18px;align-items:start}.pane{background:white;border:1px solid var(--line);border-radius:15px;padding:19px;margin-bottom:16px;box-shadow:0 2px 4px #17354a09}.steps{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0 18px}.steps span{border:1px solid #c8dedb;padding:5px 10px;background:#e5f4f0;border-radius:30px;font-size:12px;font-weight:700;color:#135b51}.field{border-bottom:1px solid #e7eef3;padding:0 0 11px;margin-bottom:11px}.field:last-child{border-bottom:0;margin-bottom:0}.field>label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:650;font-size:14px}.field input[type=number]{border:2px solid #bbd6e3;border-radius:8px;background:#f6fbfe;padding:8px 7px;width:95px;text-align:right;font-weight:800;font-size:17px;color:#165c7c;min-width:0}.field input:focus,.field select:focus{outline:2px solid #66c6b5;outline-offset:1px}.field .right{white-space:nowrap;font-size:13px;color:#3a5a69}.hint{font-size:12px;color:var(--mut);line-height:1.45;margin-top:4px}.field select{width:100%;border:1px solid var(--line);border-radius:8px;padding:11px 9px;margin-top:5px;background:white;font-size:14px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.stat{background:#eaf3f7;border-radius:9px;padding:10px}.stat small{display:block;font-size:11px}.stat b{font-size:21px;font-variant-numeric:tabular-nums}.svgarea{border:1px solid var(--line);border-radius:12px;background:linear-gradient(160deg,#e5f2f6,white)}svg{display:block;width:100%;height:auto;max-height:430px}.legend{display:flex;flex-wrap:wrap;gap:11px;font-size:12px;color:var(--mut);margin-top:7px}.legend i{display:inline-block;vertical-align:middle;width:17px;height:4px;margin-right:5px;background:#087f78}.legend .b{background:#d08e2f}.legend .c{background:#6d8491}.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid #e6edf2;padding:9px 7px;vertical-align:top;text-align:left}th{font-size:12px;color:#516d7c;white-space:nowrap}td.r,th.r{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.actions{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}button{font:650 14px/1.25 system-ui;cursor:pointer;background:white;border:1px solid #b9cfd9;border-radius:9px;padding:11px 14px;color:#143449}button.primary{color:white;background:var(--brand);border-color:var(--brand)}button:disabled{opacity:.45;cursor:default}button:hover:not(:disabled){filter:brightness(.96)}.note{background:#e9f6f1;border-left:4px solid var(--brand);padding:10px 13px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}.warning{background:#fff5e7;border-left:4px solid var(--amber);padding:10px 13px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}.outgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.outgrid>div{background:#f3f8fa;border:1px solid #e0eaf0;border-radius:8px;padding:9px}.outgrid b{display:block;font-size:17px}.outgrid small{display:block;font-size:12px}.model{border-top:1px solid #e6edf2;padding:10px 0;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.model strong{display:block}.model p{margin:3px 0;color:var(--mut);font-size:12px}.model button{padding:9px 12px}.meter{height:12px;border-radius:10px;overflow:hidden;background:#e0eaf1;margin:8px 0}.meter>div{height:100%;background:var(--brand);width:0%;transition:width .15s}.message{font-size:13px;color:var(--mut);padding:7px 0;min-height:28px}.error{color:#a23222}.footer{color:var(--mut);font-size:13px;padding:10px 0}.checkline{display:flex;gap:9px;align-items:center;font-size:14px;margin:10px 0}.checkline input{width:18px;height:18px;accent-color:var(--brand)}@media(max-width:850px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:450px){main{padding:14px 10px}.pane{padding:14px}.stat b{font-size:19px}.outgrid{grid-template-columns:1fr}.field input[type=number]{width:80px}}@media print{button,.actions,.meter{display:none}body{background:white}}
+
+.tooltabs{display:flex;gap:8px;align-items:center;margin:10px 0}.tooltabs select{flex:1;min-width:0;padding:10px 8px;border-radius:8px;border:1px solid var(--line);background:white;font:650 14px system-ui}
+.modelcanvas{position:relative;background:radial-gradient(circle at 35% 25%,#e6f5f7,#c7dce7 70%,#bcd4e1);border:1px solid #b6d0dd;border-radius:12px;overflow:hidden;touch-action:none;user-select:none;cursor:grab}
+.modelcanvas.dragging{cursor:grabbing}.modelcanvas canvas{display:block;width:100%;height:auto;aspect-ratio:800/540;touch-action:none}.viewstatus{position:absolute;top:10px;left:10px;font-weight:750;font-size:11px;letter-spacing:.03em;padding:5px 9px;border-radius:7px;background:#ffffffdc;color:#184858;pointer-events:none}.viewhelp{position:absolute;bottom:8px;left:12px;right:12px;text-align:center;color:#355564;font-size:11px;pointer-events:none;background:#fff9;border-radius:5px}
+.toolbar{display:flex;gap:11px;flex-wrap:wrap;margin-top:11px}.toggle{display:flex;gap:5px;align-items:center;font-size:13px;color:#345465}.toggle input{accent-color:var(--brand)}.viewrow{display:flex;gap:8px;flex-wrap:wrap;margin:9px 0}.portlist{display:flex;flex-wrap:wrap;gap:7px}.portlist button{font-size:12px;padding:7px 10px}.portlist button.active{background:#087b73;color:white;border-color:#087b73}
+.model-btns{display:flex;gap:6px}.model-btns button{padding:8px}.model-btns .viewpart{border-color:#1b7ba4;color:#1b7ba4}
+#partTitle{font-size:13px}#partDim,#portAngle,#partScrews{font-size:15px}
+@media (max-width:600px){.modelcanvas canvas{aspect-ratio:4/3}.tooltabs{flex-wrap:wrap}.tooltabs select{min-width:100%}.viewhelp{font-size:10px}.toolbar{gap:8px}.viewrow button{padding:10px}}
+</style></head>
+<body><main><header><div class="eyebrow">Расчёт + готовые файлы для 3D-печати</div><h1>Геодезический купол 2V <span style="font-size:13px;color:#087b73;font-weight:700;vertical-align:middle">КОНСТРУКТОР v4</span></h1><p class="muted">Палатка или сезонная теплица Ø3–4 м · деревянные шканты Ø20–30 мм · генерация STL прямо в браузере</p><div class="steps"><span>1. Измени размеры</span><span>2. Выбери деталь</span><span>3. Поверни 3D-модель</span><span>4. Создай STL</span></div></header>
+<div class="layout"><div>
+<section class="pane"><h2>1. Размер купола</h2>
+<div class="field"><label>Диаметр купола <span class="right"><input id="diam" type="number" min="3" max="4" step="0.1" value="3.5"> м</span></label><div class="hint">Ширина конструкции по самым удалённым точкам.</div></div>
+<div class="field"><label>Полная высота <span class="right"><input id="height" type="number" min="1.5" max="3" step="0.05" value="2.25"> м</span></label><div class="hint">Высота полусферы = половина диаметра. Остальное — вертикальные стойки.</div></div>
+<div class="field"><label>Диаметр шканта <span class="right"><input id="dowel" type="number" min="15" max="40" step="0.1" value="25"> мм</span></label><div class="hint">Измерь реальный диаметр дерева штангенциркулем.</div></div>
+</section>
+<section class="pane"><h2>2. Печатный соединитель</h2>
+<div class="field"><label>Прибавка к диаметру гнезда <span class="right"><input id="clearance" type="number" min="0" max="2" step="0.1" value="0.5"> мм</span></label><div class="hint">Для шканта Ø25,4 мм (шипорез 1″) и зазора 0,5 мм отверстие Ø25,9 мм.</div></div>
+<div class="field"><label>Толщина стенки гнезда <span class="right"><input id="wall" type="number" min="3" max="12" step="0.5" value="6"> мм</span></label><div class="hint">Радиальная толщина материала вокруг отверстия.</div></div>
+<div class="field"><label>Глубина посадки <span class="right"><input id="depth" type="number" min="25" max="75" step="1" value="45"> мм</span></label><div class="hint">Насколько далеко шкант входит в печатный соединитель.</div></div>
+<div class="field"><label>Торец шканта от центра узла <span class="right"><input id="setback" type="number" min="32" max="90" step="1" value="40"> мм</span></label><div class="hint">Уменьшает длину деревянной детали на каждом конце.</div></div>
+<div class="field"><label>Радиус центрального тела <span class="right"><input id="core" type="number" min="24" max="55" step="1" value="30"> мм</span></label><div class="hint">Радиус сферической сердцевины узла.</div></div>
+<h3>Крепление веток саморезами</h3>
+<label class="checkline"><input type="checkbox" id="fasten" checked> Одно боковое отверстие для самореза на каждое гнездо</label>
+<div class="field"><label>Диаметр отверстия <span class="right"><input id="screwDiam" type="number" min="3" max="5" step="0.1" value="3.7"> мм</span></label><div class="hint">Сквозь одну стенку печатного гнезда, не сквозь всё гнездо. Для самореза по дереву Ø3,5 мм.</div></div>
+<div class="field"><label>От входа гнезда до самореза <span class="right"><input id="screwFromMouth" type="number" min="12" max="50" step="1" value="20"> мм</span></label><div class="hint">При глубине 45 мм и этом значении саморез попадает в древесину на расстоянии 25 мм от её торца.</div></div>
+<div class="field"><label for="screwQty">Саморезов на каждое гнездо</label><select id="screwQty"><option value="1" selected>1 — обычная фиксация</option><option value="2">2 — два отверстия вдоль гнезда</option></select><div class="hint">Количество применяется ко всем соединителям и точно учитывается при экспорте STL.</div></div>
+<div class="field"><label>Шаг между саморезами <span class="right"><input id="screwPitch" type="number" min="10" max="32" step="1" value="14"> мм</span></label><div class="hint">Применяется при двух отверстиях. Расстояние между их центрами вдоль оси шканта.</div></div>
+<div class="field"><label>Диаметр площадки под головку <span class="right"><input id="bossDiam" type="number" min="10" max="19" step="0.5" value="13"> мм</span></label><div class="hint">Наружная площадка на гнезде под саморез, не диаметр отверстия.</div></div>
+<div class="note">Вокруг каждого отверстия формируется наружная площадка под головку. Все отверстия обращены наружу купола. Перед сборкой сверли отверстие в древесине под сердечник самореза.</div>
+<label class="checkline"><input type="checkbox" id="mark" checked> Маркировать длинные лучи A кольцом</label>
+<div class="field"><label for="quality">Детализация STL</label><select id="quality"><option value="2.2">Быстрая · шаг 2,2 мм</option><option selected value="1.6">Стандартная · шаг 1,6 мм</option><option value="1.1">Точная · шаг 1,1 мм (медленнее)</option></select><div class="hint">Размер отверстия уточни на пробном калибре. STL строится с учётом текущих значений.</div></div>
+</section></div><div>
+<section class="pane" id="previewPanel"><h2>Интерактивный просмотр деталей</h2>
+<p class="muted">Выбери узел. Мышью вращай модель, колесом меняй масштаб. Нажми на номер луча или выбери гнездо в списке.</p>
+<div class="tooltabs" role="group" aria-label="Тип соединителя"><select id="modelSelect" aria-label="Выбрать тип соединителя"></select><button id="resetCamera" title="Вернуть исходный ракурс">Сброс вида</button></div>
+<div class="modelcanvas">
+<canvas id="partCanvas" width="800" height="540" aria-label="3D эскиз соединителя, вращается мышью"></canvas>
+<canvas id="exactCanvas" width="800" height="540" aria-label="Точная STL-сетка соединителя" style="display:none"></canvas>
+<div class="viewstatus" id="modeTag">Эскиз · геометрия упрощена</div>
+<div class="viewhelp">Потяни — вращать · колесо — масштаб · щёлкни по номеру луча</div>
+</div>
+<div class="toolbar"><label class="toggle"><input id="showWood" type="checkbox" checked> Шканты</label><label class="toggle"><input id="showScrews" type="checkbox" checked> Саморезы</label><label class="toggle"><input id="showLabels" type="checkbox" checked> Номера</label><label class="toggle"><input id="wireView" type="checkbox"> Каркас</label></div>
+<div class="field" style="margin-top:12px"><label>Разнести детали <span class="right"><output id="explodeVal">0</output> мм</span></label><input id="explode" type="range" min="0" max="70" step="1" value="0" style="width:100%;accent-color:#087b73"></div>
+<div class="field"><label>Масштаб модели <span class="right"><output id="zoomVal">100</output>%</span></label><input id="zoomView" type="range" min="40" max="180" step="5" value="100" style="width:100%;accent-color:#087b73"></div>
+<div class="viewrow"><button id="viewTop">Сверху</button><button id="viewSide">Сбоку</button><button id="precise" class="primary">Построить точный 3D STL</button><button id="previewBack" hidden>Эскиз</button></div>
+<div id="renderMsg" class="hint" role="status">Эскиз обновляется сразу. Точная 3D-сетка строится по тем же данным, что и STL для печати.</div>
+<div class="port-panel"><h3>Гнёзда выбранного соединителя</h3><div id="portList" class="portlist"></div><div class="outgrid" style="margin-top:10px"><div><small>Узел</small><b id="partTitle">—</b></div><div><small>Габарит (оценка)</small><b id="partDim">—</b></div><div><small>Угол выбранного луча к вертикали</small><b id="portAngle">—</b></div><div><small>Саморезов на узел</small><b id="partScrews">—</b></div></div></div>
+<div class="actions"><button class="primary" id="downloadPicked">Скачать выбранный STL</button><button id="saveConfig">Сохранить настройки JSON</button><button id="loadConfig">Загрузить настройки JSON</button><input type="file" id="configFile" accept=".json,application/json" hidden></div>
+<div class="note">В эскизе показаны ориентировочные формы гнёзд и крепежа. Кнопка «Построить точный 3D STL» выводит действительную сетку модели. STEP пока не экспортируется. Изменения размеров учитываются при создании STL.</div>
+</section>
+<section class="pane"><h2>Схема и ведомость</h2>
+<div class="stats"><div class="stat"><small>Диаметр</small><b id="viewD">3,50 м</b></div><div class="stat"><small>Высота</small><b id="viewH">2,25 м</b></div><div class="stat"><small>Узлов купола</small><b>26</b></div><div class="stat"><small>Шкантов купола</small><b>65</b></div></div>
+<div class="svgarea"><svg id="drawing" viewBox="0 0 700 440" role="img" aria-label="Схема каркаса 2V в перспективе"></svg></div>
+<div id="domePicked" class="hint" style="margin:8px 0 5px">Нажми на точку узла или линию шканта на схеме для просмотра параметров.</div><div class="legend"><span><i></i>A — длинные</span><span><i class="b"></i>B — короткие</span><span><i class="c"></i>C/D — нижний каркас</span></div>
+<div id="invalid" class="warning" hidden></div>
+<h3>Длина распила</h3><div class="tablewrap"><table><thead><tr><th>Шкант</th><th class="r">Шт.</th><th class="r">По осям</th><th class="r">Резать</th></tr></thead><tbody id="cutlist"></tbody></table></div>
+<div class="outgrid" style="margin-top:12px"><div><small>Всего саморезов в узлах</small><b id="screwCount">170 шт.</b></div><div><small>Посадочный диаметр</small><b id="inner">25,5 мм</b></div><div><small>Наружный диаметр гнезда</small><b id="outer">37,5 мм</b></div><div><small>Расстояние до входа в гнездо</small><b id="reach">85 мм</b></div><div><small>Плёнка с запасом 20%</small><b id="cover">28 м²</b></div></div>
+<div class="note">Пространственные углы соединителей определяются геометрией 2V. При изменении только диаметра купола эти углы <b>не меняются</b>. Меняется длина шкантов. STL перестраиваются при изменении размеров самих гнёзд.</div></section>
+<section class="pane" id="models"><h2>3. Создать готовые соединители STL</h2><p class="muted">В каждом луче предусмотрена площадка и одностороннее отверстие для фиксации шканта саморезом. Скачай комплект ZIP или только нужную модель. Файлы открываются в Creality Slicer и Fusion 360 как сетки.</p>
+<div id="modellist"></div>
+<div class="actions"><button class="primary" id="all">Создать ZIP со всеми STL + CSV</button><button id="csv">Только ведомость CSV</button></div>
+<div class="meter"><div id="bar"></div></div><div role="status" aria-live="polite" class="message" id="msg">Готов к генерации. Выбери соединитель в 3D-просмотре.</div>
+<div class="warning"><b>Прежде чем печатать комплект.</b> Это опытные соединители, а не проверенный расчёт прочности. Сделай один пробный узел и испытай его со шкантами. При укрытии плёнкой необходимы анкеры, нижняя обвязка и ветровые растяжки. Не оставляй сезонную палатку под снегом.</div>
+</section>
+</div></div><div class="footer">Независимая HTML-страница. Без интернета и внешних библиотек. На телефоне построение точных STL может занимать заметное время. Размеры отверстий и геометрия требуют проверки после печати. STEP эта версия не создаёт.</div></main>
+<script>
+const POINTS=[[0.5257311121, 0.0, 0.8506508084], [0.1624598481, 0.5, 0.8506508084], [-0.4253254042, 0.3090169944, 0.8506508084], [-0.4253254042, -0.3090169944, 0.8506508084], [0.1624598481, -0.5, 0.8506508084], [0.6881909602, 0.5, 0.5257311121], [0.6881909602, -0.5, 0.5257311121], [0.9510565163, 0.3090169944, 0.0], [0.9510565163, -0.3090169944, 0.0], [-0.2628655561, 0.8090169944, 0.5257311121], [0.5877852523, 0.8090169944, 0.0], [0.0, 1.0, 0.0], [-0.8506508084, 0.0, 0.5257311121], [-0.5877852523, 0.8090169944, 0.0], [-0.9510565163, 0.3090169944, 0.0], [-0.2628655561, -0.8090169944, 0.5257311121], [-0.9510565163, -0.3090169944, 0.0], [-0.5877852523, -0.8090169944, 0.0], [-0.0, -1.0, 0.0], [0.5877852523, -0.8090169944, 0.0], [0.0, 0.0, 1.0], [0.894427191, 0.0, 0.4472135955], [0.2763932023, 0.8506508084, 0.4472135955], [-0.7236067977, 0.5257311121, 0.4472135955], [-0.7236067977, -0.5257311121, 0.4472135955], [0.2763932023, -0.8506508084, 0.4472135955]];
+const EDGES=[[0, 1], [0, 4], [0, 5], [0, 6], [0, 20], [0, 21], [1, 2], [1, 5], [1, 9], [1, 20], [1, 22], [2, 3], [2, 9], [2, 12], [2, 20], [2, 23], [3, 4], [3, 12], [3, 15], [3, 20], [3, 24], [4, 6], [4, 15], [4, 20], [4, 25], [5, 7], [5, 10], [5, 21], [5, 22], [6, 8], [6, 19], [6, 21], [6, 25], [7, 8], [7, 10], [7, 21], [8, 19], [8, 21], [9, 11], [9, 13], [9, 22], [9, 23], [10, 11], [10, 22], [11, 13], [11, 22], [12, 14], [12, 16], [12, 23], [12, 24], [13, 14], [13, 23], [14, 16], [14, 23], [15, 17], [15, 18], [15, 24], [15, 25], [16, 17], [16, 24], [17, 18], [17, 24], [18, 19], [18, 25], [19, 25]];
+const BASE=[16, 17, 18, 19, 8, 7, 10, 11, 13, 14];
+const $=id=>document.getElementById(id);
+const num=id=>Number($(id).value);
+const mm=x=>x.toLocaleString('ru-RU',{maximumFractionDigits:1,minimumFractionDigits:1})+' мм';
+const meter=x=>x.toLocaleString('ru-RU',{maximumFractionDigits:2,minimumFractionDigits:2})+' м';
+const neigh=POINTS.map(()=>[]);for(const [a,b] of EDGES){neigh[a].push(b);neigh[b].push(a)}
+function norm(v){const len=Math.hypot(...v);return v.map(x=>x/len)}
+function diff(a,b){return a.map((x,i)=>x-b[i])}
+function ports(i,vertical=false){const a=POINTS[i],res=neigh[i].map(j=>{const o=diff(POINTS[j],a);return {type:Math.hypot(...o)>.58?'A':'B',axis:norm(o)}});if(vertical)res.push({type:'C',axis:[0,0,-1]});return res}
+function footPorts(){const i=BASE[0], ip=BASE.at(-1), inext=BASE[1];return [{type:'C',axis:[0,0,1]},{type:'D',axis:norm(diff(POINTS[ip],POINTS[i]))},{type:'D',axis:norm(diff(POINTS[inext],POINTS[i]))}]}
+const baseA=BASE.filter(i=>[7,11,14,17,19].includes(i));
+const baseB=BASE.filter(i=>!baseA.includes(i));
+const five=neigh.findIndex(n=>n.length===5), six=neigh.findIndex(n=>n.length===6);
+function specs(withStands){const list=withStands?[
+{id:'05_krai_4_levyi_so_stoikoi',title:'Крайний 4 луча · левый + стойка',qty:5,ports:ports(7,true)},
+{id:'06_krai_4_pravyi_so_stoikoi',title:'Крайний 4 луча · правый + стойка',qty:5,ports:ports(baseB[0],true)},
+{id:'03_uzel_5',title:'Верхний узел · 5 лучей',qty:6,ports:ports(five)},
+{id:'04_uzel_6',title:'Промежуточный узел · 6 лучей',qty:10,ports:ports(six)},
+{id:'07_niz_3',title:'Нижняя обвязка · 3 гнезда',qty:10,ports:footPorts()}]:[
+{id:'01_krai_4_levyi',title:'Крайний 4 луча · левый',qty:5,ports:ports(7)},
+{id:'02_krai_4_pravyi',title:'Крайний 4 луча · правый',qty:5,ports:ports(baseB[0])},
+{id:'03_uzel_5',title:'Верхний узел · 5 лучей',qty:6,ports:ports(five)},
+{id:'04_uzel_6',title:'Промежуточный узел · 6 лучей',qty:10,ports:ports(six)}];const mIdx={'05_krai_4_levyi_so_stoikoi':7,'06_krai_4_pravyi_so_stoikoi':baseB[0],'01_krai_4_levyi':7,'02_krai_4_pravyi':baseB[0],'03_uzel_5':five,'04_uzel_6':six,'07_niz_3':BASE[0]};
+for(const model of list){const outward=POINTS[mIdx[model.id]];for(const port of model.ports){const d=port.axis,dot=d[0]*outward[0]+d[1]*outward[1]+d[2]*outward[2];let s=outward.map((v,i)=>v-dot*d[i]);if(Math.hypot(...s)<.01){s=[-d[1],d[0],0];if(Math.hypot(...s)<.01)s=[1,0,0]};port.screwDir=norm(s)}}return list}
+function params(){return {screwQty:num('screwQty'),screwPitch:num('screwPitch'),bossDiam:num('bossDiam'),D:num('diam'),H:num('height'),dowel:num('dowel'),clearance:num('clearance'),wall:num('wall'),depth:num('depth'),setback:num('setback'),core:num('core'),fasten:$('fasten').checked,screwDiam:num('screwDiam'),screwFromMouth:num('screwFromMouth'),mark:$('mark').checked,step:num('quality')}}
+function check(p){if(Object.values(p).some(v=>typeof v==='number'&&!Number.isFinite(v)))return 'Заполни все числовые поля.';if(p.D<3||p.D>4)return 'Диаметр должен быть от 3 до 4 м.';if(p.H<p.D/2-1e-6)return 'Высота меньше полусферы. Увеличь высоту или уменьши диаметр.';if(p.dowel<15||p.dowel>40||p.clearance<0||p.clearance>2||p.wall<3||p.wall>12||p.depth<25||p.depth>75)return 'Проверь диаметр шканта, зазор, стенку или глубину гнезда.';if(p.fasten&&(p.wall<5||p.depth<35||p.screwDiam<3||p.screwDiam>5||p.bossDiam<p.screwDiam+5||p.bossDiam>19||![1,2].includes(p.screwQty)||p.screwPitch<10||p.screwPitch>32||p.screwFromMouth-p.screwPitch*(p.screwQty-1)/2<12||p.screwFromMouth+p.screwPitch*(p.screwQty-1)/2>p.depth-13))return 'Саморезы слишком близко к краю гнезда, стенка тонкая или неверны размеры площадки. Увеличь глубину или уменьши шаг крепежа.';if(p.core<24||p.core>55||p.setback<p.core+5)return 'Отступ торца должен быть больше радиуса сердцевины минимум на 5 мм.';if(p.setback<(p.dowel+p.clearance)/2+6)return 'Отступ слишком мал для выбранного диаметра шканта.';if(p.setback + p.depth>185)return 'Гнездо слишком длинное для этого генератора.';if(p.H>p.D/2+.015 && (p.H-p.D/2)*1000-2*p.setback<50)return 'Вертикальная стойка получится слишком короткой. Измени высоту или отступ.';return ''}
+const mul=(a,k)=>a.map(t=>t*k);
+const sg=(t)=>t.toLocaleString('ru-RU',{maximumFractionDigits:0});
+function update(){const p=params();$('viewD').textContent=meter(p.D);$('viewH').textContent=meter(p.H);const msg=check(p);$('invalid').hidden=!msg;$('invalid').textContent=msg;$('all').disabled=!!msg;const R=p.D*500,w=(p.H-p.D/2)*1000,stand=w>15;
+const A=R*.618033988749895,B=R*.5465330578253433;
+const pieces=[['A · длинный',35,A,A-2*p.setback],['B · короткий',30,B,B-2*p.setback]];
+if(stand){pieces.push(['C · нижняя стойка',10,w,w-2*p.setback]);pieces.push(['D · нижняя обвязка',10,A,A-2*p.setback])}
+$('cutlist').innerHTML=pieces.map(r=>`<tr><td>${r[0]}</td><td class="r">${r[1]}</td><td class="r">${mm(r[2])}</td><td class="r"><b>${mm(r[3])}</b></td></tr>`).join('');
+$('inner').textContent=mm(p.dowel+p.clearance);$('outer').textContent=mm(p.dowel+p.clearance+2*p.wall);$('reach').textContent=mm(p.setback+p.depth);
+const area=5.832965695859*(p.D/2)**2+10*(p.D/2)*.618033988749895*Math.max(0,p.H-p.D/2);$('cover').textContent=sg(area*1.2)+' м²';
+const models=specs(stand);$('screwCount').textContent=p.fasten?models.reduce((v,m)=>v+m.qty*m.ports.length*p.screwQty,0)+' шт.':'без саморезов';$('modellist').innerHTML=models.map((s,i)=>`<div class="model"><div><strong>${s.title}</strong><p>${s.qty} шт. · Гнёзда: ${s.ports.map(t=>t.type).join('')}</p></div><div class="model-btns"><button class="viewpart" data-i="${i}">3D</button><button class="single" data-i="${i}" ${msg?'disabled':''}>STL</button></div></div>`).join('');
+$('modellist').querySelectorAll('button.single').forEach(btn=>btn.addEventListener('click',()=>run([models[Number(btn.dataset.i)]],false)));$('modellist').querySelectorAll('button.viewpart').forEach(btn=>btn.addEventListener('click',()=>{selectModel(Number(btn.dataset.i));$('previewPanel').scrollIntoView({behavior:'smooth',block:'start'})}));
+draw(p,stand);
+}
+let selectedDomeNode=-1,selectedDomeLine=-1;
+function draw(p,stand){
+  const svg=$('drawing');svg.replaceChildren();
+  const ns='http://www.w3.org/2000/svg';
+  const el=(tag,a={})=>{const e=document.createElementNS(ns,tag);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));return e};
+  const r=p.D/2*1e3,w=Math.max(0,p.H-p.D/2)*1e3;
+  const pts=POINTS.map(v=>[r*v[0],r*v[1],w+r*v[2]]),feet=BASE.map(i=>[pts[i][0],pts[i][1],0]);
+  const az=.34,cz=Math.cos(az),sz=Math.sin(az),theta=.45;
+  const proj=v=>{const x=cz*v[0]-sz*v[1],y=sz*v[0]+cz*v[1];return[x,(y*Math.sin(theta)-v[2]*Math.cos(theta))*.9]};
+  const all=pts.concat(feet).map(proj),xs=all.map(v=>v[0]),ys=all.map(v=>v[1]);
+  const mid=[(Math.min(...xs)+Math.max(...xs))/2,(Math.min(...ys)+Math.max(...ys))/2];
+  const scale=Math.min(620/(Math.max(...xs)-Math.min(...xs)),390/(Math.max(...ys)-Math.min(...ys)));
+  const pos=v=>{const q=proj(v);return[350+(q[0]-mid[0])*scale,220+(q[1]-mid[1])*scale]};
+  const lines=[];
+  for(const [a,b] of EDGES){const q=pts[a],v=pts[b],kind=Math.hypot(...diff(q,v))/r>.58?'A':'B';lines.push([q,v,kind])}
+  if(stand)for(let k=0;k<BASE.length;k++){lines.push([pts[BASE[k]],feet[k],'C']);lines.push([feet[k],feet[(k+1)%10],'D'])}
+  for(const [lineNo,[u,v,t]] of lines.entries()){
+    const a=pos(u),b=pos(v);
+    const ln=el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:lineNo===selectedDomeLine?'#c23640':t==='A'?'#087f78':t==='B'?'#d08e2f':'#6d8491','stroke-width':lineNo===selectedDomeLine?6:3.1,'stroke-linecap':'round'});
+    svg.appendChild(ln);
+    const hit=el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'transparent','stroke-width':14,'pointer-events':'stroke'});
+    hit.style.cursor='pointer';
+    hit.addEventListener('click',()=>{
+      selectedDomeLine=lineNo;selectedDomeNode=-1;
+      const length=(t==='A'||t==='D'?r*.618033988749895:t==='B'?r*.5465330578253433:w)-2*p.setback;
+      $('domePicked').textContent='Шкант '+t+' — длина реза '+mm(length)+'. '+({A:'Длинный',B:'Короткий',C:'Нижняя стойка',D:'Нижняя обвязка'}[t])+'.';
+      draw(params(),params().H>params().D/2+.015);
+    });svg.appendChild(hit);
+  }
+  for(const [i,u] of pts.entries()){
+    const [x,y]=pos(u);
+    const c=el('circle',{cx:x,cy:y,r:i===selectedDomeNode?8:5.2,fill:i===selectedDomeNode?'#e65c45':'#1d384a',stroke:'#fff','stroke-width':1.2});
+    c.style.cursor='pointer';
+    c.addEventListener('click',()=>{
+      selectedDomeNode=i;selectedDomeLine=-1;
+      const models=specs(stand);
+      const target=BASE.includes(i)?(baseA.includes(i)?models[0]:models[1]):models.find(m=>m.id===(neigh[i].length===5?'03_uzel_5':'04_uzel_6'));
+      if(target){designer.id=target.id;designer.ray=0;invalidateExact();syncPartUI();requestDraw()}
+      $('domePicked').textContent='Узел №'+(i+1)+' — '+neigh[i].length+' лучей купола'+(BASE.includes(i)&&stand?' и нижняя стойка':'')+'. Выбрана модель '+(target?target.title:'не определена')+'.';
+      draw(params(),params().H>params().D/2+.015);
+    });svg.appendChild(c);
+  }
+}
+function csvText(){const p=params(),R=p.D*500,w=(p.H-p.D/2)*1000;const A=R*.618033988749895,B=R*.5465330578253433;const rows=[['Тип','Количество','Осевая длина, мм','Резать, мм'],['A',35,A.toFixed(1),(A-2*p.setback).toFixed(1)],['B',30,B.toFixed(1),(B-2*p.setback).toFixed(1)]];if(w>15)rows.push(['C',10,w.toFixed(1),(w-2*p.setback).toFixed(1)],['D',10,A.toFixed(1),(A-2*p.setback).toFixed(1)]);return '\ufeff'+rows.map(x=>x.join(';')).join('\r\n')}
+function trigger(name,data,type){const blob=data instanceof Blob?data:new Blob([data],{type});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+$('csv').addEventListener('click',()=>trigger('kupol_2V_rezka.csv',csvText(),'text/csv;charset=utf-8'));
+const field=(x,y,z,ports,p)=>{
+  const core=Math.hypot(x,y,z)-p.core, insideR=(p.dowel+p.clearance)/2, outR=insideR+p.wall,tip=p.setback+p.depth;
+  let outside=core, cut=1e5;
+  for(const {type,axis,screwDir} of ports){const t=x*axis[0]+y*axis[1]+z*axis[2];const radial=Math.sqrt(Math.max(0,x*x+y*y+z*z-t*t));
+    const outAx=Math.abs(t-(p.core-5+tip)*.5)-(tip-(p.core-5))*.5;const od=radial-outR;
+    let d=Math.hypot(Math.max(od,0),Math.max(outAx,0))+Math.min(Math.max(od,outAx),0);
+    if(p.mark&&type==='A'){const bandax=Math.abs(t-(tip-7+1.25))-1.25,bd=radial-(outR+1);const bd2=Math.hypot(Math.max(bd,0),Math.max(bandax,0))+Math.min(Math.max(bd,bandax),0);d=Math.min(d,bd2)}
+    if(d<outside)outside=d;
+    const inAx=Math.abs(t-(p.setback+tip+2)*.5)-(tip+2-p.setback)*.5,id=radial-insideR;
+    const dCut=Math.hypot(Math.max(id,0),Math.max(inAx,0))+Math.min(Math.max(id,inAx),0);
+    if(dCut<cut)cut=dCut;
+    if(p.fasten){
+      for(let si=0;si<p.screwQty;si++){const at=tip-p.screwFromMouth+(si-(p.screwQty-1)/2)*p.screwPitch;
+      const qx=x-axis[0]*at,qy=y-axis[1]*at,qz=z-axis[2]*at;
+      const u=qx*screwDir[0]+qy*screwDir[1]+qz*screwDir[2];
+      const perp=Math.sqrt(Math.max(0,qx*qx+qy*qy+qz*qz-u*u));
+      // Cylindrical pad: flat external seat for a pan-head self-tapping screw.
+      const boss=Math.max(perp-p.bossDiam/2,Math.abs(u-(outR+.6))-2.8);
+      outside=Math.min(outside,boss);
+      // One-sided through-wall clearance hole. Do not drill the opposing wall.
+      const h0=insideR-1.5,h1=outR+5.5;
+      const hole=Math.max(perp-p.screwDiam/2,Math.abs(u-(h0+h1)/2)-(h1-h0)/2);
+      cut=Math.min(cut,hole);}
+    }
+  }
+  return Math.max(outside,-cut);
+};
+// Surface extraction via marching tetrahedra: one consistent subdivision for all grid cells.
+const TETS=[[0,5,1,6],[0,1,2,6],[0,2,3,6],[0,3,7,6],[0,7,4,6],[0,4,5,6]];
+function bound(spec,p){const radius=(p.dowel+p.clearance)/2+p.wall+(p.mark?1:0)+(p.fasten?p.bossDiam/2:0),tip=p.setback+p.depth,mins=[-p.core,-p.core,-p.core],maxs=[p.core,p.core,p.core];for(const {axis} of spec.ports)for(let a=0;a<3;a++){const m=axis[a]*tip, lateral=radius*Math.sqrt(Math.max(0,1-axis[a]*axis[a]));mins[a]=Math.min(mins[a],m-lateral);maxs[a]=Math.max(maxs[a],m+lateral)}return {min:mins.map(x=>x-2*p.step),max:maxs.map(x=>x+2*p.step)}}
+const tick=()=>new Promise(resolve=>requestAnimationFrame(resolve));
+async function buildSTL(spec,p,onProgress){const b=bound(spec,p),step=p.step;const nx=Math.ceil((b.max[0]-b.min[0])/step),ny=Math.ceil((b.max[1]-b.min[1])/step),nz=Math.ceil((b.max[2]-b.min[2])/step);const x0=b.min[0],y0=b.min[1],z0=b.min[2];const layerSize=(nx+1)*(ny+1);if(nx*ny*nz>15000000)throw Error('Слишком много ячеек. Выбери более крупный шаг сетки.');
+  const makeLayer=(k)=>{const z=z0+k*step,v=new Float32Array(layerSize);let i=0;for(let iy=0;iy<=ny;iy++){const y=y0+iy*step;for(let ix=0;ix<=nx;ix++,i++)v[i]=field(x0+ix*step,y,z,spec.ports,p)}return v};
+  let low=makeLayer(0);const tris=[];let ntri=0;
+  function tri(a,b,c,gradient){let ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2],vx=c[0]-a[0],vy=c[1]-a[1],vz=c[2]-a[2];let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;if(Math.hypot(...diff(a,b))<0.000000001 || Math.hypot(...diff(b,c))<0.000000001 || Math.hypot(...diff(c,a))<0.000000001)return;
+    const qa=a.map(Math.fround),qb=b.map(Math.fround),qc=c.map(Math.fround);
+    const same=(u,v)=>u[0]===v[0]&&u[1]===v[1]&&u[2]===v[2];
+    if(same(qa,qb)||same(qb,qc)||same(qc,qa))return;if(nx*gradient[0]+ny*gradient[1]+nz*gradient[2]<0){const t=b;b=c;c=t}tris.push(...a,...b,...c);ntri++}
+  function tet(ids,points,values){const ii=[],oo=[];for(const id of ids)(values[id]<0?ii:oo).push(id);if(ii.length===0||oo.length===0)return;const lerp=(a,b)=>{const va=values[a],vb=values[b],t=va/(va-vb);return [points[a][0]+(points[b][0]-points[a][0])*t,points[a][1]+(points[b][1]-points[a][1])*t,points[a][2]+(points[b][2]-points[a][2])*t]};let gx=0,gy=0,gz=0;for(const id of oo){gx+=points[id][0]/oo.length;gy+=points[id][1]/oo.length;gz+=points[id][2]/oo.length}for(const id of ii){gx-=points[id][0]/ii.length;gy-=points[id][1]/ii.length;gz-=points[id][2]/ii.length};const dir=[gx,gy,gz];if(ii.length===1){const a=ii[0];tri(lerp(a,oo[0]),lerp(a,oo[1]),lerp(a,oo[2]),dir)}else if(ii.length===3){const a=oo[0];tri(lerp(a,ii[0]),lerp(a,ii[1]),lerp(a,ii[2]),dir)}else{const a=lerp(ii[0],oo[0]),b=lerp(ii[0],oo[1]),c=lerp(ii[1],oo[0]),d=lerp(ii[1],oo[1]);tri(a,b,c,dir);tri(b,d,c,dir)}}
+  for(let iz=0;iz<nz;iz++){const high=makeLayer(iz+1),z=z0+iz*step;for(let iy=0;iy<ny;iy++){const y=y0+iy*step,off0=iy*(nx+1),off1=(iy+1)*(nx+1);for(let ix=0;ix<nx;ix++){const x=x0+ix*step,idx=off0+ix;const vals=[low[idx],low[idx+1],low[off1+ix+1],low[off1+ix],high[idx],high[idx+1],high[off1+ix+1],high[off1+ix]];let lowV=1e5,highV=-1e5;for(const v of vals){if(v<lowV)lowV=v;if(v>highV)highV=v}if(lowV>=0||highV<0)continue;const pts=[[x,y,z],[x+step,y,z],[x+step,y+step,z],[x,y+step,z],[x,y,z+step],[x+step,y,z+step],[x+step,y+step,z+step],[x,y+step,z+step]];for(const t of TETS)tet(t,pts,vals)}}low=high;if(iz%3===0||iz===nz-1){onProgress((iz+1)/nz);await tick()}}
+  if(ntri===0)throw Error('Не удалось создать поверхность. Проверь размеры.');
+  // Keep only the largest vertex-connected triangle component. Tiny disconnected shells
+  // are numerical artifacts of SDF intersections and cannot be printable parts.
+  const parent=new Int32Array(ntri);for(let i=0;i<ntri;i++)parent[i]=i;
+  const find=(x)=>{while(parent[x]!==x){parent[x]=parent[parent[x]];x=parent[x]}return x};
+  const join=(a,b)=>{a=find(a);b=find(b);if(a!==b)parent[b]=a};
+  const owners=new Map();
+  for(let i=0;i<ntri;i++){
+    const vkeys=[];
+    for(let j=0;j<3;j++){
+      const v=i*9+j*3;
+      vkeys.push(Math.round(tris[v]*1e4)+','+Math.round(tris[v+1]*1e4)+','+Math.round(tris[v+2]*1e4));
+    }
+    for(let j=0;j<3;j++){
+      const a=vkeys[j],b=vkeys[(j+1)%3];const key=a<b?a+'|'+b:b+'|'+a;
+      const found=owners.get(key);if(found===undefined)owners.set(key,i);else join(i,found);
+    }
+  }
+  const componentCounts=new Int32Array(ntri);let largest=-1,main=-1;
+  for(let i=0;i<ntri;i++){const root=find(i);const count=++componentCounts[root];if(count>largest){largest=count;main=root}}
+  const kept=largest;
+  const out=new ArrayBuffer(84+kept*50),d=new DataView(out);let at=80;d.setUint32(at,kept,true);at+=4;let k=0;for(let i=0;i<ntri;i++){if(find(i)!==main){k+=9;continue}const ax=tris[k],ay=tris[k+1],az=tris[k+2],bx=tris[k+3],by=tris[k+4],bz=tris[k+5],cx=tris[k+6],cy=tris[k+7],cz=tris[k+8];let nx=(by-ay)*(cz-az)-(bz-az)*(cy-ay),ny=(bz-az)*(cx-ax)-(bx-ax)*(cz-az),nz=(bx-ax)*(cy-ay)-(by-ay)*(cx-ax),len=Math.hypot(nx,ny,nz)||1;for(const f of [nx/len,ny/len,nz/len]){d.setFloat32(at,f,true);at+=4}for(let j=0;j<9;j++){d.setFloat32(at,tris[k++],true);at+=4}d.setUint16(at,0,true);at+=2}return {data:new Uint8Array(out),triangles:kept,nodes:nx*ny*nz};
+}
+// ZIP creator (STORE compression method): one downloadable file, fully offline.
+const CRC_TABLE=(()=>{let t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let j=0;j<8;j++)c=(c&1)?0xedb88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc32(data){let c=0xffffffff;for(const b of data)c=CRC_TABLE[(c^b)&255]^(c>>>8);return (c^0xffffffff)>>>0}
+async function zipBlob(files){
+  const enc=new TextEncoder(),parts=[],central=[];let offset=0,cs=0;
+  for(const f of files){
+    const name=enc.encode(f.name),data=typeof f.data==='string'?enc.encode(f.data):f.data;
+    const crc=crc32(data);let payload=data,method=0;
+    if(typeof CompressionStream!=='undefined'&&data.length>1000){
+      try{const compressed=new Blob([data]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+          payload=new Uint8Array(await new Response(compressed).arrayBuffer());method=8;}catch(e){payload=data;method=0}
+    }
+    const h=new Uint8Array(30+name.length),v=new DataView(h.buffer);
+    v.setUint32(0,0x04034b50,true);v.setUint16(4,20,true);v.setUint16(6,0x0800,true);
+    v.setUint16(8,method,true);v.setUint32(14,crc,true);
+    v.setUint32(18,payload.length,true);v.setUint32(22,data.length,true);v.setUint16(26,name.length,true);
+    h.set(name,30);parts.push(h,payload);
+    const c=new Uint8Array(46+name.length),w=new DataView(c.buffer);
+    w.setUint32(0,0x02014b50,true);w.setUint16(4,20,true);w.setUint16(6,20,true);
+    w.setUint16(8,0x0800,true);w.setUint16(10,method,true);
+    w.setUint32(16,crc,true);w.setUint32(20,payload.length,true);w.setUint32(24,data.length,true);
+    w.setUint16(28,name.length,true);w.setUint32(42,offset,true);c.set(name,46);
+    central.push(c);cs+=c.length;offset+=h.length+payload.length;
+  }
+  const tail=new Uint8Array(22),v=new DataView(tail.buffer);v.setUint32(0,0x06054b50,true);
+  v.setUint16(8,files.length,true);v.setUint16(10,files.length,true);v.setUint32(12,cs,true);v.setUint32(16,offset,true);
+  return new Blob([...parts,...central,tail],{type:'application/zip'});
+}
+function readme(p,models){return `КУПОЛ 2V — ФАЙЛЫ СОЕДИНИТЕЛЕЙ\\r\\nРазмеры каркаса: диаметр ${p.D} м, высота ${p.H} м.\\r\\nШкант Ø${p.dowel} мм, посадочное отверстие Ø${p.dowel+p.clearance} мм.\\r\\nСтенка ${p.wall} мм, глубина гнезда ${p.depth} мм, отступ торца ${p.setback} мм.\r\nБоковые отверстия под саморезы: ${p.fasten?'ВКЛ, по '+p.screwQty+' на гнездо, Ø'+p.screwDiam+' мм, от входа '+p.screwFromMouth+' мм, шаг '+p.screwPitch+' мм':'ВЫКЛ'}.\r\nВсего саморезов: ${p.fasten?models.reduce((s,m)=>s+m.qty*m.ports.length*p.screwQty,0):0}.\\r\\nSTL: триангулированные сетки; точность шага сетки ${p.step} мм.\\r\\n\\r\\nИзготовить деталей:\\r\\n${models.map(m=>m.id+' — '+m.qty+' шт.').join('\\r\\n')}\\r\\n\\r\\nПеред серийной печатью проверить размеры гнёзд и пробный узел.\\r\\nПод саморезы Ø3,5 мм сначала сверлить древесину по диаметру сердечника; длину самореза проверить на образце.\r\nНе применять длинные саморезы, способные выйти с противоположной стороны шканта.\r\nДля сезонной теплицы предусмотрите анкеровку и усиление дверного проёма.\\r\\nМодели опытные, расчёт прочности не выполнен.\\r\\n`}
+let busy=false;
+async function run(models,zip){if(busy)return;const p=params(),err=check(p);if(err){$('msg').textContent=err;return}busy=true;$('all').disabled=true;document.querySelectorAll('.single').forEach(b=>b.disabled=true);const files=[];const msg=$('msg');try{let total=0;for(const [i,s] of models.entries()){msg.textContent=`Модель ${i+1}/${models.length}: ${s.title} — создаю STL…`;$('bar').style.width=(i/models.length*100)+'%';await tick();const res=await buildSTL(s,p,q=>{$('bar').style.width=(((i+q)/models.length)*100).toFixed(1)+'%';msg.textContent=`${s.title}: ${Math.round(q*100)} % (сетка)`.replace(' (сетка)','')});files.push({name:s.id+'.stl',data:res.data});msg.textContent=`Создан ${s.id}.stl · ${res.triangles.toLocaleString('ru-RU')} треугольников.`;await tick()}
+ const prefix=`geokupol_2V_v4_D${Math.round(p.D*100)}_dowel${p.dowel}`;
+ if(zip){files.push({name:'vedomost_shkantov.csv',data:csvText()},{name:'README_RU.txt',data:readme(p,models)});trigger(prefix+'.zip',await zipBlob(files),'application/zip')}else trigger(models[0].id+'_d'+p.dowel+'.stl',files[0].data,'model/stl');$('bar').style.width='100%';msg.textContent='Готово: '+(zip?'скачан комплект ZIP':'скачан STL')+'. Проверь файлы в слайсере.';
+ }catch(e){console.error(e);msg.textContent='Ошибка генерации: '+e.message;msg.classList.add('error')}finally{busy=false;update();$('all').disabled=!!check(params())}}
+// VIEWER v4: offline previews + exact STL WebGL display. No external JS dependencies.
+const designer={id:'04_uzel_6',ray:0,yaw:.60,pitch:.45,zoom:1,explode:0,accurate:false,exactKey:'',gl:null,glShader:null,meshes:null,drag:false,moved:false,last:[0,0],clicks:[],scheduled:false};
+const PREVIEW_INPUTS=['diam','height','dowel','clearance','wall','depth','setback','core','fasten','screwDiam','screwFromMouth','screwQty','screwPitch','bossDiam','mark','quality'];
+const SCALE_FIELDS={};
+function listModels(){const p=params();return specs(p.H>p.D/2+.015)}
+function part(){return listModels().find(m=>m.id===designer.id)||listModels()[0]}
+function selectModel(i){const arr=listModels(),n=Math.max(0,Math.min(i,arr.length-1));designer.id=arr[n].id;designer.ray=0;designer.accurate=false;syncPartUI(true);requestDraw()}
+function selectedPort(){const m=part();return m.ports[Math.min(designer.ray,m.ports.length-1)]}
+function invalidateExact(){if(designer.accurate){designer.accurate=false;$('exactCanvas').style.display='none';$('partCanvas').style.display='block';$('previewBack').hidden=true;$('precise').hidden=false;$('renderMsg').textContent='Размеры изменились. Эскиз обновлён; точную сетку можно построить заново.'}}
+function syncPartUI(resetSelect=false){const models=listModels();if(!models.find(m=>m.id===designer.id))designer.id=models[0].id;
+const select=$('modelSelect'),ids=models.map(m=>m.id).join('|');if(select.dataset.ids!==ids){select.replaceChildren();for(const m of models){const o=document.createElement('option');o.value=m.id;o.textContent=m.title+' · '+m.qty+' шт.';select.appendChild(o)}select.dataset.ids=ids}select.value=designer.id;
+const m=part(),p=params();designer.ray=Math.min(designer.ray,m.ports.length-1);
+$('partTitle').textContent=m.title;const tip=p.setback+p.depth;$('partDim').textContent='≈'+Math.round(2*tip)+' мм';$('partScrews').textContent=p.fasten?m.ports.length*p.screwQty+' шт.':'0';
+$('portAngle').textContent=(Math.acos(Math.max(-1,Math.min(1,selectedPort().axis[2])))*180/Math.PI).toFixed(1)+'°';
+$('portList').replaceChildren();for(const [i,port] of m.ports.entries()){const b=document.createElement('button');b.type='button';b.className=i===designer.ray?'active':'';b.textContent=(i+1)+'. '+port.type+' ('+({A:'длинный',B:'короткий',C:'стойка',D:'обвязка'}[port.type]||'')+')';b.onclick=()=>{designer.ray=i;syncPartUI();requestDraw()};$('portList').appendChild(b)}
+$('explodeVal').textContent=designer.explode;$('zoomVal').textContent=Math.round(designer.zoom*100);
+$('modeTag').textContent=designer.accurate?'Точная поверхность · STL':'Эскиз · форма приближённая';
+}
+function vecAdd(a,b){return[a[0]+b[0],a[1]+b[1],a[2]+b[2]]}
+function vecMul(a,m){return[a[0]*m,a[1]*m,a[2]*m]}
+function vecDot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]}
+function vecCross(a,b){return[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}
+function rayBasis(v){const tmp=Math.abs(v[2])>.88?[0,1,0]:[0,0,1];const u=norm(vecCross(v,tmp));return[u,norm(vecCross(v,u))]}
+function cylPoint(v,t,rad,phi){const [u,w]=rayBasis(v);return vecAdd(vecMul(v,t),vecAdd(vecMul(u,rad*Math.cos(phi)),vecMul(w,rad*Math.sin(phi))))}
+function screenTransform(pt){let a=designer.yaw,b=designer.pitch,ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b);const x=ca*pt[0]-sa*pt[1],y=sa*pt[0]+ca*pt[1];return [x,cb*pt[2]+sb*y,cb*y-sb*pt[2]]}
+function renderSketch(){const canvas=$('partCanvas'),ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,p=params(),spec=part();const tip=p.setback+p.depth,outer=(p.dowel+p.clearance)/2+p.wall,inner=(p.dowel+p.clearance)/2;
+ctx.clearRect(0,0,W,H);const grad=ctx.createRadialGradient(310,100,30,400,275,520);grad.addColorStop(0,'#edf8fa');grad.addColorStop(1,'#bfd7e3');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+const pixels=(W*.31/(tip+65))*designer.zoom;
+const pr=q=>{const z=screenTransform(q);return[W*.5+z[0]*pixels,H*.50-z[1]*pixels,z[2]]};
+const faces=[];const add=(verts,color,stroke='',alpha=1)=>faces.push({verts:verts.map(pr),color,stroke,alpha,depth:verts.reduce((acc,q)=>acc+screenTransform(q)[2],0)/verts.length});
+const sides=18;
+function cylinder(v,t0,t1,r,col,edge=false){for(let k=0;k<sides;k++){const an=k*2*Math.PI/sides,bn=(k+1)*2*Math.PI/sides;add([cylPoint(v,t0,r,an),cylPoint(v,t0,r,bn),cylPoint(v,t1,r,bn),cylPoint(v,t1,r,an)],col,edge?'#638ca1':'')}
+add(Array.from({length:sides},(_,k)=>cylPoint(v,t0,r,k*2*Math.PI/sides)).reverse(),col);add(Array.from({length:sides},(_,k)=>cylPoint(v,t1,r,k*2*Math.PI/sides)),col)}
+// A short visible piece of wood: the buried section is intentionally hidden by the housing.
+if($('showWood').checked){for(const [i,port] of spec.ports.entries()){const t0=tip+designer.explode-1,t1=tip+designer.explode+65;cylinder(port.axis,t0,t1,p.dowel/2,i===designer.ray?'#c08c56':'#cfad75',true)}}
+// Central hub sphere.
+const rings=10,merid=20;for(let j=0;j<rings;j++){const a=-Math.PI/2+j*Math.PI/rings,b=-Math.PI/2+(j+1)*Math.PI/rings;for(let k=0;k<merid;k++){const t=k*2*Math.PI/merid,u=(k+1)*2*Math.PI/merid;const pt=(ang,phi)=>[p.core*Math.cos(ang)*Math.cos(phi),p.core*Math.cos(ang)*Math.sin(phi),p.core*Math.sin(ang)];add([pt(a,t),pt(a,u),pt(b,u),pt(b,t)],'#346c83','#2a6177')}}
+for(const [i,port] of spec.ports.entries()){
+const axis=port.axis,col=i===designer.ray?'#06877b':'#4d91aa',edge=i===designer.ray?'#026a64':'#386c83';const begin=Math.max(p.core-5,0);
+for(let k=0;k<sides;k++){const t=k*2*Math.PI/sides,u=(k+1)*2*Math.PI/sides;add([cylPoint(axis,begin,outer,t),cylPoint(axis,begin,outer,u),cylPoint(axis,tip,outer,u),cylPoint(axis,tip,outer,t)],col,edge);
+add([cylPoint(axis,tip,outer,t),cylPoint(axis,tip,outer,u),cylPoint(axis,tip,inner,u),cylPoint(axis,tip,inner,t)],'#aed4d9',edge);
+add([cylPoint(axis,p.setback,inner,t),cylPoint(axis,p.setback,inner,u),cylPoint(axis,tip,inner,u),cylPoint(axis,tip,inner,t)],'#1d5269')}
+if(p.mark&&port.type==='A')for(let k=0;k<sides;k++){const t=k*2*Math.PI/sides,u=(k+1)*2*Math.PI/sides;add([cylPoint(axis,tip-7,outer+1,t),cylPoint(axis,tip-7,outer+1,u),cylPoint(axis,tip-4,outer+1,u),cylPoint(axis,tip-4,outer+1,t)],'#dcc16b')}
+if(p.fasten && $('showScrews').checked){for(let si=0;si<p.screwQty;si++){const st=tip-p.screwFromMouth+(si-(p.screwQty-1)/2)*p.screwPitch;const spot=vecAdd(vecMul(axis,st),vecMul(port.screwDir,outer+2));const [u,w]=rayBasis(port.screwDir);const disk=[];for(let k=0;k<20;k++)disk.push(vecAdd(spot,vecAdd(vecMul(u,(p.screwDiam/2+2)*Math.cos(k*2*Math.PI/20)),vecMul(w,(p.screwDiam/2+2)*Math.sin(k*2*Math.PI/20)))));add(disk,'#e4bb66','#655c3b')}}
+}
+faces.sort((a,b)=>a.depth-b.depth);for(const f of faces){const v=f.verts;ctx.beginPath();ctx.moveTo(v[0][0],v[0][1]);for(let i=1;i<v.length;i++)ctx.lineTo(v[i][0],v[i][1]);ctx.closePath();if($('wireView').checked){ctx.fillStyle='rgba(247,252,253,.13)';ctx.fill()}else{ctx.globalAlpha=f.alpha;ctx.fillStyle=f.color;ctx.fill();ctx.globalAlpha=1}ctx.strokeStyle=$('wireView').checked?'#2e7f95':f.stroke||'rgba(17,69,90,.11)';ctx.lineWidth=$('wireView').checked?1.2:.45;ctx.stroke()}
+// Label and picking positions in front of the projection.
+designer.clicks=[];
+if($('showLabels').checked)for(const [i,port] of spec.ports.entries()){const loc=pr(vecMul(port.axis,tip+25+designer.explode));const is=i===designer.ray;designer.clicks.push([loc[0],loc[1],i]);ctx.beginPath();ctx.arc(loc[0],loc[1],14,0,2*Math.PI);ctx.fillStyle=is?'#087e76':'rgba(255,255,255,.94)';ctx.fill();ctx.strokeStyle=is?'#07685f':'#4c8699';ctx.lineWidth=1.5;ctx.stroke();ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='bold 13px system-ui';ctx.fillStyle=is?'#fff':'#244b5e';ctx.fillText(''+(i+1),loc[0],loc[1])}
+// Axis indicator and scale bar.
+const o=[60,H-56],basis=[[40,0,0],[0,40,0],[0,0,40]],colors=['#c85e54','#4a9a68','#3879ae'];const ort=q=>{const v=screenTransform(q);return[o[0]+v[0]*.55,o[1]-v[1]*.55]};for(let k=0;k<3;k++){const pp=ort(basis[k]);ctx.strokeStyle=colors[k];ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(o[0],o[1]);ctx.lineTo(pp[0],pp[1]);ctx.stroke();ctx.font='bold 12px system-ui';ctx.fillText('XYZ'[k],pp[0]+6,pp[1])}
+ctx.fillStyle='#254a60';ctx.font='12px system-ui';ctx.textAlign='right';ctx.fillText('Ø'+(p.dowel+p.clearance).toFixed(1)+' · гнездо '+p.depth+' мм',W-15,H-16);
+}
+function requestDraw(){if(designer.scheduled)return;designer.scheduled=true;requestAnimationFrame(()=>{designer.scheduled=false;if(designer.accurate){renderGL()}else{renderSketch()}})}
+function onConfigurationChanged(){invalidateExact();syncPartUI();requestDraw()}
+const updateOriginal=update;update=function(){updateOriginal();onConfigurationChanged()};
+function initViewer(){
+$('modelSelect').addEventListener('change',e=>{designer.id=e.target.value;designer.ray=0;invalidateExact();syncPartUI();requestDraw()});
+$('resetCamera').addEventListener('click',()=>{designer.yaw=.60;designer.pitch=.45;designer.zoom=1;$('zoomView').value=100;syncPartUI();requestDraw()});
+$('viewTop').addEventListener('click',()=>{designer.yaw=0;designer.pitch=Math.PI/2;requestDraw()});
+$('viewSide').addEventListener('click',()=>{designer.yaw=0;designer.pitch=0;requestDraw()});
+for(const id of ['showWood','showScrews','showLabels','wireView'])$(id).addEventListener('input',requestDraw);
+$('explode').addEventListener('input',e=>{designer.explode=+e.target.value;syncPartUI();requestDraw()});
+$('zoomView').addEventListener('input',e=>{designer.zoom=+e.target.value/100;syncPartUI();requestDraw()});
+const panel=document.querySelector('.modelcanvas');
+panel.addEventListener('pointerdown',e=>{panel.setPointerCapture(e.pointerId);designer.drag=true;designer.moved=false;designer.last=[e.clientX,e.clientY];panel.classList.add('dragging')});
+panel.addEventListener('pointermove',e=>{if(!designer.drag)return;const dx=e.clientX-designer.last[0],dy=e.clientY-designer.last[1];if(Math.abs(dx)+Math.abs(dy)>1)designer.moved=true;designer.yaw+=dx*.008;designer.pitch=Math.max(-1.55,Math.min(1.55,designer.pitch+dy*.008));designer.last=[e.clientX,e.clientY];requestDraw()});
+panel.addEventListener('pointerup',e=>{if(!designer.drag)return;designer.drag=false;panel.classList.remove('dragging');if(designer.moved||designer.accurate)return;const rect=$('partCanvas').getBoundingClientRect(),x=(e.clientX-rect.left)*800/rect.width,y=(e.clientY-rect.top)*540/rect.height;let closest=null;for(const [cx,cy,i] of designer.clicks){const d=Math.hypot(x-cx,y-cy);if(d<25&&(!closest||d<closest[0]))closest=[d,i]}if(closest){designer.ray=closest[1];syncPartUI();requestDraw()}});
+panel.addEventListener('pointercancel',()=>{designer.drag=false;panel.classList.remove('dragging')});
+panel.addEventListener('wheel',e=>{e.preventDefault();designer.zoom=Math.max(.4,Math.min(1.8,designer.zoom*(e.deltaY>0?.92:1.08)));$('zoomView').value=Math.round(designer.zoom*100/5)*5;syncPartUI();requestDraw()},{passive:false});
+$('downloadPicked').addEventListener('click',()=>run([part()],false));
+$('saveConfig').addEventListener('click',()=>{const obj={version:4,inputs:Object.fromEntries(PREVIEW_INPUTS.map(k=>[k,($(k).type==='checkbox'?$(k).checked:$(k).value)])),selected:designer.id};trigger('kupol_2V_nastroiki_v4.json',JSON.stringify(obj,null,2),'application/json')});
+$('loadConfig').addEventListener('click',()=>$('configFile').click());
+$('configFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const obj=JSON.parse(await file.text());if(!obj.inputs||typeof obj.inputs!=='object')throw Error('Нет параметров');for(const k of PREVIEW_INPUTS){if(!(k in obj.inputs))continue;const t=$(k),v=obj.inputs[k];if(t.type==='checkbox'){t.checked=!!v}else if(t.type==='number'){if(!Number.isFinite(Number(v)))continue;t.value=v}else if(t.type==='select-one'){if([...t.options].some(o=>o.value===String(v)))t.value=v}}
+if(typeof obj.selected==='string')designer.id=obj.selected;update();$('renderMsg').textContent='Параметры загружены. Проверь размеры и заново сформируй STL.'}catch(err){$('renderMsg').textContent='Не удалось прочитать настройки JSON: '+err.message}finally{e.target.value=''}});
+$('precise').addEventListener('click',generatePrecise);
+$('previewBack').addEventListener('click',()=>{designer.accurate=false;$('precise').hidden=false;$('previewBack').hidden=true;$('exactCanvas').style.display='none';$('partCanvas').style.display='block';syncPartUI();requestDraw()});
+}
+// Native WebGL displays the REAL binary STL computed by buildSTL.
+function makeGL(){if(designer.gl)return designer.gl;const canvas=$('exactCanvas'),gl=canvas.getContext('webgl',{antialias:true,alpha:false});if(!gl)throw Error('WebGL недоступен в этом браузере');
+const vertex=`attribute vec3 aPos;attribute vec3 aNormal;uniform float uYaw,uPitch,uZoom,uExtent;varying float vLight;void main(){float ca=cos(uYaw),sa=sin(uYaw),cb=cos(uPitch),sb=sin(uPitch);vec3 p=vec3(ca*aPos.x-sa*aPos.y,sa*aPos.x+ca*aPos.y,aPos.z);vec3 n=vec3(ca*aNormal.x-sa*aNormal.y,sa*aNormal.x+ca*aNormal.y,aNormal.z);p=vec3(p.x,cb*p.z+sb*p.y,cb*p.y-sb*p.z);n=vec3(n.x,cb*n.z+sb*n.y,cb*n.y-sb*n.z);float aspect=800.0/540.0;gl_Position=vec4(p.x/uExtent/aspect/uZoom,p.y/uExtent/uZoom,p.z/uExtent*.25,1.0);vLight=.60+.40*abs(dot(normalize(n),normalize(vec3(.4,.6,1.0))));}`;
+const frag=`precision mediump float;varying float vLight;void main(){gl_FragColor=vec4(vec3(.11,.48,.56)*vLight+vec3(.07,.15,.18),1.);}`;
+function shader(src,t){const sh=gl.createShader(t);gl.shaderSource(sh,src);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(sh));return sh}
+const pr=gl.createProgram();gl.attachShader(pr,shader(vertex,gl.VERTEX_SHADER));gl.attachShader(pr,shader(frag,gl.FRAGMENT_SHADER));gl.linkProgram(pr);if(!gl.getProgramParameter(pr,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(pr));gl.useProgram(pr);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);
+const buffer=gl.createBuffer();designer.gl={gl,pr,buffer,attributePos:gl.getAttribLocation(pr,'aPos'),attributeNormal:gl.getAttribLocation(pr,'aNormal'),yaw:gl.getUniformLocation(pr,'uYaw'),pitch:gl.getUniformLocation(pr,'uPitch'),zoom:gl.getUniformLocation(pr,'uZoom'),extent:gl.getUniformLocation(pr,'uExtent'),count:0};return designer.gl}
+function setGLMesh(raw){const state=makeGL(),gl=state.gl,dat=new DataView(raw.buffer,raw.byteOffset,raw.byteLength),cnt=dat.getUint32(80,true),floats=new Float32Array(cnt*18);let k=0,at=84;for(let i=0;i<cnt;i++){const norm=[dat.getFloat32(at,true),dat.getFloat32(at+4,true),dat.getFloat32(at+8,true)];at+=12;for(let j=0;j<3;j++){floats[k++]=dat.getFloat32(at,true);floats[k++]=dat.getFloat32(at+4,true);floats[k++]=dat.getFloat32(at+8,true);floats.set(norm,k);k+=3;at+=12}at+=2}
+gl.bindBuffer(gl.ARRAY_BUFFER,state.buffer);gl.bufferData(gl.ARRAY_BUFFER,floats,gl.STATIC_DRAW);state.count=cnt*3;return cnt}
+function renderGL(){const s=designer.gl;if(!s)return;const p=params(),gl=s.gl;gl.viewport(0,0,800,540);gl.clearColor(.83,.91,.95,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(s.pr);gl.bindBuffer(gl.ARRAY_BUFFER,s.buffer);gl.enableVertexAttribArray(s.attributePos);gl.vertexAttribPointer(s.attributePos,3,gl.FLOAT,false,24,0);gl.enableVertexAttribArray(s.attributeNormal);gl.vertexAttribPointer(s.attributeNormal,3,gl.FLOAT,false,24,12);gl.uniform1f(s.yaw,designer.yaw);gl.uniform1f(s.pitch,designer.pitch);gl.uniform1f(s.zoom,designer.zoom);gl.uniform1f(s.extent,(p.setback+p.depth+70)*.80);gl.drawArrays(gl.TRIANGLES,0,s.count)}
+let generatingPreview=false;
+async function generatePrecise(){if(generatingPreview)return;const p=params(),err=check(p);if(err){$('renderMsg').textContent=err;return}generatingPreview=true;$('precise').disabled=true;const id=part().id,signature=JSON.stringify(p);try{$('renderMsg').textContent='Строю точную 3D-модель: 0 %';await tick();const result=await buildSTL(part(),p,f=>{$('renderMsg').textContent='Строю точную 3D-модель: '+Math.round(f*100)+' %'});if(id!==designer.id||signature!==JSON.stringify(params())){$('renderMsg').textContent='Параметры изменились. Построй точную сетку заново.';return}let n;
+try{n=setGLMesh(result.data)}catch(displayError){
+  if(String(displayError.message).includes('WebGL')){
+    trigger(id+'_d'+p.dowel+'.stl',result.data,'model/stl');
+    $('renderMsg').textContent='WebGL недоступен. Точная STL-сетка создана и скачана. 3D-эскиз остаётся доступен.';
+    return;
+  }
+  throw displayError;
+}
+designer.accurate=true;$('partCanvas').style.display='none';$('exactCanvas').style.display='block';$('precise').hidden=true;$('previewBack').hidden=false;syncPartUI();requestDraw();$('renderMsg').textContent='Точная STL-модель готова: '+n.toLocaleString('ru-RU')+' треугольников. Здесь показан только пластик; шканты и саморезы — в режиме эскиза.'}catch(e){console.error(e);$('renderMsg').textContent='Ошибка точного просмотра: '+e.message}finally{generatingPreview=false;$('precise').disabled=false}}
+initViewer();
+
+$('all').addEventListener('click',()=>run(specs(params().H>params().D/2+.015),true));
+for(const id of ['diam','height','dowel','clearance','wall','depth','setback','core','fasten','screwDiam','screwFromMouth','screwQty','screwPitch','bossDiam','mark','quality'])$(id).addEventListener('input',()=>{if(!busy)update()});
+update();
+</script></body></html>
