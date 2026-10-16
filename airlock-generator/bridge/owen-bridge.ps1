@@ -120,7 +120,8 @@ public static class OwenBridgeWin32 {
       if($before.Value -eq $Value){$result.changed=$false;$result.note="ALREADY_MATCHES"}
       elseif(-not $Apply){$result.changed=$false;$result.note="DRY_RUN_ADD_APPLY"}
       else {
-        [OwenBridgeWin32]::ShowWindow($process.MainWindowHandle,9)|Out-Null
+        # Do not call ShowWindow(SW_RESTORE=9): that un-maximizes the Owen Logic window.
+        # The preceding focus helper can maximize once; the bridge must preserve size.
         [OwenBridgeWin32]::SetForegroundWindow($process.MainWindowHandle)|Out-Null
         Start-Sleep -Milliseconds 250
         if([OwenBridgeWin32]::GetForegroundWindow() -ne $process.MainWindowHandle){throw "FOREGROUND_NOT_OWEN: refusing click"}
