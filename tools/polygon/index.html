@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Правильный многоугольник — демо</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#e8f0e9;background:#101713}*{box-sizing:border-box}body{margin:0}
+main{width:min(940px,calc(100% - 32px));margin:25px auto}a{color:#a4e7b0}
+h1{font-size:clamp(25px,5vw,42px)}p,.note{color:#b0c4b5;line-height:1.6}
+.layout{display:grid;grid-template-columns:minmax(250px,350px) 1fr;gap:22px}@media(max-width:740px){.layout{grid-template-columns:1fr}}
+.panel{border:1px solid #34463a;border-radius:17px;background:#19251d;padding:22px}
+label{display:block;margin:18px 0 7px;color:#bdd0c0}input{width:100%;background:#111b15;color:white;font:inherit;padding:11px;border-radius:8px;border:1px solid #536b57}
+button{border:0;border-radius:9px;background:#a4e7b0;color:#122717;font:inherit;font-weight:750;padding:11px 16px;cursor:pointer;margin:6px 6px 0 0}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #a4e7b0;outline-offset:3px}
+.results{font-variant-numeric:tabular-nums;line-height:2.1}.results strong{color:#a4e7b0}
+svg{width:100%;max-height:450px;aspect-ratio:1;display:block}.note{font-size:13px}
+</style></head>
+<body><main><a href="../../">← Каталог</a><h1>Правильный многоугольник</h1>
+<p>Демонстрационный инженерный инструмент. Это <strong>не калькулятор геокупола</strong>.</p>
+<div class="layout"><section class="panel">
+<label for="diameter">Диаметр описанной окружности, мм</label>
+<input id="diameter" type="number" min="1" max="1000000" step="any" value="1000">
+<label for="sides">Число сторон (3–120)</label>
+<input id="sides" type="number" min="3" max="120" step="1" value="6">
+<div id="results" class="results" aria-live="polite"></div>
+<button id="svgDownload" type="button">Скачать SVG</button>
+<button id="csvDownload" type="button">Скачать CSV</button>
+<p class="note">Все вычисления выполняются в браузере. Данные не отправляются на сервер.</p>
+</section><section class="panel">
+<svg id="drawing" viewBox="-120 -120 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Чертёж многоугольника">
+<circle r="100" fill="none" stroke="#476851" stroke-dasharray="3 4"/>
+<polygon id="poly" fill="#a4e7b01c" stroke="#a4e7b0" stroke-width="2"/>
+<circle r="2" fill="#a4e7b0"/></svg>
+</section></div></main>
+<script>
+'use strict';
+const D=document.getElementById('diameter'),N=document.getElementById('sides'),res=document.getElementById('results'),poly=document.getElementById('poly');
+let state=null;
+const format=v=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:3}).format(v);
+function update(){
+ const d=Number(D.value),n=Number(N.value);
+ if(D.value.trim()===''||N.value.trim()===''||!Number.isFinite(d)||d<=0||d>1e6||!Number.isInteger(n)||n<3||n>120){
+  state=null;res.textContent='Введите положительный диаметр до 1 000 000 мм и целое число сторон от 3 до 120.';
+  poly.setAttribute('points','');return;
+ }
+ const r=d/2,step=2*Math.PI/n,side=2*r*Math.sin(Math.PI/n);
+ const points=Array.from({length:n},(_,i)=>({x:r*Math.cos(i*step-Math.PI/2),y:r*Math.sin(i*step-Math.PI/2)}));
+ state={d,n,r,points};
+ poly.setAttribute('points',points.map(p=>(100*p.x/r).toFixed(5)+','+(100*p.y/r).toFixed(5)).join(' '));
+ res.innerHTML='<p><strong>Сторона:</strong> '+format(side)+' мм<br><strong>Периметр:</strong> '+format(n*side)+' мм<br><strong>Апофема:</strong> '+format(r*Math.cos(Math.PI/n))+' мм<br><strong>Центральный угол:</strong> '+format(360/n)+'°</p>';
+}
+D.addEventListener('input',update);N.addEventListener('input',update);
+function save(name,content,mime){
+ const url=URL.createObjectURL(new Blob([content],{type:mime}));
+ const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+document.getElementById('svgDownload').addEventListener('click',()=>{
+ if(!state)return;const s=state;
+ const pts=s.points.map(p=>p.x.toFixed(5)+','+p.y.toFixed(5)).join(' ');
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="'+(-s.r)+' '+(-s.r)+' '+s.d+' '+s.d+'" width="'+s.d+'mm" height="'+s.d+'mm"><polygon points="'+pts+'" fill="none" stroke="black" stroke-width="0.3"/></svg>';
+ save('polygon-'+s.n+'-'+s.d+'mm.svg',svg,'image/svg+xml');
+});
+document.getElementById('csvDownload').addEventListener('click',()=>{
+ if(!state)return;const s=state;
+ const rows=['vertex,x_mm,y_mm',...s.points.map((p,i)=>(i+1)+','+p.x.toFixed(5)+','+p.y.toFixed(5))];
+ save('polygon-'+s.n+'-'+s.d+'mm.csv','\uFEFF'+rows.join('\r\n'),'text/csv;charset=utf-8');
+});
+update();
+</script></body></html>
