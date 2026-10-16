@@ -81,10 +81,12 @@ test("QA-MODEL-006","Fire releases requests, restore returns to initial purge",(
   const t=make("1");ready(t);
   let s=capture("fire",t.step({FireNormal:false},100));
   eq(s.state,99,"fire state");allBlocks(s,t.doorIds,false);
-  s=capture("fire restore",t.step({FireNormal:true},100));
-  eq(s.state,0,"reinitialization");
-  s=capture("begin purge",t.step({},100));
-  eq(s.state,30,"restart purge");
+  s=capture("fire restored, next scans start purge",t.step({FireNormal:true},100));
+  eq(s.state,30,"purge already restarted after 100ms");
+  eq(s.green,false,"not ready before purge completes");
+  allBlocks(s,t.doorIds,true);
+  s=capture("after full purge",t.step({},30300));
+  eq(s.state,10,"ready after recovery purge");
 });
 test("QA-MODEL-007","Mutual room 4 releases locks immediately",()=>{
   const t=make("4");
