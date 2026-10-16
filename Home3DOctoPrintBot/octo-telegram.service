@@ -1,0 +1,23 @@
+[Unit]
+Description=Private OctoPrint Telegram bot
+After=network-online.target octoprint.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=octo-telegram
+Group=octo-telegram
+EnvironmentFile=/etc/octo-telegram.env
+WorkingDirectory=/opt/octo-telegram
+ExecStart=/usr/bin/python3 -u /opt/octo-telegram/bot.py
+Restart=on-failure
+RestartSec=8
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/octo-telegram
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

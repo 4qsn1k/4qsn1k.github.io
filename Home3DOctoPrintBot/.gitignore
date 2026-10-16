@@ -1,0 +1,26 @@
+# Local credentials and runtime state
+.env
+.env.*
+!.env.example
+!*.env.example
+*.secret
+*.key
+*.pem
+*.ppk
+authorized_keys
+id_ed25519*
+octopi_to_vps_ed25519*
+offset.json
+*.db
+*.sqlite*
+*.log
+*.pid
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+node_modules/
+.DS_Store
+*.zip
+*.tar*

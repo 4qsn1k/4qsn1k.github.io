@@ -1,0 +1,13 @@
+[Unit]
+Description=Telegram-only HTTPS CONNECT proxy for OctoPrint bot
+Wants=octopi-telegram-tunnel.service
+After=octopi-telegram-tunnel.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -u /home/octopi3d/telegram_connect_proxy.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

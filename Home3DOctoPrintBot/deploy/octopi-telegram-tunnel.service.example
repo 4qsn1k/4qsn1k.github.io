@@ -1,0 +1,14 @@
+[Unit]
+Description=OctoPi Telegram Bot API SSH tunnel to VPS
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+# Replace VPS_USER and VPS_HOST; authorize a restricted public key on VPS.
+ExecStart=/usr/bin/ssh -N -T -i /home/octopi3d/.ssh/octopi_to_vps_ed25519 -L 127.0.0.1:18443:api.telegram.org:443 -o BatchMode=yes -o StrictHostKeyChecking=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 VPS_USER@VPS_HOST
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

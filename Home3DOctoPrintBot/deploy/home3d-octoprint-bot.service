@@ -1,0 +1,16 @@
+[Unit]
+Description=Home3D Private Telegram OctoPrint Bot
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/octopi3d
+EnvironmentFile=/home/octopi3d/.config/home3d-octoprint-bot.env
+ExecStart=/usr/bin/python3 -u /home/octopi3d/Home3DOctoPrintBot/bot_ui.py
+Restart=on-failure
+RestartSec=15
+UMask=0077
+
+[Install]
+WantedBy=default.target
