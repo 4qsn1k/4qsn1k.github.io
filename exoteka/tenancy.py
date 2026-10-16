@@ -305,7 +305,7 @@ async def directory(c):
     buttons.extend([
         [("🔗 Присоединиться по приглашению","family:join")],
         [("👥 Участники и приглашения","family:members")] if owner else [],
-        [("⬅️ Настройки","settings:home")] if owner else [("⬅️ К началу","family:welcome")]
+        [("⬅️ Управление","manage:home")] if owner else [("⬅️ К началу","family:welcome")]
     ])
     buttons=[b for b in buttons if b]
     await edit(c,"\n".join(text),*buttons)

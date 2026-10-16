@@ -145,6 +145,7 @@ async def menu(c: CallbackQuery):
        [("✏️ Редактировать", "manage:editlist"),
         ("📦 Убрать из коллекции", "manage:deletelist", "danger")],
        [("🗄 Архив и возврат", "manage:archive")],
+       [("👥 Семья и коллекции", "family:list")],
        [("🏠 Главное меню", "menu:home")])
 
 async def choose(c: CallbackQuery, purpose: str):

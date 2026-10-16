@@ -167,7 +167,9 @@ async def handle(c: CallbackQuery, state: FSMContext):
     action = parts[1] if len(parts)>1 else ""
     if action == "home":
         await state.clear()
-        return await settings_home(c)
+        # Old Telegram message compatibility: the former settings screen is gone.
+        from management import menu
+        return await menu(c)
     if action == "feeding":
         await state.clear()
         return await list_periods(c)
