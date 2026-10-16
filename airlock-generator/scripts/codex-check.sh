@@ -10,6 +10,7 @@ node --check project-wiring-ui.js
 node --check bridge/headless-qa.js
 node tests/st-generator.test.js
 node tests/project-wiring.test.js
+node tests/native-fbd-fixture.test.js
 node tests/pressure-and-interlocks.test.js
 node tests/hmi.test.js
 node tests/snap.test.js
