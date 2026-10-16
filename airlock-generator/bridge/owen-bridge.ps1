@@ -1,0 +1,140 @@
+# Owen Logic UI Automation bridge v0.1 — TEST SIMULATION ONLY
+# All actions require the exact separate Airlock_SIMULATION_TEST.owle project.
+# Usage: powershell -NoProfile -ExecutionPolicy Bypass -File owen-bridge.ps1 -Action status
+#        ... -Action read -Name I_D_1_2_Closed
+#        ... -Action set-input -Name I_D_1_2_Closed -Value TRUE -Apply
+[CmdletBinding()]
+param(
+  [ValidateSet("status","read","set-input","inspect")]
+  [string]$Action="status",
+  [string]$Name="",
+  [ValidateSet("TRUE","FALSE")][string]$Value="TRUE",
+  [switch]$Apply,
+  [string]$ExpectedBlock="FB_Room_N1"
+)
+$ErrorActionPreference="Stop"
+try {
+  Add-Type -AssemblyName UIAutomationClient
+  Add-Type -AssemblyName UIAutomationTypes
+  Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class OwenBridgeWin32 {
+ [DllImport("user32.dll")] public static extern bool SetProcessDpiAwarenessContext(IntPtr context);
+ [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr window, int cmd);
+ [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr window);
+ [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+ [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
+ [DllImport("user32.dll")] public static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+}
+"@ -ErrorAction Stop
+  # The WPF UIA bounds are in physical pixels; align mouse coordinates with them.
+  [OwenBridgeWin32]::SetProcessDpiAwarenessContext([IntPtr](-4)) | Out-Null
+  $process=Get-Process ProgramRelayFBD -ErrorAction Stop |
+     Where-Object { $_.MainWindowTitle -like '*Airlock_SIMULATION_TEST.owle*' } |
+     Select-Object -First 1
+  if(-not $process){throw "TEST_PROJECT_WINDOW_NOT_FOUND"}
+  if($process.MainWindowHandle -eq [IntPtr]::Zero){throw "NO_MAIN_WINDOW"}
+  $window=[System.Windows.Automation.AutomationElement]::FromHandle($process.MainWindowHandle)
+  if(-not $window.Current.Name.EndsWith("Airlock_SIMULATION_TEST.owle")){throw "WRONG_PROJECT_WINDOW"}
+  $property=[System.Windows.Automation.AutomationElement]::AutomationIdProperty
+  $condition=New-Object System.Windows.Automation.PropertyCondition($property,"Editor")
+  $editor=$window.FindFirst([System.Windows.Automation.TreeScope]::Descendants,$condition)
+  if(-not $editor){throw "ST_EDITOR_NOT_FOUND"}
+  $pattern=$editor.GetCurrentPattern([System.Windows.Automation.TextPattern]::Pattern)
+  if(-not $pattern){throw "ST_TEXT_PATTERN_NOT_AVAILABLE"}
+  $source=$pattern.DocumentRange.GetText(-1)
+  $blockMatch=[regex]::Match($source,"(?m)^\s*FUNCTION_BLOCK\s+(\w+)")
+  if(-not $blockMatch.Success){throw "ST_BLOCK_NOT_FOUND"}
+  $block=$blockMatch.Groups[1].Value
+  if($ExpectedBlock -and $block -ne $ExpectedBlock){throw "BLOCK_MISMATCH: "+$block}
+  $inputs=[regex]::Match($source,"(?s)\bVAR_INPUT\b(.*?)\bEND_VAR\b").Groups[1].Value
+  $outputs=[regex]::Match($source,"(?s)\bVAR_OUTPUT\b(.*?)\bEND_VAR\b").Groups[1].Value
+  function SignalLocation([string]$signal){
+    if($signal -notmatch '^[A-Za-z_][A-Za-z0-9_]{0,79}$'){throw "INVALID_SIGNAL_NAME"}
+    $hit=$pattern.DocumentRange.FindText($signal,$false,$false)
+    if(-not $hit){throw "SIGNAL_NOT_FOUND: "+$signal}
+    $hit.ScrollIntoView($true)
+    Start-Sleep -Milliseconds 120
+    $rr=$hit.GetBoundingRectangles()
+    if(-not $rr -or $rr.Count -eq 0){throw "SIGNAL_NOT_VISIBLE: "+$signal}
+    $a=$rr[0]
+    $near=@()
+    $controls=$editor.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)
+    for($i=0;$i -lt $controls.Count;$i++){
+      $elem=$controls.Item($i)
+      if($elem.Current.ControlType -ne [System.Windows.Automation.ControlType]::Text){continue}
+      $label=$elem.Current.Name
+      if($label -notmatch '^(TRUE|FALSE|\d+)$'){continue}
+      $rect=$elem.Current.BoundingRectangle
+      $yDiff=[Math]::Abs(($rect.Top+$rect.Height/2)-($a.Top+$a.Height/2))
+      $xDiff=$rect.Left-$a.Right
+      if($yDiff -le 17 -and $xDiff -ge -10 -and $xDiff -lt 330){
+        $near+= [pscustomobject]@{Element=$elem;Value=$label;Rect=$rect;Score=$xDiff+$yDiff*4}
+      }
+    }
+    if($near.Count -eq 0){throw "INLINE_VALUE_NOT_FOUND: "+$signal}
+    $best=$near|Sort-Object Score|Select-Object -First 1
+    $rect=$best.Rect
+    return [pscustomobject]@{
+      Name=$signal;Value=$best.Value;
+      X=[int]($rect.Left+$rect.Width/2);Y=[int]($rect.Top+$rect.Height/2);
+      Input=([regex]::IsMatch($inputs,"(?m)^\s*"+[regex]::Escape($signal)+"<BooleanVariable>"));
+      Output=([regex]::IsMatch($outputs,"(?m)^\s*"+[regex]::Escape($signal)+"<(?:BooleanVariable|UdintVariable)>"));
+    }
+  }
+  $result=@{ok=$true;action=$Action;project="Airlock_SIMULATION_TEST.owle";block=$block;pid=$process.Id}
+  switch($Action){
+    "inspect" {
+      $result.inputNames=[regex]::Matches($inputs,"(?m)^\s*(\w+)<BooleanVariable>")|ForEach-Object {$_.Groups[1].Value}
+      $result.outputNames=[regex]::Matches($outputs,"(?m)^\s*(\w+)<(?:BooleanVariable|UdintVariable)>")|ForEach-Object {$_.Groups[1].Value}
+      $result.stLength=$source.Length
+    }
+    "read" {
+      if(-not $Name){throw "REQUIRED_NAME"}
+      $a=SignalLocation $Name
+      $result.signal=$a.Name;$result.value=$a.Value;$result.input=$a.Input;$result.output=$a.Output
+    }
+    "status" {
+      $readings=@{}
+      foreach($signal in @("FireNormal","I_D_1_2_Closed","I_D_1_4_Closed","I_D_1_5_Closed",
+         "O_State","O_Ready","O_Red","O_Green","O_D_1_2_Block","O_D_1_4_Block","O_D_1_5_Block","O_Fault")){
+        try{$loc=SignalLocation $signal;$readings[$signal]=$loc.Value}
+        catch{$readings[$signal]="UNAVAILABLE"}
+      }
+      $result.signals=$readings
+    }
+    "set-input" {
+      if(-not $Name){throw "REQUIRED_NAME"}
+      $before=SignalLocation $Name
+      if(-not $before.Input){throw "NOT_AN_INPUT: "+$Name}
+      if($before.Value -notin @("TRUE","FALSE")){throw "NOT_BOOLEAN: "+$Name}
+      $result.signal=$Name;$result.before=$before.Value;$result.requested=$Value
+      if($before.Value -eq $Value){$result.changed=$false;$result.note="ALREADY_MATCHES"}
+      elseif(-not $Apply){$result.changed=$false;$result.note="DRY_RUN_ADD_APPLY"}
+      else {
+        [OwenBridgeWin32]::ShowWindow($process.MainWindowHandle,9)|Out-Null
+        [OwenBridgeWin32]::SetForegroundWindow($process.MainWindowHandle)|Out-Null
+        Start-Sleep -Milliseconds 250
+        if([OwenBridgeWin32]::GetForegroundWindow() -ne $process.MainWindowHandle){throw "FOREGROUND_NOT_OWEN: refusing click"}
+        $current=SignalLocation $Name
+        if($current.Value -ne $before.Value){throw "RACE_INPUT_CHANGED: refusing click"}
+        [OwenBridgeWin32]::SetCursorPos($current.X,$current.Y)|Out-Null
+        [OwenBridgeWin32]::mouse_event(2,0,0,0,[UIntPtr]::Zero)
+        Start-Sleep -Milliseconds 75
+        [OwenBridgeWin32]::mouse_event(4,0,0,0,[UIntPtr]::Zero)
+        Start-Sleep -Milliseconds 300
+        $after=SignalLocation $Name
+        $result.after=$after.Value;$result.changed=($after.Value -eq $Value)
+        $result.note=if($result.changed){"CHANGED_AND_VERIFIED"}else{"NOT_CHANGED_CHECK_UI_DIALOG"}
+      }
+    }
+  }
+  $result.timestamp=(Get-Date).ToUniversalTime().ToString("o")
+  $result|ConvertTo-Json -Depth 8 -Compress
+} catch {
+  $msg=$_.Exception.Message
+  @{ok=$false;action=$Action;error=$msg;timestamp=(Get-Date).ToUniversalTime().ToString("o")}|
+    ConvertTo-Json -Compress
+  exit 1
+}
