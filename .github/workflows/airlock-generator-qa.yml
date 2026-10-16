@@ -41,6 +41,7 @@ jobs:
       - name: Run repository unit tests
         run: |
           node tests/st-generator.test.js
+          node tests/project-wiring.test.js
           node tests/pressure-and-interlocks.test.js
           node tests/hmi.test.js
           node tests/snap.test.js
