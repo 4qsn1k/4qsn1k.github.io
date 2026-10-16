@@ -1,0 +1,10 @@
+services:
+  exoteka:
+    build: .
+    container_name: exoteka-bot
+    restart: unless-stopped
+    init: true
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data

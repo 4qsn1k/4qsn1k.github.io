@@ -1,0 +1,25 @@
+# Secrets and private animal records
+.env
+.env.*
+!.env.example
+data/
+pets_import.private.json
+*secret*
+*.sqlite3
+*.sqlite3-*
+*.db
+# Environment and runtime
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+# Backups and local generated files
+*.backup*
+*.before-*
+*.bak
+*.tar
+*.tar.gz
+*.zip
+*.log
