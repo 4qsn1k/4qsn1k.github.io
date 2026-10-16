@@ -45,3 +45,15 @@ node bridge/headless-qa.js
 ```
 
 Отчёты по умолчанию: `bridge/reports`. Их не следует коммитить в исходники — лучше сохранять только как артефакты workflow или локальные файлы.
+
+## Подтверждение облачного запуска — 16.10.2026
+
+Workflow GitHub зарегистрирован: **active**, ID `387090436`. Проверено через GitHub API на Z4559. Найдено 11 запусков; три последних в момент проверки имели статус `completed`, заключение `success`.
+
+Последний подтверждённый запуск: [GitHub Actions run #38962515493](https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/38962515493).
+
+Job `Independent logic model and generator` завершён **success**. Отдельные шаги `Check source syntax`, `Run repository unit tests`, `Run repeatable headless model scenarios` и `Publish QA reports` все завершены **success**.
+
+Артефакт `airlock-model-qa`: ID `12073441853`, присутствует в облачном запуске и не истёк.
+
+Это **не полноценная проверка Owen Logic**. Это подтверждение автономного CI для модели и генератора, не зависящего от Windows и RDP.
