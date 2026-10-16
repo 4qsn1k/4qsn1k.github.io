@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Генератор шлюзов — схема A–F</title>
+<style>
+:root{color-scheme:light;--ink:#183042;--muted:#526778;--line:#ccdae2;--bg:#edf3f6;--accent:#17688c;--red:#c0392b;--green:#229e51}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:#132e40;color:white;padding:14px 22px}
+h1{font-size:20px;margin:0}h2{font-size:17px;margin:0 0 12px}h3{font-size:15px;margin:13px 0 8px}small,.muted{color:var(--muted)}header small{color:#cbdbe4}
+main{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:16px;padding:16px;max-width:1550px;margin:auto}
+.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 10px #24465a10}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+button,select,input{font:inherit}button{background:#f1f6f8;border:1px solid #b7ccd6;border-radius:7px;padding:7px 11px;cursor:pointer;color:#14374a}
+button:hover{background:#dbeef5}button.primary{color:white;background:#17688c;border-color:#17688c}button.danger{color:#a92d25}
+button:disabled{opacity:.5;cursor:not-allowed}label{display:block;font-size:13px;font-weight:600;margin:10px 0 5px}
+input,select{border:1px solid #b8cad4;padding:7px;border-radius:6px;width:100%;background:white;color:#183042}
+svg{width:100%;height:auto;border:1px solid #d4e1e8;border-radius:8px;background:#f8fbfd;touch-action:none}
+.room{cursor:move}.door{cursor:pointer}.room>rect{stroke:#203d50;stroke-width:5}.room text{pointer-events:none}
+.door rect{stroke:#1d3a25;stroke-width:1.5}.door text{pointer-events:none;font-size:15px;font-weight:700;fill:#243d4b}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;margin-top:10px}
+.dot{display:inline-block;width:12px;height:12px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.section{border-top:1px solid #d6e2e9;padding-top:12px;margin-top:15px}
+.rule{padding:9px 10px;border:1px solid #dce7ec;border-radius:7px;margin:7px 0;cursor:pointer;background:#fbfdfe}
+.rule.selected{outline:2px solid #17688c}.rule small{display:block}
+.checks{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}.checks label{display:flex;gap:6px;align-items:center;font-weight:400;margin:0}
+.checks input{width:auto}#status{padding:10px;background:#eef4f8;border-radius:7px;margin:8px 0;font-size:13px;min-height:40px}
+#status.warning{background:#fff1eb;color:#843a1c}
+table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:7px;text-align:left;border-bottom:1px solid #dce5eb}
+footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-size:13px}
+@media(max-width:980px){main{grid-template-columns:1fr}}@media(max-width:600px){.grid2{grid-template-columns:1fr}header{padding:12px}main{padding:10px}}
+</style>
+</head>
+<body>
+<header>
+<div><h1>Конструктор сан-шлюзов</h1><small>Помещения · двери · локальные блокировки · прототип v0.1</small></div>
+<div><a href="https://github.com/4qsn1k/4qsn1k.github.io/tree/main/airlock-generator" style="color:#d5f2ff">Исходники на GitHub ↗</a></div>
+</header>
+<main>
+<div>
+<section class="panel">
+<h2>План помещений</h2>
+<div class="toolbar">
+<button id="addRoom">+ Помещение</button>
+<button id="addDoor">+ Дверь</button>
+<button id="exportJSON" class="primary">Скачать JSON</button>
+<button id="exportCSV">Таблица правил CSV</button>
+<button id="reset">Исходный пример</button>
+</div>
+<svg id="plan" viewBox="100 0 730 630" role="img" aria-label="Схема помещений и дверей. Выберите помещение или дверь для настройки"></svg>
+<div class="legend">
+<span><i class="dot" style="background:#32cf5e"></i> Доступна</span>
+<span><i class="dot" style="background:#ec5948"></i> Блокируется правилом</span>
+<span><i class="dot" style="background:#e9a332"></i> Открыта в симуляции</span>
+<span><i class="dot" style="background:#fae8d8"></i> Помещение занято / продувается</span>
+</div>
+<p class="muted">Перетаскивай помещения мышью. Нажми на блок или зелёную дверь, чтобы изменить параметры. Двери привязаны к общим стенам автоматически.</p>
+</section>
+<section class="panel" style="margin-top:16px">
+<h2>Симулятор прохода</h2>
+<div class="grid2">
+<div><label for="fromRoom">Откуда</label><select id="fromRoom"></select></div>
+<div><label for="toRoom">Куда</label><select id="toRoom"></select></div>
+</div>
+<div class="toolbar" style="margin-top:12px">
+<button id="startPass" class="primary">Открыть дверь / войти</button>
+<button id="closePass">Закрыть дверь</button>
+<button id="advance">+30 секунд</button>
+<button id="fire">Пожар: ВЫКЛ</button>
+</div>
+<div id="status"></div>
+<div id="sessions"></div>
+<p class="muted">Направление прохода в симуляторе задаётся вручную. Один геркон не определяет, куда прошёл человек. Этот сценарий нельзя автоматически переносить в ПР100 без датчика направления или подтверждения СКУД.</p>
+</section>
+</div>
+<aside>
+<section class="panel">
+<h2>Свойства элемента</h2><div id="properties"><p class="muted">Выбери помещение или дверь на схеме.</p></div>
+</section>
+<section class="panel" style="margin-top:16px">
+<h2>Правила блокировок</h2>
+<p class="muted">Правило применяется после входа в указанное помещение, пока дверь открыта и во время продувки.</p>
+<div id="rules"></div>
+<button id="addRule">+ Правило</button>
+<div id="ruleEditor"></div>
+</section>
+<section class="panel" style="margin-top:16px">
+<h2>Ограничения</h2>
+<p class="muted">Одинаковый класс чистоты или давление — только основание для инженерной проверки возможного исключения. Блокировка не снимается автоматически.</p>
+<p class="muted">Зелёный цвет обозначает отсутствие запрета в модели, а не физическое подтверждение отпирания. Нужны входы обратной связи, отдельная цепь АПС, расчёт питания и проект эвакуации.</p>
+<p><strong>ST-код для реального ПР100 пока не генерируется.</strong> Требуются карта I/O, источник направления, типы замков и проверка конфликтов.</p>
+</section>
+</aside>
+</main>
+<footer>Демонстрационный проектировщик — не система управления доступом. Изменения в браузере не отправляются автоматически в GitHub. Сохраняй их кнопкой «Скачать JSON».</footer>
+<script>
+"use strict";
+const initial = {
+ version:"0.1.0",name:"A–F",
+ rooms:[["F",150,10,490,190],["E",160,200,240,200],["D",400,200,240,200],["C",640,200,150,200],["A",290,400,220,190],["B",510,400,280,190]].map(v=>({id:v[0],name:v[0],x:v[1],y:v[2],w:v[3],h:v[4],cleanClass:null,pressurePa:null,purgeSec:30})),
+ doors:[["EF","E","F",300,200,"horizontal"],["DF","D","F",500,200,"horizontal"],["AE","A","E",350,400,"horizontal"],["AD","A","D",456,400,"horizontal"],["BD","B","D",565,400,"horizontal"],["CD","C","D",640,285,"vertical"],["BC","B","C",710,400,"horizontal"],["AB","A","B",510,500,"vertical"]].map(v=>({id:v[0],a:v[1],b:v[2],x:v[3],y:v[4],axis:v[5],access:"unconfigured",reedInput:null,lockOutput:null,busyOutput:null})),
+ rules:[{id:"enter-A",from:"*",to:"A",via:"*",block:["AB","AE","AD"],comment:"Любой вход в A"},{id:"F-to-D",from:"F",to:"D",via:"DF",block:["CD","BD","AD"],comment:"Переход F → D"}],
+ exemptions:[],defaultRule:"other-incident-doors-except-entry",defaultOpenDoorAlarmSec:30
+};
+let model=structuredClone(initial),selected=null,selectedRule=null,active=[],fire=false,drag=null,now=Date.now(),sessionNo=1;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const room=id=>model.rooms.find(r=>r.id===id);
+const adjacent=id=>model.doors.filter(d=>d.a===id||d.b===id);
+const connecting=(a,b)=>model.doors.find(d=>(d.a===a&&d.b===b)||(d.a===b&&d.b===a));
+const doorName=id=>{const d=model.doors.find(x=>x.id===id);return d?d.id:id;};
+const opt=(values,val)=>values.map(v=>'<option value="'+esc(v)+'" '+(v===val?'selected':'')+'>'+esc(v)+'</option>').join('');
+const ruleFor=s=>{
+ const suitable=model.rules.filter(r=>(r.to===s.to||r.to==="*")&&(r.from===s.from||r.from==="*")&&(r.via===s.via||r.via==="*"));
+ suitable.sort((a,b)=>[b.to!=="*",b.from!=="*",b.via!=="*"].filter(Boolean).length-[a.to!=="*",a.from!=="*",a.via!=="*"].filter(Boolean).length);
+ return suitable[0]||null;
+};
+const blocksFor=s=>{
+ const rule=ruleFor(s);
+ const base=rule?rule.block:adjacent(s.to).filter(d=>d.id!==s.via).map(d=>d.id);
+ return base.filter(id=>!model.exemptions.some(e=>e.room===s.to&&e.door===id));
+};
+function blocked(){
+ const result=new Map();
+ if(fire)return result;
+ for(const s of active)for(const id of blocksFor(s))result.set(id,(result.get(id)||0)+1);
+ return result;
+}
+function svgEl(name,attrs,parent){
+ const e=document.createElementNS("http://www.w3.org/2000/svg",name);
+ for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e;
+}
+function position(d){
+ const a=room(d.a),b=room(d.b);
+ if(!a||!b)return {x:d.x,y:d.y,axis:d.axis};
+ const minX=Math.max(a.x,b.x),maxX=Math.min(a.x+a.w,b.x+b.w);
+ const minY=Math.max(a.y,b.y),maxY=Math.min(a.y+a.h,b.y+b.h);
+ if(maxX-minX>24 && Math.abs(a.y+a.h-b.y)<14)return {x:(minX+maxX)/2,y:b.y,axis:"horizontal"};
+ if(maxX-minX>24 && Math.abs(b.y+b.h-a.y)<14)return {x:(minX+maxX)/2,y:a.y,axis:"horizontal"};
+ if(maxY-minY>24 && Math.abs(a.x+a.w-b.x)<14)return {x:b.x,y:(minY+maxY)/2,axis:"vertical"};
+ if(maxY-minY>24 && Math.abs(b.x+b.w-a.x)<14)return {x:a.x,y:(minY+maxY)/2,axis:"vertical"};
+ return {x:(a.x+a.w/2+b.x+b.w/2)/2,y:(a.y+a.h/2+b.y+b.h/2)/2,axis:Math.abs((a.x+a.w/2)-(b.x+b.w/2))>Math.abs((a.y+a.h/2)-(b.y+b.h/2))?"vertical":"horizontal",connector:true};
+}
+function draw(){
+ const svg=$("plan");svg.innerHTML="";
+ const defs=svgEl("defs",{},svg),pattern=svgEl("pattern",{id:"grid",width:20,height:20,patternUnits:"userSpaceOnUse"},defs);
+ svgEl("path",{d:"M20 0H0V20",fill:"none",stroke:"#e5eef3","stroke-width":1},pattern);
+ svgEl("rect",{x:100,y:0,width:730,height:630,fill:"url(#grid)"},svg);
+ for(const r of model.rooms){
+  const busy=active.some(s=>s.to===r.id);
+  const g=svgEl("g",{class:"room","data-id":r.id},svg);
+  svgEl("rect",{x:r.x,y:r.y,width:r.w,height:r.h,rx:1,fill:busy?"#fae8d8":selected?.type==="room"&&selected.id===r.id?"#e1f0fc":"#fff",stroke:busy?"#b56e36":"#244352"},g);
+  const txt=svgEl("text",{x:r.x+r.w/2,y:r.y+r.h/2,"text-anchor":"middle","dominant-baseline":"middle","font-size":Math.max(21,Math.min(37,r.w/5)),fill:"#152c3c"},g);txt.textContent=r.name;
+  g.addEventListener("pointerdown",e=>{if(e.button!==0)return;drag={id:r.id,x:e.clientX,y:e.clientY,oldX:r.x,oldY:r.y};svg.setPointerCapture(e.pointerId);select("room",r.id);});
+ }
+ const limits=blocked();
+ for(const d of model.doors){
+  const p=position(d);
+  if(p.connector){const ra=room(d.a),rb=room(d.b);svgEl("line",{x1:ra.x+ra.w/2,y1:ra.y+ra.h/2,x2:rb.x+rb.w/2,y2:rb.y+rb.h/2,stroke:"#94a9b7","stroke-dasharray":"6 5","stroke-width":2},svg);}
+  const g=svgEl("g",{class:"door","data-id":d.id},svg);
+  const isOpen=active.some(s=>s.via===d.id&&s.phase==="open");
+  const fill=fire?"#56b1c6":isOpen?"#e9a332":limits.has(d.id)?"#ec5948":"#32cf5e";
+  svgEl("rect",{x:p.x-(p.axis==="horizontal"?31:8),y:p.y-(p.axis==="horizontal"?8:31),width:p.axis==="horizontal"?62:16,height:p.axis==="horizontal"?16:62,fill,rx:1,stroke:selected?.type==="door"&&selected.id===d.id?"#236cdd":"#264b35","stroke-width":selected?.type==="door"&&selected.id===d.id?3:1},g);
+  svgEl("line",{x1:p.x-(p.axis==="horizontal"?20:0),y1:p.y-(p.axis==="vertical"?20:0),x2:p.x+(p.axis==="horizontal"?20:0),y2:p.y+(p.axis==="vertical"?20:0),stroke:"#173c24","stroke-width":2},g);
+  const t=svgEl("text",{x:p.axis==="horizontal"?p.x:p.x+15,y:p.axis==="horizontal"?p.y-15:p.y+5,"text-anchor":p.axis==="horizontal"?"middle":"start"},g);t.textContent=d.id;
+  g.addEventListener("click",e=>{e.stopPropagation();select("door",d.id)});
+ }
+}
+$("plan").addEventListener("pointermove",e=>{
+ if(!drag)return;
+ const r=room(drag.id),scale=730/$("plan").getBoundingClientRect().width;
+ if(!r)return;r.x=Math.round(drag.oldX+(e.clientX-drag.x)*scale);r.y=Math.round(drag.oldY+(e.clientY-drag.y)*scale);draw();
+});
+$("plan").addEventListener("pointerup",()=>{drag=null});
+$("plan").addEventListener("pointercancel",()=>{drag=null});
+function select(type,id){selected={type,id};render();}
+function renderProperties(){
+ const box=$("properties");
+ if(!selected){box.innerHTML='<p class="muted">Выбери помещение или дверь.</p>';return;}
+ if(selected.type==="room"){
+  const r=room(selected.id);if(!r){selected=null;renderProperties();return;}
+  box.innerHTML='<h3>Помещение '+esc(r.id)+'</h3><label>Название</label><input id="roomName" value="'+esc(r.name)+'"><div class="grid2"><div><label>Класс чистоты</label><input id="cleanClass" placeholder="например D" value="'+esc(r.cleanClass||"")+'"></div><div><label>Давление, Па</label><input id="pressure" type="number" value="'+esc(r.pressurePa??"")+'"></div></div><label>Продувка, с</label><input id="purge" type="number" min="1" max="3600" value="'+r.purgeSec+'"><h3>Связанные двери</h3><p>'+adjacent(r.id).map(d=>esc(d.id)).join(" · ")+'</p><button class="danger" id="deleteRoom">Удалить помещение</button>';
+  $("roomName").onchange=e=>{r.name=e.target.value;draw();refreshSelects()};
+  $("cleanClass").onchange=e=>{r.cleanClass=e.target.value||null};
+  $("pressure").onchange=e=>{r.pressurePa=e.target.value===""?null:Number(e.target.value)};
+  $("purge").onchange=e=>{r.purgeSec=Math.max(1,Number(e.target.value)||30)};
+  $("deleteRoom").onclick=()=>{if(!confirm("Удалить помещение вместе с его дверьми?"))return;const ids=adjacent(r.id).map(d=>d.id);model.rooms=model.rooms.filter(x=>x.id!==r.id);model.doors=model.doors.filter(d=>!ids.includes(d.id));model.rules=model.rules.filter(x=>x.to!==r.id&&x.from!==r.id).map(x=>({...x,block:x.block.filter(d=>!ids.includes(d))}));active=[];selected=null;render()};
+ }else{
+  const d=model.doors.find(x=>x.id===selected.id);if(!d){selected=null;renderProperties();return;}
+  box.innerHTML='<h3>Дверь '+esc(d.id)+'</h3><p>Между '+esc(d.a)+' и '+esc(d.b)+'</p><label>Способ блокировки</label><select id="access">'+opt(["unconfigured","busy","relay","none"],d.access)+'</select><p class="muted">unconfigured — не назначен; busy — вход СКУД; relay — управление замком; none — без исполнительного узла.</p><label>Вход геркона (описание)</label><input id="reed" value="'+esc(d.reedInput||"")+'" placeholder="DI1"><label>Выход блокировки (описание)</label><input id="output" value="'+esc(d.access==="busy"?d.busyOutput||"":d.lockOutput||"")+'" placeholder="DO1 / DO4"><button class="danger" id="deleteDoor" style="margin-top:12px">Удалить дверь</button>';
+  $("access").onchange=e=>{d.access=e.target.value;renderProperties()};
+  $("reed").onchange=e=>d.reedInput=e.target.value||null;
+  $("output").onchange=e=>{if(d.access==="busy")d.busyOutput=e.target.value||null;else d.lockOutput=e.target.value||null};
+  $("deleteDoor").onclick=()=>{if(!confirm("Удалить дверь "+d.id+"?"))return;model.doors=model.doors.filter(x=>x.id!==d.id);model.rules=model.rules.map(x=>({...x,block:x.block.filter(y=>y!==d.id)})).filter(x=>x.via!==d.id);active=[];selected=null;render()};
+ }
+}
+function renderRules(){
+ $("rules").innerHTML=model.rules.map(r=>'<div class="rule '+(selectedRule===r.id?"selected":"")+'" data-rule="'+esc(r.id)+'"><strong>'+esc(r.from)+' → '+esc(r.to)+'</strong> · через '+esc(r.via)+'<small>Блок: '+r.block.map(esc).join(", ")+'</small></div>').join("");
+ $("rules").querySelectorAll(".rule").forEach(el=>el.onclick=()=>{selectedRule=el.dataset.rule;renderRules()});
+ const editor=$("ruleEditor"),r=model.rules.find(x=>x.id===selectedRule);
+ if(!r){editor.innerHTML="";return}
+ const candidates=model.doors.filter(d=>d.a===r.to||d.b===r.to);
+ editor.innerHTML='<div class="section"><h3>Редактор '+esc(r.id)+'</h3><label>Откуда</label><select id="rf">'+opt(["*",...model.rooms.map(x=>x.id)],r.from)+'</select><label>Куда</label><select id="rt">'+opt(model.rooms.map(x=>x.id),r.to)+'</select><label>Через дверь</label><select id="rv">'+opt(["*",...model.doors.map(d=>d.id)],r.via)+'</select><label>Блокировать двери</label><div class="checks">'+candidates.map(d=>'<label><input type="checkbox" value="'+esc(d.id)+'" '+(r.block.includes(d.id)?"checked":"")+'> '+esc(d.id)+'</label>').join("")+'</div><div class="toolbar" style="margin-top:12px"><button class="primary" id="saveRule">Применить</button><button class="danger" id="deleteRule">Удалить</button></div></div>';
+ $("rt").onchange=e=>{r.to=e.target.value;r.block=[];renderRules()};
+ $("saveRule").onclick=()=>{r.from=$("rf").value;r.via=$("rv").value;r.block=[...editor.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);render()};
+ $("deleteRule").onclick=()=>{model.rules=model.rules.filter(x=>x.id!==r.id);selectedRule=null;render()};
+}
+function refreshSelects(){
+ const from=$("fromRoom").value,to=$("toRoom").value,ids=model.rooms.map(r=>r.id);
+ $("fromRoom").innerHTML=opt(ids,ids.includes(from)?from:"F");
+ updateTargets(to);
+}
+function updateTargets(previous){
+ const a=$("fromRoom").value;
+ const targets=model.doors.filter(d=>d.a===a||d.b===a).map(d=>d.a===a?d.b:d.a);
+ $("toRoom").innerHTML=opt(targets,targets.includes(previous)?previous:targets[0]);
+}
+$("fromRoom").onchange=()=>updateTargets(null);
+function renderSim(){
+ const rows=active.map(s=>{
+  const t=s.phase==="open"?Math.floor((now-s.openedAt)/1000):Math.max(0,Math.ceil((s.purgeSec-(now-s.purgeFrom)/1000)));
+  return '<tr><td>'+esc(s.from)+' → '+esc(s.to)+'</td><td>'+esc(s.via)+'</td><td>'+(s.phase==="open"?"Дверь открыта "+t+" с"+(t>=model.defaultOpenDoorAlarmSec?" · ЗУММЕР":""):"Продувка: "+t+" с")+'</td></tr>';
+ });
+ $("sessions").innerHTML=rows.length?'<table><thead><tr><th>Проход</th><th>Дверь</th><th>Состояние</th></tr></thead><tbody>'+rows.join("")+'</tbody></table>':"";
+ const b=[...blocked().keys()];
+ const warning=active.some(s=>s.phase==="open"&&(now-s.openedAt)/1000>=model.defaultOpenDoorAlarmSec);
+ $("status").className=warning?"warning":"";
+ $("status").textContent=fire?"ПОЖАР: электрические запреты сняты. Нужна независимая аппаратная цепь эвакуации.":active.length?("Активные циклы: "+active.length+". Заблокированы: "+(b.join(", ")||"нет")+(warning?". ТРЕВОГА ДВЕРИ >30 с.":"")):"Готово. Все двери в модели доступны. Выбери направление прохода.";
+ $("fire").textContent="Пожар: "+(fire?"ВКЛ":"ВЫКЛ");
+}
+function render(){draw();renderProperties();renderRules();refreshSelects();renderSim()}
+$("startPass").onclick=()=>{
+ if(fire){alert("При пожаре штатный цикл не запускается.");return}
+ const from=$("fromRoom").value,to=$("toRoom").value,d=connecting(from,to);
+ if(!d){alert("Нет двери между помещениями.");return}
+ if(blocked().has(d.id)){alert("Проход запрещён правилом блокировки через "+d.id);return}
+ active.push({id:sessionNo++,from,to,via:d.id,phase:"open",openedAt:now,purgeSec:Math.max(1,room(to).purgeSec)});
+ render();
+};
+$("closePass").onclick=()=>{
+ const from=$("fromRoom").value,to=$("toRoom").value;
+ const s=[...active].reverse().find(s=>s.phase==="open"&&s.from===from&&s.to===to);
+ if(!s){alert("Нет открытой двери для этого направления.");return}
+ s.phase="purge";s.purgeFrom=now;render();
+};
+function tick(ms){now+=ms;active=active.filter(s=>s.phase!=="purge"||(now-s.purgeFrom)/1000<s.purgeSec);draw();renderSim()}
+$("advance").onclick=()=>tick(30000);
+setInterval(()=>{now=Date.now();active=active.filter(s=>s.phase!=="purge"||(now-s.purgeFrom)/1000<s.purgeSec);draw();renderSim()},1000);
+$("fire").onclick=()=>{fire=!fire;if(fire)active=[];render()};
+$("addRoom").onclick=()=>{
+ const id=prompt("Короткое обозначение нового помещения (например G):");if(!id)return;
+ if(model.rooms.some(r=>r.id===id)){alert("Такое помещение уже есть.");return}
+ const next=model.rooms.length;model.rooms.push({id,name:id,x:110+next*22,y:90+next*28,w:150,h:120,cleanClass:null,pressurePa:null,purgeSec:30});
+ select("room",id);
+};
+$("addDoor").onclick=()=>{
+ const a=prompt("Первое помещение (ID):");if(!a||!room(a))return alert("Помещение не найдено");
+ const b=prompt("Второе помещение (ID):");if(!b||!room(b)||a===b)return alert("Некорректное второе помещение");
+ if(connecting(a,b))return alert("Дверь между этими помещениями уже существует");
+ const id=prompt("Обозначение двери:",a+b);if(!id)return;
+ if(model.doors.some(d=>d.id===id))return alert("Такой ID двери уже существует");
+ model.doors.push({id,a,b,x:(room(a).x+room(b).x)/2,y:(room(a).y+room(b).y)/2,axis:"horizontal",access:"unconfigured",reedInput:null,lockOutput:null,busyOutput:null});
+ select("door",id);
+};
+$("addRule").onclick=()=>{
+ const to=selected&&selected.type==="room"?selected.id:model.rooms[0]?.id;
+ if(!to)return;
+ let id="rule-"+(model.rules.length+1);while(model.rules.some(r=>r.id===id))id+="-n";
+ const r={id,from:"*",to,via:"*",block:adjacent(to).map(d=>d.id),comment:""};
+ model.rules.push(r);selectedRule=id;render();
+};
+function save(name,body,type){
+ const url=URL.createObjectURL(new Blob([body],{type:type||"text/plain;charset=utf-8"}));
+ const a=document.createElement("a");a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);
+}
+$("exportJSON").onclick=()=>save("airlock-model.json",JSON.stringify(model,null,2)+"\n","application/json");
+$("exportCSV").onclick=()=>{
+ const lines=[["rule","from","to","via","blocked_doors"],...model.rules.map(r=>[r.id,r.from,r.to,r.via,r.block.join(" ")])];
+ save("airlock-rules.csv","\uFEFF"+lines.map(arr=>arr.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(";")).join("\r\n"),"text/csv;charset=utf-8");
+};
+$("reset").onclick=()=>{if(!confirm("Сбросить изменения и восстановить A–F?"))return;model=structuredClone(initial);active=[];selected=null;selectedRule=null;render()};
+render();
+</script>
+</body>
+</html>
