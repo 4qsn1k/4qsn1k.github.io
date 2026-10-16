@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Генератор шлюзов — схема A–F</title>
+<title>Генератор шлюзов — универсальная модель</title>
 <style>
 :root{color-scheme:light;--ink:#183042;--muted:#526778;--line:#ccdae2;--bg:#edf3f6;--accent:#17688c;--red:#c0392b;--green:#229e51}
 *{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg)}
@@ -34,7 +34,7 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 </head>
 <body>
 <header>
-<div><h1>Конструктор сан-шлюзов</h1><small>Помещения · двери · локальные блокировки · прототип v0.1</small></div>
+<div><h1>Конструктор сан-шлюзов</h1><small>Помещения · двери · локальные блокировки · прототип v0.2</small></div>
 <div><a href="https://github.com/4qsn1k/4qsn1k.github.io/tree/main/airlock-generator" style="color:#d5f2ff">Исходники на GitHub ↗</a></div>
 </header>
 <main>
@@ -56,7 +56,7 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 <span><i class="dot" style="background:#e9a332"></i> Открыта в симуляции</span>
 <span><i class="dot" style="background:#fae8d8"></i> Помещение занято / продувается</span>
 </div>
-<p class="muted">Перетаскивай помещения мышью. Нажми на блок или зелёную дверь, чтобы изменить параметры. Двери привязаны к общим стенам автоматически.</p>
+<p class="muted">Номера помещений не являются классами чистоты. Перетаскивай помещения мышью. Нажми на блок или зелёную дверь, чтобы изменить параметры. Двери привязаны к общим стенам автоматически.</p>
 </section>
 <section class="panel" style="margin-top:16px">
 <h2>Симулятор прохода</h2>
@@ -70,7 +70,7 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 <button id="advance">+30 секунд</button>
 <button id="fire">Пожар: ВЫКЛ</button>
 </div>
-<div id="status"></div>
+<div class="grid2" style="margin-top:10px"><div><label>Помещение для контроля занятости</label><select id="occupiedRoom"></select></div><div style="align-self:end;display:flex;gap:5px;flex-wrap:wrap"><button id="markOccupancy">Занять</button><button id="releaseOccupancy">Освободить</button></div></div><div id="status"></div>
 <div id="sessions"></div>
 <p class="muted">Направление прохода в симуляторе задаётся вручную. Один геркон не определяет, куда прошёл человек. Этот сценарий нельзя автоматически переносить в ПР100 без датчика направления или подтверждения СКУД.</p>
 </section>
@@ -80,8 +80,8 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 <h2>Свойства элемента</h2><div id="properties"><p class="muted">Выбери помещение или дверь на схеме.</p></div>
 </section>
 <section class="panel" style="margin-top:16px">
-<h2>Правила блокировок</h2>
-<p class="muted">Правило применяется после входа в указанное помещение, пока дверь открыта и во время продувки.</p>
+<h2>Дополнительные правила</h2>
+<p class="muted">Основная блокировка остальных дверей включается в свойствах помещения. Здесь можно задать дополнительные направленные связи с любыми дверьми объекта.</p>
 <div id="rules"></div>
 <button id="addRule">+ Правило</button>
 <div id="ruleEditor"></div>
@@ -95,14 +95,191 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 </aside>
 </main>
 <footer>Демонстрационный проектировщик — не система управления доступом. Изменения в браузере не отправляются автоматически в GitHub. Сохраняй их кнопкой «Скачать JSON».</footer>
+<script src="./engine.js"></script>
 <script>
 "use strict";
 const initial = {
- version:"0.1.0",name:"A–F",
- rooms:[["F",150,10,490,190],["E",160,200,240,200],["D",400,200,240,200],["C",640,200,150,200],["A",290,400,220,190],["B",510,400,280,190]].map(v=>({id:v[0],name:v[0],x:v[1],y:v[2],w:v[3],h:v[4],cleanClass:null,pressurePa:null,purgeSec:30})),
- doors:[["EF","E","F",300,200,"horizontal"],["DF","D","F",500,200,"horizontal"],["AE","A","E",350,400,"horizontal"],["AD","A","D",456,400,"horizontal"],["BD","B","D",565,400,"horizontal"],["CD","C","D",640,285,"vertical"],["BC","B","C",710,400,"horizontal"],["AB","A","B",510,500,"vertical"]].map(v=>({id:v[0],a:v[1],b:v[2],x:v[3],y:v[4],axis:v[5],access:"unconfigured",reedInput:null,lockOutput:null,busyOutput:null})),
- rules:[{id:"enter-A",from:"*",to:"A",via:"*",block:["AB","AE","AD"],comment:"Любой вход в A"},{id:"F-to-D",from:"F",to:"D",via:"DF",block:["CD","BD","AD"],comment:"Переход F → D"}],
- exemptions:[],defaultRule:"other-incident-doors-except-entry",defaultOpenDoorAlarmSec:30
+ "version": "0.2.0",
+ "name": "Универсальный генератор шлюзов — пример 1–6",
+ "units": "px",
+ "defaultOpenDoorAlarmSec": 30,
+ "rooms": [
+  {
+   "id": "6",
+   "name": "6",
+   "x": 150,
+   "y": 10,
+   "w": 490,
+   "h": 190,
+   "cleanClass": null,
+   "pressurePa": null,
+   "purgeSec": 30,
+   "interlockEnabled": false
+  },
+  {
+   "id": "5",
+   "name": "5",
+   "x": 160,
+   "y": 200,
+   "w": 240,
+   "h": 200,
+   "cleanClass": null,
+   "pressurePa": null,
+   "purgeSec": 30,
+   "interlockEnabled": false
+  },
+  {
+   "id": "4",
+   "name": "4",
+   "x": 400,
+   "y": 200,
+   "w": 240,
+   "h": 200,
+   "cleanClass": null,
+   "pressurePa": null,
+   "purgeSec": 30,
+   "interlockEnabled": true
+  },
+  {
+   "id": "3",
+   "name": "3",
+   "x": 640,
+   "y": 200,
+   "w": 150,
+   "h": 200,
+   "cleanClass": null,
+   "pressurePa": null,
+   "purgeSec": 30,
+   "interlockEnabled": false
+  },
+  {
+   "id": "1",
+   "name": "1",
+   "x": 290,
+   "y": 400,
+   "w": 220,
+   "h": 190,
+   "cleanClass": null,
+   "pressurePa": null,
+   "purgeSec": 30,
+   "interlockEnabled": true
+  },
+  {
+   "id": "2",
+   "name": "2",
+   "x": 510,
+   "y": 400,
+   "w": 280,
+   "h": 190,
+   "cleanClass": null,
+   "pressurePa": null,
+   "purgeSec": 30,
+   "interlockEnabled": false
+  }
+ ],
+ "doors": [
+  {
+   "id": "5-6",
+   "a": "5",
+   "b": "6",
+   "x": 300,
+   "y": 200,
+   "axis": "horizontal",
+   "access": "unconfigured",
+   "reedInput": null,
+   "lockOutput": null,
+   "busyOutput": null
+  },
+  {
+   "id": "4-6",
+   "a": "4",
+   "b": "6",
+   "x": 500,
+   "y": 200,
+   "axis": "horizontal",
+   "access": "unconfigured",
+   "reedInput": null,
+   "lockOutput": null,
+   "busyOutput": null
+  },
+  {
+   "id": "1-5",
+   "a": "1",
+   "b": "5",
+   "x": 350,
+   "y": 400,
+   "axis": "horizontal",
+   "access": "unconfigured",
+   "reedInput": null,
+   "lockOutput": null,
+   "busyOutput": null
+  },
+  {
+   "id": "1-4",
+   "a": "1",
+   "b": "4",
+   "x": 456,
+   "y": 400,
+   "axis": "horizontal",
+   "access": "unconfigured",
+   "reedInput": null,
+   "lockOutput": null,
+   "busyOutput": null
+  },
+  {
+   "id": "2-4",
+   "a": "2",
+   "b": "4",
+   "x": 565,
+   "y": 400,
+   "axis": "horizontal",
+   "access": "unconfigured",
+   "reedInput": null,
+   "lockOutput": null,
+   "busyOutput": null
+  },
+  {
+   "id": "3-4",
+   "a": "3",
+   "b": "4",
+   "x": 640,
+   "y": 285,
+   "axis": "vertical",
+   "access": "unconfigured",
+   "reedInput": null,
+   "lockOutput": null,
+   "busyOutput": null
+  },
+  {
+   "id": "2-3",
+   "a": "2",
+   "b": "3",
+   "x": 710,
+   "y": 400,
+   "axis": "horizontal",
+   "access": "unconfigured",
+   "reedInput": null,
+   "lockOutput": null,
+   "busyOutput": null
+  },
+  {
+   "id": "1-2",
+   "a": "1",
+   "b": "2",
+   "x": 510,
+   "y": 500,
+   "axis": "vertical",
+   "access": "unconfigured",
+   "reedInput": null,
+   "lockOutput": null,
+   "busyOutput": null
+  }
+ ],
+ "rules": [],
+ "exemptions": [],
+ "defaultRule": "interlock-managed-rooms-on-each-incident-door",
+ "fireMode": "all-electrical-interlocks-off",
+ "disclaimer": "Simulation only. Direction and room occupancy events are not inferred from reed switches. Independent fire-release hardware required."
 };
 let model=structuredClone(initial),selected=null,selectedRule=null,active=[],fire=false,drag=null,now=Date.now(),timeOffset=0,sessionNo=1;
 const $=id=>document.getElementById(id);
@@ -112,22 +289,8 @@ const adjacent=id=>model.doors.filter(d=>d.a===id||d.b===id);
 const connecting=(a,b)=>model.doors.find(d=>(d.a===a&&d.b===b)||(d.a===b&&d.b===a));
 const doorName=id=>{const d=model.doors.find(x=>x.id===id);return d?d.id:id;};
 const opt=(values,val)=>values.map(v=>'<option value="'+esc(v)+'" '+(v===val?'selected':'')+'>'+esc(v)+'</option>').join('');
-const ruleFor=s=>{
- const suitable=model.rules.filter(r=>(r.to===s.to||r.to==="*")&&(r.from===s.from||r.from==="*")&&(r.via===s.via||r.via==="*"));
- suitable.sort((a,b)=>[b.to!=="*",b.from!=="*",b.via!=="*"].filter(Boolean).length-[a.to!=="*",a.from!=="*",a.via!=="*"].filter(Boolean).length);
- return suitable[0]||null;
-};
-const blocksFor=s=>{
- const rule=ruleFor(s);
- const base=rule?rule.block:adjacent(s.to).filter(d=>d.id!==s.via).map(d=>d.id);
- return base.filter(id=>!model.exemptions.some(e=>e.room===s.to&&e.door===id));
-};
-function blocked(){
- const result=new Map();
- if(fire)return result;
- for(const s of active)for(const id of blocksFor(s))result.set(id,(result.get(id)||0)+1);
- return result;
-}
+const blocked=()=>AirlockEngine.blocked(model,active,fire);
+const blocksFor=s=>AirlockEngine.requestsFor(model,s).map(x=>x.doorId);
 function svgEl(name,attrs,parent){
  const e=document.createElementNS("http://www.w3.org/2000/svg",name);
  for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e;
@@ -145,11 +308,14 @@ function position(d){
 }
 function draw(){
  const svg=$("plan");svg.innerHTML="";
+ const minX=Math.min(100,...model.rooms.map(r=>r.x))-20, minY=Math.min(0,...model.rooms.map(r=>r.y))-20;
+ const maxX=Math.max(830,...model.rooms.map(r=>r.x+r.w))+20, maxY=Math.max(630,...model.rooms.map(r=>r.y+r.h))+20;
+ svg.setAttribute("viewBox",[minX,minY,maxX-minX,maxY-minY].join(" "));
  const defs=svgEl("defs",{},svg),pattern=svgEl("pattern",{id:"grid",width:20,height:20,patternUnits:"userSpaceOnUse"},defs);
  svgEl("path",{d:"M20 0H0V20",fill:"none",stroke:"#e5eef3","stroke-width":1},pattern);
- svgEl("rect",{x:100,y:0,width:730,height:630,fill:"url(#grid)"},svg);
+ svgEl("rect",{x:minX,y:minY,width:maxX-minX,height:maxY-minY,fill:"url(#grid)"},svg);
  for(const r of model.rooms){
-  const busy=active.some(s=>s.to===r.id);
+  const busy=active.some(s=>s.roomId===r.id||(s.type==="passage"&&r.interlockEnabled&&(s.from===r.id||s.to===r.id)));
   const g=svgEl("g",{class:"room","data-id":r.id},svg);
   svgEl("rect",{x:r.x,y:r.y,width:r.w,height:r.h,rx:1,fill:busy?"#fae8d8":selected?.type==="room"&&selected.id===r.id?"#e1f0fc":"#fff",stroke:busy?"#b56e36":"#244352"},g);
   const txt=svgEl("text",{x:r.x+r.w/2,y:r.y+r.h/2,"text-anchor":"middle","dominant-baseline":"middle","font-size":Math.max(21,Math.min(37,r.w/5)),fill:"#152c3c"},g);txt.textContent=r.name;
@@ -172,7 +338,7 @@ function draw(){
 }
 $("plan").addEventListener("pointermove",e=>{
  if(!drag)return;
- const r=room(drag.id),scale=730/$("plan").getBoundingClientRect().width;
+ const r=room(drag.id),scale=$("plan").viewBox.baseVal.width/$("plan").getBoundingClientRect().width;
  if(!r)return;r.x=Math.round(drag.oldX+(e.clientX-drag.x)*scale);r.y=Math.round(drag.oldY+(e.clientY-drag.y)*scale);draw();
 });
 $("plan").addEventListener("pointerup",()=>{drag=null});
@@ -183,25 +349,26 @@ function renderProperties(){
  if(!selected){box.innerHTML='<p class="muted">Выбери помещение или дверь.</p>';return;}
  if(selected.type==="room"){
   const r=room(selected.id);if(!r){selected=null;renderProperties();return;}
-  box.innerHTML='<h3>Помещение '+esc(r.id)+'</h3><label>Название</label><input id="roomName" value="'+esc(r.name)+'"><div class="grid2"><div><label>Класс чистоты</label><input id="cleanClass" placeholder="например D" value="'+esc(r.cleanClass||"")+'"></div><div><label>Давление, Па</label><input id="pressure" type="number" value="'+esc(r.pressurePa??"")+'"></div></div><label>Продувка, с</label><input id="purge" type="number" min="1" max="3600" value="'+r.purgeSec+'"><h3>Связанные двери</h3><p>'+adjacent(r.id).map(d=>esc(d.id)).join(" · ")+'</p><h3>Исключения из блокировки</h3><p class="muted">Отметь дверь, которая может остаться доступной в этом помещении. Проверь класс чистоты и перепад давления отдельно.</p><div class="checks">'+adjacent(r.id).map(d=>'<label><input type="checkbox" data-except="'+esc(d.id)+'" '+(model.exemptions.some(e=>e.room===r.id&&e.door===d.id)?"checked":"")+'> '+esc(d.id)+'</label>').join('')+'</div><button class="danger" id="deleteRoom">Удалить помещение</button>';
+  box.innerHTML='<h3>Помещение '+esc(r.id)+'</h3><label>Название</label><input id="roomName" value="'+esc(r.name)+'"><div class="grid2"><div><label>Класс чистоты</label><input id="cleanClass" placeholder="например D" value="'+esc(r.cleanClass||"")+'"></div><div><label>Давление, Па</label><input id="pressure" type="number" value="'+esc(r.pressurePa??"")+'"></div></div><label>Продувка, с</label><input id="purge" type="number" min="1" max="3600" value="'+r.purgeSec+'"><label style="display:flex;align-items:center;gap:8px"><input id="interlock" style="width:auto" type="checkbox" '+(r.interlockEnabled?"checked":"")+'> Шлюзовая зона: блокировать остальные двери при любом проходе</label><h3>Связанные двери</h3><p>'+adjacent(r.id).map(d=>esc(d.id)).join(" · ")+'</p><h3>Исключения из блокировки</h3><p class="muted">Отметь дверь, которая может остаться доступной в этом помещении. Проверь класс чистоты и перепад давления отдельно.</p><div class="checks">'+adjacent(r.id).map(d=>'<label><input type="checkbox" data-except="'+esc(d.id)+'" '+(model.exemptions.some(e=>e.room===r.id&&e.door===d.id)?"checked":"")+'> '+esc(d.id)+'</label>').join('')+'</div><button class="danger" id="deleteRoom">Удалить помещение</button>';
   $("roomName").onchange=e=>{r.name=e.target.value;draw();refreshSelects()};
   $("cleanClass").onchange=e=>{r.cleanClass=e.target.value||null;draw()};
   $("pressure").onchange=e=>{r.pressurePa=e.target.value===""?null:Number(e.target.value);draw()};
   $("purge").onchange=e=>{r.purgeSec=Math.max(1,Number(e.target.value)||30)};
+  $("interlock").onchange=e=>{r.interlockEnabled=e.target.checked;render()};
   box.querySelectorAll('input[data-except]').forEach(el=>el.onchange=e=>{
     const did=e.target.dataset.except;
     model.exemptions=model.exemptions.filter(x=>!(x.room===r.id&&x.door===did));
     if(e.target.checked)model.exemptions.push({room:r.id,door:did,reason:"explicit engineering exemption"});
     draw();renderSim();
   });
-  $("deleteRoom").onclick=()=>{if(!confirm("Удалить помещение вместе с его дверьми?"))return;const ids=adjacent(r.id).map(d=>d.id);model.rooms=model.rooms.filter(x=>x.id!==r.id);model.doors=model.doors.filter(d=>!ids.includes(d.id));model.rules=model.rules.filter(x=>x.to!==r.id&&x.from!==r.id).map(x=>({...x,block:x.block.filter(d=>!ids.includes(d))}));active=[];selected=null;render()};
+  $("deleteRoom").onclick=()=>{if(!confirm("Удалить помещение вместе с его дверьми?"))return;const ids=adjacent(r.id).map(d=>d.id);model.rooms=model.rooms.filter(x=>x.id!==r.id);model.doors=model.doors.filter(d=>!ids.includes(d.id));model.rules=model.rules.filter(x=>x.to!==r.id&&x.from!==r.id).map(x=>({...x,block:x.block.filter(d=>!ids.includes(d))}));model.exemptions=model.exemptions.filter(x=>x.room!==r.id&&!ids.includes(x.door));active=[];selected=null;render()};
  }else{
   const d=model.doors.find(x=>x.id===selected.id);if(!d){selected=null;renderProperties();return;}
   box.innerHTML='<h3>Дверь '+esc(d.id)+'</h3><p>Между '+esc(d.a)+' и '+esc(d.b)+'</p><label>Способ блокировки</label><select id="access">'+opt(["unconfigured","busy","relay","none"],d.access)+'</select><p class="muted">unconfigured — не назначен; busy — вход СКУД; relay — управление замком; none — без исполнительного узла.</p><label>Вход геркона (описание)</label><input id="reed" value="'+esc(d.reedInput||"")+'" placeholder="DI1"><label>Выход блокировки (описание)</label><input id="output" value="'+esc(d.access==="busy"?d.busyOutput||"":d.lockOutput||"")+'" placeholder="DO1 / DO4"><button class="danger" id="deleteDoor" style="margin-top:12px">Удалить дверь</button>';
   $("access").onchange=e=>{d.access=e.target.value;renderProperties()};
   $("reed").onchange=e=>d.reedInput=e.target.value||null;
   $("output").onchange=e=>{if(d.access==="busy")d.busyOutput=e.target.value||null;else d.lockOutput=e.target.value||null};
-  $("deleteDoor").onclick=()=>{if(!confirm("Удалить дверь "+d.id+"?"))return;model.doors=model.doors.filter(x=>x.id!==d.id);model.rules=model.rules.map(x=>({...x,block:x.block.filter(y=>y!==d.id)})).filter(x=>x.via!==d.id);active=[];selected=null;render()};
+  $("deleteDoor").onclick=()=>{if(!confirm("Удалить дверь "+d.id+"?"))return;model.doors=model.doors.filter(x=>x.id!==d.id);model.rules=model.rules.map(x=>({...x,block:x.block.filter(y=>y!==d.id)})).filter(x=>x.via!==d.id);model.exemptions=model.exemptions.filter(x=>x.door!==d.id);active=[];selected=null;render()};
  }
 }
 function renderRules(){
@@ -209,16 +376,18 @@ function renderRules(){
  $("rules").querySelectorAll(".rule").forEach(el=>el.onclick=()=>{selectedRule=el.dataset.rule;renderRules()});
  const editor=$("ruleEditor"),r=model.rules.find(x=>x.id===selectedRule);
  if(!r){editor.innerHTML="";return}
- const candidates=model.doors.filter(d=>d.a===r.to||d.b===r.to);
- editor.innerHTML='<div class="section"><h3>Редактор '+esc(r.id)+'</h3><label>Откуда</label><select id="rf">'+opt(["*",...model.rooms.map(x=>x.id)],r.from)+'</select><label>Куда</label><select id="rt">'+opt(model.rooms.map(x=>x.id),r.to)+'</select><label>Через дверь</label><select id="rv">'+opt(["*",...model.doors.map(d=>d.id)],r.via)+'</select><label>Блокировать двери</label><div class="checks">'+candidates.map(d=>'<label><input type="checkbox" value="'+esc(d.id)+'" '+(r.block.includes(d.id)?"checked":"")+'> '+esc(d.id)+'</label>').join("")+'</div><div class="toolbar" style="margin-top:12px"><button class="primary" id="saveRule">Применить</button><button class="danger" id="deleteRule">Удалить</button></div></div>';
- $("rt").onchange=e=>{r.to=e.target.value;r.block=[];renderRules()};
+ const candidates=model.doors;
+ editor.innerHTML='<div class="section"><h3>Редактор '+esc(r.id)+'</h3><label>Откуда</label><select id="rf">'+opt(["*",...model.rooms.map(x=>x.id)],r.from)+'</select><label>Куда</label><select id="rt">'+opt(model.rooms.map(x=>x.id),r.to)+'</select><label>Через дверь</label><select id="rv">'+opt(["*",...model.doors.map(d=>d.id)],r.via)+'</select><label>Дополнительно блокировать любые двери</label><div class="checks">'+candidates.map(d=>'<label><input type="checkbox" value="'+esc(d.id)+'" '+(r.block.includes(d.id)?"checked":"")+'> '+esc(d.id)+'</label>').join("")+'</div><div class="toolbar" style="margin-top:12px"><button class="primary" id="saveRule">Применить</button><button class="danger" id="deleteRule">Удалить</button></div></div>';
+ $("rt").onchange=e=>{r.to=e.target.value;renderRules()};
  $("saveRule").onclick=()=>{r.from=$("rf").value;r.via=$("rv").value;r.block=[...editor.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);render()};
  $("deleteRule").onclick=()=>{model.rules=model.rules.filter(x=>x.id!==r.id);selectedRule=null;render()};
 }
 function refreshSelects(){
  const from=$("fromRoom").value,to=$("toRoom").value,ids=model.rooms.map(r=>r.id);
- $("fromRoom").innerHTML=opt(ids,ids.includes(from)?from:"F");
+ $("fromRoom").innerHTML=opt(ids,ids.includes(from)?from:ids[0]);
  updateTargets(to);
+ const occupied=$("occupiedRoom").value;
+ $("occupiedRoom").innerHTML=opt(ids,ids.includes(occupied)?occupied:(ids.includes("1")?"1":ids[0]));
 }
 function updateTargets(previous){
  const a=$("fromRoom").value;
@@ -228,8 +397,8 @@ function updateTargets(previous){
 $("fromRoom").onchange=()=>updateTargets(null);
 function renderSim(){
  const rows=active.map(s=>{
-  const t=s.phase==="open"?Math.floor((now-s.openedAt)/1000):Math.max(0,Math.ceil((s.purgeSec-(now-s.purgeFrom)/1000)));
-  return '<tr><td>'+esc(s.from)+' → '+esc(s.to)+'</td><td>'+esc(s.via)+'</td><td>'+(s.phase==="open"?"Дверь открыта "+t+" с"+(t>=model.defaultOpenDoorAlarmSec?" · ЗУММЕР":""):"Продувка: "+t+" с")+'</td></tr>';
+  const t=(s.phase==="open"||s.phase==="occupied")?Math.floor((now-s.openedAt)/1000):Math.max(0,Math.ceil((s.purgeSec-(now-s.purgeFrom)/1000)));
+  return '<tr><td>'+esc(s.type==="occupancy"?"Помещение "+s.roomId:s.from+" → "+s.to)+'</td><td>'+esc(s.via||"—")+'</td><td>'+(s.phase==="occupied"?"Занято "+t+" с":s.phase==="open"?"Дверь открыта "+t+" с"+(t>=model.defaultOpenDoorAlarmSec?" · ЗУММЕР":""):"Продувка: "+t+" с")+'</td></tr>';
  });
  $("sessions").innerHTML=rows.length?'<table><thead><tr><th>Проход</th><th>Дверь</th><th>Состояние</th></tr></thead><tbody>'+rows.join("")+'</tbody></table>':"";
  const b=[...blocked().keys()];
@@ -240,34 +409,51 @@ function renderSim(){
 }
 function render(){draw();renderProperties();renderRules();refreshSelects();renderSim()}
 $("startPass").onclick=()=>{
- if(fire){alert("При пожаре штатный цикл не запускается.");return}
+ if(fire)return alert("При пожаре штатный цикл не запускается");
  const from=$("fromRoom").value,to=$("toRoom").value,d=connecting(from,to);
- if(!d){alert("Нет двери между помещениями.");return}
- if(blocked().has(d.id)){alert("Проход запрещён правилом блокировки через "+d.id);return}
- active.push({id:sessionNo++,from,to,via:d.id,phase:"open",openedAt:now,purgeSec:Math.max(1,room(to).purgeSec)});
+ if(!d)return alert("Нет двери между помещениями");
+ const existing=active.find(s=>s.type==="passage"&&s.via===d.id);
+ if(existing?.phase==="open")return alert("Дверь уже открыта");
+ if(blocked().has(d.id) && !existing)return alert("Проход запрещён блокировкой двери "+d.id);
+ if(existing) active=active.filter(s=>s.id!==existing.id);
+ active.push({id:sessionNo++,type:"passage",from,to,via:d.id,phase:"open",openedAt:now,purgeSec:Math.max(1,room(to).purgeSec)});
  render();
 };
 $("closePass").onclick=()=>{
  const from=$("fromRoom").value,to=$("toRoom").value;
- const s=[...active].reverse().find(s=>s.phase==="open"&&s.from===from&&s.to===to);
+ const s=[...active].reverse().find(s=>s.type==="passage"&&s.phase==="open"&&s.from===from&&s.to===to);
  if(!s){alert("Нет открытой двери для этого направления.");return}
  s.phase="purge";s.purgeFrom=now;render();
 };
 function tick(ms){now+=ms;active=active.filter(s=>s.phase!=="purge"||(now-s.purgeFrom)/1000<s.purgeSec);draw();renderSim()}
 $("advance").onclick=()=>{timeOffset+=30000;tick(30000)};
+$("markOccupancy").onclick=()=>{
+ if(fire)return alert("Нельзя запустить цикл при АПС");
+ const rid=$("occupiedRoom").value,r=room(rid);
+ if(!r?.interlockEnabled)return alert("Сначала включи «Шлюзовая зона» в свойствах помещения");
+ if(active.some(s=>s.type==="occupancy"&&s.roomId===rid))return alert("Помещение уже занято");
+ active.push({id:sessionNo++,type:"occupancy",roomId:rid,phase:"occupied",openedAt:now,purgeSec:Math.max(1,r.purgeSec)});
+ render();
+};
+$("releaseOccupancy").onclick=()=>{
+ const rid=$("occupiedRoom").value, s=active.find(x=>x.type==="occupancy"&&x.roomId===rid&&x.phase==="occupied");
+ if(!s)return alert("Нет события занятости этого помещения");
+ s.phase="purge";s.purgeFrom=now;render();
+};
 setInterval(()=>{now=Date.now()+timeOffset;active=active.filter(s=>s.phase!=="purge"||(now-s.purgeFrom)/1000<s.purgeSec);draw();renderSim()},1000);
 $("fire").onclick=()=>{fire=!fire;if(fire)active=[];render()};
 $("addRoom").onclick=()=>{
- const id=prompt("Короткое обозначение нового помещения (например G):");if(!id)return;
+ const nextId=String(Math.max(0,...model.rooms.map(r=>Number(r.id)).filter(Number.isFinite))+1);
+ const id=prompt("Номер нового помещения:",nextId);if(!id)return;
  if(model.rooms.some(r=>r.id===id)){alert("Такое помещение уже есть.");return}
- const next=model.rooms.length;model.rooms.push({id,name:id,x:110+next*22,y:90+next*28,w:150,h:120,cleanClass:null,pressurePa:null,purgeSec:30});
+ const next=model.rooms.length;model.rooms.push({id,name:id,x:130+(next%4)*170,y:40+Math.floor(next/4)*180,w:150,h:120,cleanClass:null,pressurePa:null,purgeSec:30,interlockEnabled:false});
  select("room",id);
 };
 $("addDoor").onclick=()=>{
  const a=prompt("Первое помещение (ID):");if(!a||!room(a))return alert("Помещение не найдено");
  const b=prompt("Второе помещение (ID):");if(!b||!room(b)||a===b)return alert("Некорректное второе помещение");
  if(connecting(a,b))return alert("Дверь между этими помещениями уже существует");
- const id=prompt("Обозначение двери:",a+b);if(!id)return;
+ const id=prompt("Обозначение двери:",[a,b].sort((x,y)=>Number(x)-Number(y)).join("-"));if(!id)return;
  if(model.doors.some(d=>d.id===id))return alert("Такой ID двери уже существует");
  model.doors.push({id,a,b,x:(room(a).x+room(b).x)/2,y:(room(a).y+room(b).y)/2,axis:"horizontal",access:"unconfigured",reedInput:null,lockOutput:null,busyOutput:null});
  select("door",id);
@@ -289,6 +475,9 @@ $("fileJSON").onchange=async e=>{
  try{
   const data=JSON.parse(await e.target.files[0].text());
   if(!Array.isArray(data.rooms)||!Array.isArray(data.doors)||!Array.isArray(data.rules))throw Error("Нет rooms, doors или rules");
+  const errors=AirlockEngine.validate({...data,exemptions:data.exemptions||[]});
+  if(errors.length)throw Error(errors.join("; "));
+  data.rooms.forEach(r=>{if(typeof r.interlockEnabled!=="boolean")r.interlockEnabled=false});
   const ids=new Set(data.rooms.map(r=>r.id));
   if(data.doors.some(d=>!ids.has(d.a)||!ids.has(d.b)))throw Error("Дверь ссылается на отсутствующее помещение");
   model={...data,exemptions:data.exemptions||[],defaultOpenDoorAlarmSec:data.defaultOpenDoorAlarmSec||30};
@@ -296,10 +485,14 @@ $("fileJSON").onchange=async e=>{
  }catch(err){alert("Ошибка импорта JSON: "+err.message)}finally{e.target.value=""}
 };
 $("exportCSV").onclick=()=>{
- const lines=[["rule","from","to","via","blocked_doors"],...model.rules.map(r=>[r.id,r.from,r.to,r.via,r.block.join(" ")])];
+ const generated=model.rooms.filter(r=>r.interlockEnabled).flatMap(r=>AirlockEngine.incident(model,r.id).map(v=>[
+ "zone:"+r.id,"*","*",v.id,
+ AirlockEngine.incident(model,r.id).filter(d=>d.id!==v.id&&!model.exemptions.some(e=>e.room===r.id&&e.door===d.id)).map(d=>d.id).join(" ")
+ ]));
+ const lines=[["source","from","to","via","blocked_doors"],...generated,...model.rules.map(r=>[r.id,r.from,r.to,r.via,r.block.join(" ")])];
  save("airlock-rules.csv","\uFEFF"+lines.map(arr=>arr.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(";")).join("\r\n"),"text/csv;charset=utf-8");
 };
-$("reset").onclick=()=>{if(!confirm("Сбросить изменения и восстановить A–F?"))return;model=structuredClone(initial);active=[];selected=null;selectedRule=null;render()};
+$("reset").onclick=()=>{if(!confirm("Сбросить изменения и восстановить пример 1–6?"))return;model=structuredClone(initial);active=[];selected=null;selectedRule=null;render()};
 render();
 </script>
 </body>
