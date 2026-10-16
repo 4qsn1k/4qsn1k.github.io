@@ -155,9 +155,9 @@
     "workflow": ".github/workflows/airlock-generator-qa.yml",
     "id": 387090436,
     "state": "active",
-    "lastVerifiedRunId": 38962515493,
+    "lastVerifiedRunId": 38972001563,
     "lastVerifiedRunConclusion": "success",
-    "lastVerifiedRunUrl": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/38962515493",
+    "lastVerifiedRunUrl": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/38972001563",
     "lastVerifiedJob": "Independent logic model and generator",
     "modelTests": "success",
     "repositoryTests": "success",
@@ -166,7 +166,8 @@
       "id": 12073441853,
       "available": true
     },
-    "requiresLocalPc": false
+    "requiresLocalPc": false,
+    "nativeFbdFixtureShapeTest": "success (as part of repository unit tests)"
   },
   "nativeQA": {
     "QA-OL-006": {
