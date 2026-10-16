@@ -1,0 +1,202 @@
+{
+  "version": "0.1.0",
+  "name": "Межкомнатные шлюзы — пример A–F",
+  "units": "px",
+  "defaultOpenDoorAlarmSec": 30,
+  "rooms": [
+    {
+      "id": "F",
+      "name": "F",
+      "x": 150,
+      "y": 10,
+      "w": 490,
+      "h": 190,
+      "cleanClass": null,
+      "pressurePa": null,
+      "purgeSec": 30
+    },
+    {
+      "id": "E",
+      "name": "E",
+      "x": 160,
+      "y": 200,
+      "w": 240,
+      "h": 200,
+      "cleanClass": null,
+      "pressurePa": null,
+      "purgeSec": 30
+    },
+    {
+      "id": "D",
+      "name": "D",
+      "x": 400,
+      "y": 200,
+      "w": 240,
+      "h": 200,
+      "cleanClass": null,
+      "pressurePa": null,
+      "purgeSec": 30
+    },
+    {
+      "id": "C",
+      "name": "C",
+      "x": 640,
+      "y": 200,
+      "w": 150,
+      "h": 200,
+      "cleanClass": null,
+      "pressurePa": null,
+      "purgeSec": 30
+    },
+    {
+      "id": "A",
+      "name": "A",
+      "x": 290,
+      "y": 400,
+      "w": 220,
+      "h": 190,
+      "cleanClass": null,
+      "pressurePa": null,
+      "purgeSec": 30
+    },
+    {
+      "id": "B",
+      "name": "B",
+      "x": 510,
+      "y": 400,
+      "w": 280,
+      "h": 190,
+      "cleanClass": null,
+      "pressurePa": null,
+      "purgeSec": 30
+    }
+  ],
+  "doors": [
+    {
+      "id": "EF",
+      "a": "E",
+      "b": "F",
+      "x": 300,
+      "y": 200,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "DF",
+      "a": "D",
+      "b": "F",
+      "x": 500,
+      "y": 200,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "AE",
+      "a": "A",
+      "b": "E",
+      "x": 350,
+      "y": 400,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "AD",
+      "a": "A",
+      "b": "D",
+      "x": 456,
+      "y": 400,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "BD",
+      "a": "B",
+      "b": "D",
+      "x": 565,
+      "y": 400,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "CD",
+      "a": "C",
+      "b": "D",
+      "x": 640,
+      "y": 285,
+      "axis": "vertical",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "BC",
+      "a": "B",
+      "b": "C",
+      "x": 710,
+      "y": 400,
+      "axis": "horizontal",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    },
+    {
+      "id": "AB",
+      "a": "A",
+      "b": "B",
+      "x": 510,
+      "y": 500,
+      "axis": "vertical",
+      "access": "unconfigured",
+      "reedInput": null,
+      "lockOutput": null,
+      "busyOutput": null
+    }
+  ],
+  "rules": [
+    {
+      "id": "enter-A",
+      "from": "*",
+      "to": "A",
+      "via": "*",
+      "block": [
+        "AB",
+        "AE",
+        "AD"
+      ],
+      "comment": "При входе в A блокируются три двери его контура"
+    },
+    {
+      "id": "F-to-D",
+      "from": "F",
+      "to": "D",
+      "via": "DF",
+      "block": [
+        "CD",
+        "BD",
+        "AD"
+      ],
+      "comment": "Вход F→D не блокирует двери иных контуров"
+    }
+  ],
+  "exemptions": [],
+  "defaultRule": "other-incident-doors-except-entry",
+  "fireMode": "all-electrical-interlocks-off",
+  "disclaimer": "Simulation only. Requires direction detection, independent fire-release hardware and validated I/O mapping."
+}
