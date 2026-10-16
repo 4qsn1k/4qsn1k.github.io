@@ -135,7 +135,7 @@ def home_kb():
        ('🔄 Обновить', 'menu:home')],
       [('🐾 Мои питомцы', 'menu:pets'),
        ('🛠 Управление', 'manage:home')],
-      [('👥 Семья и коллекции', 'family:list')])
+      [('⚙️ Настройки', 'settings:home')])
 
 async def start(message: Message):
     parts = (message.text or '').split()

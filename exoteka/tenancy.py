@@ -305,7 +305,7 @@ async def directory(c):
     buttons.extend([
         [("🔗 Присоединиться по приглашению","family:join")],
         [("👥 Участники и приглашения","family:members")] if owner else [],
-        [("🏠 Главное меню","menu:home")] if owner else []
+        [("⬅️ Настройки","settings:home")] if owner else [("⬅️ К началу","family:welcome")]
     ])
     buttons=[b for b in buttons if b]
     await edit(c,"\n".join(text),*buttons)
@@ -356,6 +356,13 @@ async def callback(c:CallbackQuery,state:FSMContext):
     parts=c.data.split(":")
     action=parts[1] if len(parts)>1 else ""
     owner=active_owner(user)
+    if action=="welcome":
+        await state.clear()
+        return await edit(c,
+            "🦎 <b>ЭКЗОТЕКА</b>\n━━━━━━━━━━━━━━\n"
+            "Создай собственную коллекцию или присоединись к семейной.",
+            [("➕ Создать коллекцию","family:create","success")],
+            [("🔗 Ввести приглашение","family:join")])
     if action=="create":
         await state.clear()
         create_own(user)

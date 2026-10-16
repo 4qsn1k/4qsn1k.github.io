@@ -1,8 +1,7 @@
-"""Feeding periods: Home -> Periods -> Animal -> Number -> Result.
+"""Settings hub and animal feeding periods.
 
-There is no extra generic Settings screen. Navigation preserves the caller:
-list, animal passport, or animal editor. All screens are one Rich Message with
-classic Telegram fallback via rich_ui.
+Main -> Settings -> Family and collections. Feeding periods stay under Pets.
+Screens are edited in place, with classic Telegram fallback via rich_ui.
 """
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
@@ -55,6 +54,15 @@ async def show(c: CallbackQuery, text: str, *rows):
     await rich_ui.edit_screen(
         c.message, text, parse_mode="HTML", reply_markup=board(*rows))
     await c.answer()
+
+
+async def settings_home(c: CallbackQuery):
+    await show(c,
+        "⚙️ <b>НАСТРОЙКИ</b>\n"
+        "━━━━━━━━━━━━━━\n"
+        "Здесь можно управлять общими коллекциями и доступом семьи.",
+        [("👥 Семья и коллекции", "family:list")],
+        [("⬅️ Главное меню", "menu:home")])
 
 
 async def list_periods(c: CallbackQuery):
@@ -157,8 +165,10 @@ async def handle(c: CallbackQuery, state: FSMContext):
         return
     parts = (c.data or "").split(":")
     action = parts[1] if len(parts)>1 else ""
-    # settings:home is a compatibility alias for old messages, not a separate screen.
-    if action in ("home", "feeding"):
+    if action == "home":
+        await state.clear()
+        return await settings_home(c)
+    if action == "feeding":
         await state.clear()
         return await list_periods(c)
     if action in ("pet", "custom") and len(parts)>=3:
