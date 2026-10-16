@@ -12,17 +12,21 @@
  const prev=document.getElementById("stRoom").closest("section");prev.insertAdjacentElement("afterend",panel);
  function renderWiring(){
   const plan=AirlockProjectWiring.build(model);
-  const n=plan.planningCounts,needed=n.logicalBlockingRequests+n.roomLightChannels+n.aggregatedAlarmChannels;
+  const n=plan.planningCounts,needed=n.estimatedDOWithRoomSignals,doorNeeded=n.estimatedDOWithDoorSignals;
   const shared=plan.blockRequests.filter(p=>p.sources.length>1);
   document.getElementById("wiringSummary").innerHTML=
    '<p><strong>Контролируемых помещений:</strong> '+n.controlledRooms+
    '; <strong>уникальных герконов:</strong> '+n.uniqueReedInputs+
    '; <strong>общих входов:</strong> '+n.commonInputs+
    '; <strong>логических запретов:</strong> '+n.logicalBlockingRequests+
-   '; <strong>цветовых линий:</strong> '+n.roomLightChannels+
+   '; <strong>перекидных реле светофоров по помещениям:</strong> '+n.roomTrafficRelays+
    '; <strong>общий сигнал тревоги:</strong> '+n.aggregatedAlarmChannels+'.</p>'+
-   '<p><strong>Если каждому запрету и цвету нужен отдельный контакт:</strong> ориентировочно '+
-   needed+' выходов. У ПР100-24.1208.03.1 М02 — 8 релейных выходов. Требуется анализ, какие сигналы реализуются штатным BUSY, общими цепями или на других устройствах.</p>'+
+   '<p><strong>Перекидное реле (1 DO на красный/зелёный):</strong> NC — красный, NO — зелёный, зелёный только при наличии подтверждённого разрешения. '+
+   'При исчезновении управления реле выбирает красный лишь при сохранённом питании ламп.</p>'+
+   '<p><strong>Предварительный бюджет независимых DO:</strong> по зонам '+
+   needed+' выходов; при отдельном светофоре каждой двери — '+doorNeeded+
+   ' выходов. У ПР100-24.1208.03.1 М02 — 8 релейных выходов. Это не клеммная схема: запросы BUSY, группировка светофоров и аппаратные реле должны быть согласованы.</p>'+
+   '<p class="muted">Зелёный одной комнаты не означает разрешение общей двери. Для неё нужен отдельный сигнал с учётом обоих блоков и FINAL_BLOCK.</p>'+
    (shared.length?'<p>Общие двери (OR): '+shared.map(p=>p.doorId).join(", ")+'</p>':"");
  }
  document.getElementById("exportWiring").onclick=()=>{
