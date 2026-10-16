@@ -44,7 +44,7 @@
     "QA-OL-011"
   ],
   "nextTest": "QA-OL-012",
-  "nextAction": "В отдельной тестовой копии Owen Logic собрать FBD из FB_Room_N1 и FB_Room_N4 и объединить блокировку общей двери 1-4 через OR. Проверить I/O ресурсы и блокировки. Не трогать физические выходы и реальный ПР100. Перед FBD сохранить .owle отдельно.",
+  "nextAction": "Разместить FB_Room_N1 и FB_Room_N4 на FBD тестовой копии, объединить блокировки общей двери 1–4 через OR и подтвердить совместное исполнение. Физические ПР не программировать.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
@@ -193,7 +193,7 @@
       "status": "OBSERVED_NOT_APPROVED",
       "scope": "automatic purge restart when FireNormal restores; needs engineering safety review"
     },
-    "next": "QA-OL-011 FB_Room_N4 real native ST simulation",
+    "next": "QA-OL-012 FBD integration",
     "QA-OL-011": {
       "status": "PASS",
       "scope": "Four-door mutual interlock FB_Room_N4: 3-4 and 4-6 open, other doors blocked, close => ready without purge",
@@ -201,5 +201,38 @@
       "verifiedAt": "2026-10-16T20:54:58Z"
     }
   },
-  "currentTestProject": "Airlock_SIMULATION_TEST.owle"
+  "currentTestProject": "Airlock_SIMULATION_TEST.owle",
+  "indicatorDesign": {
+    "updated": "2026-10-17",
+    "relayPerRedGreenPair": 1,
+    "contactCom": "lamp supply",
+    "contactNc": "RED",
+    "contactNo": "GREEN",
+    "coilEnergizedFor": "confirmed GREEN permission",
+    "lampSupplyLoss": "both lights off even though NC position selects RED",
+    "roomBasedEstimateLogicalDO": 9,
+    "doorBasedEstimateLogicalDO": 13,
+    "notes": "Demonstration with 6 blocking requests + 2 or 6 indicator relays + 1 alarm. Physical DO count and BUSY mapping not approved. Shared-door green requires both room Ready and final inhibit clear.",
+    "file": "airlock-generator/docs/FBD-N1-N4-INTEGRATION.md"
+  },
+  "windowBridge": {
+    "updated": "2026-10-17",
+    "rootCause": "owen-bridge.ps1 used ShowWindow(SW_RESTORE=9), unmaximizing Owen Logic between GUI operations",
+    "remedy": "remove SW_RESTORE call; leave window maximized",
+    "confirmed": true,
+    "signal": "I_D_3_4_Closed",
+    "cycle": "TRUE -> FALSE -> TRUE",
+    "beforeGeometry": "-16;-16;3872;2092",
+    "afterGeometry": "-16;-16;3872;2092",
+    "state": "Maximized",
+    "result": "WINDOW_SIZE_STABLE_PASS",
+    "repeatableTest": "airlock-generator/bridge/verify-no-resize.ps1"
+  },
+  "homePC": {
+    "installationAuthorized": true,
+    "scope": "Fresh Owen Logic and required dependencies, Airlock Generator backup, GUI bridge, offline QA",
+    "scheduledFor": "2026-10-17T01:34:20+03:00",
+    "installationCompleted": false,
+    "notes": "Approval received 2026-10-17; installation task scheduled. Do not claim installed before verified."
+  }
 }
