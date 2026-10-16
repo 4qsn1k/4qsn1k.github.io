@@ -39,7 +39,7 @@
     "QA-OL-005"
   ],
   "nextTest": "QA-OL-006",
-  "nextAction": "Завершить QA-OL-006: вывести окно тестового Owen Logic на передний план, через мост v0.2 закрыть дверь 1–2 (I_D_1_2_Closed=TRUE) и проверить State=30; затем повторно открыть во время продувки, закрыть, проверить новые полные 30 с.",
+  "nextAction": "После восстановления интерактивного RDP сеанса №2 проверить состояние Owen Logic, затем выполнить %USERPROFILE%\\Desktop\\AirlockGeneratorTest\\qa006_run_v3.ps1. GUI мост должен отказаться от изменения входа при GetForegroundWindow()==0. QA006 не считать завершённым до подтверждения таймера в реальном симуляторе.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Full ST QA and safety review",
@@ -76,7 +76,7 @@
     "inputMutationVerified": true,
     "inputMutationBlocker": "Foreground focus required; failed safe with FOREGROUND_NOT_OWEN when Firefox focused",
     "outputWriteDenied": true,
-    "nextAction": "Завершить QA-OL-006: вывести окно тестового Owen Logic на передний план, через мост v0.2 закрыть дверь 1–2 (I_D_1_2_Closed=TRUE) и проверить State=30; затем повторно открыть во время продувки, закрыть, проверить новые полные 30 с.",
+    "nextAction": "После восстановления интерактивного RDP сеанса №2 проверить состояние Owen Logic, затем выполнить %USERPROFILE%\\Desktop\\AirlockGeneratorTest\\qa006_run_v3.ps1. GUI мост должен отказаться от изменения входа при GetForegroundWindow()==0. QA006 не считать завершённым до подтверждения таймера в реальном симуляторе.",
     "launchWithoutClosingConsole": "%USERPROFILE%\\Desktop\\AirlockGeneratorTest\\owen-bridge-status.cmd",
     "lastSuccessfulWrite": {
       "signal": "I_D_1_2_Closed",
@@ -84,6 +84,55 @@
       "after": "FALSE",
       "verified": true,
       "note": "CHANGED_AND_VERIFIED"
+    },
+    "safeFocusHelper": "airlock-generator/bridge/focus-owen.ps1",
+    "qa006Script": "airlock-generator/bridge/qa006_run.ps1",
+    "remoteQa006Script": "%USERPROFILE%\\Desktop\\AirlockGeneratorTest\\qa006_run_v3.ps1"
+  },
+  "rdp": {
+    "status": "Session 2 disconnected at last check; only session 2 exists after approved logoff 7",
+    "threeHourSessionLimitDetected": false,
+    "limits": {
+      "MaxConnectionTime": 0,
+      "MaxIdleTime": 0,
+      "MaxDisconnectionTime": 0
+    },
+    "recentError": "Windows error 64 / 0x80070040, network name no longer available",
+    "guiForegroundHandleZeroWhenDisconnected": true,
+    "diagnosticDoc": "airlock-generator/docs/RDP-DIAGNOSTICS-2026-10-16.md"
+  },
+  "qa006PartialObservations": [
+    {
+      "time": "2026-10-16T19:41:39Z",
+      "input": "I_D_1_2_Closed",
+      "value": "TRUE",
+      "verified": true
+    },
+    {
+      "time": "2026-10-16T19:42:02Z",
+      "input": "I_D_1_2_Closed",
+      "value": "FALSE",
+      "verified": true,
+      "resetTimerVerified": false
+    },
+    {
+      "time": "2026-10-16T19:44:12Z",
+      "input": "I_D_1_2_Closed",
+      "value": "TRUE",
+      "verified": true,
+      "observedState": "UNAVAILABLE"
+    },
+    {
+      "time": "2026-10-16T19:47:20Z",
+      "input": "I_D_1_2_Closed",
+      "value": "FALSE",
+      "verified": true
+    },
+    {
+      "time": "2026-10-16T19:47:42Z",
+      "observedState": "20",
+      "openDoor": "1-2",
+      "confirmed": true
     }
-  }
+  ]
 }
