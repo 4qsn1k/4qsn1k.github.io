@@ -1,4 +1,4 @@
-# Owen Logic UI Automation bridge v0.1 — TEST SIMULATION ONLY
+# Owen Logic UI Automation bridge v0.2 — TEST SIMULATION ONLY
 # All actions require the exact separate Airlock_SIMULATION_TEST.owle project.
 # Usage: powershell -NoProfile -ExecutionPolicy Bypass -File owen-bridge.ps1 -Action status
 #        ... -Action read -Name I_D_1_2_Closed
@@ -124,9 +124,52 @@ public static class OwenBridgeWin32 {
         Start-Sleep -Milliseconds 75
         [OwenBridgeWin32]::mouse_event(4,0,0,0,[UIntPtr]::Zero)
         Start-Sleep -Milliseconds 300
+        # Owen Logic opens a modal "Изменить значение" (change value) dialog.
+        # Find it by PID + exact signal label; never click unrelated windows.
+        $desktop=[System.Windows.Automation.AutomationElement]::RootElement
+        $top=$desktop.FindAll([System.Windows.Automation.TreeScope]::Children,[System.Windows.Automation.Condition]::TrueCondition)
+        $modal=$null
+        foreach($candidate in $top){
+          if($candidate.Current.ProcessId -ne $process.Id){continue}
+          if($candidate.Current.ControlType -ne [System.Windows.Automation.ControlType]::Window){continue}
+          if($candidate.Current.NativeWindowHandle -eq $window.Current.NativeWindowHandle){continue}
+          $c=$candidate.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)
+          if($c.Count -lt 7 -or $c.Count -gt 25){continue}
+          foreach($el in $c){if($el.Current.Name -eq $Name){$modal=$candidate;break}}
+          if($modal){break}
+        }
+        if(-not $modal){throw "SIMULATOR_VALUE_DIALOG_NOT_FOUND: no input changed"}
+        $controls=$modal.FindAll([System.Windows.Automation.TreeScope]::Descendants,[System.Windows.Automation.Condition]::TrueCondition)
+        $valueButton=$null;$fixCheck=$null;$actionButtons=@()
+        foreach($el in $controls){
+          if($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::CheckBox){
+            $fixCheck=$el
+          } elseif($el.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button){
+            try{$null=$el.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern);$valueButton=$el}catch{}
+            try{$null=$el.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern);$actionButtons+=,$el}catch{}
+          }
+        }
+        if(-not $valueButton -or -not $fixCheck -or $actionButtons.Count -ne 2){
+          throw "UNEXPECTED_SIMULATOR_DIALOG: do not confirm"
+        }
+        $toggle=$valueButton.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        $fix=$fixCheck.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        $wanted=if($Value -eq "TRUE"){"On"}else{"Off"}
+        if([string]$toggle.Current.ToggleState -ne $wanted){$toggle.Toggle()}
+        if([string]$toggle.Current.ToggleState -ne $wanted){throw "TOGGLE_NOT_APPLIED"}
+        # In Owen Logic this keeps the injected test signal stable.
+        if($fix.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::Off){$fix.Toggle()}
+        if($fix.Current.ToggleState -ne [System.Windows.Automation.ToggleState]::On){
+          throw "FIXATION_NOT_ENABLED"
+        }
+        # Left button is "Принять", right is "Отмена" in the verified dialog.
+        $accept=@($actionButtons|Sort-Object {$_.Current.BoundingRectangle.Left})[0]
+        $invoke=$accept.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        $invoke.Invoke()
+        Start-Sleep -Milliseconds 400
         $after=SignalLocation $Name
         $result.after=$after.Value;$result.changed=($after.Value -eq $Value)
-        $result.note=if($result.changed){"CHANGED_AND_VERIFIED"}else{"NOT_CHANGED_CHECK_UI_DIALOG"}
+        $result.note=if($result.changed){"CHANGED_AND_VERIFIED"}else{"CHANGE_NOT_CONFIRMED"}
       }
     }
   }
