@@ -44,11 +44,13 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 <div class="toolbar">
 <button id="addRoom">+ Помещение</button>
 <button id="addDoor">+ Дверь</button>
+<label style="display:inline-flex;align-items:center;gap:6px;margin:0 5px 0 0;cursor:pointer;font-weight:500"><input id="snapWalls" type="checkbox" checked style="width:auto;accent-color:#17688c"> Магнит стен</label>
 <button id="exportJSON" class="primary">Скачать JSON</button>
 <button id="importJSON">Загрузить JSON</button><input type="file" id="fileJSON" accept=".json,application/json" style="display:none">
 <button id="exportCSV">Таблица правил CSV</button>
 <button id="reset">Исходный пример</button>
 </div>
+<div id="snapStatus" role="status" aria-live="polite" style="color:#236782;font-size:13px;min-height:20px;margin-bottom:8px">Магнит включён: подведи одну стену к другой на расстояние до 14 единиц.</div>
 <svg id="plan" viewBox="100 0 730 630" role="img" aria-label="Схема помещений и дверей. Выберите помещение или дверь для настройки"></svg>
 <div class="legend">
 <span><i class="dot" style="background:#32cf5e"></i> Доступна</span>
@@ -56,7 +58,7 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 <span><i class="dot" style="background:#e9a332"></i> Открыта в симуляции</span>
 <span><i class="dot" style="background:#fae8d8"></i> Помещение занято / продувается</span>
 </div>
-<p class="muted">Номера помещений не являются классами чистоты. Перетаскивай помещения мышью. Нажми на блок или зелёную дверь, чтобы изменить параметры. Двери привязаны к общим стенам автоматически.</p>
+<p class="muted">Номера помещений не являются классами чистоты. Перетаскивай помещения мышью. При включённом магните соседние стены и близкие углы выравниваются без зазоров. Удерживай Alt для свободного перемещения. Нажми на блок или зелёную дверь, чтобы изменить параметры. Двери привязаны к общим стенам автоматически.</p>
 </section>
 <section class="panel" style="margin-top:16px">
 <h2>Симулятор прохода</h2>
@@ -96,6 +98,7 @@ footer{max-width:1550px;margin:0 auto 24px;padding:0 18px;color:#526778;font-siz
 </main>
 <footer>Демонстрационный проектировщик — не система управления доступом. Изменения в браузере не отправляются автоматически в GitHub. Сохраняй их кнопкой «Скачать JSON».</footer>
 <script src="./engine.js"></script>
+<script src="./wall-snap.js"></script>
 <script>
 "use strict";
 const initial = {
@@ -310,7 +313,7 @@ function draw(){
  const svg=$("plan");svg.innerHTML="";
  const minX=Math.min(100,...model.rooms.map(r=>r.x))-20, minY=Math.min(0,...model.rooms.map(r=>r.y))-20;
  const maxX=Math.max(830,...model.rooms.map(r=>r.x+r.w))+20, maxY=Math.max(630,...model.rooms.map(r=>r.y+r.h))+20;
- svg.setAttribute("viewBox",[minX,minY,maxX-minX,maxY-minY].join(" "));
+ svg.setAttribute("viewBox",drag?.viewBox || [minX,minY,maxX-minX,maxY-minY].join(" "));
  const defs=svgEl("defs",{},svg),pattern=svgEl("pattern",{id:"grid",width:20,height:20,patternUnits:"userSpaceOnUse"},defs);
  svgEl("path",{d:"M20 0H0V20",fill:"none",stroke:"#e5eef3","stroke-width":1},pattern);
  svgEl("rect",{x:minX,y:minY,width:maxX-minX,height:maxY-minY,fill:"url(#grid)"},svg);
@@ -321,7 +324,24 @@ function draw(){
   const txt=svgEl("text",{x:r.x+r.w/2,y:r.y+r.h/2,"text-anchor":"middle","dominant-baseline":"middle","font-size":Math.max(21,Math.min(37,r.w/5)),fill:"#152c3c"},g);txt.textContent=r.name;
   const meta=[r.cleanClass?"Класс "+r.cleanClass:null,r.pressurePa==null?null:r.pressurePa+" Па"].filter(Boolean).join(" · ");
   if(meta){const label=svgEl("text",{x:r.x+r.w/2,y:r.y+r.h/2+32,"text-anchor":"middle","font-size":13,fill:"#687b89"},g);label.textContent=meta;}
-  g.addEventListener("pointerdown",e=>{if(e.button!==0)return;drag={id:r.id,x:e.clientX,y:e.clientY,oldX:r.x,oldY:r.y};svg.setPointerCapture(e.pointerId);select("room",r.id);});
+  g.addEventListener("pointerdown",e=>{
+    if(e.button!==0)return;
+    drag={id:r.id,x:e.clientX,y:e.clientY,oldX:r.x,oldY:r.y,
+      scale:svg.viewBox.baseVal.width/svg.getBoundingClientRect().width,
+      viewBox:svg.getAttribute("viewBox"),snap:null};
+    svg.setPointerCapture(e.pointerId);
+    select("room",r.id);
+  });
+ }
+ // Highlight the exact shared wall while a room is being dragged.
+ if(drag?.snap?.snapped){
+   for(const w of drag.snap.walls){
+     const attrs=w.axis==="x"
+       ? {x1:w.x,y1:w.y1,x2:w.x,y2:w.y2}
+       : {x1:w.x1,y1:w.y,x2:w.x2,y2:w.y};
+     svgEl("line",{...attrs,stroke:"#1689c7","stroke-width":6,
+       "stroke-linecap":"round",opacity:"0.85","pointer-events":"none"},svg);
+   }
  }
  const limits=blocked();
  for(const d of model.doors){
@@ -336,13 +356,40 @@ function draw(){
   g.addEventListener("click",e=>{e.stopPropagation();select("door",d.id)});
  }
 }
+// Drag coordinates keep a constant screen-to-diagram scale.
+// The viewBox is frozen during dragging, preventing movement drift.
 $("plan").addEventListener("pointermove",e=>{
  if(!drag)return;
- const r=room(drag.id),scale=$("plan").viewBox.baseVal.width/$("plan").getBoundingClientRect().width;
- if(!r)return;r.x=Math.round(drag.oldX+(e.clientX-drag.x)*scale);r.y=Math.round(drag.oldY+(e.clientY-drag.y)*scale);draw();
+ const r=room(drag.id);if(!r)return;
+ const x=Math.round(drag.oldX+(e.clientX-drag.x)*drag.scale);
+ const y=Math.round(drag.oldY+(e.clientY-drag.y)*drag.scale);
+ if($("snapWalls").checked&&!e.altKey){
+   const result=WallSnap.snapRect(model.rooms,drag.id,x,y);
+   r.x=result.x;r.y=result.y;
+   drag.snap=result;
+   $("snapStatus").textContent=result.snapped
+     ? "Стены точно совмещены с помещением: "+[...new Set(result.walls.map(w=>w.roomId))].join(", ")
+     : "Магнит включён. Подведи помещение ближе к соседней стене.";
+ }else{
+   r.x=x;r.y=y;drag.snap=null;
+   $("snapStatus").textContent=e.altKey?"Alt: свободное перемещение.":"Магнит выключен.";
+ }
+ draw();
 });
-$("plan").addEventListener("pointerup",()=>{drag=null});
-$("plan").addEventListener("pointercancel",()=>{drag=null});
+$("plan").addEventListener("pointerup",()=>{
+ if(!drag)return;
+ const walls=drag.snap?.walls||[];
+ drag=null;draw();
+ $("snapStatus").textContent=walls.length
+  ? "Совмещены стены помещений: "+[...new Set(walls.map(w=>w.roomId))].join(", ")+". Координаты зафиксированы."
+  : "Помещение размещено. Магнит "+($("snapWalls").checked?"включён.":"выключен.");
+});
+$("plan").addEventListener("pointercancel",()=>{drag=null;draw();});
+$("snapWalls").onchange=e=>{
+ $("snapStatus").textContent=e.target.checked
+  ? "Магнит включён: подведи одну стену к другой на расстояние до 14 единиц."
+  : "Магнит выключен: помещения перемещаются свободно.";
+};
 function select(type,id){selected={type,id};render();}
 function renderProperties(){
  const box=$("properties");
