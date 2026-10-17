@@ -9,9 +9,9 @@ const list=(items,current)=>items.map(([v,label])=>
   '<option value="'+esc(v)+'"'+(String(current)===String(v)?' selected':'')+'>'+esc(label)+'</option>').join("");
 const famOptions=family=>list(families.map(x=>[x,x]),family);
 const moduleOptions=value=>list([["","Без ПРМ"],["PRM-1","ПРМ-1 (+8 DI, +8 DO)"],
-  ["PRM-5","ПРМ-5 (+16 DO)"]],value);
+  ["PRM-5","ПРМ-5 (+16 DO)"],["PRM-6","ПРМ-6 (+16 DI, +12 DO)"]],value);
 const defaultDevice=()=>({family:"PR100",modification:"ПР100-24.1208.03.1 М02",
-  baseDi:12,baseDo:8,modules:[]});
+  baseDi:8,baseDo:8,modules:[]});
 const hardware=()=>{
  if(!model.hardware)model.hardware={primary:defaultDevice(),secondary:[],link:"none",signaling:"room",rs485AvailableOnAll:false};
  return model.hardware;
@@ -19,7 +19,7 @@ const hardware=()=>{
 const p=document.createElement("section");p.className="panel";p.style.marginTop="16px";
 p.innerHTML='<h2>Оборудование ПР и расширения</h2>'+
  '<p class="muted">Выбери конкретную модификацию и количество физических DI/DO. '+
- 'У ПР100 нет ПРМ, у ПР102/200/103/205 — до двух. Дополнительные ПР требуют Modbus и отдельных программ.</p>'+
+ 'У ПР100 нет ПРМ, у ПР102/200/103/205 — до двух. У ПР100-24.1208.03.1 есть 8 DI и 4 универсальных AI (их дискретный режим проверяется отдельно). Дополнительные ПР требуют Modbus и отдельных программ.</p>'+
  '<div id="hardwareDevices"></div>'+
  '<div class="toolbar"><button id="hardwareAdd">+ Второй ПР</button></div>'+
  '<div class="grid2"><div><label for="hardwareLink">Связь ПР</label><select id="hardwareLink">'+
