@@ -30,6 +30,71 @@ function combos(max){
   for(let j=i;j<expansion.length;j++)out.push([expansion[i],expansion[j]]);
  return out;
 }
+function currentUpgrade(hardware,required,reserve){
+ if(!hardware?.primary)return null;
+ if((hardware.secondary||[]).length>0)return{
+  status:"MULTI_CONTROLLER_REQUIRES_LOCAL_PLACEMENT",
+  note:"В проекте выбрано несколько ПР. Модули расширения надо выбирать по свободным каналам конкретного контроллера, а не по общей сумме. Используй раздел «Размещение сигналов по контроллерам».",
+  additions:[]
+ };
+ const selected=hardware.primary;
+ const variation=String(selected.modification||"");
+ const exact=catalogue.find(x=>x.family===selected.family&&
+   (variation.includes(x.id.slice(x.id.indexOf("-")+1))||
+    variation.replace(/^ПР/,"PR").includes(x.id)));
+ const familyRules={"PR100":0,"PR102":2,"PR200":2,"PR103":2,"PR205":2};
+ const max=familyRules[selected.family];
+ if(max===undefined)return {status:"UNSUPPORTED_SELECTED_FAMILY",note:"Для текущего прибора нет проверенной конфигурации.",additions:[]};
+ const modules=Array.isArray(selected.modules)?selected.modules:[];
+ const knownModules=modules.map(name=>expansion.find(m=>m.id===name));
+ if(knownModules.some(x=>!x))return{
+  status:"UNKNOWN_MODULE",note:"Установлен неизвестный модуль. Проверь состав ПРМ до автоматического подбора.",additions:[]
+ };
+ const baseDi=exact?exact.di+exact.specialDi:selected.baseDi;
+ const baseDo=exact?exact.relayDo:selected.baseDo;
+ if(!Number.isInteger(baseDi)||!Number.isInteger(baseDo)||baseDi<0||baseDo<0)
+  return {status:"INVALID_SELECTED_COUNTS",note:"Введи число DI и релейных DO текущего ПР.",additions:[]};
+ const currentDi=baseDi+knownModules.reduce((n,m)=>n+m.di,0);
+ const currentDo=baseDo+knownModules.reduce((n,m)=>n+m.relayDo,0);
+ const remainingSlots=max-modules.length;
+ const targetDi=required.di+reserve.di,targetDo=required.relayDo+reserve.relayDo;
+ const capacity={di:currentDi,relayDo:currentDo,freeDi:currentDi-required.di,
+  freeDo:currentDo-required.relayDo};
+ const caveat=exact?"Паспортные количества из проверенной модели. Универсальные AI не включены в DI.":
+  "DI/DO взяты из ручных полей. Перед заказом проверь модификацию и тип выхода по паспорту.";
+ if(currentDi>=targetDi&&currentDo>=targetDo)return{
+  status:"SUFFICIENT_WITH_MARGIN",capacity,note:"Каналов текущего ПР хватает с заданным резервом. "+caveat,additions:[]
+ };
+ if(remainingSlots<=0)return{
+  status:"NO_EXPANSION",capacity,
+  note:max===0?"Для ПР100 штатные ПРМ не предусмотрены. Если каналов не хватает, выбирай другой контроллер или утверждённую архитектуру из нескольких ПР.":
+  "Все слоты ПРМ заняты. Необходимо изменить контроллер или архитектуру.",
+  additions:[]
+ };
+ const options=[];
+ for(const extra of combos(remainingSlots)){
+  if(!extra.length)continue;
+  const d=currentDi+extra.reduce((n,x)=>n+x.di,0);
+  const o=currentDo+extra.reduce((n,x)=>n+x.relayDo,0);
+  if(d<required.di||o<required.relayDo)continue;
+  const meets=d>=targetDi&&o>=targetDo;
+  options.push({modules:extra.map(x=>x.id),sources:extra.map(x=>x.source),
+    capacity:{di:d,relayDo:o,freeDi:d-required.di,freeDo:o-required.relayDo},
+    meetsReserve:meets,score:(meets?0:1000)+extra.length*100+
+      Math.abs(d-targetDi)*0.2+Math.abs(o-targetDo)*0.4});
+ }
+ options.sort((a,b)=>a.score-b.score);
+ if(!options.length)return {status:"CANNOT_EXPAND_ENOUGH",capacity,
+  note:"Одними доступными ПРМ требуемую ёмкость не обеспечить. Нужен новый ПР или распределённая схема. "+caveat,
+  additions:[]};
+ return {
+  status:options[0].meetsReserve?"ADD_MODULE":"ADD_MODULE_WITHOUT_DESIRED_RESERVE",
+  capacity,note:caveat,
+  additions:options.slice(0,2).map(x=>({
+   modules:x.modules,capacity:x.capacity,meetsReserve:x.meetsReserve,sources:x.sources
+  }))
+ };
+}
 function check(wiring,settings={}){
  if(!wiring||!wiring.planningCounts)throw Error("Нет рассчитанных дверей и помещений");
  const c=wiring.planningCounts, perDoor=settings.signaling==="door";
@@ -93,6 +158,7 @@ function check(wiring,settings={}){
   {id:"ACCESS_INTERFACE",quantity:required.doors,name:"Согласование запросов блокировки со СКУД",
    details:"Уточнить интерфейс BUSY контроллера С2000-2 и логическую полярность; расчёт выходов завышен, если допускается групповое или иное согласованное объединение."}
  ];
+ const current=currentUpgrade(settings.currentHardware,required,{di:reserveDi,relayDo:reserveDo});
  const constraints=[
   "Расчёт основан на логических запросах: физические реле, аппаратные контакты и безопасное отпирание требуют проекта.",
   "Индивидуальные входы/выходы и допустимые типы датчиков/нагрузок проверить в паспорте точной модификации.",
@@ -105,7 +171,7 @@ function check(wiring,settings={}){
  return {
   schema:"airlock-equipment-advice/0.1",status:"PRELIMINARY_ENGINEERING_SELECTION_NOT_BOM",
   required,reserve:{di:reserveDi,relayDo:reserveDo},requireEthernet,
-  recommended:primary,alternatives,accessories,constraints,
+  recommended:primary,alternatives,current,accessories,constraints,
   allSingleControllerCandidates:candidates.length,
   assumptions:["Питание базового перечня ПР — 24 В DC",
    "Сигналы внешней АПС и ResetFault учтены как два логических DI; реальное исполнение может потребовать большего",
