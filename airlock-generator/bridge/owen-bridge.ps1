@@ -30,13 +30,25 @@ public static class OwenBridgeWin32 {
 "@ -ErrorAction Stop
   # The WPF UIA bounds are in physical pixels; align mouse coordinates with them.
   [OwenBridgeWin32]::SetProcessDpiAwarenessContext([IntPtr](-4)) | Out-Null
-  $process=Get-Process ProgramRelayFBD -ErrorAction Stop |
-     Where-Object { $_.MainWindowTitle -like '*Airlock_SIMULATION_TEST.owle*' } |
-     Select-Object -First 1
-  if(-not $process){throw "TEST_PROJECT_WINDOW_NOT_FOUND"}
-  if($process.MainWindowHandle -eq [IntPtr]::Zero){throw "NO_MAIN_WINDOW"}
-  $window=[System.Windows.Automation.AutomationElement]::FromHandle($process.MainWindowHandle)
-  if(-not $window.Current.Name.EndsWith("Airlock_SIMULATION_TEST.owle")){throw "WRONG_PROJECT_WINDOW"}
+  # Get-Process.MainWindowHandle can identify a hidden native Pane after focus.
+  # Locate the exact test document in the desktop top-level UIA Window set.
+  $desktopRoot=[System.Windows.Automation.AutomationElement]::RootElement
+  $topWindows=$desktopRoot.FindAll(
+    [System.Windows.Automation.TreeScope]::Children,
+    [System.Windows.Automation.Condition]::TrueCondition)
+  $matches=@()
+  for($wi=0;$wi -lt $topWindows.Count;$wi++){
+    $candidate=$topWindows.Item($wi)
+    if($candidate.Current.ControlType -ne [System.Windows.Automation.ControlType]::Window){continue}
+    if(-not $candidate.Current.Name.EndsWith("Airlock_SIMULATION_TEST.owle")){continue}
+    $owner=Get-Process -Id $candidate.Current.ProcessId -ErrorAction SilentlyContinue
+    if($owner -and $owner.ProcessName -eq "ProgramRelayFBD"){$matches+=,$candidate}
+  }
+  if($matches.Count -ne 1){throw "TEST_PROJECT_WINDOW_NOT_UNIQUE: "+$matches.Count}
+  $window=$matches[0]
+  $targetHandle=[IntPtr]($window.Current.NativeWindowHandle)
+  if($targetHandle -eq [IntPtr]::Zero){throw "TEST_WINDOW_NO_HANDLE"}
+  $process=Get-Process -Id $window.Current.ProcessId -ErrorAction Stop
   $property=[System.Windows.Automation.AutomationElement]::AutomationIdProperty
   $condition=New-Object System.Windows.Automation.PropertyCondition($property,"Editor")
   $editor=$window.FindFirst([System.Windows.Automation.TreeScope]::Descendants,$condition)
@@ -122,9 +134,9 @@ public static class OwenBridgeWin32 {
       else {
         # Do not call ShowWindow(SW_RESTORE=9): that un-maximizes the Owen Logic window.
         # The preceding focus helper can maximize once; the bridge must preserve size.
-        [OwenBridgeWin32]::SetForegroundWindow($process.MainWindowHandle)|Out-Null
+        [OwenBridgeWin32]::SetForegroundWindow($targetHandle)|Out-Null
         Start-Sleep -Milliseconds 250
-        if([OwenBridgeWin32]::GetForegroundWindow() -ne $process.MainWindowHandle){throw "FOREGROUND_NOT_OWEN: refusing click"}
+        if([OwenBridgeWin32]::GetForegroundWindow() -ne $targetHandle){throw "FOREGROUND_NOT_OWEN: refusing click"}
         $current=SignalLocation $Name
         if($current.Value -ne $before.Value){throw "RACE_INPUT_CHANGED: refusing click"}
         [OwenBridgeWin32]::SetCursorPos($current.X,$current.Y)|Out-Null
