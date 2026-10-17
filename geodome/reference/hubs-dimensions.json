@@ -1,0 +1,65 @@
+{
+  "source_spec": "https://buildwithhubs.co.uk/downloads/hubs-part-specs.pdf",
+  "oem_cad": "https://buildwithhubs.co.uk/downloads/hubs-cad-models.zip",
+  "verified": {
+    "five_diameter": 52.6,
+    "six_diameter": 54.6,
+    "hub_height": 14,
+    "five_to_ball": 18,
+    "six_to_ball": 19,
+    "ball_diameter": 16,
+    "ball_total_height": 30.4,
+    "ball_base_to_centre": 25,
+    "plate_diameter": 30,
+    "plate_thickness": 1.5
+  },
+  "geometry": {
+    "h5": 6,
+    "h6": 20,
+    "ball16": 16,
+    "ballHeight30_4": 30.4,
+    "offset88": 88,
+    "cover2v": {
+      "iso": 30,
+      "equal": 10
+    },
+    "builds": [
+      {
+        "id": "2v",
+        "h5": 6,
+        "h6": 20,
+        "s": 30,
+        "l": 35
+      },
+      {
+        "id": "pod",
+        "h5": 6,
+        "h6": 30,
+        "s": 50,
+        "l": 45
+      },
+      {
+        "id": "3v38",
+        "h5": 6,
+        "h6": 40,
+        "s": 30,
+        "m": 40,
+        "l": 50
+      },
+      {
+        "id": "3v58",
+        "h5": 6,
+        "h6": 55,
+        "s": 30,
+        "m": 55,
+        "l": 80
+      }
+    ]
+  },
+  "unknown": [
+    "socket lip profile",
+    "backside ribs",
+    "snap tolerances",
+    "pullout retention load"
+  ]
+}
