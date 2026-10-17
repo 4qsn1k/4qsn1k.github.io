@@ -10,6 +10,9 @@ function validate(m,id){
  if(!r)return {errors:["Не найдено помещение "+id],warnings};
  const mode=r.interlockMode||(r.interlockEnabled?"purge":"none");
  const ds=doorsFor(m,id);
+ if(mode==="purge" && r.ventilationControlMode!==undefined &&
+    !["independent","integrated"].includes(r.ventilationControlMode))
+    errors.push("Неизвестный режим вентиляции");
  if(mode!=="purge"&&mode!=="mutual")errors.push("Нужен режим 'Шлюз' или 'Взаимоблокировка'");
  if(ds.length<2)errors.push("Требуются минимум две двери");
  if(ds.length>24)errors.push("Более 24 дверей: раздели на несколько контроллеров");
@@ -25,6 +28,8 @@ function build(m,id){
  const v=validate(m,id);if(v.errors.length)throw Error(v.errors.join("; "));
  const r=m.rooms.find(x=>String(x.id)===String(id));
  const ds=doorsFor(m,id), mode=r.interlockMode||(r.interlockEnabled?"purge":"none");
+ const ventilationControlMode=mode==="purge"?(r.ventilationControlMode||"independent"):"none";
+ const ventilationIntegrated=ventilationControlMode==="integrated";
  const purge=Math.round(Number(r.purgeSec)||30), timeout=Math.round(Number(m.defaultOpenDoorAlarmSec)||30);
  if(purge<1||purge>3600||timeout<1||timeout>3600)throw Error("Таймер должен быть в диапазоне 1..3600 с");
  const fb="FB_Room_N"+String(id).replace(/[^a-zA-Z0-9_]/g,"_");
@@ -47,6 +52,7 @@ function build(m,id){
  "  O_State : UDINT;",
  ...ds.map(d=>"  O_"+sym(d.id)+"_Block : BOOL;"),
  ...ds.map(d=>"  O_"+sym(d.id)+"_Overtime : BOOL;"),
+ ...(ventilationIntegrated?["  O_VentilationRequest : BOOL;"]:[]),
  "END_VAR","",
  "VAR",
  "  State : UDINT := 0;",
@@ -103,6 +109,11 @@ function build(m,id){
  "O_State := State;",
  ...ds.map(d=>"O_"+sym(d.id)+"_Overtime := Open_"+sym(d.id)+".Q;"),
  "O_Alarm := "+ds.map(d=>"O_"+sym(d.id)+"_Overtime").join(" OR ")+";",
+ ...(ventilationIntegrated?[
+   "// A LOGICAL request to the external ventilation controller, not a direct fan output.",
+   "// No completion feedback yet: the door dwell timer does not prove air exchange.",
+   "O_VentilationRequest := (State = 30) AND AllClosed AND FireNormal AND NOT FaultLatch;"
+ ]:[]),
  ...ds.map(d=>"O_"+sym(d.id)+"_Block := FireNormal AND (NOT O_Ready) AND ((State <> 20) OR I_"+sym(d.id)+"_Closed);"),
  "","END_FUNCTION_BLOCK",""
  ];
@@ -112,7 +123,9 @@ function build(m,id){
  ...ds.map(d=>({signal:"I_"+sym(d.id)+"_Closed",direction:"input",doorId:d.id,note:"Геркон; 1=закрыто"})),
  ...["O_Ready","O_Red","O_Green","O_Fault","O_Fire","O_Alarm","O_State"].map(x=>({signal:x,direction:"output",note:"Логическое состояние"})),
  ...ds.map(d=>({signal:"O_"+sym(d.id)+"_Block",direction:"output",doorId:d.id,note:"Логический запрет, НЕ прямая команда замка"})),
- ...ds.map(d=>({signal:"O_"+sym(d.id)+"_Overtime",direction:"output",doorId:d.id,note:"Тревога длительного открытия"}))
+ ...ds.map(d=>({signal:"O_"+sym(d.id)+"_Overtime",direction:"output",doorId:d.id,note:"Тревога длительного открытия"})),
+ ...(ventilationIntegrated?[{signal:"O_VentilationRequest",direction:"output",
+   note:"Логический запрос вентиляции при закрытых дверях на время выдержки; НЕ прямое питание двигателя"}]:[])
  ].map(row=>({...row,controllerId:null,terminal:null}));
  const manual=[
  "# Симуляция "+fb+" в Owen Logic",
@@ -127,16 +140,25 @@ function build(m,id){
  "8. Проверь по очереди одну открытую дверь, другую закрытую и переход в режим "+mode+".",
  "9. Проверь открытие двух дверей одновременно (FAULT) и ResetFault при подтверждённом закрытии.",
  "10. При FireNormal=0 команды блокировки должны быть нулевыми. Аппаратное отпирание проектируется отдельно.",
+ ...(ventilationIntegrated?[
+   "11. Для интегрированной вентиляции доступен только логический O_VentilationRequest: TRUE пока State=30, все двери закрыты и АПС в норме.",
+   "12. Выход не назначен клемме и не предназначен для прямого подключения двигателя.",
+   "13. Подтверждение фактического завершения продувки пока не реализовано. Технологическое разрешение после таймера требует отдельного согласования."
+ ]:[
+   "11. Продувка автономная: отдельная система со своими герконами. ПР100 не выдаёт запрос на вентиляцию."
+ ]),
  "",
  "Пока не назначены клеммы. Межзонные правила и OR-запреты требуют отдельной схемы FBD.",
  "Фактическая компиляция в Owen Logic не подтверждена.",
  ""
  ].join("\n");
  return {
-  roomId:String(id),blockName:fb,mode,doorIds:ds.map(d=>d.id),st:st.join("\n"),io,
+  roomId:String(id),blockName:fb,mode,ventilationControlMode,doorIds:ds.map(d=>d.id),st:st.join("\n"),io,
   ioCsv:csv([["Signal","Direction","Door","Controller","Terminal","Description"],
    ...io.map(x=>[x.signal,x.direction,x.doorId||"",x.controllerId||"",x.terminal||"",x.note])]),
-  manual,warnings:v.warnings
+  manual,warnings:[...v.warnings,...(mode==="purge"?[ventilationIntegrated?
+   "Режим вентиляции: совместный. O_VentilationRequest — только логический запрос, не управление силовой цепью. Нет обратной связи о выполненной продувке.":
+   "Режим вентиляции: автономный. ПР100 не даёт сигнал запуска вентиляции; внешняя система использует собственные герконы."]:[])]
  };
 }
 return {validate,build,sym};
