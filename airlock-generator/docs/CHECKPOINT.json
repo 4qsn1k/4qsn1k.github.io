@@ -44,7 +44,7 @@
     "QA-OL-011"
   ],
   "nextTest": "QA-OL-012",
-  "nextAction": "Perform subsequent routine JavaScript checks and native Owen Logic TEST simulations on HOME-PC (Z4559 backup only). Home GUI bridge resolves exact main window, but ST_EDITOR_NOT_FOUND until FB ST editor is opened safely. Do not mark HOME native QA PASS yet; do not overwrite autosave, alter real PLC or real I/O. QA-OL-012 is still pending.",
+  "nextAction": "Now that HOME-PC Owen Logic native ST FB_Room_N1 QA-OL-006 passes, capture actual FBD wires and OR element in a separate .owle test copy; connect FB_Room_N1+FB_Room_N4 and verify compilation and shared-door behavior in native simulator. No physical PLC writes.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
@@ -494,9 +494,12 @@
       "testPath": "%USERPROFILE%\\Documents\\AirlockGeneratorBackup\\owen-tests\\Airlock_SIMULATION_TEST.owle",
       "processIdAtCheck": 7084,
       "windowUiAutomationVisible": true,
-      "editorStatus": "ST_EDITOR_NOT_FOUND — native ST simulator NOT YET tested on HOME-PC",
+      "editorStatus": "OPENED via ST library FB_Room_N1 context menu > Edit; native simulator running; QA-OL-006 PASS",
       "unrelatedRdpNotification": "Existing Z4559 RDP client displayed session-ended notice; no RDP process terminated",
-      "ongoingAutosave": "Original and autosave test copies on HOME-PC left unchanged"
+      "ongoingAutosave": "Original and autosave test copies on HOME-PC left unchanged",
+      "nativeStSimulatorVerified": true,
+      "qaOl006": "PASS",
+      "lastVerifiedTestState": 10
     },
     "homeRun": {
       "command": "npm run check",
@@ -514,5 +517,48 @@
       ],
       "remaining": "Open ST editor within safe GUI TEST copy; rerun QA-OL-006 and QA-OL-011 then QA-OL-012"
     }
+  },
+  "nativeHomeQA": {
+    "machine": "HOME-PC",
+    "project": "Airlock_SIMULATION_TEST.owle",
+    "owenLogic": "3.3.378.0",
+    "lastVerifiedDate": "2026-10-17",
+    "expectedBlock": "FB_Room_N1",
+    "status": "NATIVE_ST_SIMULATOR_RUN_CONFIRMED",
+    "fireInputNoSignalState": 99,
+    "faultLatchVerified": {
+      "state": 90,
+      "O_Fault": "TRUE",
+      "O_Red": "TRUE",
+      "O_Green": "FALSE",
+      "allBlockRequests": "TRUE"
+    },
+    "resetRecoveryVerified": {
+      "state": 10,
+      "O_Fault": "FALSE",
+      "O_Ready": "TRUE",
+      "O_Green": "TRUE",
+      "allBlockRequests": "FALSE",
+      "allReedsClosed": "TRUE"
+    },
+    "qaOl006": {
+      "conclusion": "PASS",
+      "reopenDuringFirstDwellSeconds": 20.9759362,
+      "verifiedSequence": [
+        "20",
+        "30",
+        "20",
+        "30",
+        "10"
+      ],
+      "finalReady": true,
+      "sharedDoor14BlockRequest": false,
+      "evidence": "airlock-generator/qa-reports/qa-ol-006-home-20261017.jsonl",
+      "testScript": "airlock-generator/bridge/qa006_home.ps1"
+    },
+    "nativeCombinedFbdCompiled": false,
+    "nativeCombinedFbdSimulated": false,
+    "report": "airlock-generator/docs/QA-OWEN-HOME-2026-10-17.md",
+    "note": "All actions in standalone OWLE GUI simulator, no physical PLC or wiring."
   }
 }
