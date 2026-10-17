@@ -44,7 +44,7 @@
     "QA-OL-011"
   ],
   "nextTest": "QA-OL-012",
-  "nextAction": "Capture native FBD connector and OR element in separate Owen Logic .owle TEST copy; implement exact per-controller signal and Modbus contract only after vendor model/channel details, network timing and safe-fault rules are confirmed. Until then draft placement and logical freshness simulation are ready and tested; do not deploy to real PR.",
+  "nextAction": "Native QA-OL-012 joint FBD N1+N4 still outstanding. Equipment advisor now suggests PR102 for 8DI/9DO demo, PR103+PRM with Ethernet, and PRM additions to selected controller; before procurement validate sensor types, relay outputs, NC/NO auxiliary relays and safety design.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
@@ -445,6 +445,41 @@
       "No OEM Owen Logic FBD joint compilation",
       "Timeout must be commissioned for site and approved",
       "No physical egress/life safety claims"
+    ]
+  },
+  "equipmentAdvisor": {
+    "date": "2026-10-17",
+    "status": "IMPLEMENTED_AND_UNIT_BROWSER_CI_VERIFIED",
+    "module": "airlock-generator/equipment-advisor.js",
+    "ui": "airlock-generator/equipment-advisor-ui.js",
+    "tests": "airlock-generator/tests/equipment-advisor.test.js",
+    "docs": "airlock-generator/docs/EQUIPMENT-RECOMMENDATIONS.md",
+    "demoRequirements": {
+      "di": 8,
+      "relayDo": 9
+    },
+    "demoRecommendation": "PR102-24.2416.03.1 / 16 DI / 16 relay DO / no expansion",
+    "ethernetAlternative": "PR103-24.1610.03.1.0 + PRM-1 if at least 2 DI and 2 DO reserve requested; confirm FDI compatibility",
+    "currentPR100Correction": "PR100-24.1208.03.1: 8 regular DI, 4 universal AI that may be configured as discrete, 8 relay DO; no PRM",
+    "newPrm6": {
+      "di": 16,
+      "relayDo": 12
+    },
+    "auxiliary": "Intermediate changeover relays for each lamp pair (2 in demo), 24V supply sizing, circuit protection, hardware fire egress and access BUSY interface validation",
+    "proof": {
+      "nodeTests": "13/13 PASS",
+      "fullHomeNpmCheck": "PASS",
+      "browserEdgeSmoke": "ADVISOR_BROWSER_SMOKE_PASS; DOM displayed PR102 and COM/NC/NO",
+      "ci": {
+        "runId": 39016300069,
+        "conclusion": "success",
+        "url": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39016300069"
+      }
+    },
+    "limits": [
+      "Only verified catalogue subset includes PR100-24.1208.03.1 PR102-24.2416.03.1 and PR103-24.1610.03.1.0",
+      "No supplier purchase, certification, physical I/O pinout or validated electrical load",
+      "No native jointly connected FBD compilation in Owen Logic, QA-OL-012 remains pending"
     ]
   }
 }
