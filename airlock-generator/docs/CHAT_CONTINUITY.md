@@ -1,5 +1,14 @@
 # CHAT_CONTINUITY — конструктор технологических шлюзов
 
+## Установка Owen Logic на HOME-PC — подтверждено 17.10.2026
+
+**Выполнено:** Owen Logic 3.3.378.0 и Microsoft .NET Desktop Runtime 6.0.36 установлены на HOME-PC. Проверены подлинные цифровые подписи Microsoft и Owen Digital Solutions LLC. Программа реально запущена с перенесённым тестовым Airlock_SIMULATION_TEST.owle; окно доступно через Windows UI Automation.
+
+Из Z4559 перенесены только две тестовые копии OWLE; обе проверены по SHA-256 и ZIP CRC. На HOME-PC: 34 PASS модульных тестов и 8/8 PASS автономной модели. Отчёт: [HOME-PC-INSTALLATION.md](HOME-PC-INSTALLATION.md). Установка в %LOCALAPPDATA%\Programs\Owen\Owen Logic\, не Program Files.
+
+**Не проверено:** полная нативная FBD-компиляция и полный цикл в симуляторе HOME-PC. Следующий этап — QA-OL-012, межблочные соединения и OR общей двери 1–4.
+
+---
 ## Самая свежая контрольная точка — 17.10.2026 (ночь)
 
 **Codex:** Репозиторий подготовлен для среды Codex, но подключение GitHub к аккаунту Codex ещё требует отдельной пользовательской авторизации. Созданы [AGENTS.md](../AGENTS.md), [настройка среды](CODEX-ENVIRONMENT.md), [очередь задач](CODEX-TASKS.md), [Issue #3](https://github.com/4qsn1k/4qsn1k.github.io/issues/3), `package.json`, Node 22 и скрипты `scripts/codex-{setup,check}.sh`. Никаких токенов для Codex в GitHub не публиковалось.
