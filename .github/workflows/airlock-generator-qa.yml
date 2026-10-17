@@ -35,6 +35,10 @@ jobs:
       - name: Check source syntax
         run: |
           node --check st-generator.js
+          node --check hardware-planner.js
+          node --check hardware-ui.js
+          node --check features-v04.js
+          node --check st-ui.js
           node --check st-testbench.js
           node --check interzone-testbench.js
           node --check project-wiring.js
@@ -46,6 +50,7 @@ jobs:
         run: |
           node tests/st-generator.test.js
           node tests/project-wiring.test.js
+          node tests/hardware-planner.test.js
           node tests/native-fbd-fixture.test.js
           node tests/interzone.test.js
           node tests/pressure-and-interlocks.test.js
