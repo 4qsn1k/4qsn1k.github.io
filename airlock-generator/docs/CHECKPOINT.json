@@ -44,7 +44,7 @@
     "QA-OL-011"
   ],
   "nextTest": "QA-OL-012",
-  "nextAction": "Finish QA-OL-012 native FBD connection and OR on test copies; separately implement signal placement on exact physical controller variants, PRM module wiring and Modbus map with timeout policy. Ventilation integrated mode now generates logical O_VentilationRequest only; native Owen Logic untested.",
+  "nextAction": "Capture native FBD connector and OR element in separate Owen Logic .owle TEST copy; implement exact per-controller signal and Modbus contract only after vendor model/channel details, network timing and safe-fault rules are confirmed. Until then draft placement and logical freshness simulation are ready and tested; do not deploy to real PR.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
@@ -410,6 +410,41 @@
       "No automatic physical terminal allocation",
       "No distributed FBD or Modbus register mapping",
       "No validation of RS485 response time or failure safe state"
+    ]
+  },
+  "distributedPLC": {
+    "date": "2026-10-17",
+    "status": "OFFLINE_MAPPING_AND_NETWORK_FRESHNESS_REFERENCE_VERIFIED",
+    "module": "airlock-generator/distributed-planner.js",
+    "ui": "airlock-generator/distributed-ui.js",
+    "linkWatchdog": "airlock-generator/network-watchdog.js",
+    "docs": "airlock-generator/docs/DISTRIBUTED-PLC-MAPPING.md",
+    "features": [
+      "Explicit roomOwners / doorInputOwners / doorOutputOwners / alarmOwner",
+      "Provisional per-controller BASE and PRM slot allocation; no physical terminal addresses",
+      "One physical reed per door, remote monitored copies to consuming FBs",
+      "Remote logical inhibit and O_Ready / O_Alarm routing",
+      "Per-controller DI/DO shortages rejected even with enough aggregate capacity",
+      "Explicit freshness timeout and sequence-number replay protection in separate JS watchdog",
+      "Logical green denied when stale or unknown network status, not real lock actuation"
+    ],
+    "tests": {
+      "homePC": "npm run check EXIT 0; distributed-planner 10/10; network-watchdog 6/6; all legacy tests pass",
+      "chromeSmoke": "Microsoft Edge headless DOM shows new dynamic placement panel on HOME-PC",
+      "githubActions": {
+        "id": 39014161957,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39014161957"
+      }
+    },
+    "limits": [
+      "No verified Modbus addresses, register format or master/slave logic",
+      "No vendor-confirmed real terminal mapping",
+      "No remote network transport or real PLC programmed",
+      "No OEM Owen Logic FBD joint compilation",
+      "Timeout must be commissioned for site and approved",
+      "No physical egress/life safety claims"
     ]
   }
 }
