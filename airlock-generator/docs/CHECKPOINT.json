@@ -44,7 +44,7 @@
     "QA-OL-011"
   ],
   "nextTest": "QA-OL-012",
-  "nextAction": "В тестовой копии Airlock_FBD_PROBE_ONLY.owle получить пример GUI-сохранённой FBD-линии и элемента OR, затем выполнить схему двух экземпляров с общей дверью 1-4. Параллельно подключить Codex через отдельную авторизацию GitHub и передать Issue #3. Не объявлять нативную QA-OL-012 PASS до компиляции и реальной симуляции.",
+  "nextAction": "QA-OL-012 native shared FBD N1+N4: create and connect real FBD wires and OR for door 1-4 in test copy; compile/simulate. HOME-PC Owen Logic installed/GUI opened, ready for more checks.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
@@ -275,5 +275,36 @@
     "fixtureShapeTest": "airlock-generator/tests/native-fbd-fixture.test.js",
     "fullFbdConnectionsVerified": false,
     "fullNativeSimulationVerified": false
+  },
+  "homePcInstall": {
+    "date": "2026-10-17",
+    "status": "OWEN_INSTALLED_AND_GUI_OPENED",
+    "version": "3.3.378.0",
+    "installLocation": "%LOCALAPPDATA%\\Programs\\Owen\\Owen Logic\\",
+    "prerequisites": {
+      "NETFramework": "4.8",
+      "Microsoft.WindowsDesktop.App": "6.0.36",
+      "VisualC++": "2015–2022 x64 and x86 present"
+    },
+    "sourceCopies": [
+      "Airlock_SIMULATION_TEST.owle",
+      "Airlock_FBD_PROBE_ONLY.owle"
+    ],
+    "copyIntegrityVerified": true,
+    "guiProjectOpened": true,
+    "guiWindowUiaElements": 97,
+    "localUnitTests": {
+      "passed": 34,
+      "failed": 0
+    },
+    "headlessTests": {
+      "passed": 8,
+      "failed": 0
+    },
+    "nativeCompilationVerified": false,
+    "nativeSimulatorFullCycleVerified": false,
+    "report": "airlock-generator/docs/HOME-PC-INSTALLATION.md",
+    "backupPath": "%USERPROFILE%\\Documents\\AirlockGeneratorBackup\\",
+    "note": "Installed via official vendor signed setup and Microsoft signed runtime; no real I/O touched."
   }
 }
