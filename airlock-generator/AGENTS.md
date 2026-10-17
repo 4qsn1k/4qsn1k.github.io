@@ -1,5 +1,15 @@
 # Airlock Generator — instructions for Codex and other coding agents
 
+## Distributed PLC allocation (draft)
+
+- New files: `distributed-planner.js` (per-controller DI/DO slot estimates), `distributed-ui.js` (room and door owner selectors), `network-watchdog.js` (deterministic reference freshness model).
+- **One physical reed per door**; share states only through a monitored signal if the consuming function block is remote.
+- Every controller executing a room FB needs separately verified local `FireNormal` and `ResetFault` sources. These are provisional DI requirements; do not assume physically safe parallel wiring or a remote APS contact.
+- Never issue logical green if the network status is missing, expired, replayed, or unknown. The logical permissive MUST NOT be confused with physical lock power or emergency egress.
+- Draft labels like `PLC1.BASE.DI1` or `proposedPublisherWordIndex` are **not** Owen terminal numbers or verified Modbus register addresses. Do not compile or deploy these as real I/O mappings.
+- The Modbus heartbeat/timeout model is offline-only and requires an explicitly selected timeout; no default is approved.
+- Run `node tests/distributed-planner.test.js` and `node tests/network-watchdog.test.js` after changes; QA-OL-012 still requires native FBD wiring and Owen Logic simulation.
+
 ## Scope and source of truth
 
 - Work **only in `airlock-generator/`** unless a task explicitly requires the related workflow under `.github/workflows/airlock-generator-qa.yml`.
