@@ -157,7 +157,7 @@ function build(model,wiring,hardware,hardwarePlanner,topology){
  };
 }
 function logicalDoorPermit({closed,fireNormal,allRoomReady,finalBlock,
- networkFresh=true,localFault=false}){
+ networkFresh,localFault}){
  // Unknown and stale values cannot grant positive authorisation.
  return closed===true&&fireNormal===true&&allRoomReady===true&&
    finalBlock===false&&networkFresh===true&&localFault===false;
