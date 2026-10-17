@@ -353,7 +353,12 @@
     ],
     "unitTestsPassed": 3,
     "nativeOwenCompilationVerified": false,
-    "pending": "Confirm ventilation completion feedback, safety interlocks, physical interface and integration on real Owen Logic."
+    "pending": "Confirm ventilation completion feedback, safety interlocks, physical interface and integration on real Owen Logic.",
+    "testResults": {
+      "homePcNpmRunCheckExit": 0,
+      "githubActionsRunId": 39013235143,
+      "githubActionsStatus": "success"
+    }
   },
   "scalableHardware": {
     "date": "2026-10-17",
@@ -390,7 +395,14 @@
     ],
     "testResults": {
       "homePcPlannerTestsPassed": 9,
-      "homePcNpmRunCheckExit": 0
+      "homePcNpmRunCheckExit": 0,
+      "githubActionsRun": {
+        "id": 39013235143,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39013235143",
+        "headSha": "1a468d8a9ee09d816449c7a1befaf9406d3f77ca"
+      }
     },
     "docs": "airlock-generator/docs/CONTROLLER-TOPOLOGY-VENTILATION.md",
     "limitations": [
