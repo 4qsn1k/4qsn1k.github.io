@@ -10,12 +10,18 @@ const typeName=id=>types.find(t=>t[0]===id)?.[1]||"Помещение";
 const typeOptions=id=>types.map(t=>'<option value="'+t[0]+'" '+(t[0]===id?"selected":"")+'>'+t[1]+'</option>').join("");
 const modes=[["none","Без взаимоблокировки"],["mutual","Взаимоблокировка до закрытия"],["purge","Шлюз с продувкой"]];
 const modeOptions=id=>modes.map(t=>'<option value="'+t[0]+'" '+(t[0]===id?"selected":"")+'>'+t[1]+'</option>').join("");
+const ventilationModes=[["independent","Автономная система (свои герконы)"],
+ ["integrated","Совместно со СКУД (запрос ПР100)"]];
+const ventilationOptions=id=>ventilationModes.map(v=>
+ '<option value="'+v[0]+'" '+(v[0]===id?"selected":"")+'>'+v[1]+'</option>').join("");
 const roomMode=r=>AirlockEngine.roomMode(r);
 function normalize(){
  for(const r of model.rooms){
   if(!r.roomType)r.roomType=roomMode(r)==="purge"?"airlock":r.cleanClass?"cleanroom":"general";
   if(!r.name)r.name="Помещение "+r.id;
   if(!r.interlockMode)r.interlockMode=r.interlockEnabled?"purge":"none";
+  if(!["independent","integrated"].includes(r.ventilationControlMode))
+   r.ventilationControlMode="independent";
  }
 }
 normalize();
@@ -38,7 +44,8 @@ panel.innerHTML=[
  '<div><label for="newRoomClass">Класс чистоты</label><input id="newRoomClass" list="roomClassList" placeholder="CNC, D, C, B, A"></div>',
  '<div><label for="newRoomPressure">Условное давление, Па</label><input id="newRoomPressure" type="number" step="0.5" list="roomPressureList" placeholder="Например: 25"></div>',
  '<div><label for="newRoomMode">Режим дверей</label><select id="newRoomMode">'+modeOptions("none")+'</select></div>',
- '<div><label for="newRoomPurge">Продувка, с (если нужна)</label><input id="newRoomPurge" type="number" min="1" max="3600" value="30"></div>',
+ '<div><label for="newRoomPurge">Выдержка после закрытия, с</label><input id="newRoomPurge" type="number" min="1" max="3600" value="30"></div>',
+ '<div id="newRoomVentilationGroup" hidden><label for="newRoomVentilation">Управление продувкой</label><select id="newRoomVentilation">'+ventilationOptions("independent")+'</select></div>',
  '</div><datalist id="roomClassList"><option value="CNC"><option value="D"><option value="C"><option value="B"><option value="A"></datalist>',
  '<datalist id="roomPressureList">'+[10,15,20,25,30,35,40,45].map(n=>'<option value="'+n+'"></option>').join("")+'</datalist>',
  '<p class="create-note">Класс и Па — только подписи помещения. Они не управляют вентиляцией и не изменяют блокировки автоматически.</p>',
@@ -52,6 +59,7 @@ function showForm(){
  $("newRoomType").value="general";$("newRoomClass").value="";
  $("newRoomPressure").value="";$("newRoomMode").value="none";
  $("newRoomPurge").value="30";$("newRoomPurge").disabled=true;
+ $("newRoomVentilation").value="independent";$("newRoomVentilationGroup").hidden=true;
  $("newRoomName").focus();
 }
 $("addRoom").onclick=()=>panel.hidden?showForm():panel.hidden=true;
@@ -59,9 +67,14 @@ $("cancelNewRoom").onclick=()=>panel.hidden=true;
 $("newRoomType").onchange=()=>{
  if($("newRoomType").value==="airlock" && $("newRoomMode").value==="none"){
   $("newRoomMode").value="purge";$("newRoomPurge").disabled=false;
+  $("newRoomVentilationGroup").hidden=false;
  }
 };
-$("newRoomMode").onchange=()=>$("newRoomPurge").disabled=$("newRoomMode").value!=="purge";
+$("newRoomMode").onchange=()=>{
+ const usePurge=$("newRoomMode").value==="purge";
+ $("newRoomPurge").disabled=!usePurge;
+ $("newRoomVentilationGroup").hidden=!usePurge;
+};
 $("createRoomForm").onsubmit=event=>{
  event.preventDefault();
  const id=$("newRoomId").value.trim(),name=$("newRoomName").value.trim();
@@ -74,6 +87,7 @@ $("createRoomForm").onsubmit=event=>{
   id,name,roomType:$("newRoomType").value,cleanClass:$("newRoomClass").value.trim()||null,
   pressurePa:p===""?null:Number(p),interlockMode:m,interlockEnabled:m!=="none",
   purgeSec:Math.max(1,Number($("newRoomPurge").value)||30),
+  ventilationControlMode:m==="purge"?$("newRoomVentilation").value:"independent",
   x,y,w:190,h:145
  });
  panel.hidden=true;select("room",id);
@@ -114,6 +128,13 @@ renderProperties=function(){
   '<label for="roomMode">Режим дверей</label><select id="roomMode">'+modeOptions(roomMode(r))+'</select>');
  $("roomMode").onchange=e=>{r.interlockMode=e.target.value;r.interlockEnabled=e.target.value!=="none";active=[];render()};
  $("purge").disabled=roomMode(r)!=="purge";
+ $("purge").insertAdjacentHTML("afterend",
+  '<div id="roomVentilationGroup"'+(roomMode(r)==="purge"?'':' hidden')+'>'+
+  '<label for="roomVentilation">Управление продувкой</label>'+
+  '<select id="roomVentilation">'+ventilationOptions(r.ventilationControlMode||"independent")+'</select>'+
+  '<p class="muted" style="font-size:12px;margin:5px 0">Автономная — внешняя система со своими герконами. '+
+  'Совместная — ПР выдаёт логический запрос во время выдержки. Без обратной связи таймер не подтверждает фактическую продувку.</p></div>');
+ $("roomVentilation").onchange=e=>{r.ventilationControlMode=e.target.value;render()};
  const pressure=$("pressure");
  pressure.setAttribute("list","editPressurePresets");
  pressure.setAttribute("step","0.5");
