@@ -48,7 +48,7 @@ function renderAdvice(){
   const cfg=settings(),wiring=AirlockProjectWiring.build(model);
   const h=model.hardware||{};
   current=AirlockEquipmentAdvisor.check(wiring,{
-   ...cfg,signaling:h.signaling||"room",hasRemoteControllers:!!h.secondary?.length
+   ...cfg,currentHardware:h,signaling:h.signaling||"room",hasRemoteControllers:!!h.secondary?.length
   });
   const d=current,need=d.required;
   const summary='<p><strong>По схеме требуется:</strong> '+need.di+' DI, '+need.relayDo+
@@ -67,6 +67,19 @@ function renderAdvice(){
     '<p><a href="'+esc(x.source)+'" target="_blank" rel="noopener noreferrer">Характеристики ОВЕН</a>'+
     x.moduleSources.map((url,i)=>' · <a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+
       esc(x.modules[i])+'</a>').join('')+'</p></div>';
+  const current=d.current;
+  const upgrade=current?'<h3>Что добавить к выбранному ПР</h3>'+
+    '<p>'+esc(current.note)+'</p>'+
+    (current.capacity?'<p>Сейчас доступно: '+current.capacity.di+' DI, '+
+      current.capacity.relayDo+' DO. Свободно без запаса: '+current.capacity.freeDi+
+      ' DI / '+current.capacity.freeDo+' DO.</p>':'')+
+    (current.additions.length?'<ul>'+current.additions.map(x=>
+      '<li><strong>Добавить '+esc(x.modules.join(" + "))+'</strong>: после расширения '+
+      x.capacity.di+' DI / '+x.capacity.relayDo+' DO; резерв '+
+      x.capacity.freeDi+' DI / '+x.capacity.freeDo+' DO'+
+      (x.meetsReserve?' (достаточный)':' (ниже заданного)')+'. '+
+      x.sources.map((url,i)=>'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+
+       esc(x.modules[i])+'</a>').join(', ')+'</li>').join('')+'</ul>':''):"";
   const chosen=d.recommended?
     '<h3>Основной вариант</h3>'+item(d.recommended):
     '<p><strong>Одиночного ПР в проверенном наборе не хватает.</strong> '+
@@ -77,7 +90,7 @@ function renderAdvice(){
     d.accessories.map(x=>'<li><strong>'+esc(x.name)+'</strong>'+
     (x.quantity!==null?' — '+x.quantity+' шт.':' — количество по расчёту')+
     '. '+esc(x.details)+'</li>').join('')+'</ul>';
-  el("equipmentRecommendations").innerHTML=summary+chosen+alternatives+bill+
+  el("equipmentRecommendations").innerHTML=summary+upgrade+chosen+alternatives+bill+
     '<p class="muted">'+d.constraints.map(esc).join(' · ')+'</p>';
   el("adviceExport").disabled=false;
  }catch(e){
@@ -101,6 +114,9 @@ const oldRender=render;
 render=function(){oldRender();syncInputs();renderAdvice()};
 const importElement=document.getElementById("fileJSON"),oldImport=importElement.onchange;
 importElement.onchange=async e=>{await oldImport(e);syncInputs();renderAdvice()};
+for(const controlId of ["hardwareSignaling","hardwareLink"]){
+ document.getElementById(controlId).addEventListener("change",()=>setTimeout(renderAdvice,0));
+}
 document.getElementById("hardwareDevices").closest("section").addEventListener("change",()=>{
  setTimeout(renderAdvice,0)
 });
