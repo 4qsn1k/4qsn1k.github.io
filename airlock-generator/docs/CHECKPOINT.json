@@ -44,7 +44,7 @@
     "QA-OL-011"
   ],
   "nextTest": "QA-OL-012",
-  "nextAction": "Native QA-OL-012 joint FBD N1+N4 still outstanding. Equipment advisor now suggests PR102 for 8DI/9DO demo, PR103+PRM with Ethernet, and PRM additions to selected controller; before procurement validate sensor types, relay outputs, NC/NO auxiliary relays and safety design.",
+  "nextAction": "Perform subsequent routine JavaScript checks and native Owen Logic TEST simulations on HOME-PC (Z4559 backup only). Home GUI bridge resolves exact main window, but ST_EDITOR_NOT_FOUND until FB ST editor is opened safely. Do not mark HOME native QA PASS yet; do not overwrite autosave, alter real PLC or real I/O. QA-OL-012 is still pending.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
@@ -481,5 +481,38 @@
       "No supplier purchase, certification, physical I/O pinout or validated electrical load",
       "No native jointly connected FBD compilation in Owen Logic, QA-OL-012 remains pending"
     ]
+  },
+  "testMachines": {
+    "primary": "HOME-PC",
+    "backup": "Z4559",
+    "establishedOn": "2026-10-17",
+    "homeDeviceState": "Online; session 1 console active",
+    "homeOwen": {
+      "version": "3.3.378",
+      "installed": true,
+      "testProjectOpened": true,
+      "testPath": "%USERPROFILE%\\Documents\\AirlockGeneratorBackup\\owen-tests\\Airlock_SIMULATION_TEST.owle",
+      "processIdAtCheck": 7084,
+      "windowUiAutomationVisible": true,
+      "editorStatus": "ST_EDITOR_NOT_FOUND — native ST simulator NOT YET tested on HOME-PC",
+      "unrelatedRdpNotification": "Existing Z4559 RDP client displayed session-ended notice; no RDP process terminated",
+      "ongoingAutosave": "Original and autosave test copies on HOME-PC left unchanged"
+    },
+    "homeRun": {
+      "command": "npm run check",
+      "commit": "9a26abe8bd6e117ba1163ee37404b1d5ba1c723c",
+      "exitCode": 0,
+      "headlessModel": "8/8 PASS",
+      "log": "%USERPROFILE%\\Documents\\AirlockGeneratorBackup\\HOME-QA-20261017.log"
+    },
+    "bridge": {
+      "exactUiaWindowSelectionFixed": true,
+      "focusPreservesWindowSize": true,
+      "commits": [
+        "c6ae6fbe7daa8849ef6976be152cb2241e539ca4",
+        "9a26abe8bd6e117ba1163ee37404b1d5ba1c723c"
+      ],
+      "remaining": "Open ST editor within safe GUI TEST copy; rerun QA-OL-006 and QA-OL-011 then QA-OL-012"
+    }
   }
 }
