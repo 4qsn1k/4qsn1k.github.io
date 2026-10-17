@@ -13,7 +13,8 @@ const families={
 };
 const modules={
  "PRM-1":{di:8,do:8,source:"https://owen.ru/product/prm1/specifications"},
- "PRM-5":{di:0,do:16,source:"https://owen.ru/product/prm5"}
+ "PRM-5":{di:0,do:16,source:"https://owen.ru/product/prm5"},
+ "PRM-6":{di:16,do:12,source:"https://owen.ru/product/prm6/specifications"}
 };
 const integer=(n,min,max,key)=>{
  if(!Number.isInteger(n)||n<min||n>max)throw Error("Недопустимое количество "+key);
