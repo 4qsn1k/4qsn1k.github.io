@@ -7,6 +7,7 @@ function create(model,roomId){
  const r=model.rooms.find(x=>String(x.id)===String(roomId));
  if(!r)throw Error("Нет помещения "+roomId);
  const mode=r.interlockMode||(r.interlockEnabled?"purge":"none");
+ const ventilationIntegrated=mode==="purge" && r.ventilationControlMode==="integrated";
  if(mode!=="mutual"&&mode!=="purge")throw Error("Режим должен быть mutual или purge");
  const doorIds=model.doors.filter(d=>d.a===r.id||d.b===r.id).map(d=>d.id).sort();
  if(doorIds.length<2)throw Error("Минимум две двери");
@@ -27,6 +28,7 @@ function create(model,roomId){
   ]));
   return {timeMs:clock,state,anyOpen,confirmedClosed,fault,fire:!signals.FireNormal,
    green:ready,red:signals.FireNormal&&!ready,
+   ventilationRequest:ventilationIntegrated&&state===30&&confirmedClosed&&signals.FireNormal&&!fault,
    alarm:Object.values(overtime).some(Boolean),overtime,blocked,
    purgeRemainingSec:state===30?Math.max(0,Math.ceil((purgeMs-purgeElapsed)/1000)):null};
  }
@@ -79,7 +81,7 @@ function create(model,roomId){
   return last;
  }
  function reset(){return create(model,roomId)}
- return {doorIds,mode,step,snapshot:()=>last||compute(),reset};
+ return {doorIds,mode,ventilationControlMode:ventilationIntegrated?"integrated":"independent",step,snapshot:()=>last||compute(),reset};
 }
 return {create};
 })();
