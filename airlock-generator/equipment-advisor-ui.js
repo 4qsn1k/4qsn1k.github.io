@@ -67,13 +67,13 @@ function renderAdvice(){
     '<p><a href="'+esc(x.source)+'" target="_blank" rel="noopener noreferrer">Характеристики ОВЕН</a>'+
     x.moduleSources.map((url,i)=>' · <a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+
       esc(x.modules[i])+'</a>').join('')+'</p></div>';
-  const current=d.current;
-  const upgrade=current?'<h3>Что добавить к выбранному ПР</h3>'+
-    '<p>'+esc(current.note)+'</p>'+
-    (current.capacity?'<p>Сейчас доступно: '+current.capacity.di+' DI, '+
-      current.capacity.relayDo+' DO. Свободно без запаса: '+current.capacity.freeDi+
-      ' DI / '+current.capacity.freeDo+' DO.</p>':'')+
-    (current.additions.length?'<ul>'+current.additions.map(x=>
+  const selectedEquipment=d.current;
+  const upgrade=selectedEquipment?'<h3>Что добавить к выбранному ПР</h3>'+
+    '<p>'+esc(selectedEquipment.note)+'</p>'+
+    (selectedEquipment.capacity?'<p>Сейчас доступно: '+selectedEquipment.capacity.di+' DI, '+
+      selectedEquipment.capacity.relayDo+' DO. Свободно без запаса: '+selectedEquipment.capacity.freeDi+
+      ' DI / '+selectedEquipment.capacity.freeDo+' DO.</p>':'')+
+    (selectedEquipment.additions.length?'<ul>'+selectedEquipment.additions.map(x=>
       '<li><strong>Добавить '+esc(x.modules.join(" + "))+'</strong>: после расширения '+
       x.capacity.di+' DI / '+x.capacity.relayDo+' DO; резерв '+
       x.capacity.freeDi+' DI / '+x.capacity.freeDo+' DO'+
