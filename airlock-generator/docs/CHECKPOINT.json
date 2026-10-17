@@ -44,7 +44,7 @@
     "QA-OL-011"
   ],
   "nextTest": "QA-OL-012",
-  "nextAction": "Native FBD connection/OR sample is still required to validate full project in actual Owen Logic. Do not mislabel QA-OR-012A-I reference-model passes as QA-OL-012.",
+  "nextAction": "Finish QA-OL-012 native FBD connection and OR on test copies; separately implement signal placement on exact physical controller variants, PRM module wiring and Modbus map with timeout policy. Ventilation integrated mode now generates logical O_VentilationRequest only; native Owen Logic untested.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
@@ -332,6 +332,72 @@
     "reasons": [
       "No validated Owen Logic connector and OR sample yet; native ConnectorModels absent",
       "HOME-PC GUI opened project but ST editor not selected; UIA bridge yielded ST_EDITOR_NOT_FOUND"
+    ]
+  },
+  "ventilationControl": {
+    "date": "2026-10-17",
+    "scope": "Per-room ventilation-control switch under purge interlock",
+    "modes": [
+      "independent",
+      "integrated"
+    ],
+    "default": "independent",
+    "independent": "External ventilation controller with separate reeds; no PLC output",
+    "integrated": "Virtual O_VentilationRequest active only during dwell State=30 and confirmed doors closed, normal fire and no fault; unassigned physical output; no proof of ventilation completion",
+    "files": [
+      "airlock-generator/features-v04.js",
+      "airlock-generator/st-ui.js",
+      "airlock-generator/st-generator.js",
+      "airlock-generator/st-testbench.js",
+      "airlock-generator/project-wiring.js"
+    ],
+    "unitTestsPassed": 3,
+    "nativeOwenCompilationVerified": false,
+    "pending": "Confirm ventilation completion feedback, safety interlocks, physical interface and integration on real Owen Logic."
+  },
+  "scalableHardware": {
+    "date": "2026-10-17",
+    "status": "capacity_estimator_verified_not_I_O_mapping",
+    "controllerFamilies": [
+      "PR100",
+      "PR102",
+      "PR200",
+      "PR103",
+      "PR205"
+    ],
+    "maxPrm": {
+      "PR100": 0,
+      "PR102": 2,
+      "PR200": 2,
+      "PR103": 2,
+      "PR205": 2
+    },
+    "supportedModuleExamples": {
+      "PRM-1": {
+        "di": 8,
+        "do": 8
+      },
+      "PRM-5": {
+        "di": 0,
+        "do": 16
+      }
+    },
+    "secondaryControllers": "User may add; require configured Modbus RTU/RS485 or Modbus TCP/Ethernet, no deployed network variable map",
+    "files": [
+      "airlock-generator/hardware-planner.js",
+      "airlock-generator/hardware-ui.js",
+      "airlock-generator/tests/hardware-planner.test.js"
+    ],
+    "testResults": {
+      "homePcPlannerTestsPassed": 9,
+      "homePcNpmRunCheckExit": 0
+    },
+    "docs": "airlock-generator/docs/CONTROLLER-TOPOLOGY-VENTILATION.md",
+    "limitations": [
+      "I/O counts are user-entered for exact modifications",
+      "No automatic physical terminal allocation",
+      "No distributed FBD or Modbus register mapping",
+      "No validation of RS485 response time or failure safe state"
     ]
   }
 }
