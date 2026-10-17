@@ -36,6 +36,8 @@ jobs:
         run: |
           node --check st-generator.js
           node --check hardware-planner.js
+          node --check equipment-advisor.js
+          node --check equipment-advisor-ui.js
           node --check distributed-planner.js
           node --check network-watchdog.js
           node --check distributed-ui.js
@@ -54,6 +56,7 @@ jobs:
           node tests/st-generator.test.js
           node tests/project-wiring.test.js
           node tests/hardware-planner.test.js
+          node tests/equipment-advisor.test.js
           node tests/distributed-planner.test.js
           node tests/network-watchdog.test.js
           node tests/native-fbd-fixture.test.js
