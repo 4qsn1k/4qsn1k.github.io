@@ -24,6 +24,7 @@ public static class OwenBridgeWin32 {
  [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr window, int cmd);
  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr window);
  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+ [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint processId);
  [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
  [DllImport("user32.dll")] public static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
 }
@@ -136,7 +137,10 @@ public static class OwenBridgeWin32 {
         # The preceding focus helper can maximize once; the bridge must preserve size.
         [OwenBridgeWin32]::SetForegroundWindow($targetHandle)|Out-Null
         Start-Sleep -Milliseconds 250
-        if([OwenBridgeWin32]::GetForegroundWindow() -ne $targetHandle){throw "FOREGROUND_NOT_OWEN: refusing click"}
+        $fg=[OwenBridgeWin32]::GetForegroundWindow()
+        $fgPid=[uint32]0
+        [OwenBridgeWin32]::GetWindowThreadProcessId($fg,[ref]$fgPid)|Out-Null
+        if($fgPid -ne [uint32]$process.Id){throw "FOREGROUND_NOT_TEST_OWEN: refusing click"}
         $current=SignalLocation $Name
         if($current.Value -ne $before.Value){throw "RACE_INPUT_CHANGED: refusing click"}
         [OwenBridgeWin32]::SetCursorPos($current.X,$current.Y)|Out-Null
