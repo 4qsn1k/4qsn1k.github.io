@@ -85,4 +85,31 @@ test("One changeover relay per selected lamp group is recommended as separate eq
  assert.equal(item.quantity,2);
  assert(item.details.includes("COM/NC/NO")===false || item.details.includes("NC"));
 });
-console.log("EQUIPMENT_ADVICE_QA 10/10 PASS — preliminary catalog advice, not certified design");
+test("Selected PR100 has 8 true DI / 8 DO and no expansion PRM",()=>{
+ const hw={primary:{family:"PR100",modification:"ПР100-24.1208.03.1 [M02]",
+   baseDi:12,baseDo:8,modules:[]},secondary:[]};
+ const x=adv.check(project,{currentHardware:hw});
+ assert.equal(x.current.status,"NO_EXPANSION");
+ assert.equal(x.current.capacity.di,8);
+ assert.equal(x.current.capacity.relayDo,8);
+ assert.equal(x.current.additions.length,0);
+});
+test("Selected PR102 with too few channels gains 8 DI/8 DO through one PRM-1",()=>{
+ const bigger=structuredClone(project);
+ bigger.planningCounts.uniqueReedInputs=18;
+ bigger.planningCounts.estimatedDOWithRoomSignals=18;
+ const hw={primary:{family:"PR102",modification:"ПР102-24.2416.03.1",baseDi:16,baseDo:16,modules:[]},secondary:[]};
+ const x=adv.check(bigger,{currentHardware:hw});
+ assert.equal(x.current.status,"ADD_MODULE");
+ assert.equal(x.current.additions[0].modules.join(","),"PRM-1");
+ assert(x.current.additions[0].capacity.freeDi>=2);
+});
+test("Multiple selected PLCs require local placement instead of aggregate expansion advice",()=>{
+ const hw={primary:{family:"PR103",modification:"ПР103-24.1610.03.1.0",
+  baseDi:10,baseDo:10,modules:[]},
+  secondary:[{family:"PR103",modification:"",baseDi:10,baseDo:10,modules:[]}]};
+ const x=adv.check(project,{currentHardware:hw});
+ assert.equal(x.current.status,"MULTI_CONTROLLER_REQUIRES_LOCAL_PLACEMENT");
+ assert.equal(x.current.additions.length,0);
+});
+console.log("EQUIPMENT_ADVICE_QA 13/13 PASS — preliminary catalog advice, not certified design");
