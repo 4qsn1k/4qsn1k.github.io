@@ -78,4 +78,36 @@ check("fire removes all logical lock requests",()=>{
  assert.equal(s.state,99);
  assert(!Object.values(s.blocked).some(Boolean));
 });
+check("default independent ventilation emits no PLC request",()=>{
+ const g=gen.build(model,"1");
+ const t=bench.create(model,"1");
+ assert.equal(g.ventilationControlMode,"independent");
+ assert(!g.st.includes("O_VentilationRequest"));
+ assert(!g.io.some(x=>x.signal==="O_VentilationRequest"));
+ assert.equal(t.step({},100).ventilationRequest,false);
+});
+check("integrated ventilation request follows closed-door timer and drops on opening or fire",()=>{
+ const m=structuredClone(model);
+ m.rooms.find(x=>x.id==="1").ventilationControlMode="integrated";
+ const g=gen.build(m,"1"),t=bench.create(m,"1");
+ assert.equal(g.ventilationControlMode,"integrated");
+ assert(g.st.includes("O_VentilationRequest : BOOL;"));
+ assert(g.st.includes("O_VentilationRequest := (State = 30) AND AllClosed AND FireNormal AND NOT FaultLatch;"));
+ assert(g.io.some(x=>x.signal==="O_VentilationRequest"&&x.terminal===null));
+ let s=t.step({},100);
+ assert.equal(s.ventilationRequest,true);
+ s=t.step({},30300);
+ assert.equal(s.ventilationRequest,false);
+ s=t.step({Closed:{"1-2":false}},100);
+ assert.equal(s.ventilationRequest,false);
+ s=t.step({Closed:{"1-2":true}},100);
+ assert.equal(s.ventilationRequest,true);
+ s=t.step({FireNormal:false},100);
+ assert.equal(s.ventilationRequest,false);
+});
+check("invalid ventilation mode rejected for purge",()=>{
+ const m=structuredClone(model);
+ m.rooms.find(x=>x.id==="1").ventilationControlMode="unknown";
+ assert.throws(()=>gen.build(m,"1"),/вентиляции/);
+});
 console.log("ALL GENERATION TESTS PASSED");
