@@ -44,7 +44,7 @@
     "QA-OL-011"
   ],
   "nextTest": "QA-OL-012",
-  "nextAction": "QA-OL-012 native shared FBD N1+N4: create and connect real FBD wires and OR for door 1-4 in test copy; compile/simulate. HOME-PC Owen Logic installed/GUI opened, ready for more checks.",
+  "nextAction": "Native FBD connection/OR sample is still required to validate full project in actual Owen Logic. Do not mislabel QA-OR-012A-I reference-model passes as QA-OL-012.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
@@ -306,5 +306,32 @@
     "report": "airlock-generator/docs/HOME-PC-INSTALLATION.md",
     "backupPath": "%USERPROFILE%\\Documents\\AirlockGeneratorBackup\\",
     "note": "Installed via official vendor signed setup and Microsoft signed runtime; no real I/O touched."
+  },
+  "interzoneQA": {
+    "date": "2026-10-17",
+    "system": "independent JavaScript model, NOT native Owen Logic",
+    "passed": 9,
+    "failed": 0,
+    "tests": [
+      "QA-OR-012A",
+      "QA-OR-012B",
+      "QA-OR-012C",
+      "QA-OR-012D",
+      "QA-OR-012E",
+      "QA-OR-012F",
+      "QA-OR-012G",
+      "QA-OR-012H",
+      "QA-OR-012I"
+    ],
+    "generator": "airlock-generator/interzone-testbench.js",
+    "testsPath": "airlock-generator/tests/interzone.test.js",
+    "homePcNpmTest": "PASS, exit code 0, includes 43 unit checks + 8 model scenarios",
+    "actionsCIIncluded": true,
+    "realNativeFbdConnected": false,
+    "realNativeFbdCompiled": false,
+    "reasons": [
+      "No validated Owen Logic connector and OR sample yet; native ConnectorModels absent",
+      "HOME-PC GUI opened project but ST editor not selected; UIA bridge yielded ST_EDITOR_NOT_FOUND"
+    ]
   }
 }
