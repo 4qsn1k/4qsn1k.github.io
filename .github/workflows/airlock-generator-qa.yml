@@ -36,6 +36,8 @@ jobs:
         run: |
           node --check st-generator.js
           node --check hardware-planner.js
+          node --check distributed-planner.js
+          node --check distributed-ui.js
           node --check hardware-ui.js
           node --check features-v04.js
           node --check st-ui.js
@@ -51,6 +53,7 @@ jobs:
           node tests/st-generator.test.js
           node tests/project-wiring.test.js
           node tests/hardware-planner.test.js
+          node tests/distributed-planner.test.js
           node tests/native-fbd-fixture.test.js
           node tests/interzone.test.js
           node tests/pressure-and-interlocks.test.js
