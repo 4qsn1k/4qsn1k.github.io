@@ -61,5 +61,39 @@
     "backside ribs",
     "snap tolerances",
     "pullout retention load"
-  ]
+  ],
+  "simplified_mesh_measurements_2026_10_17": {
+    "source": "user-provided hubs-cad-models.zip, official vendor Simplified STL; no vendor meshes redistributed",
+    "five": {
+      "volume_mm3": 14463.482,
+      "box_mm": [
+        51.194,
+        14,
+        52.64
+      ],
+      "watertight": true
+    },
+    "six": {
+      "volume_mm3": 14339.588,
+      "box_mm": [
+        51.832,
+        14,
+        54.603
+      ],
+      "watertight": true
+    },
+    "ball": {
+      "volume_mm3": 2676.405,
+      "box_mm": [
+        30.353,
+        16,
+        16
+      ],
+      "spherical_radius_mm": 8,
+      "surface_rings_present": false,
+      "watertight": true
+    },
+    "photo_ridges": "Real ball image on vendor store visibly has circumferential grip ridges not present in simplified CAD.",
+    "uncertain": "Simplified is not a production mold model; printed replicas require load tests."
+  }
 }
