@@ -54,15 +54,31 @@ const AirlockProjectWiring=(()=>{
       energizeFor:"GREEN",deenergized:"RED_IF_LAMP_SUPPLY_AVAILABLE"
     };
   });
+  const ventilationControl=rooms.map(r=>({
+    roomId:String(r.id),mode:(r.interlockMode==="purge"||
+      (!r.interlockMode&&r.interlockEnabled))?
+      (r.ventilationControlMode||"independent"):"not_applicable",
+    externalReedsRequired:r.ventilationControlMode!=="integrated",
+    note:"External ventilation control has its own sensor and engineering design"
+  }));
+  const roomVentilationRequests=ventilationControl.filter(x=>x.mode==="integrated")
+   .map(x=>({
+    id:"ROOM_"+x.roomId+"_VENTILATION_REQUEST",
+    kind:"OPTIONAL_DO_LOGICAL",source:"FB_Room_N"+x.roomId+".O_VentilationRequest",
+    terminal:null,roomId:x.roomId,hardwareControl:false,
+    note:"Logical request to ventilation controller only; no completion feedback"
+   }));
   const signals=[
    ...blockRequests.map(b=>({id:b.result,kind:"DO_LOGICAL",terminal:null,note:"Request; not a direct lock output"})),
    ...roomTrafficRelays,
+   ...roomVentilationRequests,
    {id:"ANY_ALARM",kind:"DO_LOGICAL",source:rooms.map(r=>"FB_Room_N"+r.id+".O_Alarm").join(" OR "),terminal:null}
   ];
   return {
    schema:"airlock-project-wiring/0.2",
    activeRoomIds:rooms.map(r=>r.id),
    inputs,blockRequests,logicalOutputs:signals,
+   ventilationControl:{rooms:ventilationControl,requests:roomVentilationRequests},
    trafficLightOptions:{roomGroups:roomTrafficRelays,perDoor:perDoorTrafficRelays},
    planningCounts:{controlledRooms:rooms.length,uniqueReedInputs:controlledDoors.length,
     commonInputs:2,logicalBlockingRequests:blockRequests.length,
@@ -70,8 +86,9 @@ const AirlockProjectWiring=(()=>{
     roomTrafficRelays:roomTrafficRelays.length,
     doorTrafficRelays:perDoorTrafficRelays.length,
     aggregatedAlarmChannels:1,
-    estimatedDOWithRoomSignals:blockRequests.length+roomTrafficRelays.length+1,
-    estimatedDOWithDoorSignals:blockRequests.length+perDoorTrafficRelays.length+1},
+    integratedVentilationRequests:roomVentilationRequests.length,
+    estimatedDOWithRoomSignals:blockRequests.length+roomTrafficRelays.length+1+roomVentilationRequests.length,
+    estimatedDOWithDoorSignals:blockRequests.length+perDoorTrafficRelays.length+1+roomVentilationRequests.length},
    warnings:[
     "Это список потенциальных физических сигналов, а не проверка ресурсов конкретной модели ПР.",
     "Два FB могут управлять общей дверью только через OR с правильными приоритетами и аппаратным интерфейсом.",
@@ -80,6 +97,8 @@ const AirlockProjectWiring=(()=>{
     "При потере управляющего сигнала реле выбирает красный только если сохранено питание ламп; потеря питания обеих ламп не даёт индикации.",
     "Один светофор на помещение показывает состояние помещения, а не разрешение конкретной общей двери. Для двери между двумя зонами нужен расчёт отдельного разрешения с учётом обеих зон и FINAL_BLOCK.",
     "Фактические светофоры и питание рассчитываются отдельно от виртуального выходного сигнала.",
+    "При автономной вентиляции ПР не создаёт команду запуска; внешняя система использует свои герконы.",
+    "В совместном режиме дополнительный логический запрос вентиляции не доказывает фактическое выполнение продувки. Обратная связь и останов по аварии требуют проектирования.",
     "Отдельная цепь аварийной эвакуации обязательна."
    ]
   };
