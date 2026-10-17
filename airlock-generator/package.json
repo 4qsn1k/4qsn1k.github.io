@@ -4,8 +4,8 @@
   "private": true,
   "description": "Pure JavaScript Airlock Generator prototype and deterministic QA",
   "scripts": {
-    "test": "node tests/st-generator.test.js && node tests/project-wiring.test.js && node tests/native-fbd-fixture.test.js && node tests/pressure-and-interlocks.test.js && node tests/hmi.test.js && node tests/snap.test.js && node bridge/headless-qa.js --out ./qa-reports",
-    "check": "node --check st-generator.js && node --check st-testbench.js && node --check project-wiring.js && node --check bridge/headless-qa.js && npm test"
+    "test": "node tests/st-generator.test.js && node tests/project-wiring.test.js && node tests/native-fbd-fixture.test.js && node tests/interzone.test.js && node tests/pressure-and-interlocks.test.js && node tests/hmi.test.js && node tests/snap.test.js && node bridge/headless-qa.js --out ./qa-reports",
+    "check": "node --check st-generator.js && node --check st-testbench.js && node --check interzone-testbench.js && node --check project-wiring.js && node --check bridge/headless-qa.js && npm test"
   },
   "engines": {
     "node": ">=22"
