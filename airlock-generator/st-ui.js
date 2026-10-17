@@ -34,7 +34,7 @@
  let compiled=null,bench=null,selectedId=null,selectedSignature=null;
  const signature=id=>{
    const r=model.rooms.find(r=>r.id===id);
-   return JSON.stringify({id,mode:r?.interlockMode,purge:r?.purgeSec,alarm:model.defaultOpenDoorAlarmSec,
+   return JSON.stringify({id,mode:r?.interlockMode,purge:r?.purgeSec,ventilationControlMode:r?.ventilationControlMode,alarm:model.defaultOpenDoorAlarmSec,
      doors:model.doors.filter(d=>d.a===id||d.b===id).map(d=>d.id).sort()});
  };
  const eligible=()=>model.rooms.filter(r=>["purge","mutual"].includes(AirlockEngine.roomMode(r))&&
@@ -98,6 +98,8 @@
     '<tr><td>Красный</td><td>'+(v.red?"ВКЛ":"ВЫКЛ")+'</td></tr>'+
     '<tr><td>Тревога</td><td>'+(v.alarm?"ДА":"НЕТ")+'</td></tr>'+
     '<tr><td>Ошибка двух дверей</td><td>'+(v.fault?"ДА":"НЕТ")+'</td></tr>'+
+    (compiled?.ventilationControlMode==="integrated"?
+      '<tr><td>Запрос вентиляции</td><td>'+(v.ventilationRequest?"ВКЛ":"ВЫКЛ")+'</td></tr>':"")+
     (v.purgeRemainingSec!==null?'<tr><td>Продувка, осталось</td><td>'+v.purgeRemainingSec+' с</td></tr>':"")+
     Object.entries(v.blocked).map(([id,blocked])=>'<tr><td>Запрет двери '+esc(id)+'</td><td>'+(blocked?"ДА":"НЕТ")+'</td></tr>').join("")+
     '</table>';
