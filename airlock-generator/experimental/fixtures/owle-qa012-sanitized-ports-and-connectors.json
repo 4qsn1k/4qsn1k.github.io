@@ -1,0 +1,1166 @@
+{
+  "schema": "airlock-owle-test-metadata/1",
+  "evidence": "Owen Logic 3.3.378 TEST project; read-only extracted",
+  "sourceArchiveSha256": "0e3f85bfc198aa298ebac5068e76b5c0408cb4590faee9530e74559a1a167a00",
+  "counts": {
+    "elements": 25,
+    "connectors": 16
+  },
+  "documentKeys": [
+    "ApplicationVersionCreated",
+    "Bounds",
+    "CommentBlockModels",
+    "ConnectorModels",
+    "DevValue",
+    "Elements",
+    "KeyFileName",
+    "LastChangingApplicationVersion",
+    "UniqueId",
+    "VariableCatalogSections",
+    "Variables",
+    "WorkRectangle"
+  ],
+  "examples": [
+    {
+      "role": "OUTPUT_OR",
+      "discriminator": 3,
+      "wrapperKeys": [
+        "Company",
+        "Discriminator",
+        "ElementModel",
+        "ModelSerializedData",
+        "ModuleName",
+        "OrderExecution",
+        "OutputVariableIndex",
+        "UsedBitMask"
+      ],
+      "elementModelKeys": [
+        "Comment",
+        "Descriptor",
+        "FbType",
+        "FontSize",
+        "IsAddToMacroProperty",
+        "IsInvertOutput",
+        "Location",
+        "NewDisplayNames",
+        "OldDisplayNames",
+        "Ports",
+        "Primitives",
+        "PropertyNames",
+        "Title",
+        "UniqueId",
+        "Version",
+        "ZOrder"
+      ],
+      "nativePortCount": 1,
+      "ports": [
+        {
+          "name": "Input0",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        }
+      ],
+      "primitiveFieldShapes": [
+        [
+          "Discriminator",
+          "PointTypes",
+          "Points",
+          "StyleSheetName"
+        ],
+        [
+          "Discriminator",
+          "Height",
+          "Name",
+          "Text",
+          "TextStyleModel",
+          "Width",
+          "X",
+          "Y"
+        ]
+      ],
+      "elementDefaults": {
+        "Version": 0,
+        "FbType": 13,
+        "IsInvertOutput": false,
+        "FontSize": 13.252205,
+        "ZOrder": 7
+      },
+      "outputIndex": 3
+    },
+    {
+      "role": "INPUT_SHARED",
+      "discriminator": 2,
+      "wrapperKeys": [
+        "Company",
+        "Discriminator",
+        "ElementModel",
+        "InputVariableIndex",
+        "ModelSerializedData",
+        "ModuleName",
+        "UsedBitMask",
+        "ValueToTypes",
+        "VariableTypeExtensionName"
+      ],
+      "elementModelKeys": [
+        "Comment",
+        "Descriptor",
+        "FbType",
+        "FontSize",
+        "IsAddToMacroProperty",
+        "IsInvertOutput",
+        "Location",
+        "NewDisplayNames",
+        "OldDisplayNames",
+        "Ports",
+        "Primitives",
+        "PropertyNames",
+        "Title",
+        "UniqueId",
+        "Version",
+        "ZOrder"
+      ],
+      "nativePortCount": 1,
+      "ports": [
+        {
+          "name": "Output0",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        }
+      ],
+      "primitiveFieldShapes": [
+        [
+          "Discriminator",
+          "PointTypes",
+          "Points",
+          "StyleSheetName"
+        ],
+        [
+          "Discriminator",
+          "Height",
+          "Name",
+          "Text",
+          "TextStyleModel",
+          "Width",
+          "X",
+          "Y"
+        ]
+      ],
+      "elementDefaults": {
+        "Version": 0,
+        "FbType": 12,
+        "IsInvertOutput": false,
+        "FontSize": 13.252205,
+        "ZOrder": 14
+      },
+      "inputIndex": 7
+    },
+    {
+      "role": "OR_SHARED",
+      "discriminator": 18,
+      "wrapperKeys": [
+        "Discriminator",
+        "ElementModel",
+        "FbType",
+        "PinDefaultValue"
+      ],
+      "elementModelKeys": [
+        "Comment",
+        "Descriptor",
+        "FbType",
+        "FontSize",
+        "IsAddToMacroProperty",
+        "IsInvertOutput",
+        "Location",
+        "NewDisplayNames",
+        "OldDisplayNames",
+        "Ports",
+        "Primitives",
+        "PropertyNames",
+        "Title",
+        "UniqueId",
+        "Version",
+        "ZOrder"
+      ],
+      "nativePortCount": 3,
+      "ports": [
+        {
+          "name": "Input0",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": true
+        },
+        {
+          "name": "Input1",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": true
+        },
+        {
+          "name": "Output2",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": true
+        }
+      ],
+      "primitiveFieldShapes": [
+        [
+          "Discriminator",
+          "PointTypes",
+          "Points",
+          "StyleSheetName"
+        ],
+        [
+          "Color",
+          "Discriminator",
+          "LineModel",
+          "Name",
+          "UniqueId"
+        ]
+      ],
+      "elementDefaults": {
+        "Version": 0,
+        "FbType": 4,
+        "IsInvertOutput": false,
+        "FontSize": 8,
+        "ZOrder": 15
+      },
+      "pinDefaultValue": 0
+    },
+    {
+      "role": "ROOM_A",
+      "discriminator": 41,
+      "wrapperKeys": [
+        "Discriminator",
+        "ElementBlockStoreModel",
+        "FunctionBlockUId",
+        "FunctionalBlocksDirectorStoreModel",
+        "LastModificationId",
+        "Name"
+      ],
+      "elementModelKeys": [
+        "Comment",
+        "Descriptor",
+        "FbType",
+        "FontSize",
+        "IsAddToMacroProperty",
+        "IsInvertOutput",
+        "Location",
+        "NewDisplayNames",
+        "OldDisplayNames",
+        "Ports",
+        "Primitives",
+        "PropertyNames",
+        "Title",
+        "UniqueId",
+        "Version",
+        "ZOrder"
+      ],
+      "nativePortCount": 18,
+      "ports": [
+        {
+          "name": "Input0",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Input1",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Input2",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Input3",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Input4",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output0",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output1",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output2",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output3",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output4",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output5",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output6",
+          "portType": 1,
+          "dataType": 3,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output7",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output8",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output9",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output10",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output11",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output12",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        }
+      ],
+      "primitiveFieldShapes": [
+        [
+          "Discriminator",
+          "PointTypes",
+          "Points",
+          "StyleSheetName"
+        ],
+        [
+          "Discriminator",
+          "EndPointX",
+          "EndPointY",
+          "StartPointX",
+          "StartPointY"
+        ]
+      ],
+      "elementDefaults": {
+        "Version": 0,
+        "FbType": -1,
+        "IsInvertOutput": false,
+        "FontSize": 8,
+        "ZOrder": 24
+      },
+      "fbInterface": {
+        "InputDataTypes": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "OutputDataTypes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "role": "ROOM_B",
+      "discriminator": 41,
+      "wrapperKeys": [
+        "Discriminator",
+        "ElementBlockStoreModel",
+        "FunctionBlockUId",
+        "FunctionalBlocksDirectorStoreModel",
+        "LastModificationId",
+        "Name"
+      ],
+      "elementModelKeys": [
+        "Comment",
+        "Descriptor",
+        "FbType",
+        "FontSize",
+        "IsAddToMacroProperty",
+        "IsInvertOutput",
+        "Location",
+        "NewDisplayNames",
+        "OldDisplayNames",
+        "Ports",
+        "Primitives",
+        "PropertyNames",
+        "Title",
+        "UniqueId",
+        "Version",
+        "ZOrder"
+      ],
+      "nativePortCount": 21,
+      "ports": [
+        {
+          "name": "Input0",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Input1",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Input2",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Input3",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Input4",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Input5",
+          "portType": 0,
+          "dataType": 0,
+          "pointIndexMode": 0,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output0",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output1",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output2",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output3",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output4",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output5",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output6",
+          "portType": 1,
+          "dataType": 3,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output7",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output8",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output9",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output10",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output11",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output12",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output13",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        },
+        {
+          "name": "Output14",
+          "portType": 1,
+          "dataType": 0,
+          "pointIndexMode": 1,
+          "arrayType": null,
+          "isFloating": false
+        }
+      ],
+      "primitiveFieldShapes": [
+        [
+          "Discriminator",
+          "PointTypes",
+          "Points",
+          "StyleSheetName"
+        ],
+        [
+          "Discriminator",
+          "EndPointX",
+          "EndPointY",
+          "StartPointX",
+          "StartPointY"
+        ]
+      ],
+      "elementDefaults": {
+        "Version": 0,
+        "FbType": -1,
+        "IsInvertOutput": false,
+        "FontSize": 8,
+        "ZOrder": 32
+      },
+      "fbInterface": {
+        "InputDataTypes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "OutputDataTypes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": {
+        "element": "OR_SHARED",
+        "port": "Output2"
+      },
+      "to": {
+        "element": "OUTPUT_OR",
+        "port": "Input0"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "NODE_16",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "ROOM_A",
+        "port": "Input0"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "NODE_17",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "ROOM_A",
+        "port": "Input1"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "NODE_18",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "ROOM_A",
+        "port": "Input2"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "INPUT_SHARED",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "ROOM_A",
+        "port": "Input3"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "NODE_19",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "ROOM_A",
+        "port": "Input4"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "ROOM_A",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "NODE_4",
+        "port": "Input0"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "ROOM_A",
+        "port": "Output8"
+      },
+      "to": {
+        "element": "OR_SHARED",
+        "port": "Input0"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "NODE_16",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "ROOM_B",
+        "port": "Input0"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "NODE_17",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "ROOM_B",
+        "port": "Input1"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "INPUT_SHARED",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "ROOM_B",
+        "port": "Input2"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "NODE_20",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "ROOM_B",
+        "port": "Input3"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "NODE_21",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "ROOM_B",
+        "port": "Input4"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "NODE_22",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "ROOM_B",
+        "port": "Input5"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "ROOM_B",
+        "port": "Output0"
+      },
+      "to": {
+        "element": "NODE_5",
+        "port": "Input0"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    },
+    {
+      "from": {
+        "element": "ROOM_B",
+        "port": "Output7"
+      },
+      "to": {
+        "element": "OR_SHARED",
+        "port": "Input1"
+      },
+      "discriminator": 1,
+      "connectorKeys": [
+        "Color",
+        "FromPortUId",
+        "Points",
+        "ToPortUId",
+        "UniqueId",
+        "ZOrder"
+      ],
+      "pointsFieldShapes": [
+        [
+          "IsEmpty",
+          "X",
+          "Y"
+        ]
+      ],
+      "color": -16777216
+    }
+  ],
+  "guidPolicy": "All original UniqueId, AnchorUniqueId, ElementOwnerUId, FunctionBlockUId and LastModificationId values OMITTED. Edge endpoints are synthetic element role and Port Name, not usable GUIDs.",
+  "omitted": [
+    "all ST source code",
+    "all UUID values",
+    "ModelSerializedData",
+    "Project name",
+    "device/site metadata",
+    "port numeric UniqueIds",
+    "raw geometry",
+    "Company and ModuleName"
+  ],
+  "validation": {
+    "nativeFileOpenedInOwenLogicBefore": true,
+    "nativeStructureVerified": true,
+    "newNativeSerializerValidated": false,
+    "realPLCConnected": false
+  }
+}
