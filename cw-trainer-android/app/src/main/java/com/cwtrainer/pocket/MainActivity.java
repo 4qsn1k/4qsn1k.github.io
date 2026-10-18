@@ -4,167 +4,340 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.media.AudioAttributes;
-import android.media.AudioFormat;
-import android.media.AudioTrack;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.*;
-import android.graphics.drawable.GradientDrawable;
-import java.util.*;
-import java.io.ByteArrayOutputStream;
+import android.view.inputmethod.InputMethodManager;
+import android.view.inputmethod.EditorInfo;
+import android.text.InputFilter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
-public class MainActivity extends Activity {
-    private final String[] names = {"К","М","Р","С","У","А","П","Т","Л","О","В","И","Н","Й","Е","Ф","Ы","Ж","Г","З","Х","Б","Ц","Д","Ь","Ч","Ш","Щ","Ъ","Э","Ю","Я"};
-    private final String[] codes = {"-.-","--",".-.","...","..-",".-",".--.","-",".-..","---",".--","..","-."," .---",".","..-.","-.--","...-","--.","--..","....","-...","-.-.","-..","-..-","---.","----","--.-","--.--","..-..","..--",".-.-"};
-    private final Random random = new Random();
-    private final Handler main = new Handler(Looper.getMainLooper());
+/** Native, offline, beginner CW course. */
+public final class MainActivity extends Activity {
+    enum Mode { LEARN, CHOICE, CONTROL, STATS }
+    private static final int BACKGROUND=Color.rgb(12,24,35);
+    private static final int PANEL=Color.rgb(30,46,61);
+    private static final int GREEN=Color.rgb(34,135,117);
+    private static final int RED=Color.rgb(171,61,68);
+    private static final int WHITE=Color.WHITE;
+    private static final int MUTED=Color.rgb(178,195,209);
+    private final Handler handler=new Handler(Looper.getMainLooper());
+    private final Random random=new Random();
+    private final MorseTonePlayer audio=new MorseTonePlayer();
     private SharedPreferences prefs;
-    private LinearLayout screen, buttons;
-    private TextView title, info, symbol, status, progress;
-    private Button replay, advance, mode;
-    private final Button[] answers = new Button[4];
-    private int stage=2, question=-1, answered=0, soundEpoch=0;
-    private boolean busy=false, learning=false;
-    private String history="";
-    private static final int BG=Color.rgb(14,26,37), PANEL=Color.rgb(29,46,61), WHITE=Color.WHITE, MUTED=Color.rgb(180,200,214), ACCENT=Color.rgb(50,159,147);
+    private List<MorseCourse.Symbol> alphabet;
+    private MorseCourse.Progress progress;
+    private boolean russian=false;
+    private Mode mode=Mode.LEARN;
+    private int question=-1;
+    private boolean answered=false;
+    private int repeats=0;
+    private int questionVersion=0;
+    private LinearLayout root, learnPanel, choicesPanel, controlPanel, statPanel;
+    private TextView heading, prompt, character, feedback, metrics, stats;
+    private EditText answerField;
+    private Button languageButton, replayButton, nextButton, submitButton, unknownButton;
+    private final Button[] choiceButtons=new Button[4];
+    private final Button[] modeButtons=new Button[4];
+    private Runnable scheduled=null;
+
     private int dp(int n){return Math.round(getResources().getDisplayMetrics().density*n);}
-    private GradientDrawable rounded(int color,int radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(radius));return d;}
-    private TextView text(String value,int size,int color){
-        TextView v=new TextView(this);v.setText(value);v.setTextColor(color);v.setTextSize(size);v.setGravity(Gravity.CENTER);return v;
+    private GradientDrawable rounded(int color,int radius) {
+        GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(radius));return d;
     }
-    private Button button(String value,int color){
-        Button b=new Button(this);b.setText(value);b.setTextSize(21);b.setTextColor(WHITE);b.setAllCaps(false);b.setBackgroundTintList(ColorStateList.valueOf(color));return b;
+    private TextView text(String value,int size,int color) {
+        TextView v=new TextView(this);
+        v.setText(value);v.setTextSize(size);v.setTextColor(color);v.setGravity(Gravity.CENTER);
+        return v;
+    }
+    private Button button(String value,int color) {
+        Button b=new Button(this);b.setText(value);b.setTextSize(17);b.setTextColor(WHITE);
+        b.setAllCaps(false);b.setBackgroundTintList(ColorStateList.valueOf(color));
+        b.setMinHeight(dp(52));return b;
+    }
+    private void tint(Button b,int color){b.setBackgroundTintList(ColorStateList.valueOf(color));}
+    private LinearLayout column() {
+        LinearLayout c=new LinearLayout(this);c.setOrientation(LinearLayout.VERTICAL);return c;
+    }
+    private void add(LinearLayout parent,View v,int margin) {
+        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,-2);
+        p.setMargins(0,dp(margin),0,0);parent.addView(v,p);
+    }
+    private LinearLayout row() {
+        LinearLayout r=new LinearLayout(this);r.setOrientation(LinearLayout.HORIZONTAL);return r;
+    }
+    private void half(LinearLayout parent,View v) {
+        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,-2,1);
+        p.setMargins(dp(3),dp(4),dp(3),0);parent.addView(v,p);
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
-        getWindow().setStatusBarColor(BG);getWindow().setNavigationBarColor(BG);
-        prefs=getSharedPreferences("cw_pocket_01",Context.MODE_PRIVATE);
-        stage=Math.max(2,Math.min(names.length,prefs.getInt("stage",2)));
-        history=prefs.getString("history","");
-        buildScreen();newQuestion();
+        getWindow().setStatusBarColor(BACKGROUND);
+        getWindow().setNavigationBarColor(BACKGROUND);
+        prefs=getSharedPreferences("cw_trainer_pocket",Context.MODE_PRIVATE);
+        russian=prefs.getBoolean("russian",false);
+        loadLanguage();
+        buildUI();
+        switchMode(Mode.LEARN);
     }
-    private void buildScreen(){
+    private void loadLanguage() {
+        alphabet=MorseCourse.alphabet(russian);
+        progress=MorseCourse.Progress.parse(prefs.getString(russian?"progress_ru":"progress_en",""),alphabet.size());
+    }
+    private void saveProgress(){
+        prefs.edit().putString(russian?"progress_ru":"progress_en",progress.serialize()).apply();
+    }
+    private void buildUI(){
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
-        screen=new LinearLayout(this);screen.setOrientation(LinearLayout.VERTICAL);screen.setPadding(dp(16),dp(16),dp(16),dp(20));screen.setBackgroundColor(BG);
-        scroll.addView(screen);setContentView(scroll);
-        title=text("CW TRAINER  ·  POCKET",21,Color.rgb(117,234,205));title.setTypeface(null,Typeface.BOLD);screen.addView(title);
-        info=text("",16,MUTED);info.setPadding(0,dp(12),0,dp(6));screen.addView(info);
-        symbol=text("?",88,WHITE);symbol.setTypeface(null,Typeface.BOLD);
-        symbol.setBackground(rounded(PANEL,16));LinearLayout.LayoutParams s=new LinearLayout.LayoutParams(-1,dp(190));s.setMargins(0,dp(12),0,dp(12));screen.addView(symbol,s);
-        status=text("",18,MUTED);screen.addView(status);
-        buttons=new LinearLayout(this);buttons.setOrientation(LinearLayout.VERTICAL);
-        screen.addView(buttons,new LinearLayout.LayoutParams(-1,-2));
-        for(int i=0;i<4;i++){final int n=i;answers[i]=button("?",ACCENT);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(63));lp.setMargins(0,dp(6),0,0);buttons.addView(answers[i],lp);answers[i].setOnClickListener(v->answer(n));}
-        replay=button("▶ Повторить звук",PANEL);LinearLayout.LayoutParams rlp=new LinearLayout.LayoutParams(-1,dp(58));rlp.setMargins(0,dp(16),0,0);screen.addView(replay,rlp);replay.setOnClickListener(v->playCurrent());
-        advance=button("Следующая буква",PANEL);LinearLayout.LayoutParams alp=new LinearLayout.LayoutParams(-1,dp(56));alp.setMargins(0,dp(8),0,0);screen.addView(advance,alp);advance.setVisibility(View.GONE);advance.setOnClickListener(v->newQuestion());
-        mode=button("Знакомство с буквами",PANEL);LinearLayout.LayoutParams mlp=new LinearLayout.LayoutParams(-1,dp(53));mlp.setMargins(0,dp(8),0,0);screen.addView(mode,mlp);
-        mode.setOnClickListener(v->{learning=!learning;busy=false;mode.setText(learning?"Вернуться к тесту":"Знакомство с буквами");newQuestion();});
-        progress=text("",14,MUTED);progress.setPadding(0,dp(12),0,0);screen.addView(progress);
-        TextView footer=text("Звук 650 Гц · 18 WPM · офлайн",13,MUTED);footer.setPadding(0,dp(14),0,0);screen.addView(footer);
-    }
-    private void refreshHeader(){
-        info.setText("Урок "+(stage-1)+"  ·  изучено "+stage+"/"+names.length+" букв");
-        int n=0,k=0;for(String a:history.split(";"))if(!a.isEmpty()){n++;if(a.startsWith("1"))k++;}
-        progress.setText("Проверено: "+n+"/40  ·  точность: "+(n==0?0:(100*k/n))+"%\nНовая буква: "+names[stage-1]+". Переход после 40 ответов и ≥90%.");
-    }
-    private int choose(){
-        ArrayList<Integer> pool=new ArrayList<>();
-        for(int i=0;i<stage;i++){
-            int weight=(i==stage-1?6:2);
-            if(history.contains("0"+i+","))weight+=2;
-            for(int j=0;j<weight;j++)pool.add(i);
+        root=column();root.setPadding(dp(14),dp(14),dp(14),dp(20));
+        root.setBackgroundColor(BACKGROUND);scroll.addView(root);setContentView(scroll);
+
+        TextView name=text("CW  TRAINER  POCKET",21,Color.rgb(125,234,202));
+        name.setTypeface(null,Typeface.BOLD);add(root,name,2);
+        languageButton=button("",PANEL);languageButton.setTextSize(15);
+        add(root,languageButton,6);
+        languageButton.setOnClickListener(v->{
+            cancelPending();
+            saveProgress();
+            russian=!russian;prefs.edit().putBoolean("russian",russian).apply();
+            loadLanguage();switchMode(Mode.LEARN);
+        });
+        String[] labels={"1. Знакомство","2. Тренировка","3. Контроль","4. Результат"};
+        for(int r=0;r<2;r++){
+            LinearLayout line=row();add(root,line,2);
+            for(int c=0;c<2;c++){
+                int index=r*2+c;
+                Button b=button(labels[index],PANEL);b.setTextSize(14);
+                half(line,b);modeButtons[index]=b;
+                b.setOnClickListener(v->switchMode(Mode.values()[index]));
+            }
         }
-        return pool.get(random.nextInt(pool.size()));
+        heading=text("",16,MUTED);add(root,heading,12);
+        prompt=text("",17,MUTED);add(root,prompt,4);
+        character=text("?",74,WHITE);character.setTypeface(null,Typeface.BOLD);
+        character.setBackground(rounded(PANEL,14));
+        LinearLayout.LayoutParams hero=new LinearLayout.LayoutParams(-1,dp(140));
+        hero.setMargins(0,dp(12),0,dp(8));root.addView(character,hero);
+        feedback=text("",17,MUTED);add(root,feedback,5);
+        metrics=text("",14,MUTED);add(root,metrics,5);
+
+        learnPanel=column();add(root,learnPanel,8);
+        choicesPanel=column();add(root,choicesPanel,8);
+        for(int r=0;r<2;r++){
+            LinearLayout line=row();add(choicesPanel,line,4);
+            for(int c=0;c<2;c++){
+                int index=r*2+c;
+                Button b=button("?",GREEN);b.setTextSize(23);half(line,b);
+                choiceButtons[index]=b;b.setOnClickListener(v->respondChoice(index));
+            }
+        }
+        controlPanel=column();add(root,controlPanel,8);
+        answerField=new EditText(this);
+        answerField.setTextColor(WHITE);answerField.setHintTextColor(MUTED);
+        answerField.setTextSize(26);answerField.setSingleLine(true);
+        answerField.setHint("Введи одну букву");
+        answerField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(1)});
+        answerField.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        answerField.setInputType(android.text.InputType.TYPE_CLASS_TEXT |
+           android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+        answerField.setBackground(rounded(PANEL,12));
+        answerField.setPadding(dp(14),dp(8),dp(14),dp(8));add(controlPanel,answerField,2);
+        answerField.setOnEditorActionListener((v,action,event)->{
+            if(action==EditorInfo.IME_ACTION_DONE){respondBlind(false);return true;}
+            return false;
+        });
+        LinearLayout controlActions=row();add(controlPanel,controlActions,6);
+        submitButton=button("Проверить",GREEN);half(controlActions,submitButton);
+        submitButton.setOnClickListener(v->respondBlind(false));
+        unknownButton=button("Не знаю",PANEL);half(controlActions,unknownButton);
+        unknownButton.setOnClickListener(v->respondBlind(true));
+
+        statPanel=column();add(root,statPanel,8);
+        stats=text("",17,WHITE);stats.setGravity(Gravity.START);
+        stats.setPadding(dp(14),dp(12),dp(14),dp(12));stats.setBackground(rounded(PANEL,12));
+        add(statPanel,stats,3);
+
+        replayButton=button("▶  Слушать / повторить",PANEL);add(root,replayButton,12);
+        replayButton.setOnClickListener(v->{
+            if(question<0)return;
+            if(mode==Mode.CONTROL && !answered)repeats++;
+            audio.play(alphabet.get(question).code,25);
+        });
+        nextButton=button("Следующее задание",PANEL);add(root,nextButton,6);
+        nextButton.setOnClickListener(v->newQuestion());
+
+        TextView footer=text("25 WPM внутри символов · офлайн · звук 650 Гц",12,MUTED);
+        add(root,footer,14);
+    }
+    private void cancelPending(){
+        questionVersion++;
+        if(scheduled!=null)handler.removeCallbacks(scheduled);
+        scheduled=null;audio.stop();
+    }
+    private void schedule(Runnable action,long delay) {
+        final int version=questionVersion;
+        scheduled=()->{if(questionVersion==version)action.run();};
+        handler.postDelayed(scheduled,delay);
+    }
+    private void switchMode(Mode next){
+        cancelPending();mode=next;answered=false;
+        for(int i=0;i<4;i++)tint(modeButtons[i],i==next.ordinal()?GREEN:PANEL);
+        languageButton.setText(russian?"Язык: РУССКИЙ  ·  переключить":"Язык: МЕЖДУНАРОДНЫЙ  ·  переключить");
+        learnPanel.setVisibility(next==Mode.LEARN?View.VISIBLE:View.GONE);
+        choicesPanel.setVisibility(next==Mode.CHOICE?View.VISIBLE:View.GONE);
+        controlPanel.setVisibility(next==Mode.CONTROL?View.VISIBLE:View.GONE);
+        statPanel.setVisibility(next==Mode.STATS?View.VISIBLE:View.GONE);
+        replayButton.setVisibility(next==Mode.STATS?View.GONE:View.VISIBLE);
+        nextButton.setVisibility(View.GONE);
+        refreshMetrics();
+        if(next==Mode.STATS){
+            question=-1;character.setText("✓");prompt.setText("Что уже освоено");
+            feedback.setText("Прогресс считается только по контролю без вариантов");
+            renderStats();return;
+        }
+        if(next==Mode.LEARN){
+            question=Math.min(progress.unlocked-1,alphabet.size()-1);
+            refreshIntroduction();
+        }else newQuestion();
+    }
+    private void refreshMetrics(){
+        int unlocked=Math.min(progress.unlocked,alphabet.size());
+        heading.setText("Этап "+Math.max(1,unlocked-3)+"  ·  открыто "+unlocked+" / "+alphabet.size());
+        metrics.setText("Контроль: "+progress.attempts+" попыток  ·  "+progress.accuracy()+"% без подсказок");
+    }
+    private void refreshIntroduction(){
+        refreshMetrics();
+        prompt.setText("Слушай целый сигнал. Не считай точки.");
+        feedback.setText("Нажми на любую букву для прослушивания");
+        character.setText(alphabet.get(question).label(russian)+"\n"+alphabet.get(question).code);
+        character.setTextSize(40);
+        learnPanel.removeAllViews();
+        int start=Math.max(0,progress.unlocked-8);
+        for(int i=start;i<progress.unlocked;i++){
+            final int idx=i;MorseCourse.Symbol s=alphabet.get(i);
+            Button b=button(s.label(russian)+"     "+s.code,i==progress.unlocked-1?GREEN:PANEL);
+            add(learnPanel,b,2);
+            b.setOnClickListener(v->{
+                question=idx;
+                character.setText(alphabet.get(question).label(russian)+"\n"+alphabet.get(question).code);
+                audio.play(alphabet.get(question).code,25);
+            });
+        }
+        if(start>0)feedback.setText("Последние 8 символов. Остальные повторяются в тренировках.");
     }
     private void newQuestion(){
-        soundEpoch++;
-        busy=false;answered=0;advance.setVisibility(View.GONE);
-        question=choose();refreshHeader();
-        status.setText(learning?"Нажми букву, чтобы услышать сигнал":"Какую букву ты услышал?");
-        symbol.setText(learning ? names[question]+"\n"+codes[question].trim() : "?");
-        symbol.setTextSize(learning?40:88);
-        ArrayList<Integer> options=new ArrayList<>();
-        options.add(question);
-        ArrayList<Integer> other=new ArrayList<>();for(int i=0;i<stage;i++)if(i!=question)other.add(i);
-        Collections.shuffle(other,random);
-        for(int i=0;i<Math.min(3,other.size());i++)options.add(other.get(i));
-        Collections.shuffle(options,random);
-        for(int i=0;i<answers.length;i++){
-            Button b=answers[i];
-            if(i>=options.size()){b.setVisibility(View.GONE);b.setTag(null);b.setEnabled(false);continue;}
-            int value=options.get(i);
-            b.setVisibility(View.VISIBLE);b.setTag(value);b.setText(names[value]);b.setEnabled(true);b.setBackgroundTintList(ColorStateList.valueOf(ACCENT));
-        }
-        if(learning){status.setText("Послушай звук. Затем возвращайся к тесту.");}
-        main.postDelayed(()->{if(!busy && !learning)playCurrent();},300);
-    }
-    private void answer(int selectedButton){
-        if(selectedButton<0 || selectedButton>=answers.length || busy)return;
-        Button choice=answers[selectedButton];
-        Object tag=choice.getTag();
-        if(choice.getVisibility()!=View.VISIBLE || !(tag instanceof Integer))return;
-        int selected=(Integer)tag;
-        if(learning){question=selected;symbol.setText(names[question]+"\n"+codes[question].trim());playCurrent();return;}
-        if(busy)return;
-        busy=true;boolean ok=(selected==question);
-        String item=(ok?"1":"0")+question+",";
-        history+=item+";";
-        String[] items=history.split(";");
-        if(items.length>40){StringBuilder out=new StringBuilder();for(int i=items.length-40;i<items.length;i++)out.append(items[i]).append(";");history=out.toString();}
-        int n=0,k=0,newN=0,newK=0;
-        for(String a:history.split(";")){if(a.isEmpty())continue;n++;boolean correct=a.startsWith("1");if(correct)k++;if(a.endsWith((stage-1)+",")){newN++;if(correct)newK++;}}
-        for(Button b:answers){
-            Object value=b.getTag();
-            if(b.getVisibility()!=View.VISIBLE || !(value instanceof Integer))continue;
-            b.setEnabled(false);
-            int num=(Integer)value;
-            b.setBackgroundTintList(ColorStateList.valueOf(num==question?Color.rgb(45,134,90):num==selected?Color.rgb(184,72,69):PANEL));
-        }
-        symbol.setText(names[question]);symbol.setTextSize(80);
-        status.setText(ok?"✓ Правильно":"✗ Это буква "+names[question]);
-        if(stage<names.length && n>=40 && 100*k/n>=90 && newN>=8 && 100*newK/newN>=80){
-            stage++;history="";status.setText("✓ Открыта новая буква: "+names[stage-1]);
-        }
-        prefs.edit().putInt("stage",stage).putString("history",history).apply();refreshHeader();
-        if(ok){main.postDelayed(()->{if(!learning)newQuestion();},850);}
-        else {advance.setVisibility(View.VISIBLE);playCurrent();}
-    }
-    private void playCurrent(){
-        if(question<0)return;final int own=++soundEpoch;final String pattern=codes[question].trim();
-        new Thread(()->{
-            try{
-                int sr=22050;double unit=1200.0/18.0;ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-                for(int k=0;k<pattern.length();k++){
-                    int millis=(int)Math.round(unit*(pattern.charAt(k)=='-'?3:1));
-                    appendTone(bytes,sr,millis,true);
-                    if(k<pattern.length()-1)appendTone(bytes,sr,(int)unit,false);
+        cancelPending();repeats=0;answered=false;nextButton.setVisibility(View.GONE);
+        question=progress.choose(random,System.currentTimeMillis());
+        refreshMetrics();character.setText("?");character.setTextSize(74);
+        feedback.setText("");feedback.setTextColor(MUTED);
+        if(mode==Mode.CHOICE){
+            prompt.setText("Какой символ прозвучал? Выбери букву");
+            ArrayList<Integer> options=new ArrayList<>();
+            options.add(question);
+            ArrayList<Integer> others=new ArrayList<>();
+            for(int i=0;i<progress.unlocked;i++)if(i!=question)others.add(i);
+            Collections.shuffle(others,random);
+            for(int i=0;i<3 && i<others.size();i++)options.add(others.get(i));
+            Collections.shuffle(options,random);
+            for(int i=0;i<choiceButtons.length;i++){
+                Button b=choiceButtons[i];
+                if(i>=options.size()){
+                    b.setVisibility(View.GONE);b.setEnabled(false);b.setTag(null);continue;
                 }
-                appendTone(bytes,sr,140,false);
-                byte[] data=bytes.toByteArray();
-                AudioTrack track=new AudioTrack.Builder()
-                    .setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
-                    .setAudioFormat(new AudioFormat.Builder().setSampleRate(sr).setEncoding(AudioFormat.ENCODING_PCM_16BIT).setChannelMask(AudioFormat.CHANNEL_OUT_MONO).build())
-                    .setTransferMode(AudioTrack.MODE_STATIC).setBufferSizeInBytes(data.length).build();
-                if(own!=soundEpoch){track.release();return;}
-                track.write(data,0,data.length);track.play();
-                Thread.sleep(800+data.length*1000/(sr*2));
-                track.stop();track.release();
-            }catch(Exception e){main.post(()->status.setText("Ошибка воспроизведения: "+e.getMessage()));}
-        },"MorseTone").start();
+                int value=options.get(i);
+                b.setVisibility(View.VISIBLE);b.setTag(value);b.setEnabled(true);
+                b.setText(alphabet.get(value).label(russian));tint(b,GREEN);
+            }
+        }else if(mode==Mode.CONTROL){
+            prompt.setText("Контроль: введи букву без вариантов");
+            answerField.setText("");answerField.setEnabled(true);
+            submitButton.setEnabled(true);unknownButton.setEnabled(true);
+            answerField.clearFocus();
+        }else return;
+        schedule(()->audio.play(alphabet.get(question).code,25),250);
     }
-    private void appendTone(ByteArrayOutputStream out,int sr,int ms,boolean active){
-        int samples=sr*ms/1000;
-        for(int i=0;i<samples;i++){
-            double fade=Math.min(1.0,Math.min(i,samples-i-1)/(sr*.004));
-            short value=(short)(active?Math.sin(2.0*Math.PI*650*i/sr)*10000*Math.max(0,fade):0);
-            out.write(value&255);out.write((value>>>8)&255);
+    private void respondChoice(int index){
+        if(mode!=Mode.CHOICE || answered)return;
+        if(index<0 || index>=choiceButtons.length)return;
+        Button b=choiceButtons[index];Object tag=b.getTag();
+        if(b.getVisibility()!=View.VISIBLE || !(tag instanceof Integer))return;
+        int response=(Integer)tag;
+        for(Button answer:choiceButtons) {
+            Object id=answer.getTag();
+            if(answer.getVisibility()!=View.VISIBLE || !(id instanceof Integer))continue;
+            answer.setEnabled(false);int value=(Integer)id;
+            tint(answer,value==question?GREEN:value==response?RED:PANEL);
+        }
+        finishAnswer(response==question,false);
+    }
+    private void respondBlind(boolean unknown){
+        if(mode!=Mode.CONTROL || answered)return;
+        String answer=answerField.getText().toString().trim().toUpperCase(Locale.ROOT);
+        if(!unknown && answer.isEmpty()){
+            feedback.setText("Введи одну букву или нажми «Не знаю»");return;
+        }
+        boolean correct=!unknown && answer.equals(alphabet.get(question).label(russian));
+        answerField.setEnabled(false);submitButton.setEnabled(false);unknownButton.setEnabled(false);
+        hideKeyboard();
+        progress.record(question,correct,repeats>0,alphabet.size(),System.currentTimeMillis());
+        saveProgress();
+        finishAnswer(correct,true);
+    }
+    private void finishAnswer(boolean correct,boolean exam){
+        answered=true;cancelPending();
+        String label=alphabet.get(question).label(russian);
+        character.setText(label+"\n"+alphabet.get(question).code);
+        character.setTextSize(37);
+        feedback.setText(correct?"✓ Верно"+(exam && repeats>0?" (после повтора)":"")
+               :"✗ Правильная буква: "+label);
+        feedback.setTextColor(correct?Color.rgb(124,228,175):Color.rgb(255,153,151));
+        refreshMetrics();
+        if(correct) {
+            schedule(()->newQuestion(),1000);
+        }else {
+            nextButton.setVisibility(View.VISIBLE);
+            audio.play(alphabet.get(question).code,25);
         }
     }
-    @Override public void onDestroy(){soundEpoch++;super.onDestroy();}
+    private void hideKeyboard(){
+        try{
+            InputMethodManager im=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            if(im!=null)im.hideSoftInputFromWindow(answerField.getWindowToken(),0);
+        }catch(RuntimeException ignored){}
+    }
+    private void renderStats(){
+        refreshMetrics();
+        int due=0,weak=0;
+        long now=System.currentTimeMillis();
+        for(int i=0;i<progress.unlocked;i++){
+            if(progress.dueAt[i]>0 && progress.dueAt[i]<=now)due++;
+            if(progress.misses[i]>0)weak++;
+        }
+        stats.setText(
+          "Доступно символов: "+progress.unlocked+" из "+alphabet.size()+
+          "\n\nПопыток текущего этапа: "+progress.attempts+
+          "\nПравильно без повторов: "+progress.cleanCorrect+
+          "\nТочность контроля: "+progress.accuracy()+"%"+
+          "\nСимволов для повторения: "+due+
+          "\nСимволов с ошибками: "+weak+
+          "\n\nСледующий символ открывается после ≥40 контрольных попыток, ≥90% общей точности и проверки новых букв."+
+          "\n\nПовторение назначается через 1, 3 и 7 дней."+
+          "\n\nКнопки выбора букв служат тренировкой и НЕ повышают уровень.");
+    }
+    @Override public void onPause(){super.onPause();cancelPending();}
+    @Override public void onDestroy(){cancelPending();super.onDestroy();}
 }
