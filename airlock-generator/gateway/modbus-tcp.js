@@ -26,6 +26,7 @@ function query({host,port=502,unitId=1,functionCode,address,count=1,timeoutMs=12
   }
   socket.setTimeout(timeoutMs,()=>finish(Error("Modbus timeout")));
   socket.once("error",err=>finish(Error("Modbus TCP: "+err.message)));
+  socket.once("end",()=>finish(Error("Modbus response ended before completion")));
   socket.once("connect",()=>socket.write(buffer));
   socket.on("data",part=>{
    received=Buffer.concat([received,part]);
