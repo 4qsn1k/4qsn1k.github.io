@@ -3,6 +3,7 @@
 const assert=require("node:assert/strict");
 const fs=require("node:fs"),os=require("node:os"),path=require("node:path");
 const {query}=require("../gateway/modbus-rtu");
+const {parse,readOnce}=require("../gateway/pr100-readonly-probe");
 const {validate}=require("../gateway/profile-schema");
 const {readController,createPoller}=require("../gateway/telemetry");
 const model=require("../model.json");
@@ -43,6 +44,10 @@ const check=(name,fn)=>{passed++;console.log("PASS RTU "+name);};
   ...Array.from({length:8},(_,i)=>({signal:"PLC_PR1.Q"+(i+1),controllerId:"PR1",fc:1,address:i}))
  ],pollMs:1800,staleMs:5000};
  assert.equal(validate(cfg).controllers[0].comPort,"COM3");check("COM3/9600 8N1 Slave16 schema");
+ const options=parse(["--com","COM3","--unit","16","--baud","9600","--cycles","1"]);
+ assert.equal(options.comPort,"COM3");assert.equal(options.unitId,16);
+ assert.throws(()=>parse(["--com","COM0"]),/Invalid/);
+ check("read-only PR100 diagnostic CLI validates COM and slave options");
  assert.throws(()=>validate({...cfg,controllers:[{...serial,parity:"X"}]}),/parity/);
  assert.throws(()=>validate({...cfg,controllers:[{...serial,comPort:"COM0"}]}),/port/);
  check("reject unsupported parity / port");
@@ -53,6 +58,9 @@ const check=(name,fn)=>{passed++;console.log("PASS RTU "+name);};
  assert.deepEqual(di,[1,0,1,0,1,0,1,0]);check("real Python process reads fake DI1-DI8 via FC02");
  const q=await query({...serial,functionCode:1,address:0,count:8},{env});
  assert.deepEqual(q,[0,1,0,1,0,1,0,1]);check("real Python process reads fake Q1-Q8 via FC01");
+ const frame=await readOnce(serial,request=>query(request,{env}));
+ assert.equal(frame.di.DI1,1);assert.equal(frame.q.Q2,1);
+ check("real read-only PowerShell-friendly diagnostic command exposes DI/Q values");
  for(const functionCode of [3,4]){
   const vals=await query({...serial,functionCode,address:256,count:1},{env});
   assert.deepEqual(vals,[256]);
@@ -82,7 +90,7 @@ const check=(name,fn)=>{passed++;console.log("PASS RTU "+name);};
  }finally{
   if(before===undefined)delete process.env.PYTHONPATH;else process.env.PYTHONPATH=before;
  }
- console.log("AIRLOCK_SERIAL_RTU_OFFLINE_PASS "+passed+"/8");
+ console.log("AIRLOCK_SERIAL_RTU_OFFLINE_PASS "+passed+"/10");
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1;}).finally(()=>{
  fs.rmSync(tmp,{recursive:true,force:true});
 });
