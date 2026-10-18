@@ -21,10 +21,11 @@ policies, native diagnostics and simulation of the newly generated graph.
 Physical commissioning is NOT_TESTED and NOT_AUTHORIZED. No access to either
 Windows workstation, serial port or live controller is needed for this PR.
 
+Remote CI for implementation commit `f4d0b1f` passed: [run #39149552820](https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39149552820), Full offline QA success, artifact `airlock-full-offline-qa` present.
+
 GitHub API access was blocked by environment egress policy during development;
 `api.github.com` has been added to the environment configuration draft for review.
-PR/Actions status must be recorded from actual remote results, not inferred from
-local test success. Configuration saving does not apply that policy to runtime.
+The branch is pushed; `gh pr create --draft` was blocked by `Post https://api.github.com/graphql: Forbidden`. PR creation remains pending the runtime policy update. Configuration saving does not apply that policy to runtime.
 
 ## CURRENT PRIORITY — NEW CODEX TASK: Issue #10 (18.10.2026)
 

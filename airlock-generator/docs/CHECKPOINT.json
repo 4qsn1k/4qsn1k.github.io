@@ -655,7 +655,15 @@
       "truthTableCases": 256,
       "seededGraphs": 36,
       "exportGroups": 4,
-      "chromiumSmoke": "8/8 PASS"
+      "chromiumSmoke": "8/8 PASS",
+      "githubActions": {
+        "url": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39149552820",
+        "commit": "f4d0b1f",
+        "status": "success",
+        "job": "Full offline QA (Node, Python, mock TCP/RTU)",
+        "artifact": "airlock-full-offline-qa",
+        "artifactSha256": "b2cc584163a5305cac4d43e2d7c70633f1075dcdd62e02a38e23f1322269656f"
+      }
     },
     "oldNativeQa": {
       "qaOl006": "ACCEPTED_NOT_REPEATED",
@@ -672,9 +680,15 @@
       "Native GUI fixtures and generated native test plan",
       "Approved recovery policies",
       "Actual health sources, terminal/register maps and timeouts",
-      "Remote PR and CI evidence"
+      "Draft PR creation blocked by api.github.com proxy policy"
     ],
     "guide": "docs/FBD-GRAPH-ASSEMBLY.md",
-    "apiAccess": "api.github.com blocked; domain addition saved to environment draft, runtime not yet applied"
+    "apiAccess": "api.github.com blocked; domain addition saved to environment draft, runtime not yet applied",
+    "remoteBranch": "codex/airlock-10-fbd-graph",
+    "pullRequest": {
+      "status": "NOT_CREATED_API_POLICY_BLOCK",
+      "attempt": "gh pr create --draft",
+      "error": "Post https://api.github.com/graphql: Forbidden"
+    }
   }
 }

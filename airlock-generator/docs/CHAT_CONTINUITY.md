@@ -21,7 +21,8 @@
   Адаптер описывает лишь подтверждённые порты; готовый `.owle` не создаётся.
   Физические клеммы/регистры UNASSIGNED; контроллеры/замки/СКУД не затрагивались.
 - Инструкция: [FBD-GRAPH-ASSEMBLY.md](FBD-GRAPH-ASSEMBLY.md). Новые результаты CI
-  и PR фиксировать по фактическим remote-запускам. API GitHub пока блокируется
+  подтверждены [run #39149552820](https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39149552820): Full offline QA success для `f4d0b1f`, один артефакт.
+  Ветка опубликована; draft PR не создан: `gh pr create` получил Forbidden от API-прокси. API GitHub пока блокируется
   сетевой политикой; добавление домена сохранено в черновик среды.
 
 ## 18.10.2026 — Current: Codex environment preparation; Z4559 hardware host
