@@ -84,7 +84,7 @@ python -B tests/rtu-library-faults.py
 
 Первый Windows CI выявил гонку cleanup fake TCP responder: listener уже закрыт, а accepted sockets ещё не доставили close. Fixture исправлен ожиданием close каждого сокета; проверка нулевого числа активных соединений сохранена. Это исправление тестового жизненного цикла, без ослабления проверок телеметрии.
 
-Наблюдалось в Cloud Linux: полный codex-check PASS, headless MODEL 8/8; отдельный real pymodbus 3.15.0 / pyserial 3.5 memory-serial PASS. Node 24.19.0, Python 3.12.14. Windows/HOME-PC/Z4559 и физический ПР в этой сессии **не проверялись**. Автотесты подтверждают свойства программы в указанных моделях отказов; физическая совместимость, задержки USB/RS485 и электрическая безопасность из них не следуют.
+Наблюдалось в Cloud Linux: полный codex-check PASS, headless MODEL 8/8; отдельный real pymodbus 3.15.0 / pyserial 3.5 memory-serial PASS. Node 24.19.0, Python 3.12.14. Дополнительно [GitHub Actions run 39154998928](https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39154998928) на коде `fd5c3cb` завершён success: полный Linux offline QA и реальные library/fault smoke на Linux и Windows прошли (Node 22 / Python 3.13). HOME-PC/Z4559 и физический ПР в этой сессии **не проверялись**. Автотесты подтверждают свойства программы в указанных моделях отказов; физическая совместимость, задержки USB/RS485 и электрическая безопасность из них не следуют.
 
 ## Отдельная физическая PR100-проверка (ещё НЕ выполнена)
 

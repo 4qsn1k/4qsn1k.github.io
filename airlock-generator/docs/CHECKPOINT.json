@@ -636,9 +636,18 @@
     "scope": "Existing read-only gateway only; independent of Issue #10 / PR #13",
     "fullCodexCheck": "PASS; MODEL_QA_FINAL PASS 8/8",
     "realPymodbusMemorySerial": "PASS; pymodbus 3.15.0 / pyserial 3.5; no real serial device",
-    "windowsSmoke": "Added; NOT_RUN on HOME-PC or Z4559 in this session",
+    "windowsSmoke": "GitHub windows-latest PASS; NOT_RUN on HOME-PC or Z4559 in this session",
     "physicalControllerTested": false,
     "controllerWritesAllowed": false,
-    "documentation": "docs/AGENT-RELIABILITY-ISSUE-15.md"
+    "documentation": "docs/AGENT-RELIABILITY-ISSUE-15.md",
+    "draftPR": "https://github.com/4qsn1k/4qsn1k.github.io/pull/16",
+    "ciValidatedCodeCommit": "fd5c3cb4aadadae1b8b3abf928115d25003bedba",
+    "githubActions": {
+      "run": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39154998928",
+      "conclusion": "success",
+      "fullOfflineLinux": "PASS",
+      "realLibraryAndFaultSmokeLinux": "PASS",
+      "realLibraryAndFaultSmokeWindows": "PASS"
+    }
   }
 }
