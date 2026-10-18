@@ -29,6 +29,8 @@ jobs:
           gradle-version: '8.9'
       - name: Build Android APK
         run: gradle -p cw-trainer-android --no-daemon :app:assembleDebug
+      - name: Test Activity startup
+        run: gradle -p cw-trainer-android --no-daemon :app:testDebugUnitTest
       - name: Save APK
         run: |
           mkdir -p cw-trainer-android/dist
