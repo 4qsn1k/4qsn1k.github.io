@@ -15,67 +15,33 @@ permissions:
   contents: read
 
 jobs:
-  model-tests:
-    name: Independent logic model and generator
+  full-offline-tests:
+    name: Full offline QA (Node, Python, mock TCP/RTU)
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: airlock-generator
-
     steps:
-      - name: Checkout repository
+      - name: Checkout source
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
+      - name: Setup Node 22
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-
-      - name: Check source syntax
-        run: |
-          node --check st-generator.js
-          node --check hardware-planner.js
-          node --check equipment-advisor.js
-          node --check equipment-advisor-ui.js
-          node --check distributed-planner.js
-          node --check network-watchdog.js
-          node --check distributed-ui.js
-          node --check hardware-ui.js
-          node --check features-v04.js
-          node --check st-ui.js
-          node --check st-testbench.js
-          node --check interzone-testbench.js
-          node --check project-wiring.js
-          node --check project-wiring-ui.js
-          node --check tests/project-wiring.test.js
-          node --check bridge/headless-qa.js
-
-      - name: Run repository unit tests
-        run: |
-          node tests/st-generator.test.js
-          node tests/project-wiring.test.js
-          node tests/hardware-planner.test.js
-          node tests/equipment-advisor.test.js
-          node tests/distributed-planner.test.js
-          node tests/network-watchdog.test.js
-          node tests/native-fbd-fixture.test.js
-          node tests/interzone.test.js
-          node tests/pressure-and-interlocks.test.js
-          node tests/hmi.test.js
-          node tests/snap.test.js
-
-      - name: Run repeatable headless model scenarios
-        run: node bridge/headless-qa.js --out ./qa-reports
-
-      - name: Publish QA reports
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Full deterministic software QA
+        run: bash scripts/codex-check.sh
+      - name: Upload QA reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: airlock-model-qa
+          name: airlock-full-offline-qa
           path: airlock-generator/qa-reports/
           if-no-files-found: warn
           retention-days: 30
 
-# Deliberately NO PLC communication, no GUI/Owen Logic simulation,
-# no Windows machine connection, and no secrets are required.
+# No physical PLC, Owen Logic GUI, Modbus network, secrets or writes.
