@@ -12,7 +12,7 @@ function query(p,options={}){
  if(!Number.isInteger(req.address)||req.address<0||req.address>65535||
     !Number.isInteger(req.count)||req.count<1||req.count>(req.functionCode<=2?128:32)||
     req.address+req.count>65536)return Promise.reject(Error("Invalid Modbus address/count"));
- const py=options.python||process.env.AIRLOCK_PYTHON||(process.platform==="win32"?"py":"python3");
+ const py=options.python||process.env.AIRLOCK_PYTHON||(process.platform==="win32"?"python":"python3");
  const args=/^py(?:\.exe)?$/i.test(path.basename(py))?["-3",worker]:[worker];
  return new Promise((resolve,reject)=>{
   const child=spawn(py,args,{stdio:["pipe","pipe","pipe"],windowsHide:true,shell:false,
