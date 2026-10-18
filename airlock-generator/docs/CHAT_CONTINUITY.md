@@ -1,5 +1,17 @@
 # CHAT_CONTINUITY — конструктор технологических шлюзов
 
+## 18.10.2026 — Current: Codex environment preparation; Z4559 hardware host
+
+- Z4559 is now the primary physical PR100 / USB-RS485 integration workstation. HOME-PC stays the native Owen Logic and independent QA machine. Historical roles below are superseded for physical integration.
+- Z4559 AirlockGeneratorLab created with isolated Python venv (3.13.15; pymodbus 3.15.0, pyserial 3.5), Node 24.19.0 and Airlock main ZIP source. Existing skud-kpp2 untouched. No PLC connection was attempted.
+- Z4559 offline QA PASS; feature-branch Windows launcher and scheduler DRY_RUN_ONLY tested. No task installed, no serial port opened.
+- Full CI now includes all npm tests, fake serial worker and journal via scripts/codex-check.sh.
+- Codex Cloud name: airlock-generator-dev. REPOSITORY READY, BUT CLOUD ENVIRONMENT NOT YET PUBLISHED. User must create/publish in Codex UI, connect repository. Start NEW Codex task Issue #10 on High, use Extra High for native FBD/safety. No direct Codex access to Z4559.
+- Manuals: docs/Z4559-RUNTIME.md, docs/CODEX-ENVIRONMENT.md; checkpoint docs/CODEX-Z4559-CHECKPOINT-2026-10-18.json.
+
+---
+
+
 ## КОНТРОЛЬНАЯ ТОЧКА — 18.10.2026, подготовка USB-RS485 к 19.10
 - **ВЕТКА PR, не main:** `codex/airlock-usb-rs485-offline-20261018`. HOME-PC — основная тестовая машина.
 - В прежнем «КПП 2» реально читали ПР100 через Болид USB-RS485 на COM3, 9600 8N1, Slave ID 16, Python pymodbus 3.15.0. DI1–8: FC02 4096–4103; Q1–8: FC01 0–7. Это историческая подтверждённая конфигурация, а не новый аппаратный PASS.
