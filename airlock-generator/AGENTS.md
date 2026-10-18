@@ -1,5 +1,14 @@
 # Airlock Generator — instructions for Codex and other coding agents
 
+## Current responsibilities (2026-10-18)
+
+- Codex Cloud coding work: **new task Issue #10**, High (Extra High for FBD native schema, safety). Cloud environment `airlock-generator-dev` may still require user setup in Codex UI. Do not claim its creation or authentication from mere GitHub files.
+- **Z4559** is the planned physical PR100/USB-RS485 integration workstation. **HOME-PC** is independent testing and Owen Logic simulator. Do not touch existing `skud-kpp2` on Z4559.
+- Native software QA-OL-006 and QA-OL-012 A–F are already passed with evidence; **do not repeat** without a code change needing regression. Physical PR commissioning and independent compiler diagnostics are not passed.
+- Follow `docs/SCADA-CHECKPOINT-2026-10-18.json` and `docs/RS485-LAB-2026-10-19.md`: read-only FC01–04, UNKNOWN on loss of confirmed data, no actuator writes.
+- Run **full** `bash scripts/codex-check.sh`, now aligned with `npm run check`. Mock tests never substitute physical or native Owen Logic QA.
+
+
 ## Distributed PLC allocation (draft)
 
 - New files: `distributed-planner.js` (per-controller DI/DO slot estimates), `distributed-ui.js` (room and door owner selectors), `network-watchdog.js` (deterministic reference freshness model).
