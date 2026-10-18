@@ -5,6 +5,7 @@ on:
     paths:
       - 'cw-trainer-android/app/**'
       - 'cw-trainer-android/settings.gradle.kts'
+      - 'cw-trainer-android/gradle.properties'
       - '.github/workflows/cw-trainer-apk.yml'
   workflow_dispatch:
 
