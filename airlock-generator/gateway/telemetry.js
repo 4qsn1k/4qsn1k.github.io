@@ -76,12 +76,11 @@ function frameFor(profile,readings,errors,time=Date.now()){
   info:"SCADA displays read-only Modbus values. No PLC writes."};
 }
 function createPoller(profile,modbusRead=readController){
- let busy=false,latest=frameFor(profile,{},Object.fromEntries(profile.controllers.map(c=>[c.id,"not polled"])),0);
- const poll=async()=>{
-  if(busy)return latest;
-  busy=true;
-  const readings={},errors={};
-  try{
+ let inFlight=null,latest=frameFor(profile,{},Object.fromEntries(profile.controllers.map(c=>[c.id,"not polled"])),0);
+ const poll=()=>{
+  if(inFlight)return inFlight;
+  inFlight=(async()=>{
+   const readings={},errors={};
    await Promise.all(profile.controllers.map(async c=>{
     const bindings=profile.bindings.filter(b=>b.controllerId===c.id);
     try{Object.assign(readings,await modbusRead(c,bindings));}
@@ -89,7 +88,8 @@ function createPoller(profile,modbusRead=readController){
    }));
    latest=frameFor(profile,readings,errors);
    return latest;
-  } finally{busy=false;}
+  })().finally(()=>{inFlight=null;});
+  return inFlight;
  };
  return {poll,get:()=>{
   const now=Date.now();
