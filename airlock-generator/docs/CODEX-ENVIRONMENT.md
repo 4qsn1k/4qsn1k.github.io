@@ -1,5 +1,19 @@
 # Codex cloud environment — Airlock Generator
 
+## Актуальный выбор на 18.10.2026
+
+**Новая облачная среда Codex** для `4qsn1k/4qsn1k.github.io`, имя `airlock-generator-dev`, основной каталог `airlock-generator/`, базовая ветка `main`. **Новая задача Codex по Issue #10**: [Generalized FBD graph assembler](https://github.com/4qsn1k/4qsn1k.github.io/issues/10). Старый контекст Issue #3 / QA-OL-012 не запускайте повторно: native A–F уже подтверждены на HOME-PC в тестовом проекте. `docs/CODEX-TASKS.md` содержит актуальные требования.
+
+- **Рассуждения High** по умолчанию, **Extra High** для полной Owen Logic FBD, многоконтроллерной логики и отказобезопасности.
+- Начинать **новую задачу**, не продолжать старый длинный чат. Условия и итоги — в GitHub, не в истории чата.
+- **Z4559** — физический аппаратный узел ПР100/USB-RS485 и будущий агент. **HOME-PC** — независимая проверка, Owen Logic native GUI и резерв.
+- Создана изолированная локальная копия на Z4559: `%USERPROFILE%\AirlockGeneratorLab\source\airlock-generator` (скачан архив `main`, это **не git clone**). `%USERPROFILE%\AirlockGeneratorLab\.venv` содержит pymodbus 3.15.0 и pyserial 3.5. Установлены Node 24/Python 3.13. `npm run check` завершён с PASS 18.10. **Никакого Modbus-запроса к живому прибору не было.**
+- Git CLI и Codex CLI **на Z4559 не установлены**. Это не препятствует Codex Cloud: облачная среда использует отдельный GitHub-репозиторий. Не хранить пароли Codex на рабочем компьютере.
+- **Статус публикации Codex Cloud: PENDING_USER_UI.** Этот GitHub PR подготавливает среду, но отдельная публикация в Codex требует действия пользователя в ChatGPT/Codex. GitHub-коннектор не создаёт и не публикует облачную среду.
+- После авторизации: Codex → Environments / Manage Environments → Create → select repository `4qsn1k/4qsn1k.github.io` → name `airlock-generator-dev` → run setup `cd airlock-generator && bash scripts/codex-setup.sh` → publish → new task with Issue #10. Checks: `cd airlock-generator && bash scripts/codex-check.sh`.
+- Рабочие коммиты Codex только в ветку/PR. Нет физического доступа к Z4559/ПР, реальным замкам/СКУД/АПС; без изменений `main` до проверки.
+
+
 **Repository:** https://github.com/4qsn1k/4qsn1k.github.io  
 **Work directory inside repository:** `airlock-generator`  
 **Target:** GitHub-backed Codex coding environment for JS, ST code generation, test manifests and PRs. **Not a remote instance of Owen Logic, PR100 or access control.**
@@ -11,13 +25,13 @@ Codex cloud GitHub connection is a separate consent/authorization action. Existi
 1. Open **Codex** in ChatGPT or the Codex web interface at https://chatgpt.com/codex.
 2. Connect the GitHub account that owns `4qsn1k/4qsn1k.github.io` using the Codex GitHub integration, if it is not already connected. Select **only the needed repository** rather than granting all repositories when a selection is available.
 3. In Codex, create or select an **environment** for repository `4qsn1k/4qsn1k.github.io`, branch `main`. Name it `airlock-generator` to distinguish it from other website subprojects.
-4. Configure Node.js **22**, working directory **`airlock-generator`** where supported. If Codex only allows repository root, prefix setup/test commands with `cd airlock-generator &&`.
+4. Configure Node.js **22** and Python **3.13+**, working directory **`airlock-generator`** where supported. If Codex only allows repository root, prefix setup/test commands with `cd airlock-generator &&`.
 5. Set the **setup script** to:
    ```bash
    cd airlock-generator && bash scripts/codex-setup.sh
    ```
    If the environment runs setup scripts with its working directory already set to `airlock-generator`, use `bash scripts/codex-setup.sh`.
-6. No `npm install` or third-party dependencies are required. No special environment variables or secrets are needed for **read-only software tests and code work**.
+6. No `npm install` or external Python dependencies are required for mock tests. No special environment variables or secrets are needed for **read-only software tests and code work**.
 7. Test inside Codex terminal:
    ```bash
    cd airlock-generator && bash scripts/codex-check.sh
@@ -53,7 +67,7 @@ There is **no authenticated automatic ChatGPT → Codex API bridge** in the pres
 
 ## First task
 
-Read [CODEX-TASKS.md](CODEX-TASKS.md), start with QA-OL-012 **logical, code-only wiring manifest**: both rooms' shared reed and OR of block requests. Do not claim an Owen Logic FBD build until verified.
+Read [CODEX-TASKS.md](CODEX-TASKS.md), start with Issue #10 **generalized FBD graph assembly** (old two-room QA-OL-012 already native-software-tested): both rooms' shared reed and OR of block requests. Do not claim an Owen Logic FBD build until verified.
 
 ## If the environment setup fails
 

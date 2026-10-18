@@ -614,5 +614,19 @@
       "airlock-generator/docs/QA-OWEN-HOME-2026-10-17.md",
       "airlock-generator/docs/FBD-N1-N4-INTEGRATION.md"
     ]
+  },
+  "codexCloudCurrent": {
+    "environment": "airlock-generator-dev",
+    "published": false,
+    "issue": 10,
+    "reasoning": "High, Extra High for native FBD",
+    "requiresUserUI": true
+  },
+  "physicalIntegrationCurrent": {
+    "host": "Z4559",
+    "status": "STAGED_NOT_CONNECTED",
+    "workdir": "AirlockGeneratorLab",
+    "z4559OfflineQa": "PASS",
+    "autostartInstalled": false
   }
 }

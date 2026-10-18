@@ -1,18 +1,14 @@
 #!/usr/bin/env bash
-# Reproducible non-hardware validation, for Codex cloud or any clone.
+# Complete deterministic offline suite; includes TCP socket simulator, fake RS485 worker and event tests.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 bash scripts/codex-setup.sh
-node --check st-generator.js
-node --check st-testbench.js
-node --check project-wiring.js
-node --check project-wiring-ui.js
-node --check bridge/headless-qa.js
-node tests/st-generator.test.js
-node tests/project-wiring.test.js
-node tests/native-fbd-fixture.test.js
-node tests/pressure-and-interlocks.test.js
-node tests/hmi.test.js
-node tests/snap.test.js
-node bridge/headless-qa.js --out ./qa-reports
-echo 'CODEX_MODEL_QA_PASS (independent JS model, not Owen Logic)'
+# npm test uses 'python' executable. On Linux codex images python3 may be the only name.
+if ! command -v python >/dev/null; then
+  temp_bin="$(mktemp -d)"
+  trap 'rm -rf "$temp_bin"' EXIT
+  ln -s "$(command -v python3)" "$temp_bin/python"
+  export PATH="$temp_bin:$PATH"
+fi
+npm run check
+echo "AIRLOCK_CODEX_FULL_OFFLINE_QA_PASS (JS/Modbus-mock only; NOT Owen Logic or real PLC)"

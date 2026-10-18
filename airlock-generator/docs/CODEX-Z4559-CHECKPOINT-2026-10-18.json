@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-18",
+  "project": "Airlock Generator",
+  "github": "4qsn1k/4qsn1k.github.io",
+  "codex": {
+    "requested": true,
+    "repoReady": true,
+    "cloudEnvironmentName": "airlock-generator-dev",
+    "cloudEnvironmentPublished": false,
+    "pending": "User must publish cloud environment in Codex UI and connect GitHub for Codex separately",
+    "taskIssue": "https://github.com/4qsn1k/4qsn1k.github.io/issues/10",
+    "chatPolicy": "new Codex task, High; Extra High for Owen Logic native FBD and safety logic",
+    "allowedWorkdir": "airlock-generator",
+    "branchConvention": "codex/airlock-<issue>-<topic>",
+    "setup": "cd airlock-generator && bash scripts/codex-setup.sh",
+    "check": "cd airlock-generator && bash scripts/codex-check.sh"
+  },
+  "z4559": {
+    "role": "physical PLC test host and future local read-only agent",
+    "state": "offline runtime installed; physical controller not attached",
+    "sourcePath": "C:\\Users\\m.hazgaliev\\AirlockGeneratorLab\\source\\airlock-generator",
+    "venvPath": "C:\\Users\\m.hazgaliev\\AirlockGeneratorLab\\.venv",
+    "python": "3.13.15",
+    "node": "24.19.0",
+    "pymodbus": "3.15.0",
+    "pyserial": "3.5",
+    "installation": "GitHub main ZIP, Git CLI and Codex CLI not installed",
+    "offlineTests": "npm.cmd run check PASS and serial fake-pymodbus 10/10 PASS",
+    "activeTasks": "No Windows background task installed",
+    "existingSkudKpp2": "unchanged"
+  },
+  "homePc": {
+    "role": "Owen Logic simulation, secondary nonhardware test"
+  },
+  "noPLCReadsOrWrites": true,
+  "newArtifacts": [
+    "gateway/preflight.js",
+    "scripts/windows/start-telemetry-agent.ps1",
+    "scripts/windows/register-telemetry-task.ps1",
+    "tests/agent-preflight.test.js",
+    "scripts/codex-setup.sh",
+    "scripts/codex-check.sh"
+  ],
+  "next": [
+    "Verify full changed CI on pull request",
+    "Review/merge environmental setup PR",
+    "User creates/publishes Codex Cloud environment once via UI",
+    "New Codex task Issue #10",
+    "Set local private connection profile on Z4559, then real PR100 test when available"
+  ]
+}

@@ -1,5 +1,25 @@
 # Codex task queue — Airlock Generator
 
+## CURRENT PRIORITY — NEW CODEX TASK: Issue #10 (18.10.2026)
+
+[Issue #10 — full graph-to-FBD assembly](https://github.com/4qsn1k/4qsn1k.github.io/issues/10) supersedes the early QA-OL-012 wiring-manifest task below. Old tests N1/N4 native A–F have passed **on HOME-PC TEST copy**; do not repeat them just to satisfy older text.
+
+**New Codex task, High/Extra High:** generate deterministic typed connections for arbitrary project graph (N zones, M shared doors), per-controller allocation constraints, fail-unknown state handling, natural/negative tests and a **test-only** native-format adapter where actual OWLE schema evidence exists. Label `FBD_PLAN_PASS`, `OWEN_NATIVE_PASS`, `PHYSICAL_PASS` separately; never infer the latter two.
+
+**Codex environment:** `airlock-generator-dev` for repo `4qsn1k/4qsn1k.github.io`; setup `cd airlock-generator && bash scripts/codex-setup.sh`, QA `cd airlock-generator && bash scripts/codex-check.sh`. Publish environment in Codex UI separately. Do **not** give Codex cloud Z4559 machine access or production Modbus IPs.
+
+**Supporting independent track (ChatGPT + Z4559):** staged read-only agent, serial port preflight, real PR100 unit test once authorized and hardware available. Work on Z4559 under `AirlockGeneratorLab`, preserve `skud-kpp2` untouched.
+
+## NEXT CODING BACKLOG (without physical PR)
+
+1. Windows agent foreground/preflight and optional logon service installer (explicit opt-in, never auto-open serial when unconfigured).
+2. Independent Modbus TCP/RTU simulator tests for dropout/reconnect, inter-controller stale status, status UI timestamps.
+3. Profile validation and versioned backup, events history rotation, recovery and offline/unknown UI test.
+4. Generalized FBD/studio wiring generation delegated via Issue #10.
+5. Prepare offline documentation for physical read-only communication test on Z4559, then real authorization gate.
+
+---
+
 Read `../AGENTS.md` and `CHAT_CONTINUITY.md` first. Native Owen Logic QA history is tracked separately in `QA-OWEN-2026-10-16.md`.
 
 ## Priority 1 — full inter-zone wiring manifest (QA-OL-012, code-first)
