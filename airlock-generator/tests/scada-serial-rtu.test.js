@@ -2,7 +2,7 @@
 // Offline protocol tests: fake pymodbus through PYTHONPATH; NO hardware/real serial port opened.
 const assert=require("node:assert/strict");
 const fs=require("node:fs"),os=require("node:os"),path=require("node:path");
-const {query}=require("../gateway/modbus-rtu");
+const {query,createTransport}=require("../gateway/modbus-rtu");
 const {parse,readOnce}=require("../gateway/pr100-readonly-probe");
 const {validate}=require("../gateway/profile-schema");
 const {readController,createPoller}=require("../gateway/telemetry");
@@ -81,7 +81,7 @@ const check=(name,fn)=>{passed++;console.log("PASS RTU "+name);};
   assert.equal(frame.doors["1-4"].state,"unknown");
   check("Node poller -> Python -> decoded raw DI/Q, but no false green");
   const fail={...serial,comPort:"COM99"};
-  await assert.rejects(query({...fail,functionCode:2,address:4096,count:1},{env}),/unavailable|occupied/);
+  await assert.rejects(query({...fail,functionCode:2,address:4096,count:1},{env}),/RTU_UNAVAILABLE/);
   const failedCfg={...cfg,controllers:[fail]};
   const offline=await createPoller(failedCfg).poll();
   assert.equal(offline.source,"offline");
@@ -90,7 +90,15 @@ const check=(name,fn)=>{passed++;console.log("PASS RTU "+name);};
  }finally{
   if(before===undefined)delete process.env.PYTHONPATH;else process.env.PYTHONPATH=before;
  }
- console.log("AIRLOCK_SERIAL_RTU_OFFLINE_PASS "+passed+"/10");
+ const persistent=createTransport();
+ try{
+  const results=await Promise.all([1,2,3,4].map(unitId=>persistent.query({...serial,unitId,rtuMode:"persistent",functionCode:3,address:unitId,count:1},{env})));
+  assert.deepEqual(results,[[1],[2],[3],[4]]);
+  assert.equal(persistent.stats().length,1);assert.equal(persistent.stats()[0].worker,true);
+  assert.equal(persistent.stats()[0].queued,0);
+  check("actual Node -> persistent Python JSONL -> fake library for four parallel Unit IDs");
+ }finally{await persistent.close();}
+ console.log("AIRLOCK_SERIAL_RTU_OFFLINE_PASS "+passed+"/11");
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1;}).finally(()=>{
  fs.rmSync(tmp,{recursive:true,force:true});
 });

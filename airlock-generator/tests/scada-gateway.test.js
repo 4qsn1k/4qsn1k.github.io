@@ -104,7 +104,7 @@ async function mock(){
   assert.equal(frame.source,"offline");assert.deepEqual(frame.rooms,{});
   assert.equal(frame.doors["1-4"].state,"unknown");
   pass("communications fault clears previously confirmed statuses");
-  const poller=createPoller(cfg,async()=>readings);
+  const poller=createPoller(cfg,async()=>readings,{now:()=>Date.now()});
   await poller.poll();
   assert.equal(poller.get().source,"live");
   const original=Date.now;try{Date.now=()=>original()+5000;assert.equal(poller.get().source,"offline");}
@@ -123,8 +123,9 @@ async function mock(){
    assert.equal(status.status,200);assert.equal(project.status,200);
    const projectPayload=await project.json();
    assert.equal(projectPayload.model.rooms.length,6);
-   assert.equal(projectPayload.controllers[0].host,"127.0.0.1");
-   assert.equal(projectPayload.controllers[0].port,m.port);
+   assert.equal(projectPayload.controllers[0].host,undefined);
+   assert.equal(projectPayload.controllers[0].redacted,true);
+   assert.equal(projectPayload.controllers[0].port,undefined);
    assert.equal((await fetch(base+"/scada.html")).status,200);
    const shared=await fetch(base+"/project-package.js");
    assert.equal(shared.status,200);

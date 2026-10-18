@@ -1,11 +1,13 @@
 "use strict";
 // Read-only bounded journal for SCADA observation. No PLC output commands.
 const fs=require("node:fs");
+const {cause}=require("./health-errors");
 function createJournal({filePath=null,maxEvents=500,maxFileBytes=5242880,maxArchives=3}={}){
  if(!Number.isInteger(maxFileBytes)||maxFileBytes<128||maxFileBytes>1073741824)throw Error("Invalid maximum journal file size");
  if(!Number.isInteger(maxArchives)||maxArchives<0||maxArchives>10)throw Error("Invalid journal archive count");
  if(!Number.isInteger(maxEvents)||maxEvents<10||maxEvents>5000)throw Error("Invalid journal capacity");
  const events=[],previous=new Map();
+ const persistence={ok:true,failures:0,error:null};
  function append(entry){
   if(!filePath)return;
   const data=JSON.stringify(entry)+"\n",bytes=Buffer.byteLength(data,"utf8");
@@ -28,7 +30,8 @@ function createJournal({filePath=null,maxEvents=500,maxFileBytes=5242880,maxArch
   const entry={at,type,controllerId,...detail};
   events.push(entry);
   if(events.length>maxEvents)events.splice(0,events.length-maxEvents);
-  append(entry);
+  try{append(entry);persistence.ok=true;persistence.error=null;}
+  catch{persistence.ok=false;persistence.failures++;persistence.error="JOURNAL_IO";}
  };
  function observe(frame){
   if(!frame||!Number.isFinite(frame.timestamp)||!frame.controllers)return 0;
@@ -36,10 +39,10 @@ function createJournal({filePath=null,maxEvents=500,maxFileBytes=5242880,maxArch
   for(const [id,details] of Object.entries(frame.controllers)){
    const online=!!details.online;
    const raw=online&&details.raw&&typeof details.raw==="object"?details.raw:{};
-   const last=previous.get(id);
-   if(!last || last.online!==online){
+   const last=previous.get(id),reason=online?null:cause({code:details.offlineCause||details.error});
+   if(!last || last.online!==online || (!online&&last.reason!==reason)){
     emit(frame.timestamp,online?"LINK_UP":"LINK_DOWN",id,
-      online?{}:{reason:String(details.error||"no response").slice(0,120)});
+      online?{}:{reason});
    }
    if(online&&last?.online){
     for(const [signal,value] of Object.entries(raw)){
@@ -48,7 +51,7 @@ function createJournal({filePath=null,maxEvents=500,maxFileBytes=5242880,maxArch
      }
     }
    }
-   previous.set(id,{online,raw:{...raw}});
+   previous.set(id,{online,reason,raw:{...raw}});
   }
   return events.length-before;
  }
@@ -56,6 +59,6 @@ function createJournal({filePath=null,maxEvents=500,maxFileBytes=5242880,maxArch
   if(!Number.isInteger(limit)||limit<1||limit>maxEvents)throw Error("Invalid journal read limit");
   return events.slice(-limit).reverse().map(x=>({...x}));
  }
- return {observe,recent,size:()=>events.length};
+ return {observe,recent,size:()=>events.length,status:()=>({...persistence,events:events.length,capacity:maxEvents})};
 }
 module.exports={createJournal};

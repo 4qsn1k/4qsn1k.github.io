@@ -628,5 +628,17 @@
     "workdir": "AirlockGeneratorLab",
     "z4559OfflineQa": "PASS",
     "autostartInstalled": false
+  },
+  "telemetryIssue15": {
+    "branch": "codex/airlock-15-reliable-polling",
+    "issue": "https://github.com/4qsn1k/4qsn1k.github.io/issues/15",
+    "status": "OFFLINE_SOFTWARE_QA_PASS_PHYSICAL_NOT_TESTED",
+    "scope": "Existing read-only gateway only; independent of Issue #10 / PR #13",
+    "fullCodexCheck": "PASS; MODEL_QA_FINAL PASS 8/8",
+    "realPymodbusMemorySerial": "PASS; pymodbus 3.15.0 / pyserial 3.5; no real serial device",
+    "windowsSmoke": "Added; NOT_RUN on HOME-PC or Z4559 in this session",
+    "physicalControllerTested": false,
+    "controllerWritesAllowed": false,
+    "documentation": "docs/AGENT-RELIABILITY-ISSUE-15.md"
   }
 }

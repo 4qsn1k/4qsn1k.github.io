@@ -8,3 +8,10 @@ node_modules/
 *.log
 # Local experimental native project files must never be committed implicitly
 *.owle
+
+# Local telemetry profiles, backups and temporary atomic writes
+.local/
+airlock-connection.json
+airlock-connection*.local.json*
+*.json.bak
+*.json.tmp-*

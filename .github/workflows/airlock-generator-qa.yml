@@ -45,3 +45,37 @@ jobs:
           retention-days: 30
 
 # No physical PLC, Owen Logic GUI, Modbus network, secrets or writes.
+
+  rtu-library-offline:
+    name: Real RTU library with memory adapter (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: airlock-generator
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install pinned test-only RTU library
+        run: python -m pip install -r tests/requirements-rtu.txt
+      - name: Real pymodbus CRC and fake serial recovery
+        run: python -B tests/rtu-library-faults.py
+      - name: Python helper ownership and library boundary faults
+        run: python -B tests/rtu-worker-faults.py
+      - name: Bounded worker supervisor
+        run: node tests/rtu-supervisor.test.js
+      - name: Controller isolation and local profiles
+        run: |
+          node tests/agent-reliability.test.js
+          node tests/profile-store.test.js
+      - name: Fake TCP fault and recovery smoke
+        run: node tests/tcp-faults.test.js
