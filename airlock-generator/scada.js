@@ -211,7 +211,7 @@
    if(!res.ok)throw Error("no local gateway");
    const cfg=await res.json();
    if(!cfg.model)throw Error("model not available");
-   gateway=true;profile={...profile,model:cfg.model,controllers:cfg.controllerIds.map(id=>({id,host:"в локальной конфигурации",port:502,unitId:"—"})),
+   gateway=true;profile={...profile,model:cfg.model,controllers:cfg.controllers||[],
     bindings:cfg.bindings,pollMs:cfg.pollMs,staleMs:cfg.staleMs};
    updateModel(cfg.model);
    $("gatewayUrl").textContent="Локальный шлюз: "+window.location.origin;
