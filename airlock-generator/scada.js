@@ -145,7 +145,28 @@
    }
   }
  }
- async function poll(){
+ async function updateEvents(){
+  const root=$("eventRows");
+  if(!gateway){root.textContent="Локальный агент не подключён";return;}
+  try{
+   const response=await fetch("./api/events",{cache:"no-store"});
+   if(!response.ok)throw Error("HTTP "+response.status);
+   const data=await response.json();
+   root.replaceChildren();
+   for(const ev of (data.events||[])){
+    const line=document.createElement("div");line.className="row";
+    const time=document.createElement("small");
+    time.textContent=new Date(ev.at).toLocaleTimeString("ru-RU");
+    const description=document.createElement("span");
+    description.textContent=ev.controllerId+": "+(ev.type==="SIGNAL_CHANGED"?
+     ev.signal+" "+ev.from+" → "+ev.to:ev.type==="LINK_UP"?"Связь восстановлена":
+     "Связь потеряна"+(ev.reason?" — "+ev.reason:""));
+    line.append(time,description);root.append(line);
+   }
+   if(!root.children.length)root.textContent="Событий пока нет.";
+  }catch(e){root.textContent="Журнал недоступен: "+e.message;}
+ }
+  async function poll(){
   if(!gateway||requestBusy)return;
   requestBusy=true;
   try{
@@ -160,7 +181,7 @@
    error(ok?"Получены данные "+ok+"/"+total+" контроллеров. Неизвестные состояния остаются серыми.":"Нет подтверждённого ответа от ПР — зелёный запрещён.");
   }catch(e){
    last=null;tag("offline");$("updateTime").textContent="Нет актуального пакета";error("Связь с локальным шлюзом потеряна: "+e.message);
-  }finally{requestBusy=false;render();renderHealth();}
+  }finally{requestBusy=false;render();renderHealth();void updateEvents();}
  }
  function setup(){
   for(const btn of document.querySelectorAll("nav.tabs button")){
