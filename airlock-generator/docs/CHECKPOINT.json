@@ -645,11 +645,11 @@
       "Q4": 0
     },
     "compilerDiagnosticLogCaptured": false,
-    "fullScenariosVerified": false,
-    "overallQaOl012": "UNVERIFIED",
+    "fullScenariosVerified": true,
+    "overallQaOl012": "NATIVE_A_F_PASS_COMPILER_LOG_PENDING",
     "physicalPLCProgrammed": false,
     "evidence": "airlock-generator/docs/QA-OL-012-HOME-2026-10-18.md",
-    "next": "Capture compiler diagnostics and execute native two-zone scenarios QA-OL-012A-F, verifying timers and Q1/Q2/Q4 without touching hardware.",
+    "next": "Capture explicit compiler diagnostics without connecting/programming a device; archive native GUI screenshots; keep QA012 branch draft until review.",
     "simulatorRealTimeRunActivated": true,
     "nativeDynamicSmoke": {
       "status": "PARTIAL_NATIVE_GUI_OBSERVATION",
@@ -668,6 +668,30 @@
     "portableVerifierPass": true,
     "portableVerifierPath": "airlock-generator/bridge/qa012_verify_native_fbd.ps1",
     "githubActionsRunId": 39112563846,
-    "githubActionsConclusion": "success"
+    "githubActionsConclusion": "success",
+    "nativeRuntimeCases": {
+      "QA-OL-012A": "PASS (N1 PURGE, N4 READY, Q4=1)",
+      "QA-OL-012B": "PASS (open N4 3-4, Q4=1, restore Q4=0)",
+      "QA-OL-012C": "PASS (both READY, Q1=Q2=1, Q4=0)",
+      "QA-OL-012D": "PASS (shared I4 open, both OPEN, other-door blocks=1)",
+      "QA-OL-012E": "PASS (I4 close, N4 READY and N1 PURGE; eventually N1 READY, Q4=0)",
+      "QA-OL-012F": "PASS (FireNormal=0, both FIRE, Q4=0)"
+    },
+    "timerCheck": {
+      "simulatorCycleMs": 100,
+      "near29s": {
+        "N1State": 30,
+        "Q4": 1
+      },
+      "near31s": {
+        "N1State": 10,
+        "Q4": 0
+      },
+      "timePrecision": "approximately 2-second transition bracket",
+      "fullExactBoundaryMsVerified": false,
+      "method": "native F10 steps + simulator virtual clock"
+    },
+    "nativeDynamicSimulationVerified": true,
+    "runtimeReport": "airlock-generator/docs/QA-OL-012-HOME-RUNTIME-2026-10-18.md"
   }
 }
