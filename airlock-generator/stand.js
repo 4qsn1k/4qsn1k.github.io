@@ -227,13 +227,17 @@ function bind(){
 }
 async function boot(){
  try{
-  const response=await fetch("./model.json",{cache:"no-store"});
-  if(!response.ok)throw Error("model.json HTTP "+response.status);
-  model=await response.json();
+  const embedded=$("standModel");
+  if(embedded){model=JSON.parse(embedded.textContent);}
+  else{
+   const response=await fetch("./model.json",{cache:"no-store"});
+   if(!response.ok)throw Error("model.json HTTP "+response.status);
+   model=await response.json();
+  }
   lab=AirlockStandCore.create(model,AirlockStTestbench,AirlockProjectWiring,AirlockInterzoneTestbench);
   mapInit();bind();render();
  }catch(e){
-  $("summaryLine").textContent="Не удалось открыть модель: "+e.message+". Запустите страницу через GitHub Pages или локальный HTTP-сервер.";
+  $("summaryLine").textContent="Не удалось открыть модель: "+e.message+". Проверьте встроенную модель или загрузку JSON.";
   $("playPause").disabled=true;
  }
 }
