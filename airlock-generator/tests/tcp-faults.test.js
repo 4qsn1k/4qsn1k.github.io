@@ -61,7 +61,12 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   const partial=createPoller({...profile,controllers:[profile.controllers[0]],bindings:[{signal:"PLC_P1.DI1",controllerId:"P1",fc:2,address:0},{signal:"PLC_P1.DI2",controllerId:"P1",fc:2,address:100}]});
   try{await partial.poll();assert.equal(partial.get().controllers.P1.online,false);assert.deepEqual(partial.get().controllers.P1.raw,{});}finally{await partial.close();}
   console.log("PASS TCP failure of later batch discards earlier readings");
- }finally{for(const socket of sockets)socket.destroy();await new Promise(resolve=>server.close(resolve));}
+ }finally{
+  // Windows can report listener close before accepted sockets emit their close events.
+  const closed=[...sockets].map(socket=>new Promise(resolve=>socket.once("close",resolve)));
+  for(const socket of sockets)socket.destroy();
+  await new Promise(resolve=>server.close(resolve));await Promise.all(closed);
+ }
  await assert.rejects(query(p),e=>e.code==="TCP_UNAVAILABLE");
  assert.equal(active,0);
  console.log("AIRLOCK_TCP_FAULTS_OFFLINE_PASS including refusal after listener shutdown");

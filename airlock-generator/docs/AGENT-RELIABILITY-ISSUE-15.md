@@ -82,6 +82,8 @@ python -B tests/rtu-library-faults.py
 .\scripts\windows\test-telemetry-offline.ps1 -PythonPath <venv-python.exe> -RealLibrary
 ```
 
+Первый Windows CI выявил гонку cleanup fake TCP responder: listener уже закрыт, а accepted sockets ещё не доставили close. Fixture исправлен ожиданием close каждого сокета; проверка нулевого числа активных соединений сохранена. Это исправление тестового жизненного цикла, без ослабления проверок телеметрии.
+
 Наблюдалось в Cloud Linux: полный codex-check PASS, headless MODEL 8/8; отдельный real pymodbus 3.15.0 / pyserial 3.5 memory-serial PASS. Node 24.19.0, Python 3.12.14. Windows/HOME-PC/Z4559 и физический ПР в этой сессии **не проверялись**. Автотесты подтверждают свойства программы в указанных моделях отказов; физическая совместимость, задержки USB/RS485 и электрическая безопасность из них не следуют.
 
 ## Отдельная физическая PR100-проверка (ещё НЕ выполнена)
