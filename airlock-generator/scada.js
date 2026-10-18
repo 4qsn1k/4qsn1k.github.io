@@ -200,6 +200,12 @@
  }
  async function boot(){
   setup();
+  const draft=sessionStorage.getItem("airlock-scada-current");
+  try{
+   const initial=draft?JSON.parse(draft):JSON.parse($("exampleScadaModel").textContent);
+   updateModel(initial);
+   error(draft?"Проект из генератора загружен. Для телеметрии запустите локальный шлюз.":"ПОКАЗАН ОБРАЗЕЦ ПРОЕКТА. Нет связи с ПР; все состояния неизвестны.");
+  }catch(e){error("Ошибка исходной схемы: "+e.message);}
   try{
    const res=await fetch("./api/project",{cache:"no-store"});
    if(!res.ok)throw Error("no local gateway");
@@ -212,9 +218,7 @@
    await poll();
   }catch{
    gateway=false;
-   const draft=sessionStorage.getItem("airlock-scada-current");
-   if(draft){try{updateModel(JSON.parse(draft));}catch(e){error(e.message);}}
-   else error("Нет локального шлюза. Откройте проект из конструктора или загрузите пакет JSON на вкладке «Контроллеры».");
+   if(!model)error("Нет локального шлюза или пакета SCADA. Загрузите проект на вкладке «Контроллеры».");
   }
   setInterval(poll,2000);
  }
