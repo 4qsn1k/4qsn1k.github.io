@@ -45,6 +45,7 @@ def run(args,client_class=None,output=print):
         client_class=ModbusSerialClient
     previous=None
     last_online=False
+    successful=0
     log=open(args.log,"a",encoding="utf-8") if args.log else None
     try:
         for index in range(args.cycles):
@@ -64,6 +65,7 @@ def run(args,client_class=None,output=print):
                 if changes:output("ИЗМЕНЕНИЯ: "+"; ".join(changes))
                 elif not last_online:output("СВЯЗЬ: ответ Modbus RTU подтверждён")
                 previous={"di":di,"q":q}
+                successful+=1
                 last_online=True
             except Exception as exc:
                 record={"time":now,"status":"OFFLINE","error":str(exc)[:160]}
@@ -80,12 +82,16 @@ def run(args,client_class=None,output=print):
             if index+1<args.cycles: time.sleep(args.interval)
     finally:
         if log:log.close()
+    return successful
 
 def main():
     args=build_parser().parse_args()
     try:
         print(f"PR100 READ ONLY | {args.com} | {args.baud} 8{args.parity}{args.stopbits} | Slave {args.unit}")
-        run(args)
+        successful=run(args)
+        if not successful:
+            print("НЕТ ПОДТВЕРЖДЁННЫХ ОТВЕТОВ ПР100",file=sys.stderr)
+            return 1
     except (KeyboardInterrupt,ValueError) as e:
         print("ОСТАНОВЛЕНО: "+str(e),file=sys.stderr)
         return 2
