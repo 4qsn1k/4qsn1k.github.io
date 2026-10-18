@@ -13,6 +13,7 @@ function load(file){
  return {...result,model:packageModel};
 }
 async function readController(controller,bindings){
+ if(!bindings.length)throw Error("No read-only signals assigned to this controller");
  const readings={};
  // Batch only adjacent, same-FC zero-based addresses.
  const sorted=[...bindings].sort((a,b)=>a.fc-b.fc||a.address-b.address);
