@@ -51,7 +51,7 @@ function frameFor(profile,readings,errors,time=Date.now()){
  for(const room of profile.model.rooms){
   const raw=values["ROOM_"+normalized(room.id)+".State"];
   const state=({10:"ready",20:"busy",30:"purge",90:"fault",99:"fire"})[raw];
-  if(state)rooms[String(room.id)]={state};
+  if(state)rooms[String(room.id)]={state:state==="ready"&&values["SYSTEM.FireNormal"]!==1?"unknown":state};
  }
  const anyFire=values["SYSTEM.FireNormal"]===0;
  for(const d of profile.model.doors){
