@@ -29,3 +29,17 @@ This is a **real interactive native simulator response**; it is not from JavaScr
 The verifier `bridge/qa012_verify_native_fbd.ps1` separately returned 16/16 PASS, exit 0, for the saved OWLE; see [validator log](QA-OL-012-VALIDATOR-2026-10-18.md).
 
 No physical controller, door lock, alarm, or operating access-control system was touched.
+
+
+## Independent capture of N4 (later in the same run)
+
+The full FBD screenshot on HOME-PC confirmed, at virtual `I1=1` with all reeds still `0`:
+
+- `FB_Room_N4.FireNormal=1`
+- `FB_Room_N4.O_State=90`
+- `FB_Room_N4.O_Fault=1`, `O_Alarm=1`
+- `FB_Room_N4.O_D_1_4_Block=1`
+- `FB_Room_N1.O_State=90`, `O_D_1_4_Block=1`
+- `OR.Input0=1`, `OR.Input1=1`, `OR.Output=1`, `Q4=1`.
+
+The captured local image is `owen-tests/QA012-maximized-fbd.jpg`. This explicitly verifies that **both** ST FBs respond simultaneously inside the shared native FBD. It does **not** validate fault recovery, READY, purge timing or the required A–F cases.
