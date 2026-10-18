@@ -20,7 +20,8 @@
     "homeNode": "11/11 PASS",
     "homeNpmCheck": "exit 0",
     "homeFirefox": "full UI screenshot rendered on HOME-PC",
-    "githubActions": "success on prior branch commit"
+    "githubActions": "success on prior branch commit",
+    "githubActionsRun": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39118641886"
   },
   "lighting": {
     "channels": "one DO per red-green pair using SPDT",
@@ -31,9 +32,20 @@
   },
   "physicalDeviceConnections": false,
   "next": [
-    "Publish verified front-end on GitHub Pages",
-    "Evaluate import of user-built model into separate stand",
-    "Design supervised sensor faults, COM/NO/NC electrical interfaces and independent egress",
-    "Do not replace native Owen Logic validation with JS tests"
-  ]
+    "Review the live interactive display and usability with user",
+    "Optionally add import of user-defined projects into separate demo stand",
+    "Design supervised sensor failures and real I/O allocations separately from demo",
+    "Do not treat JS reference simulation as native or physical acceptance"
+  ],
+  "published": true,
+  "liveUrl": "https://4qsn1k.github.io/airlock-generator/stand.html",
+  "publishedByPR": 7,
+  "publishedMainCommit": "7405af6883fbef60080070407fd88ad86bd8bde0",
+  "homePcLiveVerification": {
+    "date": "2026-10-18",
+    "url": "https://4qsn1k.github.io/airlock-generator/stand.html",
+    "httpStatus": 200,
+    "htmlLength": 10190,
+    "embeddedStandModel": true
+  }
 }
