@@ -649,6 +649,25 @@
     "overallQaOl012": "UNVERIFIED",
     "physicalPLCProgrammed": false,
     "evidence": "airlock-generator/docs/QA-OL-012-HOME-2026-10-18.md",
-    "next": "Capture compiler diagnostics and execute native two-zone scenarios QA-OL-012A-F, verifying timers and Q1/Q2/Q4 without touching hardware."
+    "next": "Capture compiler diagnostics and execute native two-zone scenarios QA-OL-012A-F, verifying timers and Q1/Q2/Q4 without touching hardware.",
+    "simulatorRealTimeRunActivated": true,
+    "nativeDynamicSmoke": {
+      "status": "PARTIAL_NATIVE_GUI_OBSERVATION",
+      "I1FireNormalAfterClick": 1,
+      "N1State": 90,
+      "N1Fault": 1,
+      "N1SharedDoorBlock": 1,
+      "ORInput0": 1,
+      "ORInput1": 1,
+      "ORResult": 1,
+      "testQ4": 1,
+      "evidence": "airlock-generator/docs/QA-OL-012-SIM-SMOKE-2026-10-18.md",
+      "note": "All other reed inputs were 0; individual timed A-F scenarios not performed."
+    },
+    "portableVerifierHomePcExit": 0,
+    "portableVerifierPass": true,
+    "portableVerifierPath": "airlock-generator/bridge/qa012_verify_native_fbd.ps1",
+    "githubActionsRunId": 39112563846,
+    "githubActionsConclusion": "success"
   }
 }
