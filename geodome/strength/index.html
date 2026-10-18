@@ -261,11 +261,11 @@ function csvRows(){if(!last)return'';const {unit,adjusted}=last;const rows=[['el
 $('export').onclick=()=>last&&save('geodome_2V_axial_loads.csv',csvRows(),'text/csv;charset=utf-8');
 $('config').onclick=()=>save('geodome_2V_strength_inputs.json',JSON.stringify({version:'research-1',not_certified:true,inputs:Object.fromEntries(byId.map(id=>[id,$(id).value]))},null,2),'application/json');
 $('mode').addEventListener('change',()=>{const stretch=$('mode').value==='elongated';$('H').disabled=!stretch;$('H').value=(stretch?savedStretched:num('D')/2).toFixed(2);update()});
-$('section').addEventListener('change',()=>{const r=$('section').value==='round';$('diamRow').hidden=!r;$('widthRow').hidden=r;$('thickRow').hidden=r;update()});
+$('section').addEventListener('change',()=>{const r=$('section').value==='round';$('diamRow').hidden=!r;$('widthRow').hidden=r;$('thickRow').hidden=r;$('pull').value='';$('push').value='';update()});
 $('H').addEventListener('input',()=>{if($('mode').value==='elongated')savedStretched=num('H');update()});
-$('joint').addEventListener('change',()=>{updateJoint();update()});
+$('joint').addEventListener('change',()=>{$('pull').value='';$('push').value='';updateJoint();update()});
 function updateJoint(){$('jointInfo').textContent=$('joint').value==='ball'?'Шаровая система: 6 пятилучевых + 20 шестилучевых корпуса; удержание шара прижимом М6. Нужны испытания конкретного пластика и металлического прижима.':'Наша система: цельные печатные гнёзда на 4/5/6 направлений. Расчёт не учитывает передачу изгибающих моментов и раскалывание у самореза.';}
-for(const id of byId.filter(id=>!['mode','H','section','joint'].includes(id)))$(id).addEventListener('input',update);
+for(const id of byId.filter(id=>!['mode','H','section','joint'].includes(id)))$(id).addEventListener('input',()=>{if(['d','w','t'].includes(id)){$('pull').value='';$('push').value='';}update()});
 $('example').onclick=()=>{Object.entries({E:10000,fc:15,ft:8,pull:400,push:800}).forEach(([id,n])=>$(id).value=n);update();$('status').textContent='УЧЕБНЫЙ ПРИМЕР: все введённые прочности и силы соединителя вымышленные! Не применять как безопасные нагрузки.';};
 $('clearExample').onclick=()=>{for(const k of ['E','fc','ft','pull','push'])$(k).value='';update()};
 updateJoint();update();
