@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Airlock SCADA · Проект</title><link rel="stylesheet" href="./scada.css"></head>
+<body>
+<header>
+ <div><small>AIRLOCK GENERATOR / SCADA</small><h1 id="projectName">SCADA проекта шлюзов</h1><p>План · Подключение ПР · Сигналы · Инструкция</p></div>
+ <div class="right"><strong id="connectionState" class="tag offline">НЕТ СВЯЗИ</strong><span id="updateTime">Нет данных</span><a href="./index.html">← Конструктор</a></div>
+</header>
+<nav class="tabs" aria-label="Разделы SCADA">
+ <button type="button" class="active" data-tab="plan">План</button>
+ <button type="button" data-tab="controllers">Контроллеры</button>
+ <button type="button" data-tab="signals">Сигналы</button>
+ <button type="button" data-tab="guide">Инструкция</button>
+</nav>
+<div id="warning" role="status">Показания контроллеров пока не получены. Без свежей телеметрии разрешение зелёного не подтверждено.</div>
+<main>
+ <section id="tab-plan" class="tabview active">
+  <div class="layout"><article class="card"><div class="head"><h2>План объекта</h2><span id="stats">—</span></div>
+   <svg id="plan" viewBox="0 0 920 640" role="img" aria-label="План помещений и дверей"></svg>
+   <p class="hint">Зелёный появляется только при явно подтверждённом разрешении от ПР. Серый означает неизвестный статус или потерю связи.</p>
+  </article>
+  <aside class="card"><h2>Состояния</h2><h3>Помещения</h3><div id="roomRows"></div><h3>Двери</h3><div id="doorRows"></div></aside></div>
+ </section>
+ <section id="tab-controllers" class="tabview">
+  <div class="layout"><article class="card">
+    <h2>Подключить ПР к проекту</h2>
+    <p class="hint">Подключение работает только через локальный шлюз телеметрии. На GitHub Pages можно создать профиль, но прямого соединения с ПР там нет.</p>
+    <div class="actions"><button id="importModel">Загрузить проект JSON</button><input type="file" id="fileModel" accept=".json,application/json" hidden>
+      <button id="downloadProfile" class="primary">Скачать профиль подключения</button></div>
+    <form id="controllerForm" class="fields">
+      <label>Обозначение контроллера<input id="controllerId" placeholder="PR1" value="PR1" required></label>
+      <label>Модель<select id="controllerModel"><option value="PR100">ПР100 (через Modbus TCP↔RTU)</option><option value="PR200">ПР200 (через Modbus TCP↔RTU)</option><option value="PR103">ПР103 (при подтверждённой поддержке TCP)</option><option value="other">Другая модель</option></select></label>
+      <label>IP преобразователя / Modbus-сервера<input id="controllerHost" placeholder="192.168.10.50" required></label>
+      <label>Порт TCP<input id="controllerPort" type="number" min="1" max="65535" value="502" required></label>
+      <label>Адрес Slave (Unit ID)<input id="controllerUnit" type="number" min="1" max="247" placeholder="Адрес из Owen Logic" required></label>
+      <label>Таймаут, мс<input id="controllerTimeout" type="number" min="200" max="5000" value="1200" required></label>
+      <button type="submit" class="primary">Добавить / обновить контроллер</button>
+    </form>
+    <h3>Контроллеры проекта</h3><div id="controllersList" class="rows"></div>
+  </article>
+  <aside class="card">
+    <h2>Обмен с контроллерами</h2><div id="healthRows" class="rows"></div>
+    <p class="hint">Проверка реальной связи: запустите локальный сервис, проверьте Modbus-адрес, скорость и параметры RS‑485 на преобразователе, затем назначьте фактические регистры на вкладке «Сигналы».</p>
+    <p id="gatewayUrl">Адрес локального шлюза: ещё не подключён.</p>
+  </aside></div>
+ </section>
+ <section id="tab-signals" class="tabview">
+  <div class="layout"><article class="card">
+    <h2>Привязка регистров Modbus</h2><p class="hint">Введите подтверждённые адреса из Owen Logic. Адрес в этом поле — <strong>нулевой адрес Modbus PDU</strong>, не номер в обозначении 40001. Только чтение: FC01, FC02, FC03, FC04.</p>
+    <form id="signalForm" class="fields">
+      <label>Сигнал<select id="signalName"></select></label>
+      <label>ПР<select id="signalController"></select></label>
+      <label>Функция чтения<select id="signalFc"><option value="3">FC03 — Holding Registers</option><option value="4">FC04 — Input Registers</option><option value="2">FC02 — Discrete Inputs</option><option value="1">FC01 — Coils (read)</option></select></label>
+      <label>Адрес регистра/бита<input id="signalAddress" type="number" min="0" max="65535" required placeholder="Точный адрес без 40001"></label>
+      <button type="submit" class="primary">Сохранить привязку</button>
+    </form>
+    <h3>Карта сигналов</h3><div id="signalRows" class="rows"></div>
+  </article><aside class="card"><h2>Важные условия</h2><p>Состояние READY читается из отдельной переменной ПР.</p><p>Статус двери считается «разрешён» только при подтверждении: геркон закрыт, блокировка снята, <strong>GreenPermit=1</strong>, FireNormal=1 и все участвующие помещения READY.</p>
+  <p class="hint">Счётчик, таймер и цвет лампы не заменяют обратную связь замка. Для неё предусмотрите отдельный датчик и сигнал.</p></aside></div>
+ </section>
+ <section id="tab-guide" class="tabview">
+  <article class="card guide"><h2>Порядок подключения и запуска</h2>
+  <ol>
+   <li>Создайте схему в Airlock Generator и нажмите «SCADA проекта». Для сохранения на другом ПК экспортируйте JSON-пакет.</li>
+   <li>Убедитесь, что используемая модель ПР имеет RS‑485 или иной документированный интерфейс. Для ПР100/ПР200 используйте Modbus RTU Slave и преобразователь Modbus TCP↔RTU, если нужно подключение Ethernet.</li>
+   <li>Проверьте настройки Owen Logic: адрес Slave, скорость RS‑485, чётность/стоп-биты и существующую карту регистров. Ничего не записывайте в действующий ПР ради проверки.</li>
+   <li>Во вкладке «Контроллеры» укажите IP преобразователя, TCP-порт, Unit ID. Во вкладке «Сигналы» назначьте фактические адреса. Скачайте <code>airlock-connection.json</code>.</li>
+   <li>На компьютере в той же защищённой сети установите Node.js 22+. Выполните <code>node gateway/server.js --config C:\path\airlock-connection.json</code> в каталоге проекта.</li>
+   <li>Откройте <code>http://127.0.0.1:8787/scada.html</code>. Проверьте состояние соединения, актуальность данных и совпадение сигналов с Owen Logic на испытательном стенде.</li>
+   <li>Для другого ПК используйте VPN или SSH-туннель на 127.0.0.1:8787. Не публикуйте Modbus, порт 8787 или сам ПР в открытый интернет.</li>
+  </ol>
+  <p class="notice"><strong>Безопасность.</strong> Эта версия — только мониторинг. Она не посылает команды ПР, не блокирует и не отпирает двери. Работу пожарной эвакуации, питания и контактов замков необходимо испытать отдельно.</p>
+  </article>
+ </section>
+</main>
+<footer>Локальная SCADA: чтение ПР · Обновление по сети · Нет связи = неизвестно · Без управления исполнительными цепями</footer>
+<script src="./project-package.js"></script>
+<script src="./scada.js"></script>
+</body></html>
