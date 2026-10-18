@@ -26,7 +26,7 @@ function start({configPath,host="127.0.0.1",port=8787,logger=console,pollerFacto
    // Server keeps controller IP/unit data private from the page. Only topology is exposed.
    res.writeHead(200,{"Content-Type":"application/json; charset=utf-8"});
    res.end(JSON.stringify({schema:project.schema,model:project.model,
-     controllers:project.controllers.map(c=>({id:c.id,model:c.model||"",protocol:c.protocol,host:c.host,port:c.port,unitId:c.unitId,timeoutMs:c.timeoutMs})),bindings:project.bindings.map(b=>({signal:b.signal,controllerId:b.controllerId,fc:b.fc,address:b.address})),
+     controllers:project.controllers.map(c=>({id:c.id,model:c.model||"",protocol:c.protocol,host:c.host,port:c.port,comPort:c.comPort,baudrate:c.baudrate,parity:c.parity,stopbits:c.stopbits,unitId:c.unitId,timeoutMs:c.timeoutMs})),bindings:project.bindings.map(b=>({signal:b.signal,controllerId:b.controllerId,fc:b.fc,address:b.address})),
      mode:"real-read-only",pollMs:project.pollMs,staleMs:project.staleMs}));
    return;
   }
