@@ -2,7 +2,8 @@
 const fs=require("node:fs");
 const path=require("node:path");
 const {SCHEMA,validate}=require("./profile-schema");
-const {query}=require("./modbus-tcp");
+const {query:queryTcp}=require("./modbus-tcp");
+const {query:queryRtu}=require("./modbus-rtu");
 function load(file){
  const data=JSON.parse(fs.readFileSync(path.resolve(file),"utf8"));
  const packageModel=data.package&&data.package.model?data.package.model:data.model;
@@ -29,8 +30,12 @@ async function readController(controller,bindings){
  if(current.length)groups.push(current);
  for(const items of groups){
   const fc=items[0].fc,start=items[0].address,last=items[items.length-1].address;
-  const values=await query({host:controller.host,port:controller.port,unitId:controller.unitId,
-   functionCode:fc,address:start,count:last-start+1,timeoutMs:controller.timeoutMs});
+  const parameters={unitId:controller.unitId,functionCode:fc,address:start,
+    count:last-start+1,timeoutMs:controller.timeoutMs};
+  const values=controller.protocol==="modbus-rtu"?
+   await queryRtu({...parameters,comPort:controller.comPort,baudrate:controller.baudrate,
+     parity:controller.parity,stopbits:controller.stopbits}):
+   await queryTcp({...parameters,host:controller.host,port:controller.port});
   for(const binding of items)readings[binding.signal]=values[binding.address-start];
  }
  return readings;
@@ -39,7 +44,12 @@ function frameFor(profile,readings,errors,time=Date.now()){
  const rooms={},doors={},diagnostics={};
  let valid=0;
  for(const controller of profile.controllers){
-  diagnostics[controller.id]={online:!errors[controller.id],error:errors[controller.id]||null};
+  const raw={};
+  for(const [signal,value] of Object.entries(readings)){
+   const m=/^PLC_([a-zA-Z0-9_-]+)\.(DI[1-9][0-9]*|Q[1-9][0-9]*)$/.exec(signal);
+   if(m&&m[1]===controller.id&&!errors[controller.id])raw[m[2]]=value;
+  }
+  diagnostics[controller.id]={online:!errors[controller.id],error:errors[controller.id]||null,raw};
   if(!errors[controller.id])valid++;
  }
  const values={};

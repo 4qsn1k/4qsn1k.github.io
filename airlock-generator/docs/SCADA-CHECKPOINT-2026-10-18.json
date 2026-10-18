@@ -57,5 +57,43 @@
     "Optional direct USB RS485 Modbus RTU and supervised sensor/lock feedback future",
     "Do not claim PLC connectivity PASS until actual bench tested",
     "Confirm whether first real bench connects via RS485 to genuine Modbus TCP↔RTU gateway; obtain actual Owen Logic network-variable register map"
-  ]
+  ],
+  "usbRtuPrepared20261018": {
+    "status": "OFFLINE_SOFTWARE_QA_PASS_PHYSICAL_PR100_NOT_TESTED",
+    "baselineFromPreviousProject": "КПП 2",
+    "localDevice": "HOME-PC",
+    "provenHistoricParameters": {
+      "port": "COM3",
+      "baudrate": 9600,
+      "parity": "N",
+      "dataBits": 8,
+      "stopbits": 1,
+      "slaveId": 16,
+      "adapter": "Bolid USB-RS485",
+      "ioRead": {
+        "di": "FC02 4096-4103",
+        "q": "FC01 0-7"
+      }
+    },
+    "transport": [
+      "existing Modbus TCP",
+      "new Modbus RTU via pymodbus and USB serial"
+    ],
+    "pythonVersionOnHome": "3.14.7",
+    "launcher": "python (Windows py launcher absent on HOME-PC)",
+    "labReadOnlyScripts": [
+      "gateway/pr100-readonly-probe.py",
+      "gateway/pr100-readonly-probe.js"
+    ],
+    "scada": "Protocol selector USB-RS485/COM, raw DI/Q diagnostic mappings, events tab",
+    "testOnHomePc": {
+      "rtu": 10,
+      "standalonePython": 4,
+      "journal": 7,
+      "fullNpmCheck": "PASS exit 0"
+    },
+    "physicalControllerTested": false,
+    "next": "19.10.2026: connect separate PR100 on workbench; verify COM/Slave/real registers, no writes",
+    "docs": "airlock-generator/docs/RS485-LAB-2026-10-19.md"
+  }
 }
