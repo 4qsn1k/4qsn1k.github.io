@@ -54,7 +54,7 @@
  }
  function textSvg(parent,content,attrs){const x=node("text",attrs,parent);x.textContent=content;}
  function currentState(kind,id){
-  if(!last||last.source!=="live"||Date.now()-Date.parse(last.timestamp)>profile.staleMs)return"unknown";
+  if(!last||last.source!=="live"||Date.now()-(typeof last.timestamp==="number"?last.timestamp:Date.parse(last.timestamp))>profile.staleMs)return"unknown";
   const v=last[kind]?.[String(id)]?.state;
   return STATES[v]?v:"unknown";
  }
