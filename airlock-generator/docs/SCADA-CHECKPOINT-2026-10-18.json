@@ -33,9 +33,9 @@
     "Скачать проект SCADA — portable airlock-scada-project/1 JSON"
   ],
   "tested": {
-    "homePCNodeGateway": "15/15 socket/status/security tests PASS",
-    "homePCNpmCheck": "PASS",
-    "firefox": "SCADA plan and room/door status list rendered on HOME-PC",
+    "homePCNodeGateway": "16/16 socket/status/security tests PASS",
+    "homePCNpmCheck": "PASS after latest patches",
+    "firefox": "Actual project plan shown on HOME-PC with 6 rooms / 8 doors as UNKNOWN (no real PLC)",
     "physicalOwenPLC": "NOT TESTED",
     "modbusFakePLC": "PASS"
   },
@@ -55,6 +55,7 @@
     "Review PR and publish static SCADA",
     "Test real PR100 RS485 via suitable Modbus TCP-to-RTU converter, actual Unit ID and actual register map",
     "Optional direct USB RS485 Modbus RTU and supervised sensor/lock feedback future",
-    "Do not claim PLC connectivity PASS until actual bench tested"
+    "Do not claim PLC connectivity PASS until actual bench tested",
+    "Confirm whether first real bench connects via RS485 to genuine Modbus TCP↔RTU gateway; obtain actual Owen Logic network-variable register map"
   ]
 }
