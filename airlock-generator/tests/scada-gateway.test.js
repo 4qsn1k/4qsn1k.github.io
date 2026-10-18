@@ -121,6 +121,11 @@ async function mock(){
    assert.equal(status.status,200);assert.equal(project.status,200);
    assert.equal((await project.json()).model.rooms.length,6);
    assert.equal((await fetch(base+"/scada.html")).status,200);
+   const shared=await fetch(base+"/project-package.js");
+   assert.equal(shared.status,200);
+   assert.match(await shared.text(),/AirlockProjectPackage/);
+   assert.equal((await fetch(base+"/scada.js")).status,200);
+   assert.equal((await fetch(base+"/scada.css")).status,200);
    assert.equal((await fetch(base+"/api/status",{method:"POST"})).status,405);
    assert.equal((await fetch(base+"/../package.json")).status,404);
    pass("local HTTP gateway serves project/status and blocks POST/path traversal");
