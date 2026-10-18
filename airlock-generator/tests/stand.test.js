@@ -93,6 +93,11 @@ check("standalone page scripts and accessible controls are present",()=>{
  for(const id of ["siteMap","doorStrip","scenarioButtons","relayDoor","redLamp","greenLamp","budgetTotal","eventLog"]){
   assert(html.includes('id="'+id+'"'));
  }
+ const match=html.match(/<script id="standModel" type="application\\/json">([\\s\\S]*?)<\\/script>/);
+ assert(match,"embedded stand demo model required");
+ const embedded=JSON.parse(match[1]);
+ assert.equal(embedded.rooms.length,model.rooms.length);
+ assert.equal(embedded.doors.length,model.doors.length);
  assert(html.includes("NC")&&html.includes("NO")&&html.includes("COM"));
  new Function(fs.readFileSync(path.join(root,"stand.js"),"utf8"));
 });
