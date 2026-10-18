@@ -646,10 +646,10 @@
     },
     "compilerDiagnosticLogCaptured": false,
     "fullScenariosVerified": true,
-    "overallQaOl012": "NATIVE_A_F_PASS_COMPILER_LOG_PENDING",
+    "overallQaOl012": "SOFTWARE_A_F_PASS_NO_COMPILER_LOG_OR_HARDWARE_APPROVAL",
     "physicalPLCProgrammed": false,
     "evidence": "airlock-generator/docs/QA-OL-012-HOME-2026-10-18.md",
-    "next": "Capture explicit compiler diagnostics without connecting/programming a device; archive native GUI screenshots; keep QA012 branch draft until review.",
+    "next": "Review PR #6. Keep QA006 PASS. Next engineering: final shared-door GREEN permit, fault handling, hardware design, then authorized physical test bench; do not program real PR.",
     "simulatorRealTimeRunActivated": true,
     "nativeDynamicSmoke": {
       "status": "PARTIAL_NATIVE_GUI_OBSERVATION",
@@ -667,7 +667,7 @@
     "portableVerifierHomePcExit": 0,
     "portableVerifierPass": true,
     "portableVerifierPath": "airlock-generator/bridge/qa012_verify_native_fbd.ps1",
-    "githubActionsRunId": 39112563846,
+    "githubActionsRunId": 39116025655,
     "githubActionsConclusion": "success",
     "nativeRuntimeCases": {
       "QA-OL-012A": "PASS (N1 PURGE, N4 READY, Q4=1)",
@@ -692,6 +692,13 @@
       "method": "native F10 steps + simulator virtual clock"
     },
     "nativeDynamicSimulationVerified": true,
-    "runtimeReport": "airlock-generator/docs/QA-OL-012-HOME-RUNTIME-2026-10-18.md"
+    "runtimeReport": "airlock-generator/docs/QA-OL-012-HOME-RUNTIME-2026-10-18.md",
+    "softwareAcceptance": "PASS_A_F_WITH_TIMER_29_TO_31_SECONDS",
+    "compilerEvidenceNote": "Owen Logic 3.3 native simulator ran successfully; standalone offline compiler diagnostics unavailable/not captured. No controller upload attempted.",
+    "physicalCommissioning": "NOT_TESTED_NOT_AUTHORIZED",
+    "githubEvidenceCommit": "08c0f1b4a7dea4fec9157ce7e9fba35c0aa3cf7d",
+    "githubEvidenceDirectory": "airlock-generator/docs/evidence/qa-ol-012-home-20261018",
+    "githubEvidenceCount": 11,
+    "finalSoftwareReport": "airlock-generator/docs/QA-OL-012-SOFTWARE-ACCEPTANCE-2026-10-18.md"
   }
 }
