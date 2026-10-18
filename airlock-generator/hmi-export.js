@@ -12,6 +12,8 @@
  const preview=makeButton("previewHmi","Экран отдела");
  const exportHTML=makeButton("exportHmi","Скачать экран HTML");
  const exportSignals=makeButton("exportSignals","Карта сигналов ПР");
+ const scadaOpen=makeButton("openProjectScada","SCADA проекта");
+ const scadaExport=makeButton("exportProjectScada","Скачать проект SCADA");
  const info=document.createElement("p");
  info.className="muted";info.id="hmiHint";info.style.fontSize="12px";
  info.textContent="Экран — пока демонстрационный. Реальные статусы появятся после привязки адресов ПР и подключения шлюза телеметрии.";
@@ -101,7 +103,25 @@
    w.location.href=url;setTimeout(()=>URL.revokeObjectURL(url),60000);
   }catch(e){w.close();alert("Предпросмотр не выполнен: "+e.message)}
  };
- exportSignals.onclick=()=>{
+ function currentPackage(){
+  if(!window.AirlockProjectPackage)throw Error("Модуль проекта SCADA не загружен");
+  const errors=AirlockEngine.validate(model);
+  if(errors.length)throw Error(errors.join("; "));
+  return AirlockProjectPackage.build(model);
+ }
+ scadaOpen.onclick=()=>{
+  try{
+   const pkg=currentPackage();
+   sessionStorage.setItem("airlock-scada-current",JSON.stringify(pkg));
+   const w=window.open("./scada.html","_blank");
+   if(!w)alert("Разрешите открытие вкладки SCADA или откройте scada.html вручную.");
+  }catch(e){alert("SCADA: "+e.message)}
+ };
+ scadaExport.onclick=()=>{
+  try{download("airlock-project-scada.json",JSON.stringify(currentPackage(),null,2)+"\\n","application/json;charset=utf-8")}
+  catch(e){alert("Экспорт SCADA: "+e.message)}
+ };
+  exportSignals.onclick=()=>{
   const errors=AirlockEngine.validate(model);
   if(errors.length){alert("Исправь ошибки схемы: "+errors.join("; "));return}
   const mapping=buildSignalMap(model);
