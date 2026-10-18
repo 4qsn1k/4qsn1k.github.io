@@ -614,5 +614,41 @@
       "airlock-generator/docs/QA-OWEN-HOME-2026-10-17.md",
       "airlock-generator/docs/FBD-N1-N4-INTEGRATION.md"
     ]
+  },
+  "nativeFbdQaOl012Home20261018": {
+    "status": "NATIVE_FBD_PORTMAP_PASS_SCENARIOS_PENDING",
+    "machine": "HOME-PC",
+    "machineRole": "primary",
+    "project": "Airlock_FBD_QA012_HOME.owle",
+    "owenProcessIdAtTest": 9988,
+    "date": "2026-10-18",
+    "nativeFbdElements": 25,
+    "nativeConnectorModels": 16,
+    "expectedWiresVerified": 16,
+    "unmatchedPortIds": 0,
+    "confirmedSharedReedSource": "I4.Output0",
+    "confirmedBlockOr": "FB_Room_N1.Output8 OR FB_Room_N4.Output7 -> Q4",
+    "statusOutputs": [
+      "Q1 = FB_Room_N1.Output0",
+      "Q2 = FB_Room_N4.Output0"
+    ],
+    "verifier": "QA012_CONNECTOR_PORTMAP_PASS, exit 0, HOME-PC",
+    "testOwleSha256": "0E3F85BFC198AA298EBAC5068E76B5C0408CB4590FAEE9530E74559A1A167A00",
+    "untouchedBackupSha256": "55684A7F6E6C268DB8959D1F39D8DFE9B127EE454633BF08E9CA2F520A1218F9",
+    "nativeSimulationEntered": true,
+    "nativeSimulationInitialObserved": {
+      "I1FireNormal": 0,
+      "N1State": 99,
+      "N4State": 99,
+      "N1Fire": 1,
+      "N4Fire": 1,
+      "Q4": 0
+    },
+    "compilerDiagnosticLogCaptured": false,
+    "fullScenariosVerified": false,
+    "overallQaOl012": "UNVERIFIED",
+    "physicalPLCProgrammed": false,
+    "evidence": "airlock-generator/docs/QA-OL-012-HOME-2026-10-18.md",
+    "next": "Capture compiler diagnostics and execute native two-zone scenarios QA-OL-012A-F, verifying timers and Q1/Q2/Q4 without touching hardware."
   }
 }
