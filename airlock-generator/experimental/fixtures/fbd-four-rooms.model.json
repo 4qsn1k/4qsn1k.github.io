@@ -1,0 +1,38 @@
+{
+  "name": "Issue #10 — four-room offline FBD fixture",
+  "rooms": [
+    {"id": "A", "interlockMode": "purge", "purgeSec": 1},
+    {"id": "B", "interlockMode": "mutual"},
+    {"id": "C", "interlockMode": "purge", "purgeSec": 2},
+    {"id": "D", "interlockMode": "mutual"},
+    {"id": "X", "interlockMode": "none"}
+  ],
+  "doors": [
+    {"id": "AB", "a": "A", "b": "B"},
+    {"id": "BC", "a": "B", "b": "C"},
+    {"id": "CD", "a": "C", "b": "D"},
+    {"id": "DA", "a": "D", "b": "A"},
+    {"id": "AX", "a": "A", "b": "X"},
+    {"id": "BX", "a": "B", "b": "X"},
+    {"id": "CX", "a": "C", "b": "X"},
+    {"id": "DX", "a": "D", "b": "X"}
+  ],
+  "rules": [],
+  "exemptions": [],
+  "fireMode": "all-electrical-interlocks-off",
+  "hardware": {
+    "primary": {"family": "PR103", "baseDi": 8, "baseDo": 10, "modules": []},
+    "secondary": [
+      {"family": "PR103", "baseDi": 8, "baseDo": 10, "modules": []},
+      {"family": "PR103", "baseDi": 8, "baseDo": 10, "modules": []}
+    ],
+    "link": "ethernet-modbus-tcp",
+    "signaling": "door",
+    "placements": {
+      "roomOwners": {"A": "PLC1", "B": "PLC1", "C": "PLC2", "D": "PLC3"},
+      "doorInputOwners": {"AB": "PLC1", "BC": "PLC2", "CD": "PLC3", "DA": "PLC1", "AX": "PLC1", "BX": "PLC1", "CX": "PLC2", "DX": "PLC3"},
+      "doorOutputOwners": {"AB": "PLC1", "BC": "PLC2", "CD": "PLC3", "DA": "PLC3", "AX": "PLC1", "BX": "PLC1", "CX": "PLC2", "DX": "PLC3"},
+      "alarmOwner": "PLC1"
+    }
+  }
+}

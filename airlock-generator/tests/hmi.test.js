@@ -9,17 +9,29 @@ const read=p=>fs.readFileSync(path.join(root,p),"utf8");
 const model=JSON.parse(read("model.json"));
 const engine=vm.runInNewContext(read("engine.js")+"\nAirlockEngine",{});
 const toolbar={append(){}},dummy={closest:()=>toolbar};
+const buttons={},capturedExports=[];
 const browser={
   getElementById:()=>dummy,
-  createElement:()=>({style:{}})
+  createElement:()=>({style:{},click(){},remove(){}}),
+  body:{append(){}}
 };
+toolbar.append=el=>{if(el.id)buttons[el.id]=el};
 const windowMock={};
-vm.runInNewContext(read("hmi-export.js"),{
+const context=vm.createContext({
   document:browser,
   window:windowMock,
   model,
-  AirlockEngine:engine
+  AirlockEngine:engine,
+  Blob:class{constructor(parts){this.body=parts.join("")}},
+  URL:{createObjectURL(blob){capturedExports.push(blob.body);return "blob:test"},revokeObjectURL(){}},
+  setTimeout(){},alert(message){throw Error(message)}
 });
+vm.runInContext(read("project-package.js"),context);
+vm.runInContext(read("hmi-export.js"),context);
+assert.equal(windowMock.AirlockProjectPackage,undefined,"top-level const is a lexical binding, not a Window property");
+buttons.exportProjectScada.onclick();
+const scada=JSON.parse(capturedExports[0]);
+assert.equal(scada.schema,"airlock-scada-project/1");assert.equal(scada.model.doors.length,model.doors.length);
 const manifest=windowMock.airlockHmiExport.buildSignalMap(model);
 assert.equal(manifest.schema,"airlock-hmi-bindings/0.1");
 assert.equal(manifest.lightGroups.length,model.rooms.filter(r=>engine.roomMode(r)!=="none").length);
@@ -56,4 +68,5 @@ console.log("PASS HMI standalone template with embedded project");
 console.log("PASS demo and stale-telemetry defensive rendering");
 console.log("PASS physical traffic-light catalogue: "+manifest.lightGroups.length+" groups");
 console.log("PASS unassigned signal inventory: "+manifest.signals.length+" signals");
+console.log("PASS SCADA browser lexical module export produces valid portable JSON");
 console.log("ALL HMI UNIT CHECKS PASSED");

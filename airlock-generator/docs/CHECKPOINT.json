@@ -628,5 +628,53 @@
     "workdir": "AirlockGeneratorLab",
     "z4559OfflineQa": "PASS",
     "autostartInstalled": false
+  },
+  "latestCheckpoint": "fbdGraphIssue10",
+  "fbdGraphIssue10": {
+    "date": "2026-10-18",
+    "branch": "codex/airlock-10-fbd-graph",
+    "status": "OFFLINE_QA_PASS_NEEDS_OWEN_VALIDATION",
+    "modules": [
+      "fbd-generator.js",
+      "fbd-evaluator.js",
+      "fbd-ui.js",
+      "scripts/export-fbd-plan.js"
+    ],
+    "reused": [
+      "st-generator.js",
+      "project-wiring.js",
+      "hardware-planner.js",
+      "distributed-planner.js",
+      "network-watchdog.js",
+      "st-testbench.js"
+    ],
+    "checks": {
+      "fullOfflineQa": "PASS",
+      "generatorGroups": 9,
+      "evaluatorGroups": 12,
+      "truthTableCases": 256,
+      "seededGraphs": 36,
+      "exportGroups": 4,
+      "chromiumSmoke": "8/8 PASS"
+    },
+    "oldNativeQa": {
+      "qaOl006": "ACCEPTED_NOT_REPEATED",
+      "qaOl012AF": "ACCEPTED_NOT_REPEATED",
+      "evidence": "https://github.com/4qsn1k/4qsn1k.github.io/pull/6"
+    },
+    "newNativeGraph": "NEEDS_NATIVE_GUI",
+    "newNativeCompile": "NOT_VERIFIED",
+    "physical": "NOT_TESTED",
+    "terminals": "UNASSIGNED",
+    "modbusAddresses": "UNASSIGNED",
+    "nativeSerialization": "No complete wire/OR/quality-guard fixture; evidence adapter only, no .owle generated",
+    "pending": [
+      "Native GUI fixtures and generated native test plan",
+      "Approved recovery policies",
+      "Actual health sources, terminal/register maps and timeouts",
+      "Remote PR and CI evidence"
+    ],
+    "guide": "docs/FBD-GRAPH-ASSEMBLY.md",
+    "apiAccess": "api.github.com blocked; domain addition saved to environment draft, runtime not yet applied"
   }
 }
