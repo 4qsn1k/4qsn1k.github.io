@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
         Collections.shuffle(options,random);
         for(int i=0;i<answers.length;i++){
             Button b=answers[i];
-            if(i>=options.size()){b.setVisibility(View.GONE);continue;}
+            if(i>=options.size()){b.setVisibility(View.GONE);b.setTag(null);b.setEnabled(false);continue;}
             int value=options.get(i);
             b.setVisibility(View.VISIBLE);b.setTag(value);b.setText(names[value]);b.setEnabled(true);b.setBackgroundTintList(ColorStateList.valueOf(ACCENT));
         }
@@ -105,7 +105,11 @@ public class MainActivity extends Activity {
         main.postDelayed(()->{if(!busy && !learning)playCurrent();},300);
     }
     private void answer(int selectedButton){
-        int selected=(int)answers[selectedButton].getTag();
+        if(selectedButton<0 || selectedButton>=answers.length || busy)return;
+        Button choice=answers[selectedButton];
+        Object tag=choice.getTag();
+        if(choice.getVisibility()!=View.VISIBLE || !(tag instanceof Integer))return;
+        int selected=(Integer)tag;
         if(learning){question=selected;symbol.setText(names[question]+"\n"+codes[question].trim());playCurrent();return;}
         if(busy)return;
         busy=true;boolean ok=(selected==question);
@@ -115,14 +119,20 @@ public class MainActivity extends Activity {
         if(items.length>40){StringBuilder out=new StringBuilder();for(int i=items.length-40;i<items.length;i++)out.append(items[i]).append(";");history=out.toString();}
         int n=0,k=0,newN=0,newK=0;
         for(String a:history.split(";")){if(a.isEmpty())continue;n++;boolean correct=a.startsWith("1");if(correct)k++;if(a.endsWith((stage-1)+",")){newN++;if(correct)newK++;}}
-        for(Button b:answers){b.setEnabled(false);int num=(int)b.getTag();b.setBackgroundTintList(ColorStateList.valueOf(num==question?Color.rgb(45,134,90):num==selected?Color.rgb(184,72,69):PANEL));}
+        for(Button b:answers){
+            Object value=b.getTag();
+            if(b.getVisibility()!=View.VISIBLE || !(value instanceof Integer))continue;
+            b.setEnabled(false);
+            int num=(Integer)value;
+            b.setBackgroundTintList(ColorStateList.valueOf(num==question?Color.rgb(45,134,90):num==selected?Color.rgb(184,72,69):PANEL));
+        }
         symbol.setText(names[question]);symbol.setTextSize(80);
         status.setText(ok?"✓ Правильно":"✗ Это буква "+names[question]);
         if(stage<names.length && n>=40 && 100*k/n>=90 && newN>=8 && 100*newK/newN>=80){
             stage++;history="";status.setText("✓ Открыта новая буква: "+names[stage-1]);
         }
         prefs.edit().putInt("stage",stage).putString("history",history).apply();refreshHeader();
-        if(ok){main.postDelayed(()->{if(!learning)newQuestion();},1000);}
+        if(ok){main.postDelayed(()->{if(!learning)newQuestion();},850);}
         else {advance.setVisibility(View.VISIBLE);playCurrent();}
     }
     private void playCurrent(){
