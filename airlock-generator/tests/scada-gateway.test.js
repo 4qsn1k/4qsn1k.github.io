@@ -93,7 +93,11 @@ async function mock(){
   assert.equal(frameFor(cfg,next,{}).doors["1-4"].state,"unknown");
   next["DOOR_1-4.GreenPermit"]=1;next["ROOM_4.State"]=30;
   assert.equal(frameFor(cfg,next,{}).doors["1-4"].state,"unknown");
-  pass("green requires full explicit proof from every participating room");
+  const noFireProof={...readings};
+  delete noFireProof["SYSTEM.FireNormal"];
+  assert.equal(frameFor(cfg,noFireProof,{}).rooms["1"].state,"unknown");
+  assert.equal(frameFor(cfg,noFireProof,{}).doors["1-4"].state,"open");
+    pass("green requires full explicit proof from every participating room");
   frame=frameFor(cfg,readings,{PR1:"cable disconnected"});
   assert.equal(frame.source,"offline");assert.deepEqual(frame.rooms,{});
   assert.equal(frame.doors["1-4"].state,"unknown");
@@ -120,6 +124,18 @@ async function mock(){
    assert.equal((await fetch(base+"/api/status",{method:"POST"})).status,405);
    assert.equal((await fetch(base+"/../package.json")).status,404);
    pass("local HTTP gateway serves project/status and blocks POST/path traversal");
+  const realApp=start({configPath:file,port:0,logger:{log(){},error(){}}});
+  try {
+   await new Promise(resolve=>realApp.server.once("listening",resolve));
+   const frame=await realApp.poller.poll();
+   assert.equal(frame.source,"live");
+   assert.equal(frame.controllers.PR1.online,true);
+   assert.equal(frame.rooms["1"].state,"ready");
+   assert.equal(frame.doors["1-4"].state,"open");
+   const current=await fetch("http://127.0.0.1:"+realApp.server.address().port+"/api/status").then(r=>r.json());
+   assert.equal(current.controllers.PR1.online,true);
+   pass("actual Modbus TCP socket -> polling gateway -> HTTP JSON frame");
+  } finally {await realApp.close();}
   }finally{await app.close();fs.rmSync(dir,{recursive:true,force:true});}
   assert.throws(()=>start({configPath:"none",host:"0.0.0.0"}),/loopback/);
   pass("public bind refused");
@@ -127,6 +143,6 @@ async function mock(){
   for(const word of ["Контроллеры","Сигналы","Инструкция","scada.js","План"])assert(html.includes(word));
   new Function(fs.readFileSync(path.join(root,"scada.js"),"utf8"));
   pass("SCADA tab UI scripts syntax");
-  console.log("SCADA_GATEWAY_QA_PASS "+count+"/14");
+  console.log("SCADA_GATEWAY_QA_PASS "+count+"/15");
  } finally{await m.close();}
 })().catch(e=>{console.error("SCADA_GATEWAY_QA_FAIL",e.stack||e);process.exitCode=1;});
