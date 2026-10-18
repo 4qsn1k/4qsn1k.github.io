@@ -1,6 +1,6 @@
 {
   "schema": "airlock-generator-continuity/1",
-  "savedDate": "2026-10-17",
+  "savedDate": "2026-10-18",
   "project": "Airlock Generator — граф помещений, блокировки дверей, красно-зелёные светофоры, HMI, Owen Logic ST",
   "repository": "4qsn1k/4qsn1k.github.io",
   "projectPath": "airlock-generator",
@@ -44,7 +44,7 @@
     "QA-OL-011"
   ],
   "nextTest": "QA-OL-012",
-  "nextAction": "Now that HOME-PC Owen Logic native ST FB_Room_N1 QA-OL-006 passes, capture actual FBD wires and OR element in a separate .owle test copy; connect FB_Room_N1+FB_Room_N4 and verify compilation and shared-door behavior in native simulator. No physical PLC writes.",
+  "nextAction": "Inspect opened test FBD_QA012_HOME.owle and capture authentic connectors/OR; compile and simulate N1+N4 with shared physical door 1-4. No physical PLC changes.",
   "incomplete": [
     "Owen Logic complete FBD integration / shared-door OR",
     "Real physical DI/DO assignment, S2000-2 BUSY, indicator wiring",
@@ -560,5 +560,59 @@
     "nativeCombinedFbdSimulated": false,
     "report": "airlock-generator/docs/QA-OWEN-HOME-2026-10-17.md",
     "note": "All actions in standalone OWLE GUI simulator, no physical PLC or wiring."
+  },
+  "chatMigration20261018": {
+    "status": "HANDOFF_SAVED_TO_GITHUB",
+    "reason": "User reached conversation length limit",
+    "timeLocal": "2026-10-18 09:11 MSK",
+    "primaryDevice": {
+      "name": "HOME-PC",
+      "id": "add51f38-9a08-4780-86ce-ab1030d20ebf",
+      "activeSession": 1
+    },
+    "backupDevice": {
+      "name": "Z4559",
+      "id": "74ec168b-bf90-4a08-ad7c-94b3ec6037ae"
+    },
+    "currentNativeWindows": [
+      {
+        "pid": 7084,
+        "project": "Airlock_SIMULATION_TEST.owle"
+      },
+      {
+        "pid": 9988,
+        "project": "Airlock_FBD_QA012_HOME.owle",
+        "bytes": 24574,
+        "lastModified": "2026-10-17 09:16"
+      }
+    ],
+    "homeGit": {
+      "head": "e6a541e",
+      "workingTreeClean": true
+    },
+    "confirmedNativeQA": {
+      "id": "QA-OL-006",
+      "conclusion": "PASS",
+      "sequence": [
+        20,
+        30,
+        20,
+        30,
+        10
+      ],
+      "reopenSeconds": 20.9759362,
+      "evidence": "airlock-generator/docs/QA-OWEN-HOME-2026-10-17.md"
+    },
+    "nativeSharedFbdQa012": {
+      "conclusion": "UNVERIFIED",
+      "combinedCompiled": false,
+      "combinedSimulated": false
+    },
+    "nextAction": "Inspect opened test FBD_QA012_HOME.owle and capture authentic connectors/OR; compile and simulate N1+N4 with shared physical door 1-4. No physical PLC changes.",
+    "docs": [
+      "airlock-generator/docs/CHAT_CONTINUITY.md",
+      "airlock-generator/docs/QA-OWEN-HOME-2026-10-17.md",
+      "airlock-generator/docs/FBD-N1-N4-INTEGRATION.md"
+    ]
   }
 }
