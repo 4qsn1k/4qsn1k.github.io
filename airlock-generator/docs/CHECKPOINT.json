@@ -614,5 +614,91 @@
       "airlock-generator/docs/QA-OWEN-HOME-2026-10-17.md",
       "airlock-generator/docs/FBD-N1-N4-INTEGRATION.md"
     ]
+  },
+  "nativeFbdQaOl012Home20261018": {
+    "status": "NATIVE_FBD_PORTMAP_PASS_SCENARIOS_PENDING",
+    "machine": "HOME-PC",
+    "machineRole": "primary",
+    "project": "Airlock_FBD_QA012_HOME.owle",
+    "owenProcessIdAtTest": 9988,
+    "date": "2026-10-18",
+    "nativeFbdElements": 25,
+    "nativeConnectorModels": 16,
+    "expectedWiresVerified": 16,
+    "unmatchedPortIds": 0,
+    "confirmedSharedReedSource": "I4.Output0",
+    "confirmedBlockOr": "FB_Room_N1.Output8 OR FB_Room_N4.Output7 -> Q4",
+    "statusOutputs": [
+      "Q1 = FB_Room_N1.Output0",
+      "Q2 = FB_Room_N4.Output0"
+    ],
+    "verifier": "QA012_CONNECTOR_PORTMAP_PASS, exit 0, HOME-PC",
+    "testOwleSha256": "0E3F85BFC198AA298EBAC5068E76B5C0408CB4590FAEE9530E74559A1A167A00",
+    "untouchedBackupSha256": "55684A7F6E6C268DB8959D1F39D8DFE9B127EE454633BF08E9CA2F520A1218F9",
+    "nativeSimulationEntered": true,
+    "nativeSimulationInitialObserved": {
+      "I1FireNormal": 0,
+      "N1State": 99,
+      "N4State": 99,
+      "N1Fire": 1,
+      "N4Fire": 1,
+      "Q4": 0
+    },
+    "compilerDiagnosticLogCaptured": false,
+    "fullScenariosVerified": true,
+    "overallQaOl012": "SOFTWARE_A_F_PASS_NO_COMPILER_LOG_OR_HARDWARE_APPROVAL",
+    "physicalPLCProgrammed": false,
+    "evidence": "airlock-generator/docs/QA-OL-012-HOME-2026-10-18.md",
+    "next": "Review PR #6. Keep QA006 PASS. Next engineering: final shared-door GREEN permit, fault handling, hardware design, then authorized physical test bench; do not program real PR.",
+    "simulatorRealTimeRunActivated": true,
+    "nativeDynamicSmoke": {
+      "status": "PARTIAL_NATIVE_GUI_OBSERVATION",
+      "I1FireNormalAfterClick": 1,
+      "N1State": 90,
+      "N1Fault": 1,
+      "N1SharedDoorBlock": 1,
+      "ORInput0": 1,
+      "ORInput1": 1,
+      "ORResult": 1,
+      "testQ4": 1,
+      "evidence": "airlock-generator/docs/QA-OL-012-SIM-SMOKE-2026-10-18.md",
+      "note": "All other reed inputs were 0; individual timed A-F scenarios not performed."
+    },
+    "portableVerifierHomePcExit": 0,
+    "portableVerifierPass": true,
+    "portableVerifierPath": "airlock-generator/bridge/qa012_verify_native_fbd.ps1",
+    "githubActionsRunId": 39116025655,
+    "githubActionsConclusion": "success",
+    "nativeRuntimeCases": {
+      "QA-OL-012A": "PASS (N1 PURGE, N4 READY, Q4=1)",
+      "QA-OL-012B": "PASS (open N4 3-4, Q4=1, restore Q4=0)",
+      "QA-OL-012C": "PASS (both READY, Q1=Q2=1, Q4=0)",
+      "QA-OL-012D": "PASS (shared I4 open, both OPEN, other-door blocks=1)",
+      "QA-OL-012E": "PASS (I4 close, N4 READY and N1 PURGE; eventually N1 READY, Q4=0)",
+      "QA-OL-012F": "PASS (FireNormal=0, both FIRE, Q4=0)"
+    },
+    "timerCheck": {
+      "simulatorCycleMs": 100,
+      "near29s": {
+        "N1State": 30,
+        "Q4": 1
+      },
+      "near31s": {
+        "N1State": 10,
+        "Q4": 0
+      },
+      "timePrecision": "approximately 2-second transition bracket",
+      "fullExactBoundaryMsVerified": false,
+      "method": "native F10 steps + simulator virtual clock"
+    },
+    "nativeDynamicSimulationVerified": true,
+    "runtimeReport": "airlock-generator/docs/QA-OL-012-HOME-RUNTIME-2026-10-18.md",
+    "softwareAcceptance": "PASS_A_F_WITH_TIMER_29_TO_31_SECONDS",
+    "compilerEvidenceNote": "Owen Logic 3.3 native simulator ran successfully; standalone offline compiler diagnostics unavailable/not captured. No controller upload attempted.",
+    "physicalCommissioning": "NOT_TESTED_NOT_AUTHORIZED",
+    "githubEvidenceCommit": "08c0f1b4a7dea4fec9157ce7e9fba35c0aa3cf7d",
+    "githubEvidenceDirectory": "airlock-generator/docs/evidence/qa-ol-012-home-20261018",
+    "githubEvidenceCount": 11,
+    "finalSoftwareReport": "airlock-generator/docs/QA-OL-012-SOFTWARE-ACCEPTANCE-2026-10-18.md"
   }
 }
