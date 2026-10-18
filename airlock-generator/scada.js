@@ -14,7 +14,7 @@
  }
  function fromPackage(input){
   if(!input||typeof input!=="object")throw Error("Некорректный JSON проекта");
-  const m=AirlockProjectPackage.load(input.model?input:input.schema==="airlock-scada-connection/1"?input:{model:input});
+  const m=AirlockProjectPackage.validate(input.model||input);
   if(!m.rooms.length||!m.doors.length)throw Error("В проекте нет помещений/дверей");
   return m;
  }
