@@ -11,6 +11,7 @@
  <button type="button" class="active" data-tab="plan">План</button>
  <button type="button" data-tab="controllers">Контроллеры</button>
  <button type="button" data-tab="signals">Сигналы</button>
+ <button type="button" data-tab="events">Журнал</button>
  <button type="button" data-tab="guide">Инструкция</button>
 </nav>
 <div id="warning" role="status">Показания контроллеров пока не получены. Без свежей телеметрии разрешение зелёного не подтверждено.</div>
@@ -67,6 +68,13 @@
     <h3>Карта сигналов</h3><div id="signalRows" class="rows"></div>
   </article><aside class="card"><h2>Важные условия</h2><p>Состояние READY читается из отдельной переменной ПР.</p><p>Статус двери считается «разрешён» только при подтверждении: геркон закрыт, блокировка снята, <strong>GreenPermit=1</strong>, FireNormal=1 и все участвующие помещения READY.</p>
   <p class="hint">Счётчик, таймер и цвет лампы не заменяют обратную связь замка. Для неё предусмотрите отдельный датчик и сигнал.</p></aside></div>
+ </section>
+ <section id="tab-events" class="tabview">
+  <article class="card">
+   <h2>Журнал событий ПР</h2>
+   <p class="hint">События только чтения: подключение/потеря Modbus и изменение подтверждённых DI/Q. Для сохранения в JSONL настройте AIRLOCK_EVENT_LOG на компьютере агента. Команды ПР не отправляются.</p>
+   <div id="eventRows" class="rows" aria-live="polite">Ожидание локального агента.</div>
+  </article>
  </section>
  <section id="tab-guide" class="tabview">
   <article class="card guide"><h2>Порядок подключения и запуска</h2>
