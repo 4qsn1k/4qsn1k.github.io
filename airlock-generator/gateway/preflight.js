@@ -42,6 +42,6 @@ function run(args=process.argv.slice(2),output=console){
  return result;
 }
 if(require.main===module){
- try{run();}catch(e){console.error("PREFLIGHT_FAILED: "+e.message);process.exitCode=2;}
+ try{run();}catch(e){console.error("PREFLIGHT_FAILED: invalid or unavailable local configuration");process.exitCode=2;}
 }
 module.exports={inspect,run};

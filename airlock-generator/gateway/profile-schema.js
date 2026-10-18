@@ -5,9 +5,9 @@ function validate(input){
  const controllers=input.controllers||[],bindings=input.bindings||[];
  if(!Array.isArray(controllers)||!Array.isArray(bindings)||controllers.length>16||bindings.length>256)
   throw Error("invalid controller/binding limits");
- const ids=new Set();
+ const ids=new Set(),buses=new Map(),endpoints=new Set();
  for(const c of controllers){
-  if(!c||typeof c.id!=="string"||!c.id.trim()||ids.has(c.id))throw Error("duplicate/invalid controller ID");
+  if(!c||typeof c.id!=="string"||!/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,47}$/.test(c.id)||["constructor","prototype","__proto__"].includes(c.id)||ids.has(c.id))throw Error("duplicate/invalid controller ID");
   ids.add(c.id);
   if(!["modbus-tcp","modbus-rtu"].includes(c.protocol))throw Error("unsupported Modbus transport");
   if(c.protocol==="modbus-tcp"){
@@ -22,6 +22,16 @@ function validate(input){
    if(!["N","E","O"].includes(c.parity)||![1,2].includes(c.stopbits))
     throw Error("invalid RS485 parity / stopbits");
   }
+  if(c.rtuMode!==undefined&&!["oneshot","persistent"].includes(c.rtuMode))throw Error("invalid RTU mode");
+  if(c.protocol==="modbus-rtu"){
+   const key=/^COM/i.test(c.comPort)?c.comPort.toUpperCase():c.comPort;
+   const config=JSON.stringify([c.baudrate,c.parity,c.stopbits,c.rtuMode||"oneshot"]);
+   if(buses.has(key)&&buses.get(key)!==config)throw Error("conflicting serial bus configuration");
+   buses.set(key,config);
+   const endpoint=key+":"+c.unitId;
+   if(endpoints.has(endpoint))throw Error("duplicate serial unit");
+   endpoints.add(endpoint);
+  }
   if(!Number.isInteger(c.unitId)||c.unitId<1||c.unitId>247)throw Error("invalid slave unitId");
   if(!Number.isInteger(c.timeoutMs)||c.timeoutMs<200||c.timeoutMs>5000)throw Error("invalid timeout");
  }
@@ -32,13 +42,16 @@ function validate(input){
   names.add(b.signal);
   if(!ids.has(b.controllerId)||![1,2,3,4].includes(b.fc)||!Number.isInteger(b.address)||b.address<0||b.address>65535)
    throw Error("invalid binding for "+b.signal);
+  if(b.signal.startsWith("PLC_")&&!b.signal.startsWith("PLC_"+b.controllerId+"."))throw Error("diagnostic signal controller mismatch");
   // Physical DO/coil reads are deliberately disabled; only read-only Modbus functions.
  }
+ const pollBudgetMs=input.pollBudgetMs??10000;
+ if(!Number.isInteger(pollBudgetMs)||pollBudgetMs<1000||pollBudgetMs>60000)throw Error("invalid poll budget");
  const staleMs=input.staleMs??5000;
  const pollMs=input.pollMs??1500;
  if(!Number.isInteger(staleMs)||staleMs<1000||staleMs>60000||
   !Number.isInteger(pollMs)||pollMs<500||pollMs>30000||staleMs<=pollMs)
   throw Error("invalid poll or freshness interval");
- return {schema:SCHEMA,controllers,bindings,staleMs,pollMs};
+ return {schema:SCHEMA,controllers,bindings,staleMs,pollMs,pollBudgetMs};
 }
 module.exports={SCHEMA,validate};

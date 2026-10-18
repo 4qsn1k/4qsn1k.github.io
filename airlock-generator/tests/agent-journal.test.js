@@ -58,6 +58,14 @@ const tmp=fs.mkdtempSync(path.join(os.tmpdir(),"airlock-journal-"));
   assert.throws(()=>createJournal({maxFileBytes:50}),/size/);
   assert.throws(()=>createJournal({maxArchives:40}),/archive/);
   ok("invalid disk retention parameters rejected");
-  console.log("SCADA_JOURNAL_OFFLINE_PASS "+count+"/9");
+  const broken=createJournal({filePath:path.join(tmp,"missing-directory","events.jsonl"),maxEvents:10});
+  assert.doesNotThrow(()=>broken.observe(f(10000,false)));
+  assert.equal(broken.status().ok,false);assert.equal(broken.status().error,"JOURNAL_IO");
+  assert.equal(broken.recent()[0].reason,"READ_FAILED");
+  assert(!JSON.stringify(broken.status()).includes(tmp));
+  for(let i=0;i<30;i++)broken.observe(f(11000+i,true,i%2,0));
+  assert.equal(broken.size(),10);assert.equal(broken.status().capacity,10);
+  ok("disk persistence errors preserve bounded RAM journal and expose safe health");
+  console.log("SCADA_JOURNAL_OFFLINE_PASS "+count+"/10");
  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1});
