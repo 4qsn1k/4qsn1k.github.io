@@ -65,9 +65,12 @@ public final class MorseCourse {
                 cleanCorrect++;
                 cleanBySymbol[index]++;
                 misses[index]=Math.max(0,misses[index]-1);
-                retentionLevel[index]=Math.min(3,retentionLevel[index]+1);
-                long days=retentionLevel[index]==1 ? 1 : retentionLevel[index]==2 ? 3 : 7;
-                dueAt[index]=now+days*86400000L;
+                // Practice on the same day must not skip scheduled review intervals.
+                if(retentionLevel[index]==0 || dueAt[index]<=now) {
+                    retentionLevel[index]=Math.min(3,retentionLevel[index]+1);
+                    long days=retentionLevel[index]==1 ? 1 : retentionLevel[index]==2 ? 3 : 7;
+                    dueAt[index]=now+days*86400000L;
+                }
             } else {
                 misses[index]=Math.min(50,misses[index]+2);
                 retentionLevel[index]=0;
