@@ -33,6 +33,9 @@
   for(const r of model.rooms)result.push("ROOM_"+norm(r.id)+".State");
   for(const d of model.doors)
    for(const field of ["Closed","BlockRequested","GreenPermit"])result.push("DOOR_"+norm(d.id)+"."+field);
+  for(const c of profile.controllers){
+   for(let n=1;n<=8;n++){result.push("PLC_"+c.id+".DI"+n,"PLC_"+c.id+".Q"+n);}
+  }
   return result;
  }
  function selectOptions(el,names){
@@ -104,7 +107,7 @@
   const root=$("controllersList");root.replaceChildren();
   for(const c of profile.controllers){
    const rowEl=document.createElement("div");rowEl.className="row";
-   const text=document.createElement("span");text.textContent=c.id+" · "+c.host+":"+c.port+" · Slave "+c.unitId;
+   const text=document.createElement("span");text.textContent=c.id+" · "+(c.protocol==="modbus-rtu"?c.comPort+" "+c.baudrate+" "+c.parity+"8"+c.stopbits:c.host+":"+c.port)+" · Slave "+c.unitId;
    const remove=document.createElement("button");remove.type="button";remove.textContent="Удалить";
    remove.onclick=()=>{profile.controllers=profile.controllers.filter(x=>x.id!==c.id);
     profile.bindings=profile.bindings.filter(x=>x.controllerId!==c.id);updateSelectors();};
@@ -132,6 +135,14 @@
    const left=document.createElement("span");left.textContent=id;
    const right=document.createElement("strong");right.textContent=info.online?"ONLINE":"OFFLINE · "+(info.error||"ошибка");
    div.append(left,right);root.append(div);
+   const readings=Object.entries(info.raw||{});
+   if(readings.length){
+    const values=document.createElement("div");values.className="row";
+    const span=document.createElement("span");
+    span.textContent=readings.sort((a,b)=>a[0].localeCompare(b[0],"en",{numeric:true}))
+     .map(([name,value])=>name+"="+value).join(" · ");
+    values.append(span);root.append(values);
+   }
   }
  }
  async function poll(){
@@ -169,14 +180,45 @@
    }catch(ex){error("Не удалось загрузить проект: "+ex.message);}
    e.target.value="";
   };
+  $("controllerProtocol").onchange=()=>{
+   const serial=$("controllerProtocol").value==="modbus-rtu";
+   document.querySelectorAll(".rtu-option").forEach(x=>x.hidden=!serial);
+   document.querySelectorAll(".tcp-option").forEach(x=>x.hidden=serial);
+   $("controllerHost").required=!serial;
+   $("controllerPort").required=!serial;
+  };
+  $("addPr100Diagnostics").onclick=()=>{
+   const controllerId=$("signalController").value;
+   const c=profile.controllers.find(x=>x.id===controllerId);
+   if(!c){error("Сначала добавьте ПР");return;}
+   if(c.model!=="PR100"){error("Шаблон DI/Q предназначен для подтверждённой модификации ПР100");return;}
+   const signals=[];
+   for(let i=1;i<=8;i++){
+    signals.push({signal:"PLC_"+c.id+".DI"+i,controllerId,fc:2,address:4095+i});
+    signals.push({signal:"PLC_"+c.id+".Q"+i,controllerId,fc:1,address:i-1});
+   }
+   const set=new Set(signals.map(x=>x.signal));
+   profile.bindings=profile.bindings.filter(x=>!set.has(x.signal)).concat(signals);
+   renderBindings();
+   error("Добавлены адреса DI/Q из проверенного опыта КПП 2. Сверьте карту конкретного ПР перед физическим тестом.");
+  };
   $("controllerForm").onsubmit=e=>{
    e.preventDefault();
    if(!model){error("Сначала загрузите проект");return;}
-   const c={id:$("controllerId").value.trim(),model:$("controllerModel").value,protocol:"modbus-tcp",
-    host:$("controllerHost").value.trim(),port:Number($("controllerPort").value),unitId:Number($("controllerUnit").value),timeoutMs:Number($("controllerTimeout").value)};
-   if(!/^[a-zA-Z0-9_-]+$/.test(c.id)||!c.host||!/^[a-zA-Z0-9.:_-]+$/.test(c.host)||
-     !Number.isInteger(c.port)||c.port<1||c.port>65535||!Number.isInteger(c.unitId)||c.unitId<1||c.unitId>247||
-     c.timeoutMs<200||c.timeoutMs>5000){error("Проверьте идентификатор, IP, порт, Unit ID и таймаут");return;}
+   const protocol=$("controllerProtocol").value;
+   const c={id:$("controllerId").value.trim(),model:$("controllerModel").value,protocol,
+    unitId:Number($("controllerUnit").value),timeoutMs:Number($("controllerTimeout").value)};
+   if(protocol==="modbus-rtu")Object.assign(c,{comPort:$("controllerCom").value.trim().toUpperCase(),
+    baudrate:Number($("controllerBaud").value),parity:$("controllerParity").value,
+    stopbits:Number($("controllerStop").value)});
+   else Object.assign(c,{host:$("controllerHost").value.trim(),port:Number($("controllerPort").value)});
+   if(!/^[a-zA-Z0-9_-]+$/.test(c.id)||!Number.isInteger(c.unitId)||c.unitId<1||c.unitId>247||
+     !Number.isInteger(c.timeoutMs)||c.timeoutMs<200||c.timeoutMs>5000||
+     (protocol==="modbus-tcp"&&(!/^[a-zA-Z0-9.:_-]+$/.test(c.host)||!Number.isInteger(c.port)||c.port<1||c.port>65535))||
+     (protocol==="modbus-rtu"&&(!/^COM[1-9][0-9]{0,2}$|^\/dev\/tty(?:USB|ACM|S)[0-9]{1,3}$/i.test(c.comPort)||
+      ![1200,2400,4800,9600,19200,38400,57600,115200].includes(c.baudrate)))) {
+    error("Проверьте COM/IP, настройки линии, Unit ID и таймаут");return;
+   }
    profile.controllers=profile.controllers.filter(x=>x.id!==c.id).concat(c);updateSelectors();
    error("Контроллер добавлен в ПРОФИЛЬ. Реальная связь проверяется только после запуска локального шлюза.");
   };
