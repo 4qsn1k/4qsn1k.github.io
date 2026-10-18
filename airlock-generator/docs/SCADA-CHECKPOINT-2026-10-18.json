@@ -95,5 +95,19 @@
     "physicalControllerTested": false,
     "next": "19.10.2026: connect separate PR100 on workbench; verify COM/Slave/real registers, no writes",
     "docs": "airlock-generator/docs/RS485-LAB-2026-10-19.md"
+  },
+  "agentHealthOffline20261018": {
+    "perControllerLastPoll": true,
+    "roundtripTimeMs": true,
+    "consecutiveErrors": true,
+    "lastSuccessfulReply": true,
+    "offlineStalePreserved": true,
+    "journalRotation": "5 MiB per JSONL file, 3 archives",
+    "z4559Tests": {
+      "health": "4/4 PASS",
+      "journal": "9/9 PASS",
+      "npmCheck": "PASS"
+    },
+    "physicalPLC": false
   }
 }

@@ -135,6 +135,14 @@
    const left=document.createElement("span");left.textContent=id;
    const right=document.createElement("strong");right.textContent=info.online?"ONLINE":"OFFLINE · "+(info.error||"ошибка");
    div.append(left,right);root.append(div);
+   if(info.lastPollAt!=null){
+    const meta=document.createElement("div");meta.className="row";
+    const details=document.createElement("small");
+    const last=info.lastSuccessAt?new Date(info.lastSuccessAt).toLocaleTimeString("ru-RU"):"ещё не было";
+    details.textContent="Опрос: "+(Number.isFinite(info.durationMs)?info.durationMs+" мс":"—")+
+     " · Ошибок подряд: "+(info.consecutiveFailures??0)+" · Последний ответ: "+last;
+    meta.append(details);root.append(meta);
+   }
    const readings=Object.entries(info.raw||{});
    if(readings.length){
     const values=document.createElement("div");values.className="row";
