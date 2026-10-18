@@ -2,6 +2,7 @@
 // One-shot read-only Python/pymodbus 3.15 adapter. COM port never opened by Node.
 const path=require("node:path"),{spawn}=require("node:child_process");
 const worker=path.join(__dirname,"modbus-rtu-worker.py");
+const perPortQueue=new Map();
 function query(p,options={}){
  const req={comPort:p.comPort,baudrate:p.baudrate,parity:p.parity,stopbits:p.stopbits,
    unitId:p.unitId,functionCode:p.functionCode,address:p.address,count:p.count,timeoutMs:p.timeoutMs};
@@ -14,7 +15,7 @@ function query(p,options={}){
     req.address+req.count>65536)return Promise.reject(Error("Invalid Modbus address/count"));
  const py=options.python||process.env.AIRLOCK_PYTHON||(process.platform==="win32"?"python":"python3");
  const args=/^py(?:\.exe)?$/i.test(path.basename(py))?["-3",worker]:[worker];
- return new Promise((resolve,reject)=>{
+ const run=()=>new Promise((resolve,reject)=>{
   const child=spawn(py,args,{stdio:["pipe","pipe","pipe"],windowsHide:true,shell:false,
     env:options.env||process.env});
   let stdout="",stderr="",done=false;
@@ -44,5 +45,12 @@ function query(p,options={}){
   child.stdin.on("error",()=>{});
   child.stdin.end(JSON.stringify(req));
  });
+ // Prevent concurrent masters on the same USB-RS485 adapter (multiple Unit IDs).
+ const key=req.comPort.toUpperCase();
+ const previous=perPortQueue.get(key)||Promise.resolve();
+ const current=previous.catch(()=>{}).then(run);
+ perPortQueue.set(key,current);
+ current.finally(()=>{if(perPortQueue.get(key)===current)perPortQueue.delete(key);}).catch(()=>{});
+ return current;
 }
 module.exports={query};
