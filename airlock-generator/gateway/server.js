@@ -3,6 +3,7 @@ const http=require("node:http");
 const fs=require("node:fs");
 const path=require("node:path");
 const {load,createPoller}=require("./telemetry");
+const {createJournal}=require("./event-journal");
 const files={
  "/scada.html":["scada.html","text/html; charset=utf-8"],
  "/scada.js":["scada.js","text/javascript; charset=utf-8"],
@@ -13,6 +14,9 @@ function start({configPath,host="127.0.0.1",port=8787,logger=console,pollerFacto
  if(!["127.0.0.1","::1"].includes(host))throw Error("Refusing non-loopback host. Use a tunnel for remote users.");
  const project=load(configPath);
  const poller=pollerFactory(project);
+ const journal=createJournal({filePath:process.env.AIRLOCK_EVENT_LOG||null});
+ const tick=()=>Promise.resolve().then(()=>poller.poll()).then(frame=>journal.observe(frame))
+  .catch(err=>logger.error("poll:",String(err)));
  const request=(req,res)=>{
   const url=(req.url||"").split("?")[0];
   res.setHeader("Cache-Control","no-store");
@@ -30,7 +34,11 @@ function start({configPath,host="127.0.0.1",port=8787,logger=console,pollerFacto
      mode:"real-read-only",pollMs:project.pollMs,staleMs:project.staleMs}));
    return;
   }
-  if(url==="/api/status"){
+  if(url==="/api/events"){
+   res.writeHead(200,{"Content-Type":"application/json; charset=utf-8"});
+   res.end(JSON.stringify({events:journal.recent(50)}));return;
+  }
+    if(url==="/api/status"){
    res.writeHead(200,{"Content-Type":"application/json; charset=utf-8"});
    res.end(JSON.stringify(poller.get()));return;
   }
@@ -43,11 +51,11 @@ function start({configPath,host="127.0.0.1",port=8787,logger=console,pollerFacto
   res.writeHead(404);res.end("Not found");
  };
  const server=http.createServer(request);
- const timer=setInterval(()=>poller.poll().catch(err=>logger.error("poll:",String(err))),project.pollMs);
+ const timer=setInterval(tick,project.pollMs);
  timer.unref?.();
- poller.poll().catch(err=>logger.error("initial poll:",String(err)));
+ tick();
  server.listen(port,host,()=>logger.log("AIRLOCK_SCADA_LOCAL http://"+host+":"+server.address().port+"/scada.html"));
- return {server,poller,close:()=>{clearInterval(timer);return new Promise(resolve=>server.close(resolve));}};
+ return {server,poller,journal,close:()=>{clearInterval(timer);return new Promise(resolve=>server.close(resolve));}};
 }
 if(require.main===module){
  const args=process.argv.slice(2),index=args.indexOf("--config");
