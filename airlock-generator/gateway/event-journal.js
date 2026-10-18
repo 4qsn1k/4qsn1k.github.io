@@ -32,7 +32,7 @@ function createJournal({filePath=null,maxEvents=500}={}){
   }
   return events.length-before;
  }
- function recent(limit=50){
+ function recent(limit=Math.min(50,maxEvents)){
   if(!Number.isInteger(limit)||limit<1||limit>maxEvents)throw Error("Invalid journal read limit");
   return events.slice(-limit).reverse().map(x=>({...x}));
  }
