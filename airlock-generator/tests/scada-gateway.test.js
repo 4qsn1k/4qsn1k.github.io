@@ -127,6 +127,6 @@ async function mock(){
   for(const word of ["Контроллеры","Сигналы","Инструкция","scada.js","План"])assert(html.includes(word));
   new Function(fs.readFileSync(path.join(root,"scada.js"),"utf8"));
   pass("SCADA tab UI scripts syntax");
-  console.log("SCADA_GATEWAY_QA_PASS "+count+"/12");
+  console.log("SCADA_GATEWAY_QA_PASS "+count+"/14");
  } finally{await m.close();}
 })().catch(e=>{console.error("SCADA_GATEWAY_QA_FAIL",e.stack||e);process.exitCode=1;});
