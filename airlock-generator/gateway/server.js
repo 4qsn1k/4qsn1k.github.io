@@ -6,7 +6,8 @@ const {load,createPoller}=require("./telemetry");
 const files={
  "/scada.html":["scada.html","text/html; charset=utf-8"],
  "/scada.js":["scada.js","text/javascript; charset=utf-8"],
- "/scada.css":["scada.css","text/css; charset=utf-8"]
+ "/scada.css":["scada.css","text/css; charset=utf-8"],
+ "/project-package.js":["project-package.js","text/javascript; charset=utf-8"]
 };
 function start({configPath,host="127.0.0.1",port=8787,logger=console,pollerFactory=createPoller}){
  if(!["127.0.0.1","::1"].includes(host))throw Error("Refusing non-loopback host. Use a tunnel for remote users.");
