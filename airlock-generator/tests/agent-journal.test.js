@@ -47,6 +47,17 @@ const tmp=fs.mkdtempSync(path.join(os.tmpdir(),"airlock-journal-"));
    assert.equal((await fetch(url,{method:"POST"})).status,405);
    ok("HTTP /api/events is GET-only on loopback");
   }finally{await app.close();}
-  console.log("SCADA_JOURNAL_OFFLINE_PASS "+count+"/7");
+  const rotateLog=path.join(tmp,"rotating.jsonl");
+  const rotated=createJournal({filePath:rotateLog,maxEvents:30,maxFileBytes:160,maxArchives:2});
+  for(let i=0;i<12;i++)rotated.observe(f(8000+i*1000,true,i%2,0));
+  assert(fs.existsSync(rotateLog+".1"));
+  assert(fs.statSync(rotateLog).size<=160);
+  assert(fs.statSync(rotateLog+".1").size<=160);
+  assert(rotated.recent().length>=10);
+  ok("journal JSONL files rotate at size limit without losing RAM history");
+  assert.throws(()=>createJournal({maxFileBytes:50}),/size/);
+  assert.throws(()=>createJournal({maxArchives:40}),/archive/);
+  ok("invalid disk retention parameters rejected");
+  console.log("SCADA_JOURNAL_OFFLINE_PASS "+count+"/9");
  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1});
