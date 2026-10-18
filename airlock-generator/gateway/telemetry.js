@@ -88,16 +88,31 @@ function frameFor(profile,readings,errors,time=Date.now()){
 }
 function createPoller(profile,modbusRead=readController){
  let inFlight=null,latest=frameFor(profile,{},Object.fromEntries(profile.controllers.map(c=>[c.id,"not polled"])),0);
+ const statistics=Object.fromEntries(profile.controllers.map(c=>[c.id,{
+  lastPollAt:null,lastSuccessAt:null,durationMs:null,consecutiveFailures:0
+ }]));
+ function withStats(frame){
+  for(const c of profile.controllers){
+   Object.assign(frame.controllers[c.id],statistics[c.id]);
+  }
+  return frame;
+ }
  const poll=()=>{
   if(inFlight)return inFlight;
   inFlight=(async()=>{
    const readings={},errors={};
    await Promise.all(profile.controllers.map(async c=>{
     const bindings=profile.bindings.filter(b=>b.controllerId===c.id);
+    const started=Date.now();
     try{Object.assign(readings,await modbusRead(c,bindings));}
     catch(e){errors[c.id]=String(e.message||e).slice(0,160);}
+    const ended=Date.now(),stat=statistics[c.id];
+    stat.lastPollAt=ended;
+    stat.durationMs=Math.max(0,ended-started);
+    if(errors[c.id])stat.consecutiveFailures++;
+    else{stat.consecutiveFailures=0;stat.lastSuccessAt=ended;}
    }));
-   latest=frameFor(profile,readings,errors);
+   latest=withStats(frameFor(profile,readings,errors));
    return latest;
   })().finally(()=>{inFlight=null;});
   return inFlight;
@@ -105,7 +120,7 @@ function createPoller(profile,modbusRead=readController){
  return {poll,get:()=>{
   const now=Date.now();
   if(!latest.timestamp||now-latest.timestamp>profile.staleMs){
-   return {...frameFor(profile,{},Object.fromEntries(profile.controllers.map(c=>[c.id,"stale"])),now),
+   return {...withStats(frameFor(profile,{},Object.fromEntries(profile.controllers.map(c=>[c.id,"stale"])),now)),
     source:"offline",ageMs:latest.timestamp?now-latest.timestamp:null};
   }
   return {...latest,ageMs:now-latest.timestamp};
