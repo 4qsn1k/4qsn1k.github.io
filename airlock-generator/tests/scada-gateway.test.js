@@ -76,6 +76,8 @@ async function mock(){
   const normalized=validate(cfg);
   assert.equal(normalized.bindings.length,6);
   pass("profile with explicit unit, host, register bindings validated");
+  await assert.rejects(readController(cfg.controllers[0],[]),/No read-only signals/);
+  pass("no assigned Modbus reads means no confirmed PLC connectivity");
   const readings=await readController(cfg.controllers[0],cfg.bindings);
   assert.equal(readings["ROOM_1.State"],10);
   assert.equal(readings["DOOR_1-4.Closed"],0);
@@ -119,7 +121,10 @@ async function mock(){
    const base="http://127.0.0.1:"+port;
    const status=await fetch(base+"/api/status"),project=await fetch(base+"/api/project");
    assert.equal(status.status,200);assert.equal(project.status,200);
-   assert.equal((await project.json()).model.rooms.length,6);
+   const projectPayload=await project.json();
+   assert.equal(projectPayload.model.rooms.length,6);
+   assert.equal(projectPayload.controllers[0].host,"127.0.0.1");
+   assert.equal(projectPayload.controllers[0].port,m.port);
    assert.equal((await fetch(base+"/scada.html")).status,200);
    const shared=await fetch(base+"/project-package.js");
    assert.equal(shared.status,200);
@@ -148,6 +153,6 @@ async function mock(){
   for(const word of ["Контроллеры","Сигналы","Инструкция","scada.js","План"])assert(html.includes(word));
   new Function(fs.readFileSync(path.join(root,"scada.js"),"utf8"));
   pass("SCADA tab UI scripts syntax");
-  console.log("SCADA_GATEWAY_QA_PASS "+count+"/15");
+  console.log("SCADA_GATEWAY_QA_PASS "+count+"/16");
  } finally{await m.close();}
 })().catch(e=>{console.error("SCADA_GATEWAY_QA_FAIL",e.stack||e);process.exitCode=1;});
