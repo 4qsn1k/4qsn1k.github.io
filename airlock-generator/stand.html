@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a1521">
+<title>Airlock / Интерактивный стенд</title>
+<link rel="stylesheet" href="./stand.css">
+</head>
+<body>
+<header class="mast">
+  <div class="mast-left"><span class="mark">A<span class="mark-bar"></span></span><div><div class="eyebrow">AIRLOCK GENERATOR / LAB</div><h1>Интерактивный стенд <em>N1 ↔ N4</em></h1><p>Два независимых шлюза · один общий геркон · OR блокировок</p></div></div>
+  <div class="mast-right"><span class="pill"><span class="dot cyan"></span>Только JS-модель</span><a class="navlink" href="./index.html">← Конструктор</a><a class="navlink" href="./monitor.html">Монитор ↗</a></div>
+</header>
+<main class="workspace">
+ <section class="panel plan-panel" aria-labelledby="plan-title">
+  <div class="panel-head"><div><div class="eyebrow">01 / СХЕМА ОБЪЕКТА</div><h2 id="plan-title">План дверей и помещений</h2></div><span class="hint">Нажмите на дверь, чтобы изменить геркон</span></div>
+  <div class="map-wrap"><svg id="siteMap" viewBox="90 -10 735 630" role="group" aria-label="Интерактивный план помещений N1 и N4 с шестью контролируемыми дверьми"></svg></div>
+  <div class="legend"><span><i class="key green"></i>зелёный — логическое разрешение</span><span><i class="key red"></i>красный — нет разрешения</span><span><i class="key amber"></i>открытый геркон</span><span><i class="key grey"></i>без питания</span></div>
+  <div class="door-strip" id="doorStrip" role="group" aria-label="Управление виртуальными герконами"></div>
+ </section>
+ <section class="panel logic-panel" aria-labelledby="logic-title">
+  <div class="panel-head"><div><div class="eyebrow">02 / МЕЖЗОННАЯ ЛОГИКА</div><h2 id="logic-title">N1 <span class="muted">+ N4</span> → общий запрет</h2></div><span id="virtualTime" class="time">00:00.0</span></div>
+  <div class="zone-grid" id="zoneGrid"></div>
+  <div class="flow-logic" aria-label="Табло общей двери">
+    <div class="logic-source"><span>N1 / запрет 1–4</span><strong id="n1Claim">0</strong></div>
+    <div class="or-operator">OR</div>
+    <div class="logic-source"><span>N4 / запрет 1–4</span><strong id="n4Claim">0</strong></div>
+    <div class="equals">→</div>
+    <div class="logic-result" id="sharedResult"><small>FINAL_BLOCK_1_4</small><strong id="sharedClaim">0</strong></div>
+  </div>
+  <div class="status-line" id="summaryLine" role="status" aria-live="polite"></div>
+  <div class="controls"><button type="button" id="playPause" class="btn primary">▶ Запустить</button><button type="button" id="oneSec" class="btn">+1 с</button><button type="button" id="tenSec" class="btn">+10 с</button><button type="button" id="thirtySec" class="btn">+30 с</button><button type="button" id="newCycle" class="btn ghost">↺ Сначала</button></div>
+  <div class="control-foot"><label class="check"><input id="fireNormal" type="checkbox" checked>FireNormal = 1 <span>норма АПС</span></label><button class="btn small" id="resetFault" type="button">Сброс аварии</button><label class="check"><input id="lampPower" type="checkbox" checked>Питание ламп 24 В</label></div>
+  <div class="scenarios"><div class="eyebrow">СЦЕНАРИИ ПРИЁМОЧНОЙ ЛОГИКИ · ПОКАЗАТЬ</div><div id="scenarioButtons" class="scenario-buttons"></div><p class="footnote" id="scenarioHint">Выберите сценарий или управляйте герконами на плане.</p></div>
+ </section>
+ <section class="panel relay-panel" aria-labelledby="relay-title">
+  <div class="panel-head"><div><div class="eyebrow">03 / СВЕТОФОР</div><h2 id="relay-title">Один DO — два цвета</h2></div><span class="mini-tag">SPDT / COM NC NO</span></div>
+  <div class="selector-row"><label for="relayDoor">Дверь для индикации</label><select id="relayDoor"></select></div>
+  <div class="relay-circuit">
+    <div class="lamp-row"><div class="lamp-box"><span class="lamp red" id="redLamp"></span><span class="lamp-label">КРАСНЫЙ<small>NC</small></span></div><div class="lamp-box"><span class="lamp green" id="greenLamp"></span><span class="lamp-label">ЗЕЛЁНЫЙ<small>NO</small></span></div></div>
+    <svg class="switch-diagram" viewBox="0 0 320 142" role="img" aria-label="Принцип перекидного контакта: COM переключается между NC и NO">
+      <path d="M27 75H92" class="wire"/><circle cx="95" cy="75" r="4" class="node"/><text x="27" y="62">COM</text>
+      <path d="M198 36H285" class="wire"/><circle cx="198" cy="36" r="4" class="node"/><text x="284" y="25" text-anchor="end">NC / RED</text>
+      <path d="M198 112H285" class="wire"/><circle cx="198" cy="112" r="4" class="node"/><text x="284" y="100" text-anchor="end">NO / GREEN</text>
+      <line id="relayBlade" x1="95" y1="75" x2="198" y2="36" class="blade"/>
+      <text x="24" y="125">Питание ламп</text>
+    </svg>
+    <div class="relay-readout"><span>Команда катушке</span><strong id="coilSignal">0 / NC</strong></div>
+    <div class="relay-readout"><span>Геркон двери</span><strong id="reedSignal">ЗАКРЫТ</strong></div>
+    <div class="relay-readout"><span>Разрешение зелёного</span><strong id="permitSignal">НЕТ</strong></div>
+    <p class="caution" id="relayNote"></p>
+  </div>
+  <div class="budget">
+    <div class="panel-head compact"><h3>Предварительный бюджет выходов</h3><span class="hint">1 DO на пару ламп</span></div>
+    <div class="segment" role="group" aria-label="Способ группировки светофоров"><button id="budgetRoom" class="active" type="button">По помещениям</button><button id="budgetDoor" type="button">По дверям</button></div>
+    <div class="budget-number"><strong id="budgetTotal">9</strong><span>условных независимых DO</span></div>
+    <div id="budgetBreakdown" class="budget-breakdown"></div>
+    <p class="footnote">Это верхняя предварительная оценка отдельных выходных сигналов. Запросы BUSY, группировка и сетевое управление могут изменить потребность в физических DO. ПР100-24.1208.03.1 — 8 релейных DO.</p>
+  </div>
+ </section>
+ <section class="panel journal-panel" aria-labelledby="journal-title">
+  <div class="panel-head"><div><div class="eyebrow">04 / ИСТОРИЯ СОБЫТИЙ</div><h2 id="journal-title">Журнал симуляции</h2></div><button class="btn small" id="exportLog" type="button">Экспорт JSON</button></div>
+  <ol class="journal" id="eventLog"></ol>
+  <div class="boundary"><strong>Границы демонстрации</strong><p>Это детерминированная JavaScript-модель, а не телеметрия Owen Logic. Перекидное реле показано условно. Красный при NC возможен только при сохранённом питании ламп. Отсутствие запрета не доказывает отпирание замка. Аппаратная цепь пожарной эвакуации и фактическая продувка не проверяются.</p></div>
+ </section>
+</main>
+<footer>Airlock Generator · виртуальный стенд N1/N4 · никаких сетевых команд ПР / СКУД / АПС</footer>
+<script src="./st-testbench.js"></script>
+<script src="./project-wiring.js"></script>
+<script src="./interzone-testbench.js"></script>
+<script src="./stand-core.js"></script>
+<script src="./stand.js"></script>
+</body>
+</html>
