@@ -9,16 +9,25 @@ function validate(input){
  for(const c of controllers){
   if(!c||typeof c.id!=="string"||!c.id.trim()||ids.has(c.id))throw Error("duplicate/invalid controller ID");
   ids.add(c.id);
-  if(c.protocol!=="modbus-tcp")throw Error("only Modbus TCP / TCP-RTU gateway is currently supported");
-  if(typeof c.host!=="string"||!c.host.trim()||c.host.length>253||!/^[a-z0-9.:_-]+$/i.test(c.host))
-   throw Error("invalid controller host");
-  if(!Number.isInteger(c.port)||c.port<1||c.port>65535)throw Error("invalid TCP port");
+  if(!["modbus-tcp","modbus-rtu"].includes(c.protocol))throw Error("unsupported Modbus transport");
+  if(c.protocol==="modbus-tcp"){
+   if(typeof c.host!=="string"||!c.host.trim()||c.host.length>253||!/^[a-z0-9.:_-]+$/i.test(c.host))
+    throw Error("invalid controller host");
+   if(!Number.isInteger(c.port)||c.port<1||c.port>65535)throw Error("invalid TCP port");
+  }else{
+   if(typeof c.comPort!=="string"||!/^COM[1-9][0-9]{0,2}$|^\/dev\/tty(?:USB|ACM|S)[0-9]{1,3}$/i.test(c.comPort))
+    throw Error("invalid RS485 port");
+   if(![1200,2400,4800,9600,19200,38400,57600,115200].includes(c.baudrate))
+    throw Error("invalid RS485 baudrate");
+   if(!["N","E","O"].includes(c.parity)||![1,2].includes(c.stopbits))
+    throw Error("invalid RS485 parity / stopbits");
+  }
   if(!Number.isInteger(c.unitId)||c.unitId<1||c.unitId>247)throw Error("invalid slave unitId");
   if(!Number.isInteger(c.timeoutMs)||c.timeoutMs<200||c.timeoutMs>5000)throw Error("invalid timeout");
  }
  const names=new Set();
  for(const b of bindings){
-  if(!b||typeof b.signal!=="string"||!/^(ROOM_[a-zA-Z0-9_-]+\.State|DOOR_[a-zA-Z0-9_-]+\.(Closed|BlockRequested|GreenPermit)|SYSTEM\.FireNormal)$/.test(b.signal)||
+  if(!b||typeof b.signal!=="string"||!/^(ROOM_[a-zA-Z0-9_-]+\.State|DOOR_[a-zA-Z0-9_-]+\.(Closed|BlockRequested|GreenPermit)|SYSTEM\.FireNormal|PLC_[a-zA-Z0-9_-]+\.(DI[1-9][0-9]*|Q[1-9][0-9]*))$/.test(b.signal)||
    names.has(b.signal))throw Error("invalid or duplicate signal");
   names.add(b.signal);
   if(!ids.has(b.controllerId)||![1,2,3,4].includes(b.fc)||!Number.isInteger(b.address)||b.address<0||b.address>65535)
