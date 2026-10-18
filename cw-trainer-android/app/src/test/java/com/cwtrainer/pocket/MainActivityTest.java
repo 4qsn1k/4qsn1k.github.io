@@ -21,7 +21,7 @@ public class MainActivityTest {
         assertNotNull(activity);
         View root=activity.getWindow().getDecorView();
         assertNotNull(root);
-        TextView title=root.findViewById(android.R.id.content);
+        View title=root.findViewById(android.R.id.content);
         assertNotNull(title);
     }
 }
