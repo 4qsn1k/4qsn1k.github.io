@@ -1,0 +1,39 @@
+{
+  "project": "Airlock Generator",
+  "feature": "Interactive N1+N4 educational stand",
+  "date": "2026-10-18",
+  "branch": "codex/airlock-interactive-stand-20261018",
+  "artifacts": [
+    "airlock-generator/stand.html",
+    "airlock-generator/stand.css",
+    "airlock-generator/stand.js",
+    "airlock-generator/stand-core.js",
+    "airlock-generator/tests/stand.test.js"
+  ],
+  "integration": "Additive standalone HTML + link from index; no change to ST generator, native OWLE or real device programs",
+  "referenceEngine": [
+    "st-testbench.js",
+    "interzone-testbench.js",
+    "project-wiring.js"
+  ],
+  "test": {
+    "homeNode": "11/11 PASS",
+    "homeNpmCheck": "exit 0",
+    "homeFirefox": "full UI screenshot rendered on HOME-PC",
+    "githubActions": "success on prior branch commit"
+  },
+  "lighting": {
+    "channels": "one DO per red-green pair using SPDT",
+    "com": "fused lamp supply",
+    "nc": "red",
+    "no": "green",
+    "powerLoss": "both lamps off"
+  },
+  "physicalDeviceConnections": false,
+  "next": [
+    "Publish verified front-end on GitHub Pages",
+    "Evaluate import of user-built model into separate stand",
+    "Design supervised sensor faults, COM/NO/NC electrical interfaces and independent egress",
+    "Do not replace native Owen Logic validation with JS tests"
+  ]
+}
