@@ -52,10 +52,15 @@ public class MorseCourseTest {
         MorseCourse.Progress p=new MorseCourse.Progress();long t=1000000L;
         p.record(0,true,false,36,t);
         assertEquals(t+86400000L,p.dueAt[0]);
-        p.record(0,true,false,36,t);
-        assertEquals(t+3*86400000L,p.dueAt[0]);
-        p.record(0,true,false,36,t);
-        assertEquals(t+7*86400000L,p.dueAt[0]);
+        // Additional rehearsal on the same day must not extend the interval.
+        p.record(0,true,false,36,t+60000L);
+        assertEquals(t+86400000L,p.dueAt[0]);
+        long day1=t+86400000L+1L;
+        p.record(0,true,false,36,day1);
+        assertEquals(day1+3*86400000L,p.dueAt[0]);
+        long day4=day1+3*86400000L+1L;
+        p.record(0,true,false,36,day4);
+        assertEquals(day4+7*86400000L,p.dueAt[0]);
         MorseCourse.Progress restored=MorseCourse.Progress.parse(p.serialize(),36);
         assertEquals(p.dueAt[0],restored.dueAt[0]);
         assertEquals(p.attempts,restored.attempts);
