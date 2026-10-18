@@ -110,7 +110,7 @@ function renderDoorStrip(s){
 }
 function renderZone(id,s){
  const room=s.rooms[id];
- const root=document.createElement("article");root.className="zone";
+ const root=document.createElement("article");root.className="zone "+stateClass(room.state);
  const top=document.createElement("div");top.className="zone-top";
  const name=document.createElement("strong");name.textContent="N"+id;
  const tag=document.createElement("span");tag.className="state-tag "+stateClass(room.state);
@@ -203,7 +203,8 @@ function bind(){
  $("relayDoor").onchange=e=>{selectedDoor=e.target.value;render();};
  for(const [id,item] of Object.entries(lab.scenarios)){
   const btn=document.createElement("button");btn.type="button";btn.dataset.id=id;
-  btn.textContent=id;btn.title=item.title;btn.setAttribute("aria-label","Сценарий "+id+": "+item.title);
+  const short={A:"Продувка N1",B:"Занята N4",C:"Обе готовы",D:"Открыть 1–4",E:"Закрыть 1–4",F:"Пожар"};
+  btn.textContent=id+" · "+short[id];btn.title=item.title;btn.setAttribute("aria-label","Сценарий "+id+": "+item.title);
   btn.onclick=()=>{setPlayback(false);scenarioId=id;action(()=>lab.scenario(id));$("scenarioHint").textContent=item.title+". "+item.description;};
   $("scenarioButtons").append(btn);
  }
