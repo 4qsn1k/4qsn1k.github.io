@@ -11,11 +11,11 @@ public final class SrrExamEngine {
     public static final int MIN_THEORY_CORRECT=40;
     public static final long THEORY_LIMIT_MS=90L*60*1000;
     public static final long CW_SESSION_LIMIT_MS=15L*60*1000;
-    private static final String LETTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String LETTERS="АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЩЫЬ";
     private static final String NUMBERS="0123456789";
     private SrrExamEngine(){}
 
-    /** Exactly 250 audible signs arranged in 50 five-sign groups. */
+    /** Exactly 250 audible signs arranged in 50 five-sign groups using the 26-letter official Russian sample alphabet. */
     public static String randomRadiogram(Random rng) {
         return randomRadiogram(rng,RADIOGRAM_LENGTH);
     }
@@ -25,14 +25,14 @@ public final class SrrExamEngine {
         for(int i=0;i<count;i++){
             if(i!=0 && i%5==0)out.append(' ');
             // Mostly letters with an occasional digit; no memorized text or fixed pattern.
-            String bag=rng.nextInt(100)<7?NUMBERS:LETTERS;
+            String bag=rng.nextInt(100)<28?NUMBERS:LETTERS;
             out.append(bag.charAt(rng.nextInt(bag.length())));
         }
         return out.toString();
     }
     public static String normalize(String text) {
         if(text==null)return "";
-        return text.toUpperCase(java.util.Locale.ROOT).replaceAll("[^A-Z0-9]","");
+        return text.toUpperCase(java.util.Locale.ROOT).replace("Ё","Е").replaceAll("[^A-ZА-Я0-9]","");
     }
     /** Substitution, insertion and deletion each count as one. */
     public static int errors(String reference,String answer) {
