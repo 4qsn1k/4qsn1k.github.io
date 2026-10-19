@@ -70,6 +70,10 @@ public final class MorseTonePlayer {
         playGenerated(()->CwAudioSequence.render(message,characterWpm,effectiveWpm),
             "сообщение ("+characterWpm+"/"+effectiveWpm+" WPM)");
     }
+    public void playExamText(final String message,final int cpm) {
+        playGenerated(()->CwExamAudio.renderAtRate(message,cpm),
+          "экзаменационная радиограмма "+SrrExamEngine.normalize(message).length()+" знаков / "+cpm+" зн/мин");
+    }
     private void playGenerated(final PcmSupplier supplier,final String description) {
         stop();
         final int token=generation.get();
