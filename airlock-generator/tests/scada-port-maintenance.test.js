@@ -86,6 +86,31 @@ function fakeSerial(){
   assert.deepEqual(calls,["pause COM5","resume COM5"]);
   ok("no stale DI/Q after resume; new verified sample needed");
  }finally{await poller.close();}
+ // A transport or vendor DLL may deliver a response after abort. Resuming the
+ // port must NOT validate any reply from the previous ownership generation.
+ let unblock,oldStarts=0;
+ const raceReader=async ctrl=>{
+  if(ctrl.id==="PR1"&&oldStarts++===0)
+   return await new Promise(resolve=>{unblock=resolve});
+  return Object.fromEntries(cfg.bindings.filter(b=>b.controllerId===ctrl.id).map(b=>[b.signal,1]));
+ };
+ const raceRtu={pauseBus:async()=>({released:true}),resumeBus:()=>({paused:false}),
+  close:async()=>{},stats:()=>[]};
+ const race=createPoller(cfg,raceReader,{},raceRtu);
+ try{
+  race.tick();
+  for(let i=0;i<30&&!unblock;i++)await sleep(2);
+  assert.equal(typeof unblock,"function");
+  await race.pausePort("COM5");
+  race.resumePort("COM5");
+  unblock({"PLC_PR1.DI3":1});
+  await sleep(10);
+  assert.equal(race.get().controllers.PR1.online,false,"old worker reply must stay rejected after resume");
+  assert.deepEqual(race.get().controllers.PR1.raw,{});
+  await race.poll();
+  assert.equal(race.get().controllers.PR1.online,true);
+  ok("generation fence discards late response across rapid release/resume");
+ }finally{await race.close();}
  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),"airlock-maintenance-"));
  try{
   const config=path.join(tmp,"config.json");fs.writeFileSync(config,JSON.stringify(cfg));
@@ -119,5 +144,5 @@ function fakeSerial(){
    ok("localhost port control requires explicit token and same-origin; other methods remain read-only");
   }finally{await app.close();}
  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
- console.log("SCADA_PORT_MAINTENANCE_OFFLINE_PASS "+count+"/4");
+ console.log("SCADA_PORT_MAINTENANCE_OFFLINE_PASS "+count+"/6");
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1});
