@@ -48,6 +48,12 @@ public final class SrrExamMenuActivity extends Activity {
         learn.setOnClickListener(v->startTheory(false));
         Button theory=button("📝 Пробный экзамен по теории",GREEN);add(theory,6);
         theory.setOnClickListener(v->startTheory(true));
+        Button daily=button("Ежедневная тренировка русской Морзе",GREEN);add(daily,12);
+        daily.setOnClickListener(v->{
+            Intent intent=new Intent(this,DailyPracticeActivity.class);
+            intent.putExtra("russian",true);
+            startActivity(intent);
+        });
         Button shortCw=button("🎧 Тренировка непрерывного приёма",PANEL);add(shortCw,14);
         shortCw.setOnClickListener(v->startMorse(false));
         Button cw=button("🎯 Пробный экзамен по Морзе",GREEN);add(cw,6);
