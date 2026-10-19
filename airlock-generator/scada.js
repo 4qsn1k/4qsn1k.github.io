@@ -192,6 +192,10 @@
      "Порт освободится для UPROG/Owen Logic только после закрытия worker.\\n"+
      "Программа ПР и его выходы НЕ изменяются.";
    if(!window.confirm(warning))return;
+  }else{
+   if(!window.confirm("Возобновить опрос "+port+"?\\n\\n"+
+     "Сначала закройте UPROG, Owen Logic и другие программы, использующие порт.\\n"+
+     "До новых корректных ответов ПР все показания останутся НЕТ ДАННЫХ."))return;
   }
   portOperationPending.add(port);
   $("serialPortMessage").textContent=action==="release"?
