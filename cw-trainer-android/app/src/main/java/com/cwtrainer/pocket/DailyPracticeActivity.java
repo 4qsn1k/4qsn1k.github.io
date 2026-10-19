@@ -31,12 +31,12 @@ public final class DailyPracticeActivity extends Activity {
     private SharedPreferences prefs,daily;
     private MorseCourse.Progress progress;
     private List<MorseCourse.Symbol> alphabet;
-    private boolean russian,answered=false;
+    private boolean russian,answered=false,audioComplete=false;
     private int index,correct,errors,replays,replayed;
     private DailyTraining.Task task;
     private TextView title,summary,question,feedback,audioStatus;
     private EditText entry;
-    private Button listen,submit,skip,next,language;
+    private Button listen,submit,skip,next,language,audioMethod;
     private Runnable pending;
     private int generation=0;
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
@@ -71,6 +71,7 @@ public final class DailyPracticeActivity extends Activity {
         replays=daily.getInt("replays",0);
         audio=new MorseTonePlayer(this,status->{
             if(audioStatus!=null)audioStatus.setText("Аудио: "+status);
+            if(status.startsWith("Сигнал завершён"))audioComplete=true;
         });
         createUI();
         if(index<DailyTraining.TOTAL)nextTask();else done();
@@ -109,6 +110,7 @@ public final class DailyPracticeActivity extends Activity {
         listen.setOnClickListener(v->{
             if(answered||task==null)return;
             replayed++;
+            audioComplete=false;
             audio.playText(task.target,25,6);
         });
         entry=new EditText(this);
@@ -124,6 +126,14 @@ public final class DailyPracticeActivity extends Activity {
         next=button("Далее",PANEL);add(next,7);
         next.setOnClickListener(v->nextTask());
         audioStatus=text("",12,MUTED);add(audioStatus,11);
+        audioMethod=button("Резервный звук: WAV / AudioTrack",PANEL);add(audioMethod,5);
+        audioMethod.setOnClickListener(v->{
+            if(task==null||answered)return;
+            replayed++;
+            audioComplete=false;
+            audio.setUseStream(!audio.usesStream());
+            audio.playText(task.target,25,6);
+        });
         Button back=button("← Назад",PANEL);add(back,18);
         back.setOnClickListener(v->finish());
         add(text("Результат подсчитывается только с первого прослушивания. Повтор помогает учиться, но не повышает уровень. Сложные знаки появляются чаще.",13,MUTED),14);
@@ -149,7 +159,7 @@ public final class DailyPracticeActivity extends Activity {
     private void nextTask(){
         if(index>=DailyTraining.TOTAL){done();return;}
         cancel();task=DailyTraining.task(index,progress,alphabet,russian,random,System.currentTimeMillis());
-        answered=false;replayed=0;
+        answered=false;replayed=0;audioComplete=false;
         refresh();question.setText("?");question.setTextSize(63);
         feedback.setText(index<DailyTraining.SINGLE_COUNT?
             "Знакомый знак или новый знак текущего этапа":
@@ -164,6 +174,10 @@ public final class DailyPracticeActivity extends Activity {
         String typed=unknown?"":entry.getText().toString();
         if(!unknown && DailyTraining.normalized(typed).isEmpty()){
             feedback.setText("Напиши ответ или нажми «Не разобрал».");return;
+        }
+        if(!unknown && !audioComplete){
+            feedback.setText("Дождись окончания звукового сигнала. Если он не слышен, переключи режим звука.");
+            return;
         }
         answered=true;cancel();hideKeyboard();
         DailyTraining.Assessment result=DailyTraining.assess(task,typed);
