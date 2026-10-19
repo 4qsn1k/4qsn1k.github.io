@@ -123,3 +123,30 @@ After the simulator started, the new OWLE SHA256 still matched
 No editor Save/Save As or independent compiler diagnostic has been captured.
 `NEW_TEST_NATIVE_SIMULATOR_ENTERED_AND_RUNNING_OBSERVED`;
 `NEW_TEST_NATIVE_ACCEPTANCE_PASS=false`.
+
+## Save attempt on separate copy — NOT PASS (19 Oct, follow-up)
+
+The generated 5-node archive was copied into a **separate TEST file**,
+`Airlock_NATIVE14_MINIMAL_EDITOR_SAVE_TEST_20261019.owle`, plus an untouched
+pre-save backup. Both initially matched the generated SHA256
+`f11fb96128ed92b4e9b1cbad063b47037d87b556b3376889f107615e6384c1b3`.
+
+A new Owen Logic process opened that test copy. After verifying the exact
+target window/PID, an isolated Ctrl+S was sent. The hash **remained unchanged**.
+A later observation found the GUI showing an **empty document area** with
+the process title reduced to `Owen Logic`, instead of the test filename.
+The program remained responsive. A screenshot is saved only on HOME-PC:
+`owen-tests/native14_minimal_editor_copy_before_drag.png` (despite the
+screenshot's historical name, it records the empty editor state).
+The earlier generated file and its original TEST source remained unchanged.
+The exact reason for the editor's empty view has not been established.
+Do not infer that Ctrl+S alone caused it or that Owen Logic saved the document.
+
+**Status:** `NEW_TEST_EDITOR_SAVE_PASS=false`,
+`NEW_TEST_NATIVE_COMPILER_PASS=false`,
+`NEW_TEST_NATIVE_SIMULATOR_ENTRY_OBSERVED=true`,
+`NEW_TEST_FULL_ACCEPTANCE_PASS=false`.
+
+Next: isolate the editor lifecycle under a repeatable TEST copy, capture
+any vendor diagnostics or confirmation dialogs, and obtain a changed
+`Save As` artifact before claiming successful native serialization.
