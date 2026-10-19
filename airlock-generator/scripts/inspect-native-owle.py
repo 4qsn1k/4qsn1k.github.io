@@ -148,19 +148,19 @@ def verify_raw_zip_member_names(raw, archive, infos):
     pos = archive.start_dir
     for info in infos:
         require(isinstance(pos, int) and pos >= 0 and pos + 46 <= len(raw), "INVALID_ZIP_DIRECTORY")
-        require(raw[pos:pos + 4] == b"PK\\x01\\x02", "INVALID_ZIP_DIRECTORY")
+        require(raw[pos:pos + 4] == b"PK\x01\x02", "INVALID_ZIP_DIRECTORY")
         name_len, extra_len, comment_len = struct.unpack_from("<HHH", raw, pos + 28)
         end = pos + 46 + name_len + extra_len + comment_len
         require(name_len > 0 and end <= len(raw), "INVALID_ZIP_DIRECTORY")
         name = raw[pos + 46:pos + 46 + name_len]
         # Validate original bytes, not platform-normalized ZIPInfo.filename.
-        require(b"\\\\" not in name and b"\\x00" not in name
+        require(b"\\" not in name and b"\x00" not in name
                 and not name.startswith(b"/") and not re.match(br"^[A-Za-z]:", name)
                 and all(p not in (b"", b".", b"..") for p in name.split(b"/")),
                 "UNSAFE_ZIP_MEMBER")
         start = info.header_offset
         require(0 <= start and start + 30 <= len(raw)
-                and raw[start:start + 4] == b"PK\\x03\\x04", "INVALID_ZIP_LOCAL_HEADER")
+                and raw[start:start + 4] == b"PK\x03\x04", "INVALID_ZIP_LOCAL_HEADER")
         local_len, local_extra = struct.unpack_from("<HH", raw, start + 26)
         local_end = start + 30 + local_len + local_extra
         require(local_len > 0 and local_end <= len(raw), "INVALID_ZIP_LOCAL_HEADER")
