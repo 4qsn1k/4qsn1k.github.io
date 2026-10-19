@@ -113,15 +113,16 @@ public final class SrrTheoryActivity extends Activity {
         feedback=text("",16,MUTED);add(feedback,12);
         next=button("Следующий вопрос",GREEN);add(next,9);
         next.setOnClickListener(v->nextPractice());
-        sourcePdf=button("📄 Показать оригинал вопроса и рисунки",PANEL);
+        sourcePdf=button(exam?"📐 Схема к вопросу · без ключей ответов":
+              "📄 Показать оригинал вопроса и рисунки",PANEL);
         add(sourcePdf,7);
         sourcePdf.setOnClickListener(v->{
-            if(exam||current==null)return;
+            if(current==null || (exam&&!active))return;
             Intent intent=new Intent(this,SrrOriginalPdfActivity.class);
             intent.putExtra("questionId",current.id);
+            intent.putExtra("restrictAnswers",exam);
             startActivity(intent);
         });
-        sourcePdf.setVisibility(exam?android.view.View.GONE:android.view.View.VISIBLE);
         reset=button(exam?"Начать новый экзамен":"← Выход",PANEL);add(reset,16);
         reset.setOnClickListener(v->{
             if(exam)new android.app.AlertDialog.Builder(this)
