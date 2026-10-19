@@ -335,4 +335,31 @@ test("opening an outside exit inhibits only the controlled room, not the whole c
    assert.equal(s.rooms[key].state,10);
  }
 });
+test("versioned five-room FBD fixture exports nine doors across three logical PLCs",()=>{
+ const fixture=JSON.parse(fs.readFileSync(path.join(root,
+  "experimental/fixtures/fbd-five-rooms-chain.model.json"),"utf8"));
+ const plan=fbd.build(fixture,{timeoutMs:500});
+ assert.equal(plan.verification.plan,"FBD_PLAN_PASS");
+ assert.equal(plan.blocks.length,5);
+ assert.equal(plan.doors.length,9);
+ assert.equal(plan.placement.controllers.length,3);
+ assert.equal(plan.nodes.filter(n=>n.physicalReed).length,9);
+ assert.equal(plan.native.status,"NEEDS_NATIVE_GUI");
+ assert.equal(plan.verification.physical,"NOT_TESTED");
+ assert(plan.placement.network.signals.length>0,"remote interlocks require validated link routes");
+ const owners=Object.fromEntries(plan.doors.map(d=>[d.doorId,Array.from(d.roomIds).sort(cmp)]));
+ assert.deepEqual(owners,{AB:["A","B"],AX:["A"],BC:["B","C"],
+  BX:["B"],CD:["C","D"],CX:["C"],DE:["D","E"],DX:["D"],EX:["E"]});
+ for(const controller of plan.placement.controllers){
+  const hardware=[fixture.hardware.primary,...fixture.hardware.secondary][
+   Number(controller.id.replace("PLC",""))-1];
+  for(const [kind,slots] of [["DI",hardware.baseDi],["DO",hardware.baseDo]]){
+   const count=plan.placement.allocations[kind].filter(x=>x.controller===controller.id).length;
+   assert(count<=slots,kind+" logical resource budget exceeded on "+controller.id);
+  }
+ }
+ for(const door of plan.doors)
+  assert.equal(door.lockCommand,null,"never produce a physical lock command");
+ fbd.validate(plan);
+});
 console.log("MULTIDOOR_ADJACENCY_QA "+checked+"/"+checked+" PASS — JS_MODEL_ONLY; NATIVE_OWLE_NOT_VERIFIED");
