@@ -51,6 +51,18 @@ public class SrrActivitiesTest {
         assertFalse(((Button)field(a,"lengthControl")).isEnabled());
         assertEquals(View.GONE,((Button)field(a,"grade")).getVisibility());
     }
+    @Test public void examCanShowDiagramsButCannotOpenAnswerKeys()throws Exception {
+        assertEquals(103,SrrOriginalPdfActivity.clampPage(104,106,true));
+        assertEquals(103,SrrOriginalPdfActivity.clampPage(105,106,true));
+        assertEquals(105,SrrOriginalPdfActivity.clampPage(105,106,false));
+        assertEquals(1,SrrOriginalPdfActivity.clampPage(1,106,true));
+        Intent i=new Intent(RuntimeEnvironment.getApplication(),SrrTheoryActivity.class);
+        i.putExtra("exam",true);
+        RuntimeEnvironment.getApplication().getSharedPreferences("srr_theory_session",0)
+            .edit().clear().commit();
+        SrrTheoryActivity activity=Robolectric.buildActivity(SrrTheoryActivity.class,i).setup().get();
+        assertEquals(View.VISIBLE,((Button)field(activity,"sourcePdf")).getVisibility());
+    }
     @Test public void practiceControlsAllowProgression()throws Exception{
         Intent intent=new Intent(RuntimeEnvironment.getApplication(),SrrMorseActivity.class);
         intent.putExtra("exam",false);
