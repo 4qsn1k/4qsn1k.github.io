@@ -112,7 +112,14 @@
     "roomN1StateBefore": 99,
     "roomN1StateAfter": 90,
     "roomN1FaultAfter": 1,
-    "savedUsingOwenLogic": true
+    "savedUsingOwenLogic": true,
+    "reopenedSavedClone": true,
+    "reopenedSavedCloneSimulationRan": true,
+    "reopenedCloneInputI1After": 1,
+    "reopenedCloneRoomN1StateAfter": 90,
+    "reopenedCloneFaultAfter": 1,
+    "reopenedCloneSha256": "36573D019A813C0595645A4C7318170C2B15734CE611BBD16BDB5D39C436A160",
+    "reopenedFileNotModifiedDuringSimulation": true
   },
   "disclaimers": {
     "rawNativeArchivePublished": false,
