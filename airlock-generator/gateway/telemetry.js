@@ -78,10 +78,10 @@ function frameFor(profile,readings,errors,time=Date.now()){
   ageMs:0,validControllers:valid,totalControllers:profile.controllers.length,
   info:"SCADA displays read-only Modbus values. No PLC writes."};
 }
-function createPoller(profile,modbusRead=readController,clock={}){
+function createPoller(profile,modbusRead=readController,clock={},serialTransport=createTransport()){
  const now=clock.now||(()=>Date.now()),elapsed=clock.monotonic||clock.now||(()=>performance.now());
  const setTimer=clock.setTimer||setTimeout,clearTimer=clock.clearTimer||clearTimeout;
- const rtu=createTransport();let stopped=false;
+ const rtu=serialTransport;let stopped=false;
  const serialPorts=new Map();
  for(const c of profile.controllers)if(c.protocol==="modbus-rtu"){
   const key=c.comPort.toUpperCase();
