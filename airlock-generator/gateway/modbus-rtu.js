@@ -4,7 +4,8 @@ const path=require("node:path"),{spawn}=require("node:child_process");
 const {fault}=require("./health-errors");
 const worker=path.join(__dirname,"modbus-rtu-worker.py");
 function createTransport({spawnWorker=spawn,maxQueue=16,queueTimeoutMs=15000,idleMs=10000}={}){
- const buses=new Map();let closed=false;
+ const buses=new Map(),pausedPorts=new Set(),releases=new Map();let closed=false;
+ const portKey=port=>/^COM/i.test(port)?port.toUpperCase():port;
  function terminate(bus,error){
   const child=bus.child;if(!child)return;
   bus.failure=bus.failure||error;
@@ -73,7 +74,7 @@ function createTransport({spawnWorker=spawn,maxQueue=16,queueTimeoutMs=15000,idl
   if(!bus.failure)drain(bus);
  }
  function drain(bus){
-  if(bus.active||bus.failure)return;
+  if(bus.active||bus.failure||pausedPorts.has(bus.key))return;
   const item=bus.queue.shift();
   if(!item){if(!bus.child)buses.delete(bus.key);return;}
   clearTimeout(item.queueTimer);
@@ -97,7 +98,8 @@ function createTransport({spawnWorker=spawn,maxQueue=16,queueTimeoutMs=15000,idl
   if(!Number.isInteger(p.address)||p.address<0||p.address>65535||!Number.isInteger(p.count)||p.count<1||p.count>(p.functionCode<=2?128:32)||p.address+p.count>65536)return Promise.reject(Error("Invalid Modbus address/count"));
   const req=Object.fromEntries(["comPort","baudrate","parity","stopbits","unitId","functionCode","address","count","timeoutMs"].map(k=>[k,p[k]]));
   // Windows COM is case insensitive; Linux device paths are case sensitive.
-  const key=/^COM/i.test(p.comPort)?p.comPort.toUpperCase():p.comPort;
+  const key=portKey(p.comPort);
+  if(pausedPorts.has(key))return Promise.reject(fault("PORT_RELEASED"));
   req.comPort=key;
   if(options.signal?.aborted)return Promise.reject(fault("POLL_DEADLINE"));
   const mode=p.rtuMode||"oneshot",config=JSON.stringify([p.baudrate,p.parity,p.stopbits,mode,options.python||"",options.env?.PYTHONPATH||""]);
@@ -121,6 +123,50 @@ function createTransport({spawnWorker=spawn,maxQueue=16,queueTimeoutMs=15000,idl
    bus.queue.push(item);drain(bus);
   });
  }
+ async function pauseBus(port){
+  // Claim this entire physical bus synchronously, before any awaits or new queries.
+  const key=portKey(port);
+  if(releases.has(key))return releases.get(key);
+  pausedPorts.add(key);
+  const operation=(async()=>{
+   const bus=buses.get(key);
+   if(!bus)return {released:true,port:key};
+   for(const item of bus.queue.splice(0)){
+    clearTimeout(item.queueTimer);
+    item.options.signal?.removeEventListener("abort",item.abort);
+    item.reject(fault("PORT_RELEASED"));
+   }
+   if(!bus.child){
+    if(bus.active)finish(bus,fault("PORT_RELEASED"));
+    buses.delete(key);return {released:true,port:key};
+   }
+   const child=bus.child;
+   await new Promise((resolve,reject)=>{
+    const done=()=>{clearTimeout(watchdog);resolve();};
+    const watchdog=setTimeout(()=>{
+     child.removeListener("close",done);
+     reject(fault("PORT_RELEASE_TIMEOUT"));
+    },5000);
+    child.once("close",done);
+    terminate(bus,fault("PORT_RELEASED"));
+   });
+   // 'close' has fired: serial worker OS process has exited.
+   if(bus.child)throw fault("PORT_RELEASE_TIMEOUT");
+   buses.delete(key);
+   return {released:true,port:key};
+  })();
+  releases.set(key,operation);
+  try{return await operation;}
+  finally{releases.delete(key);}
+ }
+ function resumeBus(port){
+  const key=portKey(port);
+  if(closed)throw fault("STOPPED");
+  if(releases.has(key)||buses.get(key)?.child)throw fault("PORT_RELEASE_PENDING");
+  pausedPorts.delete(key);
+  return {paused:false,port:key};
+ }
+ function isPaused(port){return pausedPorts.has(portKey(port));}
  async function close(){
   closed=true;
   await Promise.all([...buses.values()].map(bus=>{
@@ -129,7 +175,7 @@ function createTransport({spawnWorker=spawn,maxQueue=16,queueTimeoutMs=15000,idl
    return new Promise(resolve=>{bus.child.once("close",resolve);terminate(bus,fault("STOPPED"));});
   }));
  }
- return {query,close,stats:()=>[...buses.values()].map(b=>({active:!!b.active,queued:b.queue.length,worker:!!b.child}))};
+ return {query,pauseBus,resumeBus,isPaused,close,stats:()=>[...buses.values()].map(b=>({active:!!b.active,queued:b.queue.length,worker:!!b.child}))};
 }
 const shared=createTransport();
 module.exports={query:shared.query,createTransport};
