@@ -858,5 +858,38 @@
       "diagnosticType4Count": 4
     },
     "electricalSafetyAndEgressHardwareAccepted": false
+  },
+  "currentNativeOwen20261019": {
+    "issue": 14,
+    "pr": 18,
+    "source": "HOME-PC TEST copy only; no physical PLC",
+    "originalSha256": "0E3F85BFC198AA298EBAC5068E76B5C0408CB4590FAEE9530E74559A1A167A00",
+    "remappedCloneSha256": "35A3E289116C7924B398999AD68183CEA90927FFA59131A031DB49DD77BEB7A8",
+    "vendorGuiSavedCloneSha256": "36573D019A813C0595645A4C7318170C2B15734CE611BBD16BDB5D39C436A160",
+    "guiOpened": true,
+    "simulatorEnteredAndRan": true,
+    "inputI1TriggeredState99To90": true,
+    "vendorGuiSaveDiffVerified": true,
+    "identityCountsPreserved": {
+      "elements": 25,
+      "ports": 64,
+      "connectors": 16,
+      "stDefinitions": 3
+    },
+    "inputI1TranslationY": 2.5,
+    "reroutedConnectors": 2,
+    "sanitizedFixture": "experimental/fixtures/owle-qa012-editor-geometry-delta.json",
+    "unresolvedNativeType4": true,
+    "generalFbdGraphToOwleImplemented": false,
+    "generalNativeCompileVerified": false,
+    "actualPLCProgramChanged": false,
+    "vendorSavedCloneReopenedInSeparateGui": true,
+    "nativeSimulationAfterVendorSavePass": true,
+    "reopenedCloneOStateBefore": 99,
+    "reopenedCloneOStateAfter": 90,
+    "reopenedCloneOFaultAfter": 1,
+    "reopenedCloneSha256": "36573D019A813C0595645A4C7318170C2B15734CE611BBD16BDB5D39C436A160",
+    "generalizedOwleWriterStillBlocked": true,
+    "newGeometryEvidenceIntegration": "POST_PR18_FOLLOWUP_BRANCH"
   }
 }
