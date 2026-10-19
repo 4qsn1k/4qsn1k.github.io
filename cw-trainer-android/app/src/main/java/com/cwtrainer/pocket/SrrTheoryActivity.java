@@ -118,6 +118,7 @@ public final class SrrTheoryActivity extends Activity {
         timer.setText("Практика · варианты из официального перечня");
         prompt.setText(current.prompt);
         for(int i=0;i<4;i++){
+            buttons[i].setVisibility(android.view.View.VISIBLE);
             buttons[i].setText("ABCD".charAt(i)+") "+current.choices[i]);
             buttons[i].setEnabled(true);
             buttons[i].setBackgroundTintList(ColorStateList.valueOf(PANEL));
