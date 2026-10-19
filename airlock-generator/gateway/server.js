@@ -45,8 +45,8 @@ function start({configPath,host="127.0.0.1",port=8787,logger=console,pollerFacto
    const status=poller.portStatus?.().find(c=>c.port===match[1]);
    if(!status){res.writeHead(503);res.end("Port control unavailable");return;}
    const action=match[2],port=match[1];
-   const work=action==="release"?poller.pausePort(port):poller.resumePort(port);
-   Promise.resolve(work).then(result=>{
+   const work=Promise.resolve().then(()=>action==="release"?poller.pausePort(port):poller.resumePort(port));
+   work.then(result=>{
     if(res.writableEnded)return;
     journal.observe(poller.get());
     res.writeHead(200,{"Content-Type":"application/json; charset=utf-8"});
