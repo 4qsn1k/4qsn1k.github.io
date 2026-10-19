@@ -42,8 +42,13 @@ public final class AdaptiveReceptionPlan {
         return days.size();
     }
     public static Step recommended(List<TrainingOutcomeHistory.Record> records){
-        for(Step step:STEPS)if(successfulDifferentDays(records,step)<2)return step;
-        return STEPS[STEPS.length-1];
+        // Proof at a HARDER level supersedes earlier easier stages.
+        // A user who can already copy 250 signs must not be sent back to 25/30
+        // merely because the earlier stages were not logged by older APKs.
+        for(int i=STEPS.length-1;i>=0;i--)
+            if(successfulDifferentDays(records,STEPS[i])>=2)
+                return STEPS[Math.min(i+1,STEPS.length-1)];
+        return STEPS[0];
     }
     public static String explanation(List<TrainingOutcomeHistory.Record> records){
         Step step=recommended(records);
