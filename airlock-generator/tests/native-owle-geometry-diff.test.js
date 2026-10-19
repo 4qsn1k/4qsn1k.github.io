@@ -32,6 +32,13 @@ assert.equal(data.guiEvidence.roomN1StateBefore,99);
 assert.equal(data.guiEvidence.roomN1StateAfter,90);
 assert.equal(data.guiEvidence.roomN1FaultAfter,1);
 assert.equal(data.guiEvidence.savedUsingOwenLogic,true);
+assert.equal(data.guiEvidence.reopenedSavedClone,true);
+assert.equal(data.guiEvidence.reopenedSavedCloneSimulationRan,true);
+assert.equal(data.guiEvidence.reopenedCloneInputI1After,1);
+assert.equal(data.guiEvidence.reopenedCloneRoomN1StateAfter,90);
+assert.equal(data.guiEvidence.reopenedCloneFaultAfter,1);
+assert.equal(data.guiEvidence.reopenedCloneSha256,data.afterSha256);
+assert.equal(data.guiEvidence.reopenedFileNotModifiedDuringSimulation,true);
 assert.deepEqual(data.disclaimers,{
  rawNativeArchivePublished:false,sourceStPublished:false,
  arbitraryNativeSerializationConfirmed:false,compilerDiagnosticsIndependentlyCaptured:false,
