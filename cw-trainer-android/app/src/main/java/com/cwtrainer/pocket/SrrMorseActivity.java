@@ -121,7 +121,7 @@ public final class SrrMorseActivity extends Activity {
         transcribed=new EditText(this);
         transcribed.setTextColor(WHITE);transcribed.setHintTextColor(MUTED);
         transcribed.setTextSize(20);transcribed.setMinLines(4);
-        transcribed.setHint("Записывай буквы при приёме либо перенеси запись с бумаги после сигнала.");
+        transcribed.setHint("Включи РУССКУЮ раскладку. Записывай буквы и цифры во время приёма либо перенеси с бумаги после сигнала.");
         transcribed.setInputType(android.text.InputType.TYPE_CLASS_TEXT|
             android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS|
             android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE);
