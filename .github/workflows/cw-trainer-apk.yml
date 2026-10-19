@@ -35,18 +35,18 @@ jobs:
       - name: Save APK
         run: |
           mkdir -p cw-trainer-android/dist
-          cp cw-trainer-android/app/build/outputs/apk/debug/app-debug.apk cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.0-debug.apk
-          sha256sum cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.0-debug.apk
+          cp cw-trainer-android/app/build/outputs/apk/debug/app-debug.apk cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.1-debug.apk
+          sha256sum cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.1-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: CW-Trainer-Pocket-v0.4.0-APK
-          path: cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.0-debug.apk
+          name: CW-Trainer-Pocket-v0.4.1-APK
+          path: cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.1-debug.apk
       - name: Publish directly downloadable APK to build branch
         continue-on-error: true
         run: |
           git config user.name github-actions
           git config user.email github-actions[bot]@users.noreply.github.com
-          git add cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.0-debug.apk
+          git add cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.1-debug.apk
           git commit -m "Build Android debug APK" || exit 0
           git fetch origin "$GITHUB_REF_NAME"
           git rebase "origin/$GITHUB_REF_NAME"
