@@ -56,6 +56,15 @@ public final class SrrExamMenuActivity extends Activity {
         });
         Button shortCw=button("🎧 Тренировка непрерывного приёма",PANEL);add(shortCw,14);
         shortCw.setOnClickListener(v->startMorse(false));
+        Button recommended=button("📈 Следующая ступень по результатам",PANEL);add(recommended,6);
+        recommended.setOnClickListener(v->{
+            SharedPreferences history=getSharedPreferences("srr_exam_results",Context.MODE_PRIVATE);
+            AdaptiveReceptionPlan.Step step=AdaptiveReceptionPlan.recommended(
+                TrainingOutcomeHistory.parse(history.getString("completed_history_v1","")));
+            Intent i=new Intent(this,SrrMorseActivity.class);
+            i.putExtra("exam",false);i.putExtra("training_signs",step.signs);
+            i.putExtra("training_cpm",step.cpm);startActivity(i);
+        });
         Button cw=button("🎯 Пробный экзамен по Морзе",GREEN);add(cw,6);
         cw.setOnClickListener(v->startMorse(true));
         details=label("",14,MUTED);add(details,18);
@@ -75,8 +84,21 @@ public final class SrrExamMenuActivity extends Activity {
         super.onResume();
         if(details==null)return;
         SharedPreferences p=getSharedPreferences("srr_exam_results",Context.MODE_PRIVATE);
-        details.setText("ТВОЙ ПРОГРЕСС\nТеория: "+p.getInt("theory_correct",0)+"/45"+
-          "\nМорзе: "+(p.contains("morse_errors")?p.getInt("morse_errors",250)+" ошибок":"экзамен ещё не проходил")+
-          "\nТренировки теории: "+p.getInt("practice_attempts",0)+" вопросов");
+        java.util.List<TrainingOutcomeHistory.Record> trials=TrainingOutcomeHistory.parse(
+            p.getString("completed_history_v1",""));
+        int cwDays=TrainingOutcomeHistory.distinctPassDays(trials,TrainingOutcomeHistory.Part.MORSE);
+        int theoryDays=TrainingOutcomeHistory.distinctPassDays(trials,TrainingOutcomeHistory.Part.THEORY);
+        details.setText("ОБЪЕКТИВНЫЙ ПРОГРЕСС\n"+
+          AdaptiveReceptionPlan.explanation(trials)+"\n\n"+
+          "Полные зачёты CW: "+
+            TrainingOutcomeHistory.strictPasses(trials,TrainingOutcomeHistory.Part.MORSE)+
+            " (дней: "+cwDays+")\n"+
+          "Зачёты теории: "+
+            TrainingOutcomeHistory.strictPasses(trials,TrainingOutcomeHistory.Part.THEORY)+
+            " (дней: "+theoryDays+")\n"+
+          "Условная готовность по серии проверок: "+
+            (TrainingOutcomeHistory.sustainedReadiness(trials)?"ДА":"пока не подтверждена")+
+          "\n\nПоследние проверки:\n"+TrainingOutcomeHistory.recentSummary(trials,5)+
+          "\n\nЭто учебная оценка, а не решение квалификационной комиссии.");
     }
 }
