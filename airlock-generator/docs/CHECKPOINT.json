@@ -808,7 +808,14 @@
     "unresolvedNativeType4": true,
     "generalFbdGraphToOwleImplemented": false,
     "generalNativeCompileVerified": false,
-    "actualPLCProgramChanged": false
+    "actualPLCProgramChanged": false,
+    "vendorSavedCloneReopenedInSeparateGui": true,
+    "nativeSimulationAfterVendorSavePass": true,
+    "reopenedCloneOStateBefore": 99,
+    "reopenedCloneOStateAfter": 90,
+    "reopenedCloneOFaultAfter": 1,
+    "reopenedCloneSha256": "36573D019A813C0595645A4C7318170C2B15734CE611BBD16BDB5D39C436A160",
+    "generalizedOwleWriterStillBlocked": true
   },
   "currentCodeIntegration20261019": {
     "pr13FbdGraph": "MERGED_MAIN",
