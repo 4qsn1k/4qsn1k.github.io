@@ -127,6 +127,9 @@ public final class MainActivity extends Activity {
         Button fullCourse=button("📚  ПОЛНЫЙ КУРС · 16 ЗАНЯТИЙ",GREEN);
         add(root,fullCourse,7);
         fullCourse.setOnClickListener(v->startActivity(new Intent(this,FullCourseActivity.class)));
+        Button dailyWorkout=button("ЕЖЕДНЕВНАЯ ТРЕНИРОВКА",GREEN);
+        add(root,dailyWorkout,6);
+        dailyWorkout.setOnClickListener(v->startActivity(new Intent(this,DailyPracticeActivity.class)));
         Button firstCategory=button("📻  ПОДГОТОВКА · 1-Я КАТЕГОРИЯ РФ",GREEN);
         add(root,firstCategory,7);
         firstCategory.setOnClickListener(v->startActivity(new Intent(this,SrrExamMenuActivity.class)));
