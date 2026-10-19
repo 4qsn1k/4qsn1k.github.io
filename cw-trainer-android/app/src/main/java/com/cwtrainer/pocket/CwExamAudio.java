@@ -17,8 +17,9 @@ public final class CwExamAudio {
             WAVE[i]=(short)Math.round(Math.sin(2*Math.PI*13*i/882.0)*19000);
     }
     public static int totalUnits(String message) {
-        if(SrrExamEngine.normalize(message).length()!=250)
-            throw new IllegalArgumentException("Exam requires exactly 250 signs");
+        int count=SrrExamEngine.normalize(message).length();
+        if(count<5||count>250||count%5!=0)
+            throw new IllegalArgumentException("Must have 5..250 signs in groups of five");
         List<String> tokens=CwCoursePlan.tokenize(message);
         int units=0;boolean first=true,wordGap=false;
         for(String token:tokens){
@@ -36,20 +37,32 @@ public final class CwExamAudio {
         return units;
     }
     public static int samplesPerDot(String message){
+        return samplesPerDot(message,60);
+    }
+    public static int samplesPerDot(String message,int cpm){
+        if(cpm<30||cpm>80)throw new IllegalArgumentException("Rate 30..80 cpm");
         int units=totalUnits(message);
-        int available=SAMPLE_RATE*DURATION_SECONDS-LEAD_SAMPLES-FINAL_SAMPLES;
+        int available=(int)(SAMPLE_RATE*durationMillis(message,cpm)/1000)-LEAD_SAMPLES-FINAL_SAMPLES;
         return available/units;
     }
     public static long durationMillis(String message) {
-        // The written PCM contains exactly this number of milliseconds.
-        totalUnits(message);
-        return DURATION_SECONDS*1000L;
+        return durationMillis(message,60);
     }
-    /** 16-bit signed PCM LE at 44.1kHz. Never inserts a pause button or audio repeats. */
+    public static long durationMillis(String message,int cpm) {
+        if(cpm<30||cpm>80)throw new IllegalArgumentException("Rate 30..80 cpm");
+        totalUnits(message);
+        return Math.round((double)SrrExamEngine.normalize(message).length()*60000.0/cpm);
+    }
+    /** 16-bit signed PCM LE, exact output length, no pause and no replay. */
     public static byte[] render(String radiogram) {
+        if(SrrExamEngine.normalize(radiogram).length()!=250)
+            throw new IllegalArgumentException("Exam requires exactly 250 signs");
+        return renderAtRate(radiogram,60);
+    }
+    public static byte[] renderAtRate(String radiogram,int cpm) {
         String text=radiogram.toUpperCase(java.util.Locale.ROOT);
-        int dot=samplesPerDot(text);
-        final int targetSamples=SAMPLE_RATE*DURATION_SECONDS;
+        int dot=samplesPerDot(text,cpm);
+        final int targetSamples=(int)(SAMPLE_RATE*durationMillis(text,cpm)/1000);
         ByteArrayOutputStream out=new ByteArrayOutputStream(targetSamples*2);
         append(out,LEAD_SAMPLES,false);
         List<String> tokens=CwCoursePlan.tokenize(text);
