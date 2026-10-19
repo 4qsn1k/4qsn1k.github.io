@@ -54,8 +54,15 @@ class EnvelopeTests(unittest.TestCase):
 
     def test_unsafe_paths_missing_members_and_symlinks(self):
         for name in ("../escape", "/absolute", "a\\b", "a/./b", "a//b"):
+            data = archive([("Project", "{}"), ("StFunctionBlocks", "[]"), (name, "{}")])
+            # Python's ZipInfo normalizes backslashes to slashes on Windows
+            # while building a fixture. Patch the raw local+central header
+            # filenames, preserving their length, to test *actual* unsafe ZIP bytes.
+            if name == "a\\b" and b"a\\b" not in data:
+                assert data.count(b"a/b") == 2, "unexpected synthetic ZIP member layout"
+                data = data.replace(b"a/b", b"a\\b")
             with self.assertRaisesRegex(ValueError, "UNSAFE_ZIP_MEMBER"):
-                self.inspect(archive([("Project", "{}"), ("StFunctionBlocks", "[]"), (name, "{}")]))
+                self.inspect(data)
         with self.assertRaisesRegex(ValueError, "MISSING_KNOWN_ZIP_MEMBERS"):
             self.inspect(archive([("Project", "{}")]))
         link = zipfile.ZipInfo("linked")
