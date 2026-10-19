@@ -12,7 +12,7 @@ public class SrrExamEngineTest {
         assertEquals(50,a.split(" ").length);
         for(String group:a.split(" ")) {
             assertEquals(5,group.length());
-            assertTrue(group.matches("[A-Z0-9]{5}"));
+            assertTrue(group.matches("[А-Я0-9]{5}"));
         }
         assertEquals(25,SrrExamEngine.normalize(SrrExamEngine.randomRadiogram(new Random(2),25)).length());
     }
@@ -20,6 +20,10 @@ public class SrrExamEngineTest {
         String source=SrrExamEngine.randomRadiogram(new Random(3));
         String plain=SrrExamEngine.normalize(source);
         assertEquals(0,SrrExamEngine.errors(source,plain));
+        assertTrue("Exam uses Cyrillic",plain.matches("[А-Я0-9]{250}"));
+        assertEquals(".--",CwCoursePlan.code("В"));
+        assertEquals("--.-",CwCoursePlan.code("Щ"));
+        assertEquals("-..-",CwCoursePlan.code("Ь"));
         assertEquals(1,SrrExamEngine.errors(source,plain.substring(1)));
         assertEquals(1,SrrExamEngine.errors(source,"A"+plain));
         String corrupt=plain.substring(0,10)+(plain.charAt(10)=='X'?"Y":"X")+plain.substring(11);
