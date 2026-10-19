@@ -886,5 +886,27 @@
     "fullNativeOwleGeneratorPass": false,
     "physicalSafetyPass": false,
     "next": "Offline Issue #14 native Owen Logic writer until explicit permission to open COM5"
+  },
+  "nativeMinimalAssembly20261019": {
+    "issue": 14,
+    "scope": "NEW_FIVE_ELEMENT_TEST_SUBGRAPH_FROM_AUTHENTIC_GUI_SAVED_WRAPPERS",
+    "sourceSha256": "0e3f85bfc198aa298ebac5068e76b5c0408cb4590faee9530e74559a1a167a00",
+    "outputSha256": "f11fb96128ed92b4e9b1cbad063b47037d87b556b3376889f107615e6384c1b3",
+    "elements": 5,
+    "ports": 44,
+    "connectors": 5,
+    "definitions": 3,
+    "freshNonzeroUuids": 116,
+    "nativeInspectorStatus": "ZIP_JSON_ENVELOPE_INSPECTED_ONLY",
+    "owenGuiWindowTitleMatchesNewFile": true,
+    "visualDiagramAcceptance": false,
+    "nativeEditorSavePassed": false,
+    "nativeCompilerPassed": false,
+    "nativeSimulatorPassed": false,
+    "arbitraryNativeWriterCompleted": false,
+    "fullOfflineCheckOnHomePcExit": 0,
+    "unitTests": "10/10",
+    "portCOM5Touched": false,
+    "physicalSafetyPassed": false
   }
 }
