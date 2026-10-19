@@ -13,6 +13,7 @@ import stat
 import uuid
 import re
 import zipfile
+import struct
 
 LIMIT = 16 * 1024 * 1024
 MEMBERS = {"Project", "StFunctionBlocks"}
@@ -138,6 +139,36 @@ def inspect_document(document, fixture):
             "ports": len(ports), "unresolvedSTInstances": unresolved_instances}
 
 
+def verify_raw_zip_member_names(raw, archive, infos):
+    """Validate local and central member-name bytes before zipfile normalizes \\ on Windows.
+
+    This does not extract anything. In particular, ZIPInfo.filename is insufficient
+    on Windows because stdlib normalizes a raw backslash into a forward slash.
+    """
+    pos = archive.start_dir
+    for info in infos:
+        require(isinstance(pos, int) and pos >= 0 and pos + 46 <= len(raw), "INVALID_ZIP_DIRECTORY")
+        require(raw[pos:pos + 4] == b"PK\\x01\\x02", "INVALID_ZIP_DIRECTORY")
+        name_len, extra_len, comment_len = struct.unpack_from("<HHH", raw, pos + 28)
+        end = pos + 46 + name_len + extra_len + comment_len
+        require(name_len > 0 and end <= len(raw), "INVALID_ZIP_DIRECTORY")
+        name = raw[pos + 46:pos + 46 + name_len]
+        # Validate original bytes, not platform-normalized ZIPInfo.filename.
+        require(b"\\\\" not in name and b"\\x00" not in name
+                and not name.startswith(b"/") and not re.match(br"^[A-Za-z]:", name)
+                and all(p not in (b"", b".", b"..") for p in name.split(b"/")),
+                "UNSAFE_ZIP_MEMBER")
+        start = info.header_offset
+        require(0 <= start and start + 30 <= len(raw)
+                and raw[start:start + 4] == b"PK\\x03\\x04", "INVALID_ZIP_LOCAL_HEADER")
+        local_len, local_extra = struct.unpack_from("<HH", raw, start + 26)
+        local_end = start + 30 + local_len + local_extra
+        require(local_len > 0 and local_end <= len(raw), "INVALID_ZIP_LOCAL_HEADER")
+        local_name = raw[start + 30:start + 30 + local_len]
+        require(name == local_name, "ZIP_MEMBER_NAME_MISMATCH")
+        pos = end
+
+
 def inspect_archive(path):
     require(Path(path).stat().st_size <= LIMIT, "ZIP_SIZE_LIMIT")
     raw = Path(path).read_bytes()
@@ -147,6 +178,7 @@ def inspect_archive(path):
     documents = []
     with zipfile.ZipFile(path) as archive:
         infos = archive.infolist()
+        verify_raw_zip_member_names(raw, archive, infos)
         require(0 < len(infos) <= 128, "ZIP_MEMBER_LIMIT")
         names = [i.filename for i in infos]
         require(len(names) == len(set(n.casefold() for n in names)), "DUPLICATE_ZIP_MEMBER")
