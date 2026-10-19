@@ -280,7 +280,9 @@ public final class SrrTheoryActivity extends Activity {
         String history=results.getString("completed_history_v1","");
         history=TrainingOutcomeHistory.append(history,
             new TrainingOutcomeHistory.Record(TrainingOutcomeHistory.Part.THEORY,
-                System.currentTimeMillis(),correct,45,0,Math.max(1,elapsed)));
+                System.currentTimeMillis(),correct,45,0,
+                timedOut?Math.max(SrrExamEngine.THEORY_LIMIT_MS+1,elapsed):
+                         Math.max(1,elapsed)));
         results.edit().putString("completed_history_v1",history).apply();
         heading.setText(pass?"✓ ТЕОРИЯ: ПРОЙДЕНА":"ТЕОРИЯ: НЕ ПРОЙДЕНА");
         prompt.setText("Правильно: "+correct+"/45\nОшибок: "+(45-correct)+
