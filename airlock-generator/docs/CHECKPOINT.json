@@ -756,5 +756,33 @@
       "conclusion": "success",
       "jobs": "all 3 success; final metadata/order-invariance follow-up validated by local full check; its CI follows the push"
     }
+  },
+  "nativeOwenIssue14Home20261019": {
+    "status": "RICH_NATIVE_METADATA_AND_UUID_TEST_CLONE_STRUCTURE_PASS_NATIVE_GUI_NOT_YET_RUN",
+    "branch": "codex/airlock-14-native-schema",
+    "pr": 18,
+    "originalTestSha256": "0e3f85bfc198aa298ebac5068e76b5c0408cb4590faee9530e74559a1a167a00",
+    "richerSanitizedFixture": "experimental/fixtures/owle-qa012-sanitized-rich-identity-metadata.json",
+    "verifiedEvidence": {
+      "nativeElements": 25,
+      "connectors": 16,
+      "completeWrapperShapes": 5,
+      "virtualVariables": 6,
+      "stDefinitions": 3,
+      "consistentGuidAliases": 131,
+      "anchoredPorts": 44,
+      "criticalSharedDoorConnections": 5
+    },
+    "testOnlyCloneHomePc": "C:\\Users\\Forest\\Documents\\AirlockGeneratorBackup\\owen-tests\\Airlock_NATIVE_14_UUID_REMAP_TEST_20261019.owle",
+    "testOnlyCloneSha256": "35a3e289116c7924b398999ad68183cea90927ffa59131a031db49dd77beb7a8",
+    "testOnlyCloneRemappedUuidCount": 187,
+    "cloneStructuralAssertions": "25 elements/16 connectors/3 ST definitions/2 FB instances; all edges and definition references consistent",
+    "nativeGuiPass": false,
+    "physicalPass": false,
+    "inspectorFinding": "Original GUI saved test archive has 4 output ports with FBD DataType code 4; read-only inspector currently rejects as INVALID_NATIVE_PORT_TYPE; semantics not independently verified",
+    "windowsZipHardening": "Raw ZIP central/local filename bytes validated on Windows; full npm run check on Z4559 PASS at 80890a263abc455bf9d71ae5784ce8e2135062b5",
+    "externalGuiLaunch": "not performed: third-instance launch blocked by remote execution permissions; two original QA test instances untouched",
+    "next": "In separate Owen Logic 3.3.378 test session: open NEW cloned OWLE, Save As distinct file, capture compiler diagnostics and native simulator; no actual PLC",
+    "sourceChangesToPhysicalControllers": false
   }
 }
