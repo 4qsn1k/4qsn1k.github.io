@@ -4,6 +4,7 @@
     <activity android:name=".SrrExamMenuActivity" android:exported="false"/>
     <activity android:name=".SrrMorseActivity" android:exported="false"/>
     <activity android:name=".SrrTheoryActivity" android:exported="false"/>
+    <activity android:name=".SrrOriginalPdfActivity" android:exported="false"/>
     <activity android:name=".FullCourseActivity" android:exported="false"/>
     <activity android:name=".MainActivity" android:exported="true" android:screenOrientation="portrait">
       <intent-filter>
