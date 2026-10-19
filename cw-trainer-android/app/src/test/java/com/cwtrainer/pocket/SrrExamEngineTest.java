@@ -46,4 +46,26 @@ public class SrrExamEngineTest {
         boolean audible=false;for(byte v:sample)if(v!=0){audible=true;break;}
         assertTrue("Exam PCM cannot be silent",audible);
     }
+    @Test public void diskStreamedWavHasExactHeaderAndNonSilentData()throws Exception {
+        String message=SrrExamEngine.randomRadiogram(new Random(19),5);
+        java.io.File file=java.io.File.createTempFile("cw-test-", ".wav");
+        try {
+            CwExamWavWriter.write(file,message,80);
+            long millis=CwExamAudio.durationMillis(message,80);
+            assertEquals(millis*44100/1000*2+44,file.length());
+            try(java.io.RandomAccessFile input=new java.io.RandomAccessFile(file,"r")){
+                byte[] header=new byte[44];input.readFully(header);
+                assertEquals("RIFF",new String(header,0,4,"US-ASCII"));
+                assertEquals("WAVE",new String(header,8,4,"US-ASCII"));
+                assertEquals("data",new String(header,36,4,"US-ASCII"));
+                boolean nonzero=false;byte[] pcm=new byte[8192];int n;
+                while((n=input.read(pcm))>0){
+                    for(int i=0;i<n;i++)if(pcm[i]!=0){nonzero=true;break;}
+                    if(nonzero)break;
+                }
+                assertTrue(nonzero);
+            }
+        }finally {file.delete();}
+    }
 }
+
