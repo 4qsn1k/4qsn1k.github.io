@@ -78,7 +78,6 @@ public final class FullCourseActivity extends Activity {
     }
     private void uiMessage(String value){status.setText(value);}
     private void persist(){
-        state.recordPractice(System.currentTimeMillis());
         prefs.edit().putString("course_state",state.save()).putInt("charWpm",charWpm)
             .putInt("effectiveWpm",effectiveWpm).apply();
     }
@@ -98,7 +97,7 @@ public final class FullCourseActivity extends Activity {
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
         root=column();root.setBackgroundColor(BG);root.setPadding(dp(12),dp(15),dp(12),dp(22));
         scroll.addView(root);setContentView(scroll);
-        title=label("CW ACADEMY · ПОЛНЫЙ КУРС",20,Color.rgb(121,231,205));
+        title=label("CW TRAINER · 16 ЗАНЯТИЙ",20,Color.rgb(121,231,205));
         title.setTypeface(null,Typeface.BOLD);add(root,title,0);
         subtitle=label("",13,MUTED);add(root,subtitle,7);
         LinearLayout tabs=row();add(root,tabs,8);
