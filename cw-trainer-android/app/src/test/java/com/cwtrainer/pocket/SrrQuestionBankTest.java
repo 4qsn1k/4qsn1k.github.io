@@ -33,5 +33,11 @@ public class SrrQuestionBankTest {
         Set<Integer> unique=new HashSet<>();
         for(SrrQuestionBank.Question q:questions)unique.add(q.id);
         assertEquals(45,unique.size());
+        Set<Integer> topicIds=new HashSet<>();
+        for(SrrQuestionBank.Question q:questions)
+            topicIds.add(SrrQuestionBank.topicOf(q.id));
+        assertEquals("Mock should cover all eight subjects",8,topicIds.size());
+        assertEquals(0,SrrQuestionBank.topicOf(1));
+        assertEquals(7,SrrQuestionBank.topicOf(426));
     }
 }
