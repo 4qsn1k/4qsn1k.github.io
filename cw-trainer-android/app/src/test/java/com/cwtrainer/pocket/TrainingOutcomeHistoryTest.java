@@ -58,6 +58,15 @@ public class TrainingOutcomeHistoryTest {
         assertEquals(60,recommendation.cpm);
         assertFalse(TrainingOutcomeHistory.sustainedReadiness(TrainingOutcomeHistory.parse(state)));
     }
+    @Test public void higherProficiencyEvidenceSupersedesUnloggedEasyStages(){
+        String log="";
+        log=TrainingOutcomeHistory.append(log,cw(0,2,250,60));
+        log=TrainingOutcomeHistory.append(log,cw(1,3,250,60));
+        AdaptiveReceptionPlan.Step recommended=AdaptiveReceptionPlan.recommended(
+            TrainingOutcomeHistory.parse(log));
+        assertEquals(250,recommended.signs);
+        assertEquals(60,recommended.cpm);
+    }
     @Test public void malformedDataIgnoredAndOldestRecordsTrimmed() {
         assertTrue(TrainingOutcomeHistory.parse("broken").isEmpty());
         String x="CW-OUTCOMES-1|broken|M,foo,4,250,60,250000";
