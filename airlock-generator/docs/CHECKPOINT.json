@@ -912,7 +912,15 @@
     "nativeSimulatorPassed": false,
     "arbitraryNativeWriterCompleted": false,
     "fullOfflineCheckOnHomePcExit": 0,
-    "unitTests": "10/10",
+    "unitTests": "31/31",
+    "strictNativePortSignatureVerified": true,
+    "stDefinitionInterfaceTypesVerified": true,
+    "stBoolCode": 6,
+    "nativeFbdBoolCode": 0,
+    "udintCode": 3,
+    "strictSubsetNewLocalOutputSha256": "adb10c3d7bdaa9b837c2ac855c173458d700f760f48b1480ba3c70d70719c778",
+    "strictSubsetNativeInspector": "ZIP_JSON_ENVELOPE_INSPECTED_ONLY",
+    "strictSubsetGuiAndCompilerVerified": false,
     "portCOM5Touched": false,
     "physicalSafetyPassed": false
   }

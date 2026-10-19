@@ -150,3 +150,46 @@ Do not infer that Ctrl+S alone caused it or that Owen Logic saved the document.
 Next: isolate the editor lifecycle under a repeatable TEST copy, capture
 any vendor diagnostics or confirmation dialogs, and obtain a changed
 `Save As` artifact before claiming successful native serialization.
+
+## Strict native identity and ST/FBD interface gate — offline update (19.10.2026)
+
+The minimal TEST writer now validates each selected native wrapper against the
+**actual 44-port GUI-saved signature**. I4 and Q4 each have one BOOL pin; OR
+has two BOOL inputs and one BOOL output; N1 has five BOOL inputs / 13 outputs;
+N4 has six BOOL inputs / 15 outputs. Each room's `Output6` is UDINT.
+The other room output ports are BOOL. A wrong pin count, name, direction or
+numeric type is rejected before writing the file.
+
+The writer also validates:
+
+- Fresh, nonzero UUID identities for native elements, primitive anchors,
+  ports, connectors, ST definitions and ST version IDs; duplicates are rejected.
+- Each port's `AnchorUniqueId` belongs to the same element's primitive list.
+  `ElementOwnerUId` is the observed zero UUID sentinel, not a guessed owner.
+- The exact five connector endpoint pairs, unique targets, compatible types,
+  and finite, nonempty native routing points.
+- Each FB instance references the correct ST definition *and* version ID.
+  ST input/output names and native interface names must match exactly.
+- Native FBD BOOL code **0** maps to ST BOOL **6**. UDINT is code **3** in
+  both namespaces. Unknown code **4** remains explicitly unsupported.
+- Failed manifest creation removes the incomplete output and the partial
+  manifest; existing output and source files are never overwritten.
+
+New focused negative test coverage: **31/31 PASS** on HOME-PC, including
+wrong BOOL/UDINT types, ST-interface drift, foreign/dangling primitive anchors,
+nonzero native port owner, duplicate UUIDs, missing/wrong connections,
+invalid connector points and unknown source hash. Synthetic tests do not
+embed the original Owen archive or private ST.
+
+The updated writer was exercised against the pinned original TEST archive
+**without changing it**. A new distinct local output was generated:
+`Airlock_NATIVE14_ST_INTERFACE_GATE_20261019.owle`, SHA256
+`adb10c3d7bdaa9b837c2ac855c173458d700f760f48b1480ba3c70d70719c778`.
+The independent strict ZIP/JSON inspector returned
+`ZIP_JSON_ENVELOPE_INSPECTED_ONLY`, 5 elements, 44 ports, 5 connectors and
+2 ST instances. This verifies the archive envelope and selected reference
+contract only. The new strict output **has not** independently passed native
+Owen Logic Save, compiler checks or OR simulation. Never reinterpret the
+existing older GUI observation as validation of this new file.
+
+No PR100, COM5, Modbus, physical interlocks or safety devices were used.

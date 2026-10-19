@@ -28,6 +28,18 @@ LINKS = (
     ("OR", "Output2", "Q4", "Input0"),
 )
 ROLES = {"I4": 2, "Q4": 3, "OR": 18, "FB_Room_N1": 41, "FB_Room_N4": 41}
+# Exact native port layouts observed in the SHA256-pinned Owen GUI TEST source.
+# Native FBD type 0=BOOL; 3=UDINT. Code 4 remains unsupported.
+PORT_SCHEMA = {
+    "I4": {"Output0": (1, 0)},
+    "Q4": {"Input0": (0, 0)},
+    "OR": {"Input0": (0, 0), "Input1": (0, 0), "Output2": (1, 0)},
+}
+for room, inputs, outputs in (("FB_Room_N1", 5, 13), ("FB_Room_N4", 6, 15)):
+    PORT_SCHEMA[room] = {
+        **{f"Input{i}": (0, 0) for i in range(inputs)},
+        **{f"Output{i}": (1, 3 if i == 6 else 0) for i in range(outputs)},
+    }
 
 
 def require(ok, code):
@@ -70,48 +82,103 @@ def read_verified_source(source):
 
 
 def validate_subset(document, definitions):
+    """Fail closed on the exact proven five-node shape and all identity links."""
     elements, connectors = document["Elements"], document["ConnectorModels"]
     require(len(elements) == 5 and len(connectors) == 5, "INVALID_SUBSET_COUNTS")
-    roles = {}
-    all_ports = {}
+    require(isinstance(definitions, list) and len(definitions) in (2, 3),
+            "UNEXPECTED_ST_DEFINITION_COUNT")
+    identities = set()
+
+    def identity(raw):
+        require(isinstance(raw, str) and UUID_PATTERN.fullmatch(raw) and
+                raw.lower() != ZERO, "INVALID_NATIVE_UUID")
+        key = raw.lower()
+        require(key not in identities, "DUPLICATE_NATIVE_UUID")
+        identities.add(key)
+        return key
+
+    definitions_by_id = {}
+    for definition in definitions:
+        uid = identity(definition["Id"])
+        identity(definition["LastModificationId"])
+        definitions_by_id[uid] = definition
+
+    roles, all_ports = {}, {}
     for wrapper in elements:
         name = role(wrapper)
-        require(name in ROLES and name not in roles and wrapper.get("Discriminator") == ROLES[name],
+        require(name in ROLES and name not in roles and
+                wrapper.get("Discriminator") == ROLES[name],
                 "UNKNOWN_OR_DUPLICATE_NATIVE_WRAPPER")
         roles[name] = wrapper
-        ports = model(wrapper)["Ports"]
+        native_model = model(wrapper)
+        identity(native_model["UniqueId"])
+        anchors = set()
+        for primitive in native_model["Primitives"]:
+            if "UniqueId" in primitive:
+                anchors.add(identity(primitive["UniqueId"]))
+        ports = native_model["Ports"]
+        require(len(ports) == len(PORT_SCHEMA[name]), "WRONG_NATIVE_PORT_COUNT")
         names = set()
-        for p in ports:
-            require(p["Name"] not in names and p["UniqueId"].lower() not in all_ports,
-                    "DUPLICATE_PORT")
-            names.add(p["Name"])
-            require(p["PortType"] in (0, 1) and p["DataType"] in (0, 3),
-                    "UNSUPPORTED_NATIVE_PORT_TYPE")
-            all_ports[p["UniqueId"].lower()] = (name, p)
+        for pin in ports:
+            pin_uuid = identity(pin["UniqueId"])
+            pin_name = pin["Name"]
+            require(pin_name not in names, "DUPLICATE_PORT")
+            names.add(pin_name)
+            require(type(pin["PortType"]) is int and
+                    type(pin["DataType"]) is int and
+                    PORT_SCHEMA[name].get(pin_name) ==
+                    (pin["PortType"], pin["DataType"]), "NATIVE_PORT_SIGNATURE_MISMATCH")
+            require(isinstance(pin.get("AnchorUniqueId"), str) and
+                    pin["AnchorUniqueId"].lower() in anchors, "DANGLING_ANCHOR_GUID")
+            require(isinstance(pin.get("ElementOwnerUId"), str) and
+                    pin["ElementOwnerUId"].lower() == ZERO, "UNKNOWN_NATIVE_PORT_OWNER")
+            all_ports[pin_uuid] = (name, pin)
+        require(names == set(PORT_SCHEMA[name]), "INCOMPLETE_NATIVE_PORT_INTERFACE")
+
         if wrapper["Discriminator"] == 41:
-            matches = [d for d in definitions if str(d.get("Id", "")).lower() ==
-                       str(wrapper.get("FunctionBlockUId", "")).lower()]
-            require(len(matches) == 1 and
-                    str(matches[0].get("LastModificationId", "")).lower() ==
-                    str(wrapper.get("LastModificationId", "")).lower(),
-                    "UNRESOLVED_ST_DEFINITION")
+            definition = definitions_by_id.get(str(wrapper.get("FunctionBlockUId", "")).lower())
+            require(definition is not None and
+                    str(definition.get("LastModificationId", "")).lower() ==
+                    str(wrapper.get("LastModificationId", "")).lower() and
+                    definition.get("Name") == name, "UNRESOLVED_ST_DEFINITION")
+            interface = wrapper["FunctionalBlocksDirectorStoreModel"]
+            for direction, prefix in ((0, "Input"), (1, "Output")):
+                expected = [PORT_SCHEMA[name][f"{prefix}{i}"][1] for i in range(
+                    sum(pt == direction for pt, _ in PORT_SCHEMA[name].values()))]
+                # ST uses a distinct data-type enum: BOOL=6, UDINT=3;
+                # GUI-saved FBD ports use BOOL=0, UDINT=3.
+                stored_types = definition.get(prefix + "DataTypes", [])
+                translated = [{6: 0, 3: 3}.get(t) for t in stored_types]
+                require(interface.get(prefix + "DataTypes") == expected and
+                        interface.get(prefix + "Names") == definition.get(prefix + "Names") and
+                        translated == expected and
+                        len(interface.get(prefix + "ArrayRanges", [])) == len(expected),
+                        "FB_NATIVE_INTERFACE_MISMATCH")
     require(set(roles) == set(ROLES), "MISSING_NATIVE_WRAPPER")
-    edges = set()
-    drivers = set()
+    edges, drivers = set(), set()
     for wrapper in connectors:
         require(wrapper.get("Discriminator") == 1, "UNKNOWN_CONNECTOR")
-        c = wrapper["ConnectorModel"]
-        a, b = all_ports.get(c["FromPortUId"].lower()), all_ports.get(c["ToPortUId"].lower())
+        native_connector = wrapper["ConnectorModel"]
+        identity(native_connector["UniqueId"])
+        points = native_connector["Points"]
+        require(isinstance(points, list) and len(points) >= 2 and
+                all(isinstance(q, dict) and type(q.get("X")) in (int, float)
+                    and type(q.get("Y")) in (int, float) and
+                    abs(q["X"]) < 1e6 and abs(q["Y"]) < 1e6
+                    and q.get("IsEmpty") is False for q in points),
+                "UNSUPPORTED_CONNECTOR_GEOMETRY")
+        from_id = str(native_connector["FromPortUId"]).lower()
+        to_id = str(native_connector["ToPortUId"]).lower()
+        a, b = all_ports.get(from_id), all_ports.get(to_id)
         require(a and b and a[1]["PortType"] == 1 and b[1]["PortType"] == 0,
                 "DANGLING_OR_REVERSED_CONNECTOR")
         require(a[1]["DataType"] == b[1]["DataType"], "CONNECTOR_TYPE_MISMATCH")
-        require(c["ToPortUId"].lower() not in drivers, "MULTIPLE_DRIVERS")
-        drivers.add(c["ToPortUId"].lower())
+        require(to_id not in drivers, "MULTIPLE_DRIVERS")
+        drivers.add(to_id)
         edges.add((a[0], a[1]["Name"], b[0], b[1]["Name"]))
     require(edges == set(LINKS), "UNVERIFIED_FBD_TOPOLOGY")
     return {"elements": len(elements), "connectors": len(connectors),
             "ports": len(all_ports), "definitions": len(definitions)}
-
 
 def assemble(project, definitions):
     project = copy.deepcopy(project)
@@ -177,6 +244,7 @@ def generate(source, destination):
     members = {"Project": json.dumps(new_project, ensure_ascii=False, separators=(",", ":")).encode("utf-8"),
                "StFunctionBlocks": json.dumps(new_defs, ensure_ascii=False, separators=(",", ":")).encode("utf-8")}
     created = False
+    manifest_created = False
     try:
         with destination.open("xb") as handle:
             created = True
@@ -199,9 +267,14 @@ def generate(source, destination):
                     "nativeGui": "NEEDS_NATIVE_GUI",
                     "arbitraryGraphSupported": False, "physical": "PHYSICAL_NOT_TESTED"}
         with manifest_path.open("x", encoding="utf-8") as handle:
+            manifest_created = True
             json.dump(manifest, handle, indent=2)
         return manifest
     except Exception:
+        # A failed manifest write must not leave a plausible-looking OWLE or
+        # partial manifest which might later be treated as validated output.
+        if manifest_created and manifest_path.exists():
+            manifest_path.unlink()
         if created and destination.exists():
             destination.unlink()
         raise
