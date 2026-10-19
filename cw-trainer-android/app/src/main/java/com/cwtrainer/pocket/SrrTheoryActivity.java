@@ -2,6 +2,7 @@ package com.cwtrainer.pocket;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.content.Context;
@@ -36,7 +37,7 @@ public final class SrrTheoryActivity extends Activity {
     private LinearLayout root;
     private TextView heading,timer,prompt,feedback;
     private final Button[] buttons=new Button[4];
-    private Button next,reset;
+    private Button next,reset,sourcePdf;
     private ScrollView scroll;
     private final Runnable clock=new Runnable(){
         @Override public void run(){
@@ -100,6 +101,15 @@ public final class SrrTheoryActivity extends Activity {
         feedback=text("",16,MUTED);add(feedback,12);
         next=button("Следующий вопрос",GREEN);add(next,9);
         next.setOnClickListener(v->nextPractice());
+        sourcePdf=button("📄 Показать оригинал вопроса и рисунки",PANEL);
+        add(sourcePdf,7);
+        sourcePdf.setOnClickListener(v->{
+            if(exam||current==null)return;
+            Intent intent=new Intent(this,SrrOriginalPdfActivity.class);
+            intent.putExtra("questionId",current.id);
+            startActivity(intent);
+        });
+        sourcePdf.setVisibility(exam?android.view.View.GONE:android.view.View.VISIBLE);
         reset=button(exam?"Начать новый экзамен":"← Выход",PANEL);add(reset,16);
         reset.setOnClickListener(v->{
             if(exam)new android.app.AlertDialog.Builder(this)
