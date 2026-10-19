@@ -784,5 +784,36 @@
     "externalGuiLaunch": "not performed: third-instance launch blocked by remote execution permissions; two original QA test instances untouched",
     "next": "In separate Owen Logic 3.3.378 test session: open NEW cloned OWLE, Save As distinct file, capture compiler diagnostics and native simulator; no actual PLC",
     "sourceChangesToPhysicalControllers": false
+  },
+  "currentNativeOwen20261019": {
+    "issue": 14,
+    "pr": 18,
+    "source": "HOME-PC TEST copy only; no physical PLC",
+    "originalSha256": "0E3F85BFC198AA298EBAC5068E76B5C0408CB4590FAEE9530E74559A1A167A00",
+    "remappedCloneSha256": "35A3E289116C7924B398999AD68183CEA90927FFA59131A031DB49DD77BEB7A8",
+    "vendorGuiSavedCloneSha256": "36573D019A813C0595645A4C7318170C2B15734CE611BBD16BDB5D39C436A160",
+    "guiOpened": true,
+    "simulatorEnteredAndRan": true,
+    "inputI1TriggeredState99To90": true,
+    "vendorGuiSaveDiffVerified": true,
+    "identityCountsPreserved": {
+      "elements": 25,
+      "ports": 64,
+      "connectors": 16,
+      "stDefinitions": 3
+    },
+    "inputI1TranslationY": 2.5,
+    "reroutedConnectors": 2,
+    "sanitizedFixture": "experimental/fixtures/owle-qa012-editor-geometry-delta.json",
+    "unresolvedNativeType4": true,
+    "generalFbdGraphToOwleImplemented": false,
+    "generalNativeCompileVerified": false,
+    "actualPLCProgramChanged": false
+  },
+  "currentCodeIntegration20261019": {
+    "pr13FbdGraph": "MERGED_MAIN",
+    "pr20ScadaCom": "MERGED_MAIN",
+    "pr18NativeSchema": "DRAFT_IN_PROGRESS",
+    "realPr100Scada": "READ_ONLY_COM5_PASS"
   }
 }
