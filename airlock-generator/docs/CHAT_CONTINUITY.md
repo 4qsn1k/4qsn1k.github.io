@@ -1,4 +1,37 @@
+# 19.10.2026 — PR #13 synchronized with main
+
+Merged main `986ec9899f2e1e22eeb7a2547d0ba9d5777888ba` (PR #16 and #17) into `codex/airlock-10-fbd-graph`. Resolved package/checkpoint conflicts by preserving both test suites and histories. Full `bash scripts/codex-check.sh`: exit 0, FBD 9/9, evaluator 12/12 (256 cases, 36 graphs), export 4/4, MODEL 8/8; Modbus fault/recovery and sanitized native evidence tests pass. GitHub PR #13 exists as draft; earlier API/creation blocker is historical.
+
+Issue #14 starts from this synchronized graph. Published shape evidence confirms OR/FB/DI/DO ports and connectors; it omits writable project metadata, geometry, UUID relations and FB definitions. No new OWLE or native PASS. HOME-PC new-project GUI QA remains required; physical equipment untouched.
+
+---
+
 # CHAT_CONTINUITY — конструктор технологических шлюзов
+
+## 18.10.2026 — Issue #10: общий FBD-граф, offline QA
+
+- Ветка `codex/airlock-10-fbd-graph`. `fbd-generator.js` собирает типизированные
+  связи существующих ST-блоков и распределения I/O. Исходный проект и другая
+  логика помещений не заменялись. В браузере и CLI экспортируются JSON, CSV,
+  ST, план native-испытаний и контрольные суммы.
+- Проверены 1/2/4 помещения, несколько общих дверей, три ПР, дефициты по каждому
+  ПР, malformed graphs, уникальные порты/герконы и зависимости GREEN. Оценщик
+  проверяет недостоверные данные и оставляет восстановление после отказов
+  неразрешённым до утверждения политики. Replay отзывает свежесть немедленно.
+- Полный `scripts/codex-check.sh` PASS; новые группы: 9/9 генератора, 12/12
+  оценщика (256 сочетаний и 36 seeded graphs), 4/4 экспорта. Chromium: 8/8 PASS.
+  Реальный браузер также подтвердил portable SCADA JSON; исправлены два
+  прежних дефекта экспортера, добавлена регрессионная проверка.
+- Исторические QA-OL-006 и QA-OL-012 A–F приняты согласно PR #6, **не повторялись**.
+  Это превосходит старые незавершённые статусы ниже, но не проверяет новую схему.
+- **NEEDS_NATIVE_GUI / NEEDS_OWEN_VALIDATION:** нужны очищенные образцы реальных
+  соединений, OR/защитных узлов и native-исполнение сгенерированной новой схемы.
+  Адаптер описывает лишь подтверждённые порты; готовый `.owle` не создаётся.
+  Физические клеммы/регистры UNASSIGNED; контроллеры/замки/СКУД не затрагивались.
+- Инструкция: [FBD-GRAPH-ASSEMBLY.md](FBD-GRAPH-ASSEMBLY.md). Новые результаты CI
+  подтверждены [run #39149552820](https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39149552820): Full offline QA success для `f4d0b1f`, один артефакт.
+  Ветка опубликована; draft PR не создан: `gh pr create` получил Forbidden от API-прокси. API GitHub пока блокируется
+  сетевой политикой; добавление домена сохранено в черновик среды.
 
 ## 18.10.2026 — Current: Codex environment preparation; Z4559 hardware host
 

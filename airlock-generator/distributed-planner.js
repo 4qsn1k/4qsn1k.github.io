@@ -52,12 +52,14 @@ function build(model,wiring,hardware,hardwarePlanner,topology){
   allocations[kind].push(value);
   return value;
  }
- const roomControllers=[...new Set(Object.values(roomOwners))].sort();
+ const roomControllers=new Set(Object.values(roomOwners));
+ const fireControllers=[...new Set([...roomControllers,...Object.values(doorOutputOwners)])].sort();
  // Common inputs cannot silently be assumed to exist over a network.
  // Allocate a distinct, independently wired logical FireNormal/ResetFault DI
- // on each controller hosting an FB. Site wiring must be approved separately.
- for(const plc of roomControllers){
-  for(const signal of ["FireNormal","ResetFault"])
+ // on each controller hosting an FB. An output-only controller needs FireNormal
+ // for green qualification but has no room fault latch to reset.
+ for(const plc of fireControllers){
+  for(const signal of roomControllers.has(plc)?["FireNormal","ResetFault"]:["FireNormal"])
    allocate("DI",signal+"@"+plc,plc,"Separate local DI; physical wiring not verified");
  }
  for(const doorId of doors){
@@ -90,6 +92,17 @@ function build(model,wiring,hardware,hardwarePlanner,topology){
   for(const s of request.sources){
    const name=s.split(".")[0],roomId=name.replace("FB_Room_N","");
    publish(s,roomOwners[roomId],dest,request.result);
+  }
+  // A door output owner can host no room FB. It still needs the reed, local
+  // fire input and every room's confirmed health/ready/fault/fire status.
+  const permit="GREEN_PERMIT_"+sym(d);
+  publish("CLOSED_"+sym(d),doorInputOwners[d],dest,permit);
+  const door=model.doors.find(x=>String(x.id)===d);
+  if(!door)throw Error("Не найдена дверь "+d);
+  for(const roomId of [door.a,door.b].map(String).filter(x=>zones.includes(x))){
+   for(const name of ["O_Ready","O_Fault","O_Fire"])
+    publish("FB_Room_N"+roomId+"."+name,roomOwners[roomId],dest,permit);
+   publish("ROOM_DATA_VALID_N"+roomId,roomOwners[roomId],dest,permit);
   }
  }
  const useDoorTraffic=hardware.signaling==="door";

@@ -34,7 +34,10 @@ jobs:
         with:
           python-version: '3.13'
       - name: Full deterministic software QA
-        run: bash scripts/codex-check.sh
+        run: |
+          mkdir -p qa-reports
+          set -o pipefail
+          bash scripts/codex-check.sh 2>&1 | tee qa-reports/codex-check.log
       - name: Upload QA reports
         if: always()
         uses: actions/upload-artifact@v4
