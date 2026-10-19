@@ -114,7 +114,7 @@ function fakeSerial(){
    assert.equal(pauseCalls,1);
    const resumed=await fetch(origin+"/api/ports/COM5/resume",req);
    assert.equal(resumed.status,200);assert.equal(resumeCalls,1);
-   assert.equal((await fetch(origin+"/api/ports",req)).status,200);
+   assert.equal((await fetch(origin+"/api/ports")).status,200);
    assert.equal((await fetch(origin+"/api/status",{method:"POST"})).status,405);
    ok("localhost port control requires explicit token and same-origin; other methods remain read-only");
   }finally{await app.close();}
