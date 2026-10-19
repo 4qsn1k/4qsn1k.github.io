@@ -17,8 +17,12 @@ public final class SrrExamEngine {
 
     /** Exactly 250 audible signs arranged in 50 five-sign groups. */
     public static String randomRadiogram(Random rng) {
-        StringBuilder out=new StringBuilder(RADIOGRAM_LENGTH+49);
-        for(int i=0;i<RADIOGRAM_LENGTH;i++){
+        return randomRadiogram(rng,RADIOGRAM_LENGTH);
+    }
+    public static String randomRadiogram(Random rng,int count) {
+        if(count<5 || count>250 || count%5!=0)throw new IllegalArgumentException("Count must be 5..250 in groups of five");
+        StringBuilder out=new StringBuilder(count+count/5);
+        for(int i=0;i<count;i++){
             if(i!=0 && i%5==0)out.append(' ');
             // Mostly letters with an occasional digit; no memorized text or fixed pattern.
             String bag=rng.nextInt(100)<7?NUMBERS:LETTERS;
@@ -32,8 +36,12 @@ public final class SrrExamEngine {
     }
     /** Substitution, insertion and deletion each count as one. */
     public static int errors(String reference,String answer) {
+        if(normalize(reference).length()!=RADIOGRAM_LENGTH)throw new IllegalArgumentException("Expected 250 symbols");
+        return errorsAny(reference,answer);
+    }
+    public static int errorsAny(String reference,String answer) {
         String a=normalize(reference),b=normalize(answer);
-        if(a.length()!=RADIOGRAM_LENGTH)throw new IllegalArgumentException("Expected 250 symbols");
+        if(a.isEmpty() || a.length()>250)throw new IllegalArgumentException("Invalid reference");
         int[] previous=new int[b.length()+1],current=new int[b.length()+1];
         for(int j=0;j<=b.length();j++)previous[j]=j;
         for(int i=1;i<=a.length();i++){
