@@ -193,3 +193,36 @@ Owen Logic Save, compiler checks or OR simulation. Never reinterpret the
 existing older GUI observation as validation of this new file.
 
 No PR100, COM5, Modbus, physical interlocks or safety devices were used.
+
+## New strict file GUI Save-As failure — verified Windows exception
+
+A **new separate TEST copy** of the strict five-element output was opened in
+Owen Logic 3.3.378, process PID 9588. The program visibly rendered
+`FB_Room_N1` and virtual `I4` with the expected connected wiring, and
+the test file remained unchanged. No physical equipment was connected.
+
+The vendor File menu was inspected: **Save current document** is distinct
+from **Save project** and **Save project as**. A strictly isolated GUI action
+targeting `Save project as...` was then attempted. The target vendor
+process later terminated. The Windows Application event log recorded
+**Event ID 1000**, executable `ProgramRelayFBD.exe`, version **3.3.378.0**,
+exception code **0xC00000FD (stack overflow)**, with the event's process ID
+corresponding to the test process (decimal 9588). No new vendor-saved
+`.owle` was obtained. Neither the test input nor source file was changed.
+A local screenshot of the new file's rendered diagram and the menu is retained
+only on HOME-PC.
+
+An independent read-only native identity census inspected the removed
+20 element wrappers, including their element, port and primitive UUIDs:
+**60 removed nonzero native identities; 0 references to those identities**
+remained in the selected 5-element project and preserved ST definitions.
+That excludes this specific class of dangling UUID reference, **not**
+other undocumented constraints (variable catalog consistency, execution
+order, native document serialization invariants, or a vendor GUI defect).
+
+**Acceptance:** `NATIVE_EDITOR_SAVE_AS_FAIL_STACK_OVERFLOW`,
+`NATIVE_GUI_PASS=false`, `NATIVE_COMPILE_PASS=false`.
+Do not claim full native writer support. Preserve both existing source
+archives and the new strict test artifact. Avoid blind edits to Owen Logic
+project fields until a controlled vendor-generated minimal counterpart and
+a native Save-As differential are available.
