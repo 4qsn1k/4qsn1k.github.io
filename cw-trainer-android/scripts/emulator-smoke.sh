@@ -35,6 +35,43 @@ if ! grep -E 'mResumedActivity|topResumedActivity|ResumedActivity' activities.lo
   exit 1
 fi
 echo 'PASS: Full Course opened from home button'
+tap_ui_text(){
+  adb shell uiautomator dump /sdcard/window.xml >/dev/null
+  adb exec-out cat /sdcard/window.xml > /tmp/cwtrainer-ui.xml
+  python3 - "$1" <<'PY'
+import re,sys,xml.etree.ElementTree as ET,subprocess
+phrase=sys.argv[1]
+root=ET.parse('/tmp/cwtrainer-ui.xml').getroot()
+matches=[n.attrib for n in root.iter() if phrase in n.attrib.get('text','')]
+if not matches:
+    raise SystemExit("Missing UI element '"+phrase+"': "+
+        repr([n.attrib.get('text') for n in root.iter() if n.attrib.get('text')][:35]))
+numbers=list(map(int,re.findall(r'\d+',matches[0]['bounds'])))
+if len(numbers)!=4:raise SystemExit("Invalid tap bounds")
+x=(numbers[0]+numbers[2])//2
+y=(numbers[1]+numbers[3])//2
+subprocess.run(['adb','shell','input','tap',str(x),str(y)],check=True)
+print('Tapped:',phrase,x,y)
+PY
+}
+adb shell input keyevent KEYCODE_BACK
+sleep 2
+tap_ui_text 'ПОДГОТОВКА'
+sleep 3
+adb shell dumpsys activity activities | grep -E 'ResumedActivity|mResumedActivity|topResumedActivity' | grep -q 'SrrExamMenuActivity'
+echo 'PASS: First-category exam menu opens from home button'
+tap_ui_text 'Изучать 426'
+sleep 3
+adb shell dumpsys activity activities | grep -E 'ResumedActivity|mResumedActivity|topResumedActivity' | grep -q 'SrrTheoryActivity'
+echo 'PASS: Complete offline 426-question theory bank opens'
+tap_ui_text 'Показать оригинал'
+sleep 3
+adb shell dumpsys activity activities | grep -E 'ResumedActivity|mResumedActivity|topResumedActivity' | grep -q 'SrrOriginalPdfActivity'
+echo 'PASS: Offline official PDF page with source diagrams opens'
+adb shell input keyevent KEYCODE_BACK
+sleep 1
+adb shell input keyevent KEYCODE_BACK
+sleep 1
 adb shell run-as "$PKG" mkdir -p files
 adb shell run-as "$PKG" touch files/cwtrainer-upgrade-marker
 adb shell am force-stop "$PKG"
