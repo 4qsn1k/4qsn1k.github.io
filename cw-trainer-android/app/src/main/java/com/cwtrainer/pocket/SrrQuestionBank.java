@@ -24,6 +24,22 @@ public final class SrrQuestionBank {
         }
     }
     private final List<Question> all;
+    private static final int[] BOUNDARIES={1,47,100,130,150,387,409,420,427};
+    public static final String[] TOPICS={
+        "Международные правила и терминология",
+        "Нормативные акты РФ",
+        "Правила радиообмена",
+        "Виды радиосвязи",
+        "Теория радиосистем и распространения",
+        "Единицы измерения и приборы",
+        "Электробезопасность",
+        "Электромагнитная совместимость"
+    };
+    public static int topicOf(int id){
+        if(id<1||id>426)throw new IllegalArgumentException("Question "+id);
+        for(int i=0;i<8;i++)if(id>=BOUNDARIES[i]&&id<BOUNDARIES[i+1])return i;
+        throw new IllegalArgumentException("Question "+id);
+    }
     public SrrQuestionBank(Context context) throws Exception {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
         try(InputStream in=context.getAssets().open("srr_first_category_questions.json")){
@@ -61,9 +77,26 @@ public final class SrrQuestionBank {
     }
     public int size(){return all.size();}
     public List<Question> mockExam(Random rng) {
+        ArrayList<Question> chosen=new ArrayList<>();
+        java.util.HashSet<Integer> used=new java.util.HashSet<>();
+        // One from each published topic; remaining 37 questions drawn at random.
+        for(int t=0;t<TOPICS.length;t++){
+            int id=BOUNDARIES[t]+rng.nextInt(BOUNDARIES[t+1]-BOUNDARIES[t]);
+            chosen.add(get(id));used.add(id);
+        }
         ArrayList<Question> shuffled=new ArrayList<>(all);
         Collections.shuffle(shuffled,rng);
-        return new ArrayList<>(shuffled.subList(0,SrrExamEngine.THEORY_QUESTIONS));
+        for(Question question:shuffled){
+            if(chosen.size()==SrrExamEngine.THEORY_QUESTIONS)break;
+            if(used.add(question.id))chosen.add(question);
+        }
+        Collections.shuffle(chosen,rng);
+        return chosen;
     }
     public Question random(Random rng){return all.get(rng.nextInt(all.size()));}
+    public Question randomFromTopic(int topic,Random rng){
+        if(topic<0||topic>=8)throw new IllegalArgumentException("Topic "+topic);
+        int low=BOUNDARIES[topic],high=BOUNDARIES[topic+1];
+        return get(low+rng.nextInt(high-low));
+    }
 }
