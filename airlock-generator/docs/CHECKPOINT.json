@@ -886,5 +886,62 @@
     "fullNativeOwleGeneratorPass": false,
     "physicalSafetyPass": false,
     "next": "Offline Issue #14 native Owen Logic writer until explicit permission to open COM5"
+  },
+  "com5PhysicalReleaseResumeVerified20261019": {
+    "scope": "PR100_COM5_HARDWARE_READ_ONLY_DI_Q_AND_SCADA_PORT_CONTROL",
+    "device": "Z4559",
+    "authorization": "USER_EXPLICITLY_RECONNECTED_AND_ALLOWED_CONTINUATION",
+    "deviceAddress": 16,
+    "rtu": "COM5 / 9600 8N1",
+    "readFunctions": [
+      1,
+      2
+    ],
+    "directFc02At4096Count8": "PASS_RESPONSE_96MS",
+    "directDiBits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "scadaPhases": [
+      "INITIAL_READ_ONLINE",
+      "RELEASE_PORT_RELEASED",
+      "RESUME_IMMEDIATE_NOT_POLLED",
+      "FRESH_READ_ONLINE",
+      "FINAL_RELEASE_PORT_RELEASED"
+    ],
+    "scadaCycle": "PASS",
+    "scadaProcessClosed": true,
+    "listener8787AfterRun": 0,
+    "airlockWorkerProcessCountAfterRun": 0,
+    "independentCom5ReopenAndClose": "PASS",
+    "freshReadingSequence": {
+      "initialMs": 1792416048355,
+      "afterResumeMs": 1792416048887,
+      "strictlyIncreasing": true
+    },
+    "observedQ": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "doorStates": "8_UNKNOWN_UNMAPPED",
+    "realDoorMappingVerified": false,
+    "uiButtonsTested": false,
+    "physicalActuatorWritesPerformed": false,
+    "nativeOwleAndInterlockCompiled": false,
+    "electricEgressSafetyAccepted": false,
+    "report": "docs/PR100-COM5-RELEASE-RESUME-PHYSICAL-QA-2026-10-19.md",
+    "localEvidenceSha256": "ad7de9744ccb04d1548dc8345629664a83450d684ec1eee2da55c904ebacc591"
   }
 }
