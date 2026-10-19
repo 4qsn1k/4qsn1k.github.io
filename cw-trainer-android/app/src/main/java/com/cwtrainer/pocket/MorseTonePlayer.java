@@ -62,16 +62,24 @@ public final class MorseTonePlayer {
             if(lastFile!=null){lastFile.delete();lastFile=null;}
         }
     }
+    private interface PcmSupplier { byte[] generate(); }
     public void play(final String pattern,int characterWpm) {
+        playGenerated(()->pcm(pattern,characterWpm),"символ "+pattern);
+    }
+    public void playText(final String message,int characterWpm,int effectiveWpm) {
+        playGenerated(()->CwAudioSequence.render(message,characterWpm,effectiveWpm),
+            "сообщение ("+characterWpm+"/"+effectiveWpm+" WPM)");
+    }
+    private void playGenerated(final PcmSupplier supplier,final String description) {
         stop();
         final int token=generation.get();
         final boolean stream=useStream;
-        report("Подготовка сигнала "+pattern+" ("+(stream?"AudioTrack":"WAV")+")");
+        report("Подготовка: "+description+" ("+(stream?"AudioTrack":"WAV")+")");
         new Thread(()->{
             try{
-                byte[] pcm=pcm(pattern,characterWpm);
+                byte[] pcm=supplier.generate();
                 if(token!=generation.get())return;
-                if(stream){ playStream(pcm,token);return; }
+                if(stream){playStream(pcm,token);return;}
                 File sound=File.createTempFile("cw-"+token+"-", ".wav", context.getCacheDir());
                 try(FileOutputStream output=new FileOutputStream(sound)){
                     output.write(wav(pcm));
