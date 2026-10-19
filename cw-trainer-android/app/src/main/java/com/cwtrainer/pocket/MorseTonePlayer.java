@@ -71,8 +71,28 @@ public final class MorseTonePlayer {
             "сообщение ("+characterWpm+"/"+effectiveWpm+" WPM)");
     }
     public void playExamText(final String message,final int cpm) {
-        playGenerated(()->CwExamAudio.renderAtRate(message,cpm),
-          "экзаменационная радиограмма "+SrrExamEngine.normalize(message).length()+" знаков / "+cpm+" зн/мин");
+        if(useStream) {
+            // Streaming AudioTrack remains a diagnostic fallback, not the default.
+            playGenerated(()->CwExamAudio.renderAtRate(message,cpm),
+                "поток "+SrrExamEngine.normalize(message).length()+" знаков / "+cpm+" зн/мин");
+            return;
+        }
+        stop();
+        final int token=generation.get();
+        report("Подготовка WAV: "+SrrExamEngine.normalize(message).length()+" знаков / "+cpm+" зн/мин");
+        new Thread(()->{
+            File sound=null;
+            try{
+                sound=File.createTempFile("cw-exam-"+token+"-", ".wav",context.getCacheDir());
+                CwExamWavWriter.write(sound,message,cpm);
+                if(token!=generation.get()){sound.delete();return;}
+                final File ready=sound;
+                main.post(()->startPlayer(ready,token));
+            }catch(Exception error){
+                if(sound!=null)sound.delete();
+                report("ОШИБКА WAV экзамена: "+error.getClass().getSimpleName()+": "+error.getMessage());
+            }
+        },"CW-Exam-Wav").start();
     }
     private void playGenerated(final PcmSupplier supplier,final String description) {
         stop();
