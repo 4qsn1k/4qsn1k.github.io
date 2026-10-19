@@ -91,7 +91,7 @@ function createPoller(profile,modbusRead=readController,clock={},serialTransport
  const pausedPorts=new Set(),releasingPorts=new Set();
  const states=new Map(profile.controllers.map(c=>[c.id,{
   readings:{},error:"NOT_POLLED",lastPollAt:null,lastSuccessAt:null,sampleAt:null,sampleTick:null,durationMs:null,
-  consecutiveFailures:0,totalFailures:0,inFlight:null,nextDue:0,abort:null,paused:false
+  consecutiveFailures:0,totalFailures:0,inFlight:null,nextDue:0,abort:null,paused:false,epoch:0
  }]));
  function get(){
   const time=now(),readings={},errors={};
@@ -121,7 +121,7 @@ function createPoller(profile,modbusRead=readController,clock={},serialTransport
   if(state.inFlight)return state.observed;
   if(stopped||state.paused)return Promise.resolve();
   const bindings=profile.bindings.filter(b=>b.controllerId===c.id),start=now(),startTick=elapsed();
-  const abort=new AbortController();state.abort=abort;
+  const abort=new AbortController();state.abort=abort;const epoch=state.epoch;
   const budget=profile.pollBudgetMs||10000;
   let expired=false,timer;
   state.observed=new Promise(resolve=>{state.complete=resolve;});
@@ -131,6 +131,7 @@ function createPoller(profile,modbusRead=readController,clock={},serialTransport
    state.durationMs=Math.max(0,elapsed()-startTick);state.consecutiveFailures++;state.totalFailures++;
   };
   timer=state.timer=setTimer(()=>{
+   if(state.epoch!==epoch||state.paused||stopped){complete();return;}
    expired=true;fail("POLL_DEADLINE");abort.abort();complete();
   },budget);
   state.inFlight=Promise.resolve().then(()=>{
@@ -138,7 +139,7 @@ function createPoller(profile,modbusRead=readController,clock={},serialTransport
    if(!bindings.length)throw fault("NO_BINDINGS");
    return modbusRead(c,bindings,{signal:abort.signal,rtu});
   }).then(values=>{
-   if(expired||stopped||state.paused)return; // A late reply cannot restore ONLINE.
+   if(expired||stopped||state.paused||state.epoch!==epoch)return; // A late reply cannot restore ONLINE.
    // Enforce elapsed budget even if a busy event loop delayed the timer callback.
    if(elapsed()-startTick>=budget){expired=true;fail("POLL_DEADLINE");abort.abort();return;}
    if(!values||bindings.some(b=>!Object.hasOwn(values,b.signal)))throw fault("INCOMPLETE_SAMPLE");
@@ -148,8 +149,8 @@ function createPoller(profile,modbusRead=readController,clock={},serialTransport
    state.readings=Object.fromEntries(bindings.map(b=>[b.signal,values[b.signal]]));
    state.error=null;state.lastPollAt=now();state.lastSuccessAt=now();state.sampleAt=start;state.sampleTick=startTick;
    state.durationMs=Math.max(0,elapsed()-startTick);state.consecutiveFailures=0;
-  }).catch(error=>{if(!expired&&!stopped&&!state.paused)fail(cause(error));}).finally(()=>{
-   clearTimer(timer);state.inFlight=null;state.abort=null;state.nextDue=elapsed()+profile.pollMs;complete();
+  }).catch(error=>{if(!expired&&!stopped&&!state.paused&&state.epoch===epoch)fail(cause(error));}).finally(()=>{
+   clearTimer(timer);state.inFlight=null;state.abort=null;state.nextDue=state.epoch===epoch?elapsed()+profile.pollMs:0;complete();
   });
   return state.observed;
  }
@@ -178,7 +179,7 @@ function createPoller(profile,modbusRead=readController,clock={},serialTransport
   const ids=serialPorts.get(key);
   for(const id of ids){
    const state=states.get(id);
-   state.paused=true;state.error="PORT_RELEASE_PENDING";
+   state.epoch++;state.paused=true;state.error="PORT_RELEASE_PENDING";
    state.readings={};state.sampleTick=null;state.sampleAt=null;
    state.abort?.abort();
   }
@@ -201,7 +202,7 @@ function createPoller(profile,modbusRead=readController,clock={},serialTransport
   pausedPorts.delete(key);
   for(const id of serialPorts.get(key)){
    const state=states.get(id);
-   state.paused=false;state.readings={};state.sampleTick=null;state.sampleAt=null;
+   state.epoch++;state.paused=false;state.readings={};state.sampleTick=null;state.sampleAt=null;
    state.error="NOT_POLLED";state.nextDue=0;
   }
   return {port:key,paused:false,controllerIds:[...serialPorts.get(key)]};
