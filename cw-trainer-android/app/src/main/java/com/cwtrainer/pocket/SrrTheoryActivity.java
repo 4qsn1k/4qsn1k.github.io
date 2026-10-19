@@ -277,6 +277,11 @@ public final class SrrTheoryActivity extends Activity {
         boolean pass=!timedOut && SrrExamEngine.theoryPassed(correct,45,elapsed);
         results.edit().putInt("theory_correct",correct).putBoolean("theory_pass",pass)
             .putLong("theory_date",System.currentTimeMillis()).apply();
+        String history=results.getString("completed_history_v1","");
+        history=TrainingOutcomeHistory.append(history,
+            new TrainingOutcomeHistory.Record(TrainingOutcomeHistory.Part.THEORY,
+                System.currentTimeMillis(),correct,45,0,Math.max(1,elapsed)));
+        results.edit().putString("completed_history_v1",history).apply();
         heading.setText(pass?"✓ ТЕОРИЯ: ПРОЙДЕНА":"ТЕОРИЯ: НЕ ПРОЙДЕНА");
         prompt.setText("Правильно: "+correct+"/45\nОшибок: "+(45-correct)+
           "\nОтвечено: "+answeredCount+"/45\nВремя: "+(elapsed/60000)+" мин"+
