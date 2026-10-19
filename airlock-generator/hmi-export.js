@@ -104,7 +104,7 @@
   }catch(e){w.close();alert("Предпросмотр не выполнен: "+e.message)}
  };
  function currentPackage(){
-  if(!window.AirlockProjectPackage)throw Error("Модуль проекта SCADA не загружен");
+  if(typeof AirlockProjectPackage==="undefined")throw Error("Модуль проекта SCADA не загружен");
   const errors=AirlockEngine.validate(model);
   if(errors.length)throw Error(errors.join("; "));
   return AirlockProjectPackage.build(model);
@@ -118,7 +118,7 @@
   }catch(e){alert("SCADA: "+e.message)}
  };
  scadaExport.onclick=()=>{
-  try{download("airlock-project-scada.json",JSON.stringify(currentPackage(),null,2)+"\\n","application/json;charset=utf-8")}
+  try{download("airlock-project-scada.json",JSON.stringify(currentPackage(),null,2)+"\n","application/json;charset=utf-8")}
   catch(e){alert("Экспорт SCADA: "+e.message)}
  };
   exportSignals.onclick=()=>{

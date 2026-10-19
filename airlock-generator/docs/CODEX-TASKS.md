@@ -1,5 +1,32 @@
 # Codex task queue — Airlock Generator
 
+## Issue #10 — code implementation checkpoint, 18.10.2026
+
+Branch `codex/airlock-10-fbd-graph` implements the typed whole-project graph using
+the existing ST/wiring/distributed planners; see [FBD-GRAPH-ASSEMBLY.md](FBD-GRAPH-ASSEMBLY.md).
+Offline graph/evaluator/export QA and the complete `scripts/codex-check.sh` pass.
+New automated checks: 9 generator groups, 12 evaluator groups (256 boolean
+combinations, 36 seeded graphs), 4 export groups. Chromium smoke: 8/8 PASS.
+QA-OL-006 and the accepted old QA-OL-012 A–F from PR #6 were not repeated.
+
+**NEEDS_OWEN_VALIDATION / NEEDS_NATIVE_GUI:** the main checkout contains native ST
+instance fixtures only, no complete wire/OR/quality-guard serialization fixture.
+The evidence adapter exports matching port names/types and its fixture SHA256,
+not a fabricated `.owle`. Next native work must capture sanitized GUI fixtures
+and execute the generated native test plan in a distinct TEST project.
+
+Remaining blockers: actual terminal/register mapping, local fire/reset wiring,
+sensor/power-health sources, per-site freshness timeouts, approved recovery
+policies, native diagnostics and simulation of the newly generated graph.
+Physical commissioning is NOT_TESTED and NOT_AUTHORIZED. No access to either
+Windows workstation, serial port or live controller is needed for this PR.
+
+Remote CI for implementation commit `f4d0b1f` passed: [run #39149552820](https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39149552820), Full offline QA success, artifact `airlock-full-offline-qa` present.
+
+GitHub API access was blocked by environment egress policy during development;
+`api.github.com` has been added to the environment configuration draft for review.
+The branch is pushed; `gh pr create --draft` was blocked by `Post https://api.github.com/graphql: Forbidden`. PR creation remains pending the runtime policy update. Configuration saving does not apply that policy to runtime.
+
 ## CURRENT PRIORITY — NEW CODEX TASK: Issue #10 (18.10.2026)
 
 [Issue #10 — full graph-to-FBD assembly](https://github.com/4qsn1k/4qsn1k.github.io/issues/10) supersedes the early QA-OL-012 wiring-manifest task below. Old tests N1/N4 native A–F have passed **on HOME-PC TEST copy**; do not repeat them just to satisfy older text.

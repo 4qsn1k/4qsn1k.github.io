@@ -12,17 +12,23 @@ function create(plan,{timeoutMs}={}){
   throw Error("Требуется явный тестовый timeoutMs 100..600000; нет безопасного значения по умолчанию");
  const allowed=new Map(plan.network.signals.map(r=>[key(r),r]));
  if(allowed.size!==plan.network.signals.length)throw Error("Дублирование межконтроллерного сигнала");
- const seen=new Map();
+ const seen=new Map(),invalid=new Map();
  function receive({from,to,signal,value,seq,atMs}){
   const k=[from,to,signal].join("|");
   if(!allowed.has(k))throw Error("Неизвестный сетевой сигнал");
-  if(typeof value!=="boolean")throw Error("Некорректное значение BOOL");
-  if(!Number.isSafeInteger(seq)||seq<0||!Number.isSafeInteger(atMs)||atMs<0)
-   throw Error("Неверный номер кадра или время");
+  if(typeof value!=="boolean"){
+   invalid.set(k,"INVALID_BOOL_FRAME");throw Error("Некорректное значение BOOL");
+  }
+  if(!Number.isSafeInteger(seq)||seq<0||!Number.isSafeInteger(atMs)||atMs<0){
+   invalid.set(k,"INVALID_FRAME_METADATA");throw Error("Неверный номер кадра или время");
+  }
   const previous=seen.get(k);
-  if(previous && (seq<=previous.seq||atMs<=previous.atMs))
+  if(previous && (seq<=previous.seq||atMs<=previous.atMs)){
+   invalid.set(k,"STALE_OR_REPLAYED_FRAME");
    return {accepted:false,reason:"STALE_OR_REPLAYED_FRAME"};
+  }
   seen.set(k,{value,seq,atMs});
+  invalid.delete(k);
   return {accepted:true};
  }
  function status(route,nowMs){
@@ -31,14 +37,14 @@ function create(plan,{timeoutMs}={}){
   if(!registered)throw Error("Нет такого сетевого канала");
   const data=seen.get(key(route));
   const ageMs=data?nowMs-data.atMs:null;
-  const fresh=!!data&&ageMs>=0&&ageMs<=timeoutMs;
+  const fresh=!!data&&!invalid.has(key(route))&&ageMs>=0&&ageMs<=timeoutMs;
   return {signal:route.signal,from:route.from,to:route.to,
-    fresh,value:fresh?data.value:null,ageMs,reason:!data?"NEVER_RECEIVED":
-      ageMs<0?"CLOCK_ANOMALY":ageMs>timeoutMs?"TIMEOUT":"VALID"};
+    fresh,value:fresh?data.value:null,ageMs,reason:invalid.get(key(route))||(!data?"NEVER_RECEIVED":
+      ageMs<0?"CLOCK_ANOMALY":ageMs>timeoutMs?"TIMEOUT":"VALID")};
  }
  function freshFor(consumer,nowMs){
   const needed=plan.network.signals.filter(r=>r.consumers.includes(consumer));
-  return needed.every(r=>status(r,nowMs).fresh);
+  return needed.length>0&&needed.every(r=>status(r,nowMs).fresh);
  }
  function requirePermit(consumer,nowMs,conditions,distributedPlanner){
   const networkFresh=freshFor(consumer,nowMs);

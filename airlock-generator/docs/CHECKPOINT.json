@@ -629,6 +629,66 @@
     "z4559OfflineQa": "PASS",
     "autostartInstalled": false
   },
+  "latestCheckpoint": "fbdGraphMainSync20261019",
+  "fbdGraphIssue10": {
+    "date": "2026-10-18",
+    "branch": "codex/airlock-10-fbd-graph",
+    "status": "OFFLINE_QA_PASS_NEEDS_OWEN_VALIDATION",
+    "modules": [
+      "fbd-generator.js",
+      "fbd-evaluator.js",
+      "fbd-ui.js",
+      "scripts/export-fbd-plan.js"
+    ],
+    "reused": [
+      "st-generator.js",
+      "project-wiring.js",
+      "hardware-planner.js",
+      "distributed-planner.js",
+      "network-watchdog.js",
+      "st-testbench.js"
+    ],
+    "checks": {
+      "fullOfflineQa": "PASS",
+      "generatorGroups": 9,
+      "evaluatorGroups": 12,
+      "truthTableCases": 256,
+      "seededGraphs": 36,
+      "exportGroups": 4,
+      "chromiumSmoke": "8/8 PASS",
+      "githubActions": {
+        "url": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39149552820",
+        "commit": "f4d0b1f",
+        "status": "success",
+        "job": "Full offline QA (Node, Python, mock TCP/RTU)",
+        "artifact": "airlock-full-offline-qa",
+        "artifactSha256": "b2cc584163a5305cac4d43e2d7c70633f1075dcdd62e02a38e23f1322269656f"
+      }
+    },
+    "oldNativeQa": {
+      "qaOl006": "ACCEPTED_NOT_REPEATED",
+      "qaOl012AF": "ACCEPTED_NOT_REPEATED",
+      "evidence": "https://github.com/4qsn1k/4qsn1k.github.io/pull/6"
+    },
+    "newNativeGraph": "NEEDS_NATIVE_GUI",
+    "newNativeCompile": "NOT_VERIFIED",
+    "physical": "NOT_TESTED",
+    "terminals": "UNASSIGNED",
+    "modbusAddresses": "UNASSIGNED",
+    "nativeSerialization": "No complete wire/OR/quality-guard fixture; evidence adapter only, no .owle generated",
+    "pending": [
+      "Native GUI fixtures and generated native test plan",
+      "Approved recovery policies",
+      "Actual health sources, terminal/register maps and timeouts"
+    ],
+    "guide": "docs/FBD-GRAPH-ASSEMBLY.md",
+    "apiAccess": "GitHub available in current environment; historical blocker resolved",
+    "remoteBranch": "codex/airlock-10-fbd-graph",
+    "pullRequest": {
+      "status": "DRAFT_OPEN",
+      "url": "https://github.com/4qsn1k/4qsn1k.github.io/pull/13"
+    }
+  },
   "telemetryIssue15": {
     "branch": "codex/airlock-15-reliable-polling",
     "issue": "https://github.com/4qsn1k/4qsn1k.github.io/issues/15",
@@ -649,5 +709,14 @@
       "realLibraryAndFaultSmokeLinux": "PASS",
       "realLibraryAndFaultSmokeWindows": "PASS"
     }
+  },
+  "fbdGraphMainSync20261019": {
+    "date": "2026-10-19",
+    "mainCommit": "986ec9899f2e1e22eeb7a2547d0ba9d5777888ba",
+    "pullRequest": "https://github.com/4qsn1k/4qsn1k.github.io/pull/13",
+    "fullCodexCheck": "PASS exit 0; FBD 9/9, evaluator 12/12 (256 cases, 36 graphs), export 4/4, MODEL 8/8; all main Modbus and sanitized fixture tests retained",
+    "logSha256": "777e000610c06b4381692eb69cd378a4c904b65f18722356bb6e471efae0e855",
+    "nativeNewProject": "NEEDS_NATIVE_GUI",
+    "physical": "PHYSICAL_NOT_TESTED"
   }
 }
