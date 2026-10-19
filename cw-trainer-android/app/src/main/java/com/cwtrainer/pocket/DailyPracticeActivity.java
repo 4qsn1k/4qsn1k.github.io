@@ -31,7 +31,7 @@ public final class DailyPracticeActivity extends Activity {
     private SharedPreferences prefs,daily;
     private MorseCourse.Progress progress;
     private List<MorseCourse.Symbol> alphabet;
-    private boolean russian,answered=false,audioComplete=false;
+    private boolean russian,answered=false,audioComplete=false,restartOnResume=false;
     private int index,correct,errors,replays,replayed;
     private DailyTraining.Task task;
     private TextView title,summary,question,feedback,audioStatus;
@@ -228,6 +228,17 @@ public final class DailyPracticeActivity extends Activity {
             next.setOnClickListener(w->nextTask());persist();nextTask();
         });
     }
-    @Override public void onPause(){if(audio!=null)cancel();super.onPause();}
+    @Override public void onResume(){
+        super.onResume();
+        if(restartOnResume&&audio!=null&&task!=null&&!answered){
+            restartOnResume=false;
+            after(350,()->audio.playText(task.target,25,6));
+        }
+    }
+    @Override public void onPause(){
+        restartOnResume=task!=null&&!answered&&!audioComplete;
+        if(audio!=null)cancel();
+        super.onPause();
+    }
     @Override public void onDestroy(){if(audio!=null)cancel();super.onDestroy();}
 }
