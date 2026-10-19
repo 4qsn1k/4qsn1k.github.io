@@ -41,14 +41,14 @@ public final class CwCourseState {
         if(attempts[i]<30 || accuracy(session)<90)return false;
         // Evaluates a range of decoding skills, not just isolated characters.
         if(session<=10) {
-            if(kindAttempts[i][CwCoursePlan.Kind.CHARACTER]<8)return false;
-            if(kindAttempts[i][CwCoursePlan.Kind.GROUP]<8)return false;
-            if(kindAttempts[i][CwCoursePlan.Kind.WORD]<6)return false;
-            if(session>=2 && kindAttempts[i][CwCoursePlan.Kind.CALLSIGN]<3)return false;
+            if(kindAttempts[i][CwCoursePlan.Kind.CHARACTER.ordinal()]<8)return false;
+            if(kindAttempts[i][CwCoursePlan.Kind.GROUP.ordinal()]<8)return false;
+            if(kindAttempts[i][CwCoursePlan.Kind.WORD.ordinal()]<6)return false;
+            if(session>=2 && kindAttempts[i][CwCoursePlan.Kind.CALLSIGN.ordinal()]<3)return false;
         }else {
-            if(kindAttempts[i][CwCoursePlan.Kind.MESSAGE]<8)return false;
-            if(kindAttempts[i][CwCoursePlan.Kind.CALLSIGN]<6)return false;
-            if(kindAttempts[i][CwCoursePlan.Kind.GROUP]<6)return false;
+            if(kindAttempts[i][CwCoursePlan.Kind.MESSAGE.ordinal()]<8)return false;
+            if(kindAttempts[i][CwCoursePlan.Kind.CALLSIGN.ordinal()]<6)return false;
+            if(kindAttempts[i][CwCoursePlan.Kind.GROUP.ordinal()]<6)return false;
         }
         return true;
     }
