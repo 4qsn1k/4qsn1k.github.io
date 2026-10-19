@@ -1,5 +1,16 @@
 # Issue #14 — native format evidence and serialization gate, 19.10.2026
 
+## Verified independent HOME-PC checkpoints — 19.10.2026 (continuation)
+
+- **Real TEST archive strict mode:** still rejects numeric native port type code **4** as unsupported. Its meaning is not inferred.
+- **New optional read-only diagnostic mode** (`python scripts/inspect-native-owle.py FILE.owle --diagnostic`) ran on the actual preserved HOME-PC archive, SHA256 `0E3F85BFC198AA298EBAC5068E76B5C0408CB4590FAEE9530E74559A1A167A00`. Exit 0, `NATIVE_TYPE_UNSUPPORTED_DIAGNOSTIC_ONLY`, `strictValidation=INVALID_NATIVE_PORT_TYPE`, census `0/0:23; 1/0:35; 1/3:2; 1/4:4`. **`usableForSerialization=false`** and `nativeDocument=null`. Safety tests 7/7 PASS on Z4559. Complete `npm run check` on Z4559 PASS; Linux and Windows GitHub Actions for this HEAD PASS.
+- **Separate TEST clone created on HOME-PC**, `Airlock_NATIVE_14_UUID_REMAP_TEST_20261019.owle`, SHA256 `35A3E289116C7924B398999AD68183CEA90927FFA59131A031DB49DD77BEB7A8`. A local test helper replaced **187 UUIDs** throughout the existing TEST archive and verified 25 element / 16 connector / 3 ST-definition cross references before attempting any GUI operation. This is a **UUID-remapped copy of an existing saved FBD**, not a graph-to-OWLE generator.
+- **Editor GUI opening confirmed** on HOME-PC: Owen Logic 3.3.378 third separate PID 7128 shows the clone filename and displays original FBD symbols, ports and wiring without an opening error. The two older Owen test windows (PIDs 7084 and 9988) were not altered; the clone hash remained unchanged.
+- **Native compilation/simulation is NOT independently established** for the clone. No claim of `NATIVE_COMPILE_PASS`, `NATIVE_SIM_PASS` or automatically generated new OWLE. Real physical PR100/COM5 are on Z4559, not involved in this native editor GUI test.
+
+**Remaining gate:** full verified writer metadata, complete native element templates (including unknown data type 4 and original module metadata), general graph materialization, native compiler and simulation. Maintain Issue #14 open after merging tooling; do not grant status `NATIVE_GUI_PASS` for arbitrary exported files.
+
+
 ## Independent HOME-PC evidence update — 19.10.2026
 
 The actual GUI-saved `Airlock_FBD_QA012_HOME.owle` was inspected **read-only** on HOME-PC. Its SHA256 remains `0E3F85BFC198AA298EBAC5068E76B5C0408CB4590FAEE9530E74559A1A167A00` (no edits). ZIP contains only two members, `Project` (264553 bytes decompressed) and `StFunctionBlocks` (26717 bytes decompressed). There are 25 native elements, 16 connectors, 6 virtual variable records, and 3 ST definitions (one generic and two test room FBs).
