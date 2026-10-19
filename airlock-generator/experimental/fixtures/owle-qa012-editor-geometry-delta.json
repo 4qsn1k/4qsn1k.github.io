@@ -1,0 +1,124 @@
+{
+  "schema": "airlock-owle-gui-geometry-diff/1",
+  "scope": "EDITOR_SAVED_EXISTING_TEST_CLONE_ONLY_NOT_ARBITRARY_FBD_WRITER",
+  "sourceTestSha256": "0E3F85BFC198AA298EBAC5068E76B5C0408CB4590FAEE9530E74559A1A167A00",
+  "beforeSha256": "35A3E289116C7924B398999AD68183CEA90927FFA59131A031DB49DD77BEB7A8",
+  "afterSha256": "36573D019A813C0595645A4C7318170C2B15734CE611BBD16BDB5D39C436A160",
+  "editor": "Owen Logic 3.3.378, HOME-PC independent test window",
+  "counts": {
+    "elements": 25,
+    "ports": 64,
+    "connectors": 16,
+    "stDefinitions": 3
+  },
+  "identityPreserved": {
+    "elements": true,
+    "ports": true,
+    "connectors": true
+  },
+  "stDefinitionsSemanticallyUnchanged": true,
+  "archiveMembers": [
+    "Project",
+    "StFunctionBlocks"
+  ],
+  "change": {
+    "nativeElement": "I1",
+    "sourcePort": "Output0",
+    "logicalType": "Virtual DI",
+    "locationBefore": {
+      "isEmpty": true,
+      "x": 0,
+      "y": 0
+    },
+    "locationAfter": {
+      "isEmpty": false,
+      "x": 0,
+      "y": 2.5
+    },
+    "nativeDelta": {
+      "x": 0,
+      "y": 2.5
+    },
+    "primitiveGeometry": "I1 primitive points/text output line move +2.5 on Y; ZOrder normalized by editor",
+    "affectedEdges": [
+      {
+        "from": "I1.Output0",
+        "to": "FB_Room_N4.Input0",
+        "before": [
+          {
+            "x": 12.5,
+            "y": 5
+          },
+          {
+            "x": 152.5,
+            "y": 5
+          },
+          {
+            "x": 152.5,
+            "y": 135
+          }
+        ],
+        "after": [
+          {
+            "x": 12.5,
+            "y": 7.5
+          },
+          {
+            "x": 152.5,
+            "y": 7.5
+          },
+          {
+            "x": 152.5,
+            "y": 135
+          }
+        ]
+      },
+      {
+        "from": "I1.Output0",
+        "to": "FB_Room_N1.Input0",
+        "before": [
+          {
+            "x": 12.5,
+            "y": 5
+          },
+          {
+            "x": 22.499996,
+            "y": 5
+          },
+          {
+            "x": 22.499996,
+            "y": 7.500004
+          }
+        ],
+        "after": [
+          {
+            "x": 12.5,
+            "y": 7.5
+          },
+          {
+            "x": 22.499996,
+            "y": 7.500004
+          }
+        ]
+      }
+    ]
+  },
+  "guiEvidence": {
+    "opened": true,
+    "simulationEntered": true,
+    "simulationRan": true,
+    "inputI1Before": 0,
+    "inputI1After": 1,
+    "roomN1StateBefore": 99,
+    "roomN1StateAfter": 90,
+    "roomN1FaultAfter": 1,
+    "savedUsingOwenLogic": true
+  },
+  "disclaimers": {
+    "rawNativeArchivePublished": false,
+    "sourceStPublished": false,
+    "arbitraryNativeSerializationConfirmed": false,
+    "compilerDiagnosticsIndependentlyCaptured": false,
+    "physicalPLCUsed": false
+  }
+}
