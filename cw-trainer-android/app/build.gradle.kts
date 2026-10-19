@@ -6,8 +6,8 @@ android {
         applicationId = "com.cwtrainer.pocket"
         minSdk = 26
         targetSdk = 34
-        versionCode = 12
-        versionName = "0.5.2"
+        versionCode = 13
+        versionName = "0.5.3"
     }
     testOptions { unitTests.isIncludeAndroidResources = true }
     compileOptions {
