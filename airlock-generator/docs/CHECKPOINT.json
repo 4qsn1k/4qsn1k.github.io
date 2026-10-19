@@ -858,5 +858,33 @@
       "diagnosticType4Count": 4
     },
     "electricalSafetyAndEgressHardwareAccepted": false
+  },
+  "newChatHandoff20261019": {
+    "file": "airlock-generator/docs/CHAT_HANDOFF_2026-10-19_NEW_CHAT.md",
+    "goal": "continue Airlock Generator in new conversation without losing QA decisions",
+    "device": "Z4559",
+    "port": "COM5",
+    "userHasRequestedPortHold": true,
+    "until": "User explicitly instructs Airlock to resume using COM5, not a five-minute timer",
+    "localAirlockAgentAtLastRead": {
+      "listener8787": 0,
+      "stopFlagPresent": true,
+      "pidMarkerPresent": false,
+      "comPortOpenedForThisCheck": false,
+      "otherProgramPortOwnerUnverified": true
+    },
+    "stopAsSafetyGate": true,
+    "noAutostart": true,
+    "publishedPRs": [
+      13,
+      16,
+      18,
+      19,
+      20
+    ],
+    "fbdPlanPass": true,
+    "fullNativeOwleGeneratorPass": false,
+    "physicalSafetyPass": false,
+    "next": "Offline Issue #14 native Owen Logic writer until explicit permission to open COM5"
   }
 }
