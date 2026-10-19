@@ -109,5 +109,32 @@ class EnvelopeTests(unittest.TestCase):
                 self.inspect(archive(document=changed))
 
 
+    def test_vendor_type_four_diagnostic_never_enables_serialization(self):
+        fixture = json.loads((ROOT / "experimental/fixtures/fbd-two-native-blocks.sample.json").read_text())
+        doc = {"Elements": fixture["elements"], "ConnectorModels": []}
+        port = doc["Elements"][0]["ElementBlockStoreModel"]["ElementModel"]["Ports"][0]
+        port["DataType"] = 4  # numeric observation only; meaning is NOT defined
+        data = archive(document=doc)
+        with self.assertRaisesRegex(ValueError, "INVALID_NATIVE_PORT_TYPE"):
+            self.inspect(data)
+        with tempfile.TemporaryDirectory(prefix="airlock-native-type-diagnostic-") as tmp:
+            saved = Path(tmp) / "TYPE4_ONLY_SYNTHETIC.owle"
+            saved.write_bytes(data)
+            report = module.inspect_archive(saved, diagnostic=True)
+            self.assertEqual(saved.read_bytes(), data)
+            self.assertEqual(report["status"], "NATIVE_TYPE_UNSUPPORTED_DIAGNOSTIC_ONLY")
+            self.assertEqual(report["strictValidation"], "INVALID_NATIVE_PORT_TYPE")
+            self.assertTrue(any(row["dataType"] == 4 and row["count"] == 1
+                                for row in report["observedNativePortCodes"]))
+            self.assertFalse(report["usableForSerialization"])
+            self.assertIsNone(report["nativeDocument"])
+            self.assertEqual(report["nativeGui"], "NEEDS_NATIVE_GUI")
+            # Unknown types still fail even in diagnostic mode.
+            port["DataType"] = 6
+            saved.write_bytes(archive(document=doc))
+            with self.assertRaisesRegex(ValueError, "INVALID_NATIVE_PORT_TYPE"):
+                module.inspect_archive(saved, diagnostic=True)
+
+
 if __name__ == "__main__":
     unittest.main()
