@@ -159,7 +159,7 @@ public final class SrrMorseActivity extends Activity {
         if(preparing||playing)return;
         audio.stop();handler.removeCallbacks(watch);
         epoch++;reference=SrrExamEngine.randomRadiogram(random,length);
-        preparing=true;playing=false;completed=false;startedAt=0;
+        preparing=true;playing=false;completed=false;startedAt=0;playedForMs=0;
         start.setEnabled(false);rate.setEnabled(false);lengthControl.setEnabled(false);
         abort.setVisibility(View.VISIBLE);grade.setVisibility(View.GONE);
         transcribed.setEnabled(true);transcribed.setText("");
@@ -180,16 +180,26 @@ public final class SrrMorseActivity extends Activity {
     private void grade(){
         if(!completed || reference.isEmpty())return;
         completed=false;
-        long elapsed=startedAt==0?Long.MAX_VALUE:SystemClock.elapsedRealtime()-startedAt;
+        // Only the audio run belongs to the 60-character/minute test.
+        // Entering a handwritten answer AFTER the signal must not count as extra playback time.
+        long elapsed=playedForMs>0?playedForMs:Long.MAX_VALUE;
         int mistakes=exam?SrrExamEngine.errors(reference,transcribed.getText().toString()):
                           SrrExamEngine.errorsAny(reference,transcribed.getText().toString());
         boolean pass=exam?SrrExamEngine.morsePassed(mistakes,elapsed):
                           mistakes<=Math.max(1,(int)Math.floor(length*.012));
+        String oldHistory=prefs.getString("completed_history_v1","");
+        // Every COMPLETED reception task, including failed tasks, contributes to the record.
+        // Aborted or interrupted audio is excluded.
+        String newHistory=TrainingOutcomeHistory.append(oldHistory,
+            new TrainingOutcomeHistory.Record(TrainingOutcomeHistory.Part.MORSE,
+                System.currentTimeMillis(),Math.max(0,length-mistakes),length,cpm,
+                Math.max(1,elapsed==Long.MAX_VALUE?CwExamAudio.durationMillis(reference,cpm):elapsed)));
+        prefs.edit().putString("completed_history_v1",newHistory).apply();
         result.setText((pass?"✓ ЗАЧЁТ":"✕ НЕЗАЧЁТ")+"\n"+
             "Ошибок (замены, пропуски, вставки): "+mistakes+
             "\nПолучено знаков: "+SrrExamEngine.normalize(transcribed.getText().toString()).length()+
             "/"+length+"\nСкорость: "+cpm+" зн/мин"+
-            "\nВремя попытки: "+(elapsed/1000)+" с"+
+            "\nДлительность звука: "+(elapsed/1000)+" с"+
             "\n\nИсходный текст:\n"+reference+
             "\n\nТвоя запись:\n"+transcribed.getText().toString().trim().toUpperCase(Locale.ROOT));
         if(exam){
