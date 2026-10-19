@@ -82,16 +82,23 @@ function createPoller(profile,modbusRead=readController,clock={}){
  const now=clock.now||(()=>Date.now()),elapsed=clock.monotonic||clock.now||(()=>performance.now());
  const setTimer=clock.setTimer||setTimeout,clearTimer=clock.clearTimer||clearTimeout;
  const rtu=createTransport();let stopped=false;
+ const serialPorts=new Map();
+ for(const c of profile.controllers)if(c.protocol==="modbus-rtu"){
+  const key=c.comPort.toUpperCase();
+  if(!serialPorts.has(key))serialPorts.set(key,[]);
+  serialPorts.get(key).push(c.id);
+ }
+ const pausedPorts=new Set(),releasingPorts=new Set();
  const states=new Map(profile.controllers.map(c=>[c.id,{
   readings:{},error:"NOT_POLLED",lastPollAt:null,lastSuccessAt:null,sampleAt:null,sampleTick:null,durationMs:null,
-  consecutiveFailures:0,totalFailures:0,inFlight:null,nextDue:0,abort:null
+  consecutiveFailures:0,totalFailures:0,inFlight:null,nextDue:0,abort:null,paused:false
  }]));
  function get(){
   const time=now(),readings={},errors={};
   for(const c of profile.controllers){
    const state=states.get(c.id);
    const age=state.sampleTick===null?null:Math.max(0,elapsed()-state.sampleTick);
-   const error=stopped?"STOPPED":state.error||(age===null||age>profile.staleMs?"STALE":null);
+   const error=stopped?"STOPPED":state.paused?(releasingPorts.has(c.comPort?.toUpperCase())?"PORT_RELEASE_PENDING":state.error||"PORT_RELEASED"):state.error||(age===null||age>profile.staleMs?"STALE":null);
    if(error)errors[c.id]=error;else Object.assign(readings,state.readings);
   }
   const frame=frameFor(profile,readings,errors,time);
@@ -112,7 +119,7 @@ function createPoller(profile,modbusRead=readController,clock={}){
  function begin(c){
   const state=states.get(c.id);
   if(state.inFlight)return state.observed;
-  if(stopped)return Promise.resolve();
+  if(stopped||state.paused)return Promise.resolve();
   const bindings=profile.bindings.filter(b=>b.controllerId===c.id),start=now(),startTick=elapsed();
   const abort=new AbortController();state.abort=abort;
   const budget=profile.pollBudgetMs||10000;
@@ -127,10 +134,11 @@ function createPoller(profile,modbusRead=readController,clock={}){
    expired=true;fail("POLL_DEADLINE");abort.abort();complete();
   },budget);
   state.inFlight=Promise.resolve().then(()=>{
+   if(state.paused||abort.signal.aborted)throw fault("PORT_RELEASED");
    if(!bindings.length)throw fault("NO_BINDINGS");
    return modbusRead(c,bindings,{signal:abort.signal,rtu});
   }).then(values=>{
-   if(expired||stopped)return; // A late reply cannot restore ONLINE.
+   if(expired||stopped||state.paused)return; // A late reply cannot restore ONLINE.
    // Enforce elapsed budget even if a busy event loop delayed the timer callback.
    if(elapsed()-startTick>=budget){expired=true;fail("POLL_DEADLINE");abort.abort();return;}
    if(!values||bindings.some(b=>!Object.hasOwn(values,b.signal)))throw fault("INCOMPLETE_SAMPLE");
@@ -140,7 +148,7 @@ function createPoller(profile,modbusRead=readController,clock={}){
    state.readings=Object.fromEntries(bindings.map(b=>[b.signal,values[b.signal]]));
    state.error=null;state.lastPollAt=now();state.lastSuccessAt=now();state.sampleAt=start;state.sampleTick=startTick;
    state.durationMs=Math.max(0,elapsed()-startTick);state.consecutiveFailures=0;
-  }).catch(error=>{if(!expired&&!stopped)fail(cause(error));}).finally(()=>{
+  }).catch(error=>{if(!expired&&!stopped&&!state.paused)fail(cause(error));}).finally(()=>{
    clearTimer(timer);state.inFlight=null;state.abort=null;state.nextDue=elapsed()+profile.pollMs;complete();
   });
   return state.observed;
@@ -150,13 +158,58 @@ function createPoller(profile,modbusRead=readController,clock={}){
  function poll(){return Promise.all(profile.controllers.map(begin)).then(get);}
  function tick(){
   if(stopped)return get();
-  for(const c of profile.controllers){const s=states.get(c.id);if(!s.inFlight&&elapsed()>=s.nextDue)begin(c);}
+  for(const c of profile.controllers){const s=states.get(c.id);if(!s.inFlight&&!s.paused&&elapsed()>=s.nextDue)begin(c);}
   return get();
+ }
+ function portStatus(){
+  return [...serialPorts].map(([port,controllerIds])=>({
+   port,controllerIds:[...controllerIds],paused:pausedPorts.has(port),
+   releasing:releasingPorts.has(port)
+  }));
+ }
+ async function pausePort(port){
+  const key=String(port).toUpperCase();
+  if(stopped)throw fault("STOPPED");
+  if(!serialPorts.has(key))throw fault("UNKNOWN_PORT");
+  if(releasingPorts.has(key))throw fault("PORT_RELEASE_PENDING");
+  if(pausedPorts.has(key))return {port:key,released:true,controllerIds:[...serialPorts.get(key)]};
+  // Invalidate critical telemetry synchronously before waiting for COM release.
+  pausedPorts.add(key);releasingPorts.add(key);
+  const ids=serialPorts.get(key);
+  for(const id of ids){
+   const state=states.get(id);
+   state.paused=true;state.error="PORT_RELEASE_PENDING";
+   state.readings={};state.sampleTick=null;state.sampleAt=null;
+   state.abort?.abort();
+  }
+  try{
+   await rtu.pauseBus(key); // Must wait for worker 'close', not just kill request.
+   for(const id of ids)states.get(id).error="PORT_RELEASED";
+   return {port:key,released:true,controllerIds:[...ids]};
+  }catch{
+   for(const id of ids)states.get(id).error="PORT_RELEASE_UNCONFIRMED";
+   throw fault("PORT_RELEASE_UNCONFIRMED");
+  }finally{releasingPorts.delete(key);}
+ }
+ function resumePort(port){
+  const key=String(port).toUpperCase();
+  if(stopped)throw fault("STOPPED");
+  if(!serialPorts.has(key))throw fault("UNKNOWN_PORT");
+  if(releasingPorts.has(key))throw fault("PORT_RELEASE_PENDING");
+  if(!pausedPorts.has(key))return {port:key,paused:false};
+  rtu.resumeBus(key);
+  pausedPorts.delete(key);
+  for(const id of serialPorts.get(key)){
+   const state=states.get(id);
+   state.paused=false;state.readings={};state.sampleTick=null;state.sampleAt=null;
+   state.error="NOT_POLLED";state.nextDue=0;
+  }
+  return {port:key,paused:false,controllerIds:[...serialPorts.get(key)]};
  }
  async function close(){
   stopped=true;for(const s of states.values()){clearTimer(s.timer);s.abort?.abort();s.complete?.();}
   await rtu.close();
  }
- return {poll,tick,get,close};
+ return {poll,tick,get,portStatus,pausePort,resumePort,close};
 }
 module.exports={load,readController,frameFor,createPoller};
