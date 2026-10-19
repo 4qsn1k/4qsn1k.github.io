@@ -2,6 +2,7 @@ package com.cwtrainer.pocket;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.content.Context;
@@ -37,7 +38,7 @@ public final class MainActivity extends Activity {
     private static final int MUTED=Color.rgb(178,195,209);
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final Random random=new Random();
-    private final MorseTonePlayer audio=new MorseTonePlayer();
+    private MorseTonePlayer audio;
     private SharedPreferences prefs;
     private List<MorseCourse.Symbol> alphabet;
     private MorseCourse.Progress progress;
@@ -51,6 +52,8 @@ public final class MainActivity extends Activity {
     private TextView heading, prompt, character, feedback, metrics, stats;
     private EditText answerField;
     private Button languageButton, replayButton, nextButton, submitButton, unknownButton;
+    private Button soundTestButton, audioModeButton;
+    private TextView soundStatus;
     private final Button[] choiceButtons=new Button[4];
     private final Button[] modeButtons=new Button[4];
     private Runnable scheduled=null;
@@ -86,6 +89,9 @@ public final class MainActivity extends Activity {
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);
+        audio=new MorseTonePlayer(this, message -> {
+            if(soundStatus!=null)soundStatus.setText("Звук: "+message+"\n"+volumeInfo());
+        });
         getWindow().setStatusBarColor(BACKGROUND);
         getWindow().setNavigationBarColor(BACKGROUND);
         prefs=getSharedPreferences("cw_trainer_pocket",Context.MODE_PRIVATE);
@@ -101,6 +107,13 @@ public final class MainActivity extends Activity {
     private void saveProgress(){
         prefs.edit().putString(russian?"progress_ru":"progress_en",progress.serialize()).apply();
     }
+    private String volumeInfo(){
+        AudioManager a=(AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        if(a==null)return "Не удалось получить громкость";
+        int v=a.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int max=a.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        return "Громкость медиа: "+v+"/"+max+(v==0?" — УВЕЛИЧЬ ГРОМКОСТЬ!":"")+". Проверяй аудиовыход телефона.";
+    }
     private void buildUI(){
         ScrollView scroll=new ScrollView(this);scroll.setFillViewport(true);
         root=column();root.setPadding(dp(14),dp(14),dp(14),dp(20));
@@ -110,6 +123,19 @@ public final class MainActivity extends Activity {
         name.setTypeface(null,Typeface.BOLD);add(root,name,2);
         languageButton=button("",PANEL);languageButton.setTextSize(15);
         add(root,languageButton,6);
+        soundTestButton=button("🔊  ПРОВЕРИТЬ ЗВУК (SOS)",GREEN);
+        add(root,soundTestButton,7);
+        soundTestButton.setOnClickListener(v->{audio.play("...---...",25);});
+        audioModeButton=button("Способ звука: WAV · сменить",PANEL);
+        audioModeButton.setTextSize(14);
+        add(root,audioModeButton,4);
+        audioModeButton.setOnClickListener(v->{
+            audio.setUseStream(!audio.usesStream());
+            audioModeButton.setText(audio.usesStream()?"Способ звука: AudioTrack · сменить":"Способ звука: WAV · сменить");
+            audio.play("...---...",25);
+        });
+        soundStatus=text(volumeInfo(),13,MUTED);soundStatus.setGravity(Gravity.START);
+        add(root,soundStatus,5);
         languageButton.setOnClickListener(v->{
             cancelPending();
             saveProgress();
@@ -238,6 +264,7 @@ public final class MainActivity extends Activity {
             });
         }
         if(start>0)feedback.setText("Последние 8 символов. Остальные повторяются в тренировках.");
+        schedule(()->audio.play(alphabet.get(question).code,25),350);
     }
     private void newQuestion(){
         cancelPending();repeats=0;answered=false;nextButton.setVisibility(View.GONE);
@@ -338,6 +365,7 @@ public final class MainActivity extends Activity {
           "\n\nПовторение назначается через 1, 3 и 7 дней."+
           "\n\nКнопки выбора букв служат тренировкой и НЕ повышают уровень.");
     }
+    @Override public void onResume(){super.onResume();if(soundStatus!=null)soundStatus.setText("Проверка динамика: нажми SOS.\n"+volumeInfo());}
     @Override public void onPause(){super.onPause();cancelPending();}
     @Override public void onDestroy(){cancelPending();super.onDestroy();}
 }
