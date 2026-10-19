@@ -1,3 +1,11 @@
+# 19.10.2026 — PR #13 synchronized with main
+
+Merged main `986ec9899f2e1e22eeb7a2547d0ba9d5777888ba` (PR #16 and #17) into `codex/airlock-10-fbd-graph`. Resolved package/checkpoint conflicts by preserving both test suites and histories. Full `bash scripts/codex-check.sh`: exit 0, FBD 9/9, evaluator 12/12 (256 cases, 36 graphs), export 4/4, MODEL 8/8; Modbus fault/recovery and sanitized native evidence tests pass. GitHub PR #13 exists as draft; earlier API/creation blocker is historical.
+
+Issue #14 starts from this synchronized graph. Published shape evidence confirms OR/FB/DI/DO ports and connectors; it omits writable project metadata, geometry, UUID relations and FB definitions. No new OWLE or native PASS. HOME-PC new-project GUI QA remains required; physical equipment untouched.
+
+---
+
 # CHAT_CONTINUITY — конструктор технологических шлюзов
 
 ## 18.10.2026 — Issue #10: общий FBD-граф, offline QA
@@ -295,3 +303,13 @@
 - **Точка продолжения: QA-OL-012**. Собрать FBD для `FB_Room_N1` и `FB_Room_N4`, общий геркон 1–4 передать обоим блокам и запреты 1–4 объединить через OR. Действующий ПР100 не программировать.
 
 **Фраза нового чата:** «Прочитай CHAT_CONTINUITY.md и CHECKPOINT.json проекта airlock-generator в GitHub 4qsn1k/4qsn1k.github.io. Продолжи QA-OL-012. Перекидные красно-зелёные реле используют один DO на пару; установка Owen Logic на HOME-PC запланирована отдельно».
+
+## 18.10.2026 — Issue #15: автономная надёжность агента телеметрии
+
+Ветка `codex/airlock-15-reliable-polling` от актуального main; изменения Issue #10 / PR #13 не включены. Существующий gateway получил ограниченную FIFO на COM, подтверждение завершения helper до освобождения порта, межпроцессную блокировку, явный persistent-режим с сохранённым one-shot, независимое расписание ПР, общий бюджет опроса и монотонный возраст полной выборки. Ошибка/устаревание исключает данные из ONLINE/READY/GREEN. Локальные профили валидируются и сохраняются атомарно с backup/restore; API скрывает параметры подключения. Журнал ограничен и выдерживает ошибку записи на диск.
+
+**Подтверждено в Cloud Linux:** полный `bash scripts/codex-check.sh` PASS, MODEL 8/8; отдельный тест настоящего pymodbus 3.15.0/pyserial 3.5 на serial-адаптере в памяти PASS, включая CRC/потерянные байты/неверные Unit и FC/отключение-восстановление. Новые fault-injection тесты проверяют 30 пропущенных циклов без backlog, задержанный ответ, TERM/KILL/close, эксклюзивность между процессами, параллельные ПР и отказ позднего пакета. Windows CI/offline smoke добавлен; запуск на HOME-PC/Z4559 в этой сессии не выполнялся.
+
+Физические контроллеры не подключались, Modbus-записи не выполнялись, Owen Logic/СКУД/замки не менялись; автозапуск не устанавливался. Подробности, границы времени/ресурсов и отдельная ещё не выполненная физическая процедура: [AGENT-RELIABILITY-ISSUE-15.md](AGENT-RELIABILITY-ISSUE-15.md). Следующий шаг — review draft PR и результатов CI; аппаратные PASS не выводить из mock-тестов.
+
+Draft PR: [#16](https://github.com/4qsn1k/4qsn1k.github.io/pull/16), без merge. После исправления наблюдённой гонки cleanup fake TCP fixture подтверждён [CI 39154998928](https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39154998928) на `fd5c3cb`: полный Linux offline QA, Linux и Windows real-library/fault smoke — все success. Проверки Windows в GitHub не являются испытанием на HOME-PC/Z4559 или физическом ПР.

@@ -18,7 +18,7 @@ const poller=createPoller(profile,async c=>{
  await new Promise(resolve=>setTimeout(resolve,c.id==="PR1"?4:2));
  if(c.id==="PR2"&&cycle<=1)throw Error("simulated cable offline");
  return {["PLC_"+c.id+".DI1"]:cycle%2};
-});
+},{now:()=>Date.now()});
 (async()=>{
  let s=await poller.poll();
  assert.equal(s.controllers.PR1.online,true);assert.equal(s.controllers.PR2.online,false);

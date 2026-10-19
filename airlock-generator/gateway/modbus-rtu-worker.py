@@ -29,32 +29,119 @@ def validate(p):
     if type(timeout) is not int or not 200<=timeout<=5000: raise ValueError("Invalid timeout")
     return port,baud,p["parity"],p["stopbits"],uid,fc,addr,count,timeout
 
+class ReadFault(Exception):
+    def __init__(self, code): self.code = code
+
+class Session:
+    """Owns one serial master, with a cross-process OS lock released on process death."""
+    def __init__(self):
+        self.client = None
+        self.config = None
+        self.lock = None
+
+    def close(self):
+        if self.client is not None:
+            try: self.client.close()
+            finally: self.client = None
+
+    def acquire(self, port):
+        if self.lock is not None: return
+        import hashlib
+        import os
+        import tempfile
+        key = port.upper() if port.upper().startswith("COM") else port
+        filename = "airlock-rtu-" + hashlib.sha256(key.encode()).hexdigest() + ".lock"
+        self.lock = open(os.path.join(tempfile.gettempdir(), filename), "a+b")
+        try:
+            if os.name == "nt":
+                import msvcrt
+                self.lock.seek(0)
+                if not self.lock.read(1):
+                    self.lock.write(b"0"); self.lock.flush()
+                self.lock.seek(0)
+                msvcrt.locking(self.lock.fileno(), msvcrt.LK_NBLCK, 1)
+            else:
+                import fcntl
+                fcntl.flock(self.lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            self.lock.close(); self.lock = None
+            raise ReadFault("BUS_BUSY")
+
+    def query(self, params):
+        port,baud,parity,stopbits,uid,fc,addr,count,timeout = validate(params)
+        config = (port,baud,parity,stopbits)
+        if self.config is not None and self.config != config: raise ReadFault("RTU_PROTOCOL")
+        self.config = config
+        self.acquire(port)
+        from pymodbus.client import ModbusSerialClient
+        if self.client is None:
+            self.client = ModbusSerialClient(port=port,baudrate=baud,bytesize=8,parity=parity,
+                stopbits=stopbits,timeout=timeout/1000.0,retries=0)
+        try:
+            # Reconnect only when needed. Never replay failed reads or use old replies.
+            if not self.client.connect(): raise ReadFault("RTU_UNAVAILABLE")
+            # Requests on one bus may have different deadlines.
+            if hasattr(self.client, "comm_params"):
+                self.client.comm_params.timeout_connect = timeout/1000.0
+            if hasattr(self.client, "transaction"):
+                self.client.transaction.comm_params.timeout_connect = timeout/1000.0
+            if getattr(self.client, "socket", None) is not None:
+                self.client.socket.timeout = timeout/1000.0
+                # Discard delayed/incomplete bytes left by an earlier transaction.
+                self.client.socket.reset_input_buffer()
+            func = {1:"read_coils",2:"read_discrete_inputs",3:"read_holding_registers",4:"read_input_registers"}[fc]
+            result = getattr(self.client,func)(address=addr,count=count,device_id=uid)
+            if result is None: raise ReadFault("RTU_PROTOCOL")
+            if getattr(result, "dev_id", uid) != uid: raise ReadFault("RTU_PROTOCOL")
+            if getattr(result, "function_code", fc) not in (fc, fc|128): raise ReadFault("RTU_PROTOCOL")
+            if result.isError():
+                code = getattr(result, "exception_code", None)
+                raise ReadFault("MODBUS_EXCEPTION_" + str(code) if type(code) is int and 0<=code<=255 else "RTU_PROTOCOL")
+            vals = result.bits if fc<=2 else result.registers
+            if vals is None or len(vals)<count or (fc>2 and len(vals)!=count): raise ReadFault("RTU_PROTOCOL")
+            if any(type(x) not in (int,bool) or x<0 or x>(1 if fc<=2 else 65535) for x in vals[:count]):
+                raise ReadFault("RTU_PROTOCOL")
+            return {"ok":True,"values":[int(x) for x in vals[:count]]}
+        except Exception:
+            self.close()  # A fresh client/serial buffer after CRC, unplug, exception or timeout.
+            raise
+
+    def dispose(self):
+        self.close()
+        if self.lock is not None: self.lock.close(); self.lock = None
+
 def query(params):
-    port,baud,parity,stopbits,uid,fc,addr,count,timeout=validate(params)
-    from pymodbus.client import ModbusSerialClient
-    client=ModbusSerialClient(port=port,baudrate=baud,bytesize=8,parity=parity,
-                              stopbits=stopbits,timeout=timeout/1000.0,retries=0)
+    session = Session()
+    try: return session.query(params)
+    finally: session.dispose()
+
+def respond(session, blob):
+    request = {}
     try:
-        if not client.connect(): raise RuntimeError("RS485 port unavailable or occupied")
-        func={1:"read_coils",2:"read_discrete_inputs",3:"read_holding_registers",4:"read_input_registers"}[fc]
-        result=getattr(client,func)(address=addr,count=count,device_id=uid)
-        if result is None or result.isError(): raise RuntimeError("Modbus exception or no valid response")
-        vals=result.bits if fc<=2 else result.registers
-        if vals is None or len(vals)<count: raise RuntimeError("Incomplete RTU reply")
-        values=[int(x) for x in vals[:count]]
-        if any(x<0 or x>(1 if fc<=2 else 65535) for x in values): raise RuntimeError("Invalid RTU values")
-        return {"ok":True,"values":values}
-    finally:
-        client.close()
+        if len(blob)>4096: raise ReadFault("RTU_PROTOCOL")
+        request = json.loads(blob.decode("utf-8"))
+        result = session.query(request)
+    except Exception as error:
+        # Raw exception text can contain local port/network/credential data.
+        result = {"ok":False,"code":getattr(error,"code","RTU_UNAVAILABLE")}
+    if isinstance(request, dict): result["id"] = request.get("id")
+    return result
 
 def main():
+    persistent = sys.argv[1:] == ["--persistent"]
+    session = Session()
     try:
-        blob=sys.stdin.buffer.read(4097)
-        if len(blob)>4096: raise ValueError("Request too large")
-        result=query(json.loads(blob.decode("utf-8")))
-    except Exception as e:
-        result={"ok":False,"error":str(e)[:170]}
-    print(json.dumps(result,ensure_ascii=False,separators=(",",":")))
-    return 0 if result["ok"] else 2
+        if persistent:
+            while True:
+                blob = sys.stdin.buffer.readline(4097)
+                if not blob: break
+                result = respond(session, blob)
+                print(json.dumps(result,separators=(",",":")), flush=True)
+                if len(blob)>4096: return 2
+            return 0
+        result = respond(session, sys.stdin.buffer.read(4097))
+        print(json.dumps(result,separators=(",",":")), flush=True)
+        return 0 if result["ok"] else 2
+    finally: session.dispose()
 
 if __name__=="__main__": sys.exit(main())

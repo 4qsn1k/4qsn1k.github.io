@@ -107,7 +107,7 @@
   const root=$("controllersList");root.replaceChildren();
   for(const c of profile.controllers){
    const rowEl=document.createElement("div");rowEl.className="row";
-   const text=document.createElement("span");text.textContent=c.id+" · "+(c.protocol==="modbus-rtu"?c.comPort+" "+c.baudrate+" "+c.parity+"8"+c.stopbits:c.host+":"+c.port)+" · Slave "+c.unitId;
+   const text=document.createElement("span");text.textContent=c.id+" · "+(c.redacted?"локальный профиль скрыт":c.protocol==="modbus-rtu"?c.comPort+" "+c.baudrate+" "+c.parity+"8"+c.stopbits:c.host+":"+c.port)+(c.redacted?"":" · Slave "+c.unitId);
    const remove=document.createElement("button");remove.type="button";remove.textContent="Удалить";
    remove.onclick=()=>{profile.controllers=profile.controllers.filter(x=>x.id!==c.id);
     profile.bindings=profile.bindings.filter(x=>x.controllerId!==c.id);updateSelectors();};
@@ -140,6 +140,7 @@
     const details=document.createElement("small");
     const last=info.lastSuccessAt?new Date(info.lastSuccessAt).toLocaleTimeString("ru-RU"):"ещё не было";
     details.textContent="Опрос: "+(Number.isFinite(info.durationMs)?info.durationMs+" мс":"—")+
+     " · Возраст данных: "+(Number.isFinite(info.dataAgeMs)?Math.round(info.dataAgeMs)+" мс":"—")+
      " · Ошибок подряд: "+(info.consecutiveFailures??0)+" · Последний ответ: "+last;
     meta.append(details);root.append(meta);
    }
@@ -262,6 +263,7 @@
    renderBindings();
   };
   $("downloadProfile").onclick=()=>{
+   if(profile.controllers.some(c=>c.redacted)){error("Параметры подключения хранятся на агенте. Сохранение и восстановление — локально через profile-store.js.");return;}
    if(!model||!profile.controllers.length||!profile.bindings.length){
     error("Сначала добавьте ПР и хотя бы одну привязку. Пустой профиль не готов к опросу.");return;
    }

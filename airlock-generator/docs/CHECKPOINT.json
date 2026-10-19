@@ -629,7 +629,7 @@
     "z4559OfflineQa": "PASS",
     "autostartInstalled": false
   },
-  "latestCheckpoint": "fbdGraphIssue10",
+  "latestCheckpoint": "fbdGraphMainSync20261019",
   "fbdGraphIssue10": {
     "date": "2026-10-18",
     "branch": "codex/airlock-10-fbd-graph",
@@ -679,16 +679,44 @@
     "pending": [
       "Native GUI fixtures and generated native test plan",
       "Approved recovery policies",
-      "Actual health sources, terminal/register maps and timeouts",
-      "Draft PR creation blocked by api.github.com proxy policy"
+      "Actual health sources, terminal/register maps and timeouts"
     ],
     "guide": "docs/FBD-GRAPH-ASSEMBLY.md",
-    "apiAccess": "api.github.com blocked; domain addition saved to environment draft, runtime not yet applied",
+    "apiAccess": "GitHub available in current environment; historical blocker resolved",
     "remoteBranch": "codex/airlock-10-fbd-graph",
     "pullRequest": {
-      "status": "NOT_CREATED_API_POLICY_BLOCK",
-      "attempt": "gh pr create --draft",
-      "error": "Post https://api.github.com/graphql: Forbidden"
+      "status": "DRAFT_OPEN",
+      "url": "https://github.com/4qsn1k/4qsn1k.github.io/pull/13"
     }
+  },
+  "telemetryIssue15": {
+    "branch": "codex/airlock-15-reliable-polling",
+    "issue": "https://github.com/4qsn1k/4qsn1k.github.io/issues/15",
+    "status": "OFFLINE_SOFTWARE_QA_PASS_PHYSICAL_NOT_TESTED",
+    "scope": "Existing read-only gateway only; independent of Issue #10 / PR #13",
+    "fullCodexCheck": "PASS; MODEL_QA_FINAL PASS 8/8",
+    "realPymodbusMemorySerial": "PASS; pymodbus 3.15.0 / pyserial 3.5; no real serial device",
+    "windowsSmoke": "GitHub windows-latest PASS; NOT_RUN on HOME-PC or Z4559 in this session",
+    "physicalControllerTested": false,
+    "controllerWritesAllowed": false,
+    "documentation": "docs/AGENT-RELIABILITY-ISSUE-15.md",
+    "draftPR": "https://github.com/4qsn1k/4qsn1k.github.io/pull/16",
+    "ciValidatedCodeCommit": "fd5c3cb4aadadae1b8b3abf928115d25003bedba",
+    "githubActions": {
+      "run": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39154998928",
+      "conclusion": "success",
+      "fullOfflineLinux": "PASS",
+      "realLibraryAndFaultSmokeLinux": "PASS",
+      "realLibraryAndFaultSmokeWindows": "PASS"
+    }
+  },
+  "fbdGraphMainSync20261019": {
+    "date": "2026-10-19",
+    "mainCommit": "986ec9899f2e1e22eeb7a2547d0ba9d5777888ba",
+    "pullRequest": "https://github.com/4qsn1k/4qsn1k.github.io/pull/13",
+    "fullCodexCheck": "PASS exit 0; FBD 9/9, evaluator 12/12 (256 cases, 36 graphs), export 4/4, MODEL 8/8; all main Modbus and sanitized fixture tests retained",
+    "logSha256": "777e000610c06b4381692eb69cd378a4c904b65f18722356bb6e471efae0e855",
+    "nativeNewProject": "NEEDS_NATIVE_GUI",
+    "physical": "PHYSICAL_NOT_TESTED"
   }
 }

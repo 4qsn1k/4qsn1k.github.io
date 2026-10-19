@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GeoDome — предварительная оценка стержней и усилий 2V</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color-scheme:light;--ink:#172d40;--sub:#607787;--border:#d7e4eb;--teal:#0a756b;--bg:#f0f5f7}*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--bg);line-height:1.48}main{max-width:1250px;margin:auto;padding:22px 14px 42px}header{padding:15px 3px 20px}h1{font-size:clamp(25px,3.2vw,35px);letter-spacing:-.035em;margin:3px 0 7px}h2{font-size:17px;margin:0 0 12px}h3{font-size:14px;margin:16px 0 8px}p{margin:7px 0}small,.muted{color:var(--sub)}header .tag{color:var(--teal);font-weight:750;font-size:12px;text-transform:uppercase;letter-spacing:.07em}.warning{background:#fff4e6;border-left:4px solid #b57828;padding:12px 15px;border-radius:6px;margin-top:11px}.info{background:#e8f5f3;border-left:3px solid var(--teal);padding:12px 14px;border-radius:4px}.layout{display:grid;grid-template-columns:350px minmax(0,1fr);align-items:start;gap:14px}.panel{background:white;border:1px solid var(--border);border-radius:11px;padding:16px;margin-bottom:13px;min-width:0}.field{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #edf2f5}.field:last-child{border-bottom:0}.field label{font-size:13px;font-weight:600;flex:1}.field input,.field select{width:100px;max-width:47%;height:35px;border-radius:6px;border:1px solid #bed3e0;background:#fbfdff;padding:5px 7px;font:inherit;color:var(--ink)}.field select{width:180px;max-width:65%}.subnote{font-size:11px;color:var(--sub);display:block;font-weight:400;margin-top:3px}.controls{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}button{border:1px solid #b8d0dd;background:white;color:var(--ink);padding:10px 13px;border-radius:8px;font-weight:700;cursor:pointer;font:inherit}button.primary{background:var(--teal);border-color:var(--teal);color:white}button:hover{filter:brightness(.97)}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.metric{background:#edf4f7;padding:10px;border-radius:8px}.metric small{display:block;font-size:11px}.metric b{font-size:21px}.model{background:linear-gradient(140deg,#e5f2f6,#f9fbfc);border:1px solid var(--border);border-radius:10px;overflow:hidden}#dome{display:block;width:100%;height:auto;max-height:450px}#dome circle{fill:#305b73;stroke:white;stroke-width:.8}#dome line{stroke-linecap:round;cursor:pointer}#dome line:hover{stroke-width:4!important}.legend{display:flex;flex-wrap:wrap;gap:15px;font-size:12px;margin:9px 0}.legend i{display:inline-block;width:13px;height:3px;vertical-align:middle;margin-right:4px;background:#13958c}.legend .red{background:#bd7c30}.legend .blue{background:#397faf}.legend .grey{background:#8499a8}table{border-collapse:collapse;width:100%;font-size:12px}td,th{padding:8px;border-bottom:1px solid #e3edf1;text-align:right}th:first-child,td:first-child{text-align:left}th{color:#526a7b;font-size:11px}td{font-variant-numeric:tabular-nums}tbody tr:hover{background:#f2f8fa}.scroll{overflow-x:auto}details{margin-top:10px;background:#f8fbfc;border:1px solid #e2edf1;border-radius:9px;padding:8px 12px}summary{cursor:pointer;font-weight:650}.foot{color:var(--sub);font-size:12px;margin-top:13px}a{color:var(--teal)}#status{font-weight:600}#status.error{color:#a23c24}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sr{position:absolute;left:-10000px}.list{margin:7px 0;padding-left:21px}.list li{margin:4px 0}[hidden]{display:none!important}svg text{font:12px system-ui,Arial,sans-serif;fill:#39647a}@media(max-width:850px){.layout{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}@media(max-width:450px){main{padding:10px}.panel{padding:12px}.metric b{font-size:19px}}
+</style></head>
+<body><main>
+<header><span class="tag">GeoDome · Расчёт каркаса 2V · эксперимент</span><h1>Прочность стержней и усилия в куполе</h1><p class="muted">Рассчитывает идеализированную шарнирную ферму и показывает, какой стержень первым достигнет заданного осевого ограничения. Не заменяет расчёт здания и испытание узлов.</p>
+<div class="warning"><b>Это не сертификат несущей способности.</b> В модели пока нет ветра, подъёмной силы, местного изгиба гнёзд, смятия дерева, отклонений размеров и нормативных сочетаний нагрузок. Поэтому нагрузку, при которой купол с людьми внутри безопасен, калькулятор не определяет.</div></header>
+<div class="layout"><aside>
+<section class="panel"><h2>1. Геометрия</h2>
+<div class="field"><label for="mode">Форма купола<span class="subnote">Пока только опора узлов на уровне земли</span></label><select id="mode"><option value="ground">Полусфера до земли</option><option value="elongated">Вытянутый до земли</option></select></div>
+<div class="field"><label for="D">Диаметр, м</label><input type="number" id="D" min="2" max="6" step=".1" value="3.5"></div>
+<div class="field"><label for="H">Высота, м<span class="subnote">Для полусферы = D/2</span></label><input type="number" id="H" min="1" max="4" step=".05" value="1.75" disabled></div>
+<div class="field"><label for="section">Сечение стержня</label><select id="section"><option value="round">Круглый шкант</option><option value="rect">Прямоугольная рейка</option></select></div>
+<div class="field" id="diamRow"><label for="d">Диаметр шканта, мм<span class="subnote">Для ветки брать минимум по длине</span></label><input type="number" id="d" min="10" max="65" step="1" value="25"></div>
+<div class="field" id="widthRow" hidden><label for="w">Ширина рейки, мм</label><input type="number" id="w" min="10" max="80" step="1" value="25"></div>
+<div class="field" id="thickRow" hidden><label for="t">Толщина рейки, мм</label><input type="number" id="t" min="10" max="80" step="1" value="25"></div>
+</section>
+<section class="panel"><h2>2. Материал дерева</h2><p class="muted" style="font-size:12px">Введите подтверждённые проектные значения или используйте отдельный учебный пример. Для неизвестной ветки эти параметры нельзя назначить по одному диаметру.</p>
+<div class="field"><label for="E">Модуль упругости E, МПа</label><input id="E" type="number" min="100" max="30000" step="100" placeholder="нет данных"></div>
+<div class="field"><label for="fc">Прочность при сжатии, МПа</label><input id="fc" type="number" min=".1" max="120" step=".5" placeholder="нет данных"></div>
+<div class="field"><label for="ft">Прочность при растяжении, МПа</label><input id="ft" type="number" min=".1" max="150" step=".5" placeholder="нет данных"></div>
+<div class="field"><label for="ke">Коэффициент расчётной длины K<span class="subnote">1 — шарниры; 2 — консоль. Не подтверждён</span></label><input id="ke" type="number" min=".5" max="2" step=".05" value="1"></div>
+<div class="field"><label for="sf">Учебный коэффициент снижения<span class="subnote">Не является нормированным γM</span></label><input id="sf" type="number" min="1" max="10" step=".5" value="3"></div>
+<div class="controls"><button id="example">Заполнить учебный пример</button><button id="clearExample">Очистить прочности</button></div>
+</section>
+<section class="panel"><h2>3. Тип соединителей</h2>
+<div class="field"><label for="joint">Система узлов</label><select id="joint"><option value="rigid">Жёсткие гнёзда 4/5/6</option><option value="ball">Ball-Joint 5/6</option></select></div>
+<p class="muted" id="jointInfo" style="font-size:12px"></p>
+<div class="field"><label for="pull">Удержание одного луча на вырыв, Н<span class="subnote">Результат физического испытания</span></label><input type="number" id="pull" min="1" step="10" placeholder="не испытано"></div>
+<div class="field"><label for="push">Допустимое сжатие узла на один луч, Н<span class="subnote">Результат испытания соединения</span></label><input type="number" id="push" min="1" step="10" placeholder="не испытано"></div>
+<div class="warning" style="font-size:12px">Значения из рекламы Hubs не применяются к нашим 3D-печатным копиям. Сила вырыва самореза, корпуса и шара зависит от изготовления и состояния материала. Напечатанные узлы без испытаний считаются <b>нерассчитанными</b>.</div>
+</section>
+<section class="panel"><h2>4. Нагрузка</h2><div class="field"><label for="q">Равномерная вертикальная нагрузка, кПа<span class="subnote">На горизонтальную проекцию, НЕ норматив снега</span></label><input type="number" id="q" min="0" max="8" step=".05" value="0.3"></div><p class="muted" style="font-size:12px">1 кПа = 1000 Н/м². Собственный вес плёнки, деревянных стержней и соединителей не включён. Снеговые мешки, порывы ветра и местные сосредоточенные силы здесь не моделируются.</p></section>
+</aside>
+<section>
+<div class="panel"><h2>Расчётная схема</h2><div class="metrics"><div class="metric"><small>Узлы / стержни</small><b id="counts">—</b></div><div class="metric"><small>Площадь проекции</small><b id="area">—</b></div><div class="metric"><small>Нагрузка на купол</small><b id="load">—</b></div></div><div class="model"><svg id="dome" viewBox="0 0 700 415" role="img" aria-label="Схема узлов геокупола, окраска усилий в стержнях"></svg></div><div class="legend"><span><i class="blue"></i>Растяжение</span><span><i class="red"></i>Сжатие</span><span><i class="grey"></i>Не нагружен</span></div><p id="picked" class="muted">Нажми на стержень на схеме, чтобы увидеть его усилие и длину.</p></div>
+<div class="panel"><h2>Результат для заданной нагрузки</h2>
+<div class="metrics"><div class="metric"><small>Наибольшее сжатие</small><b id="compression">—</b></div><div class="metric"><small>Наибольшее растяжение</small><b id="tension">—</b></div><div class="metric"><small>Вертикальная реакция одной опоры, макс.</small><b id="reaction">—</b></div></div>
+<div class="info" id="capacity" style="margin-top:12px">Заполни свойства древесины и результаты испытаний узлов для сравнения с заданной нагрузкой.</div>
+<p id="status" aria-live="polite"></p>
+<h3>Стержни с наибольшей нагрузкой</h3><div class="scroll"><table><thead><tr><th>Стержень</th><th>Длина по осям</th><th>Усилие</th><th>Режим</th><th>Отношение к пределу*</th></tr></thead><tbody id="critical"></tbody></table></div>
+<p class="foot">* Отношение доступно только при заполненных данных. Формулы предварительные, без нормативного коэффициента устойчивости и проверок местного изгиба/продавливания.</p></div>
+<div class="panel"><h2>Проверка отдельного самого длинного стержня</h2><div class="metrics"><div class="metric"><small>Максимальная длина L</small><b id="longest">—</b></div><div class="metric"><small>Критическое сжатие по Эйлеру</small><b id="euler">—</b></div><div class="metric"><small>Максимальный прогиб узла (линейный FEM)</small><b id="deflection">—</b></div></div><div class="info" style="margin-top:12px">Длина по осям соединителей консервативно принята как расчётная длина стержня. Физическая глубина гнезда может уменьшить свободную длину, но изгибная жёсткость узлов не определена. Для деформированных природных веток расчёт Эйлера недостаточен.</div></div>
+<div class="panel"><h2>Почему это ещё не максимальная нагрузка купола</h2><ul class="list"><li>Линейная модель учитывает только <b>осевые усилия в стержнях</b> и опоры, неподвижные по трём направлениям.</li><li>Стойки, высокая обвязка, растяжки, сдвиг и вырыв анкеров в эту версию не включены.</li><li>Реальные шарнирные и жёсткие узлы могут получать изгибающие моменты, смятие и растрескивание, которые ферменная схема не определяет.</li><li>Нужны отдельные расчёты ветра, снега, их неравномерности, нормативных сочетаний, покрытия и усталости.</li><li>Для сооружения, в котором могут находиться люди, проект должен проверять профильный инженер-конструктор.</li></ul>
+<div class="controls"><button id="export">Скачать CSV с усилиями по всем стержням</button><button id="config">Сохранить входные данные JSON</button></div></div>
+</section></div>
+<footer class="foot">GeoDome — расчётный прототип. Модель: 3D-ферма, 26 узлов и 65 элементов, 10 закреплённых нижних узлов. Анализ предполагает линейно-упругую работу стержней, малые перемещения, одинаковый E для всех элементов. Нельзя использовать результат как разрешённую массу людей, снеговую или ветровую нагрузку.</footer>
+</main>
+<script>const POINTS=[[0.5257311121, 0.0, 0.8506508084], [0.1624598481, 0.5, 0.8506508084], [-0.4253254042, 0.3090169944, 0.8506508084], [-0.4253254042, -0.3090169944, 0.8506508084], [0.1624598481, -0.5, 0.8506508084], [0.6881909602, 0.5, 0.5257311121], [0.6881909602, -0.5, 0.5257311121], [0.9510565163, 0.3090169944, 0.0], [0.9510565163, -0.3090169944, 0.0], [-0.2628655561, 0.8090169944, 0.5257311121], [0.5877852523, 0.8090169944, 0.0], [0.0, 1.0, 0.0], [-0.8506508084, 0.0, 0.5257311121], [-0.5877852523, 0.8090169944, 0.0], [-0.9510565163, 0.3090169944, 0.0], [-0.2628655561, -0.8090169944, 0.5257311121], [-0.9510565163, -0.3090169944, 0.0], [-0.5877852523, -0.8090169944, 0.0], [-0.0, -1.0, 0.0], [0.5877852523, -0.8090169944, 0.0], [0.0, 0.0, 1.0], [0.894427191, 0.0, 0.4472135955], [0.2763932023, 0.8506508084, 0.4472135955], [-0.7236067977, 0.5257311121, 0.4472135955], [-0.7236067977, -0.5257311121, 0.4472135955], [0.2763932023, -0.8506508084, 0.4472135955]];
+const EDGES=[[0, 1], [0, 4], [0, 5], [0, 6], [0, 20], [0, 21], [1, 2], [1, 5], [1, 9], [1, 20], [1, 22], [2, 3], [2, 9], [2, 12], [2, 20], [2, 23], [3, 4], [3, 12], [3, 15], [3, 20], [3, 24], [4, 6], [4, 15], [4, 20], [4, 25], [5, 7], [5, 10], [5, 21], [5, 22], [6, 8], [6, 19], [6, 21], [6, 25], [7, 8], [7, 10], [7, 21], [8, 19], [8, 21], [9, 11], [9, 13], [9, 22], [9, 23], [10, 11], [10, 22], [11, 13], [11, 22], [12, 14], [12, 16], [12, 23], [12, 24], [13, 14], [13, 23], [14, 16], [14, 23], [15, 17], [15, 18], [15, 24], [15, 25], [16, 17], [16, 24], [17, 18], [17, 24], [18, 19], [18, 25], [19, 25]];
+const BASE=[16, 17, 18, 19, 8, 7, 10, 11, 13, 14];
+
+'use strict';
+const $=id=>document.getElementById(id);
+const byId=['mode','D','H','section','d','w','t','E','fc','ft','ke','sf','joint','pull','push','q'];
+const BASESET=new Set(BASE);
+const fmt=(x,dec=1)=>Number.isFinite(x)?x.toLocaleString('ru-RU',{maximumFractionDigits:dec,minimumFractionDigits:dec}):'—';
+const num=id=>Number($(id).value);
+const optional=id=>$(id).value.trim()!==''&&Number.isFinite(num(id))&&num(id)>0?num(id):null;
+const htmlEscape=x=>String(x).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+let savedStretched=2.25,last=null,selected=null;
+const EDGEKEY=(a,b)=>Math.min(a,b)+':'+Math.max(a,b);
+function geometry(d,h,mode){
+ if(!Number.isFinite(d)||d<2||d>6)throw Error('Диаметр должен быть 2–6 м.');
+ if(mode==='ground')h=d/2;
+ if(mode==='elongated'&&(!Number.isFinite(h)||h<d/2||h>d||h>4))throw Error('Для вытянутого купола высота должна быть от D/2 до D, не более 4 м.');
+ const k=mode==='elongated'?h/(d/2):1,r=d*500;
+ const p=POINTS.map(([x,y,z])=>[x*r,y*r,z*k*r]);
+ const edgeIndex=new Set(EDGES.map(([a,b])=>EDGEKEY(a,b)));
+ const tri=[];
+ for(let a=0;a<p.length;a++)for(let b=a+1;b<p.length;b++)if(edgeIndex.has(EDGEKEY(a,b))){
+  for(let c=b+1;c<p.length;c++)if(edgeIndex.has(EDGEKEY(a,c))&&edgeIndex.has(EDGEKEY(b,c)))tri.push([a,b,c]);
+ }
+ if(tri.length!==40||EDGES.length!==65||BASE.length!==10)throw Error('Геометрия 2V изменилась. Нужна повторная проверка модели.');
+ return {points:p,edges:EDGES,triangles:tri,radius:r,height:h,diameter:d};
+}
+function cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
+const sub=(a,b)=>a.map((x,i)=>x-b[i]);
+const dot=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0);
+function analyze(geom, area, E, q){
+ const pts=geom.points, n=pts.length, fixed=BASESET, ndof=3*n;
+ const force=Array(ndof).fill(0);let totalProjected=0;
+ for(const [a,b,c] of geom.triangles){
+  const u=sub(pts[b],pts[a]),v=sub(pts[c],pts[a]);
+  const fArea=Math.abs(cross(u,v)[2])/2;totalProjected+=fArea;
+  for(const node of [a,b,c])force[3*node+2]-=q*.001*fArea/3;
+ }
+ const free=[],imap=new Map();for(let i=0;i<ndof;i++)if(!fixed.has(Math.floor(i/3))){imap.set(i,free.length);free.push(i)}
+ const nn=free.length,K=Array.from({length:nn},()=>new Float64Array(nn));
+ const elements=[];
+ for(let ix=0;ix<geom.edges.length;ix++){
+  const [a,b]=geom.edges[ix], delta=sub(pts[b],pts[a]);const length=Math.hypot(...delta),dir=delta.map(x=>x/length);
+  const coef=E*area/length;
+  for(const [aa,bb,sign] of [[a,a,1],[b,b,1],[a,b,-1],[b,a,-1]])for(let i=0;i<3;i++)for(let j=0;j<3;j++){
+   const I=imap.get(aa*3+i),J=imap.get(bb*3+j);if(I!==undefined&&J!==undefined)K[I][J]+=sign*coef*dir[i]*dir[j];
+  }
+  elements.push({index:ix,a,b,length,dir,coef});
+ }
+ const f=free.map(x=>force[x]);const dispFree=linearSolve(K,f);
+ const disp=Array(ndof).fill(0);for(let i=0;i<nn;i++)disp[free[i]]=dispFree[i];
+ const reaction=Array(ndof).fill(0);const bars=[];
+ for(const b of elements){
+  const axial=b.coef*dot(b.dir,sub(disp.slice(3*b.b,3*b.b+3),disp.slice(3*b.a,3*b.a+3)));
+  bars.push({...b,force:axial});
+  for(let k=0;k<3;k++){
+   const fg=axial*b.dir[k];reaction[b.a*3+k]-=fg;reaction[b.b*3+k]+=fg;
+  }
+ }
+ for(let i=0;i<ndof;i++)reaction[i]-=force[i];
+ const maxDefl=Math.max(...pts.map((p,i)=>Math.hypot(disp[i*3],disp[i*3+1],disp[i*3+2])));
+ const totalReaction=BASE.reduce((sum,i)=>sum+reaction[i*3+2],0);
+ const maxVertReaction=Math.max(...BASE.map(i=>Math.abs(reaction[3*i+2])));
+ return {bars,displacement:disp,maxDefl,areaM2:totalProjected/1e6,totalForce:totalProjected*q*.001,force,reaction,totalReaction,maxVertReaction,freeDofs:nn};
+}
+function linearSolve(matrix,rhs){
+ // Gaussian elimination with partial pivoting. Matrix is SPD if the truss has no mechanisms.
+ const n=rhs.length,A=matrix.map((row,i)=>Float64Array.from([...row,rhs[i]]));
+ let maxDiag=0;for(let k=0;k<n;k++)maxDiag=Math.max(maxDiag,Math.abs(A[k][k]));
+ for(let j=0;j<n;j++){
+  let pivot=j;for(let i=j+1;i<n;i++)if(Math.abs(A[i][j])>Math.abs(A[pivot][j]))pivot=i;
+  if(!Number.isFinite(A[pivot][j])||Math.abs(A[pivot][j])<=maxDiag*1e-10)throw Error('Ферма имеет механизм или расчётная матрица почти вырождена.');
+  if(j!==pivot)[A[pivot],A[j]]=[A[j],A[pivot]];
+  const scale=A[j][j];
+  for(let i=j+1;i<n;i++){
+   const f=A[i][j]/scale;if(f===0)continue;A[i][j]=0;
+   for(let k=j+1;k<=n;k++)A[i][k]-=f*A[j][k];
+  }
+ }
+ const x=Array(n).fill(0);
+ for(let i=n-1;i>=0;i--){let v=A[i][n];for(let k=i+1;k<n;k++)v-=A[i][k]*x[k];x[i]=v/A[i][i];if(!Number.isFinite(x[i]))throw Error('Ошибка вычисления перемещений.');}
+ return x;
+}
+function sectionProps(){
+ if($('section').value==='round'){
+  const d=num('d');if(!(d>=10&&d<=65))throw Error('Диаметр стержня должен быть в диапазоне 10–65 мм.');
+  return {A:Math.PI*d*d/4,I:Math.PI*d**4/64,label:'Ø'+fmt(d,0)};
+ }
+ const w=num('w'),t=num('t');if(!(w>=10&&w<=80&&t>=10&&t<=80))throw Error('Сечение рейки: обе стороны 10–80 мм.');
+ return {A:w*t,I:Math.min(w*t**3,t*w**3)/12,label:fmt(w,0)+'×'+fmt(t,0)};
+}
+function limits(analysis,sec){
+ const E=optional('E'),fc=optional('fc'),ft=optional('ft'),pull=optional('pull'),push=optional('push');
+ const sf=num('sf'),ke=num('ke');const strengthsReady=E!==null&&fc!==null&&ft!==null;
+ const jointsReady=pull!==null&&push!==null;
+ const materials=strengthsReady?analysis.bars.map(b=>{
+  const euler=Math.PI**2*E*sec.I/(ke*b.length)**2;
+  const crush=fc*sec.A;
+  const cAllow=Math.min(euler,crush)/sf,tAllow=ft*sec.A/sf;
+  return {...b,euler,cAllow,tAllow,memberAllow:b.force<0?cAllow:tAllow};
+ }):[];
+ let barMax=null,jointMax=null,barMin=null,jointMin=null;
+ if(strengthsReady){
+  for(const b of materials){const unit=Math.abs(b.force);if(unit<1e-9)continue;
+   const p=b.memberAllow*num('q')/unit; // q-limit from axial response under requested q
+   if(barMax===null||p<barMax){barMax=p;barMin=b;}
+  }
+ }
+ if(jointsReady){
+  for(const b of analysis.bars){const unit=Math.abs(b.force);if(unit<1e-9)continue;
+   const p=(b.force<0?push:pull)/sf*num('q')/unit;
+   if(jointMax===null||p<jointMax){jointMax=p;jointMin=b;}
+  }
+ }
+ return {strengthsReady,jointsReady,materials,barMax,barMin,jointMax,jointMin,overall:(barMax!==null&&jointMax!==null)?Math.min(barMax,jointMax):null};
+}
+function update(){
+ try{
+  const D=num('D'),q=num('q'),mode=$('mode').value;
+  if(!Number.isFinite(q)||q<0||q>8)throw Error('Вертикальная нагрузка должна быть 0–8 кПа.');
+  if(!(num('sf')>=1&&num('sf')<=10&&num('ke')>=.5&&num('ke')<=2))throw Error('Проверь коэффициенты K и снижения.');
+  const geo=geometry(D,num('H'),mode),sec=sectionProps();
+  $('H').value=geo.height.toFixed(2);
+  const E=optional('E');const displayE=E||10000; // only for unit-load geometry; no deflection output without E
+  // Analyze one kPa so limits can be computed even at q = 0.
+  const unit=analyze(geo,sec.A,displayE,1);
+  const bars=unit.bars.map(b=>({...b,force:b.force*q}));
+  const adjusted={...unit,bars,force:unit.force.map(v=>v*q),
+    totalForce:unit.totalForce*q,maxVertReaction:unit.maxVertReaction*q,
+    totalReaction:unit.totalReaction*q,maxDefl:unit.maxDefl*q};
+  const lim=computeLimit(unit,sec);
+  $('counts').textContent=geo.points.length+' / '+geo.edges.length;
+  $('area').textContent=fmt(unit.areaM2,2)+' м²';
+  $('load').textContent=fmt(adjusted.totalForce/1000,2)+' кН';
+  $('compression').textContent=fmt(Math.max(0,...bars.map(b=>-b.force)),0)+' Н';
+  $('tension').textContent=fmt(Math.max(0,...bars.map(b=>b.force)),0)+' Н';
+  $('reaction').textContent=fmt(adjusted.maxVertReaction,0)+' Н';
+  const maxL=Math.max(...unit.bars.map(b=>b.length));$('longest').textContent=fmt(maxL,0)+' мм';
+  $('euler').textContent=E?fmt(Math.PI**2*E*sec.I/(num('ke')*maxL)**2,0)+' Н':'Не задан E';
+  $('deflection').textContent=E?fmt(adjusted.maxDefl,2)+' мм':'Не задан E';
+  let detail;
+  if(!lim.strengthsReady)detail='Нет проверенных свойств дерева (E, сжатие и растяжение): предел стержней не рассчитан.';
+  else detail='Учебное осевое ограничение по стержням: '+fmt(lim.barMax,3)+' кПа; критический №'+(lim.barMin?.index+1)+'.';
+  if(!lim.jointsReady)detail+=' Нет результатов испытания соединителя на растяжение и сжатие.';
+  else detail+=' Учебное ограничение по соединителям: '+fmt(lim.jointMax,3)+' кПа; критический №'+(lim.jointMin?.index+1)+'.';
+  if(lim.overall!==null)detail+=' Меньшее из этих двух осевых ограничений: '+fmt(lim.overall,3)+' кПа. Это НЕ общая допустимая нагрузка купола.';
+  $('capacity').textContent=detail;
+  const maxForce=Math.max(...bars.map(b=>Math.abs(b.force)),1);
+  draw(geo,bars,maxForce,lim,unit);
+  renderTable(bars,lim,q);
+  $('status').className='';$('status').textContent='Ферма посчитана. Реакции равновесны с внешней вертикальной нагрузкой. Это предварительная модель.';
+  last={geo,unit,adjusted,limits:lim,section:sec};
+ }catch(err){last=null;$('status').className='error';$('status').textContent='Ошибка: '+err.message;console.error(err);}
+}
+function computeLimit(unit,sec){
+ // Limit for 1 kPa reference case, independent of the user's comparison pressure.
+ const E=optional('E'),fc=optional('fc'),ft=optional('ft'),pull=optional('pull'),push=optional('push');
+ const sf=num('sf'),ke=num('ke');const strengthsReady=E!==null&&fc!==null&&ft!==null,jointsReady=pull!==null&&push!==null;
+ let barMax=null,barMin=null,jointMax=null,jointMin=null;
+ for(const b of unit.bars){const n=Math.abs(b.force);if(n<1e-9)continue;
+  if(strengthsReady){const euler=Math.PI**2*E*sec.I/(ke*b.length)**2;
+   const allow=(b.force<0?Math.min(euler,fc*sec.A):ft*sec.A)/sf;
+   const q=allow/n;if(barMax===null||q<barMax){barMax=q;barMin=b;}
+  }
+  if(jointsReady){const allow=(b.force<0?push:pull)/sf;
+   const q=allow/n;if(jointMax===null||q<jointMax){jointMax=q;jointMin=b;}
+  }
+ }
+ return {strengthsReady,jointsReady,barMax,barMin,jointMax,jointMin,overall:barMax!==null&&jointMax!==null?Math.min(barMax,jointMax):null};
+}
+function draw(geom,bars,maxForce,limits,unit){
+ const svg=$('dome'),w=700,h=415,ns='http://www.w3.org/2000/svg';svg.replaceChildren();
+ const projections=geom.points.map(([x,y,z])=>[x*.82-y*.57,x*.22+y*.32+z*.95]);
+ const xmin=Math.min(...projections.map(p=>p[0])),xmax=Math.max(...projections.map(p=>p[0]));
+ const ymin=Math.min(...projections.map(p=>p[1])),ymax=Math.max(...projections.map(p=>p[1]));
+ const k=Math.min((w-76)/(xmax-xmin),(h-55)/(ymax-ymin)),dx=(w-k*(xmax-xmin))/2,dy=(h-k*(ymax-ymin))/2;
+ const pp=projections.map(([x,y])=>[dx+(x-xmin)*k,h-(dy+(y-ymin)*k)]);
+ for(const b of bars){const [a,c]=[pp[b.a],pp[b.b]];
+  const line=document.createElementNS(ns,'line');line.setAttribute('x1',a[0]);line.setAttribute('y1',a[1]);line.setAttribute('x2',c[0]);line.setAttribute('y2',c[1]);
+  const f=b.force;line.setAttribute('stroke',Math.abs(f)<maxForce*.02?'#8499a8':f<0?'#bd7c30':'#397faf');
+  line.setAttribute('stroke-width',1.8+Math.abs(f)/maxForce*2.8);line.setAttribute('opacity',.82);
+  const title=document.createElementNS(ns,'title');title.textContent='Стержень №'+(b.index+1)+' · '+fmt(b.length,1)+' мм · '+fmt(f,1)+' Н';line.appendChild(title);
+  line.addEventListener('click',()=>{
+   const kind=f<0?'сжатие':f>0?'растяжение':'нулевая нагрузка';
+   $('picked').textContent='Стержень №'+(b.index+1)+' · узлы '+(b.a+1)+'–'+(b.b+1)+' · L='+fmt(b.length,1)+' мм · '+fmt(Math.abs(f),1)+' Н ('+kind+').';
+   selected=b.index;
+  });svg.appendChild(line);
+ }
+ for(const [i,p] of pp.entries()){
+  const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',p[0]);dot.setAttribute('cy',p[1]);dot.setAttribute('r',BASESET.has(i)?4.4:3.1);
+  if(BASESET.has(i))dot.setAttribute('fill','#154d53');
+  const title=document.createElementNS(ns,'title');title.textContent='Узел '+(i+1)+(BASESET.has(i)?' · закреплён по XYZ':'');dot.appendChild(title);svg.appendChild(dot);
+ }
+}
+function renderTable(bars,lim,q){
+ const order=[...bars].sort((a,b)=>Math.abs(b.force)-Math.abs(a.force)).slice(0,12);
+ const target=$('critical');target.replaceChildren();
+ for(const b of order){let ratio='—';if(lim.strengthsReady||lim.jointsReady){
+  const bound=[];
+  const ref=lim.strengthsReady?(b.force<0? Math.min(Math.PI**2*num('E')*sectionProps().I/(num('ke')*b.length)**2,num('fc')*sectionProps().A):num('ft')*sectionProps().A)/num('sf'):null;
+  if(ref!==null)bound.push(ref);
+  if(lim.jointsReady)bound.push((b.force<0?num('push'):num('pull'))/num('sf'));
+  ratio=fmt(Math.abs(b.force)/Math.min(...bound)*100,0)+'%';
+ }
+  const tr=document.createElement('tr');for(const x of ['№'+(b.index+1),fmt(b.length,0)+' мм',fmt(Math.abs(b.force),0)+' Н',b.force<0?'Сжатие':'Растяжение',ratio]){const td=document.createElement('td');td.textContent=x;tr.appendChild(td)}target.appendChild(tr);
+ }
+}
+function save(name,content,mime){const b=new Blob([content],{type:mime});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),3000)}
+function csvRows(){if(!last)return'';const {unit,adjusted}=last;const rows=[['element','node1','node2','length_mm','axial_N','state'],...adjusted.bars.map(b=>[b.index+1,b.a+1,b.b+1,b.length.toFixed(3),b.force.toFixed(3),b.force<0?'compression':'tension'])];return '\ufeff'+rows.map(r=>r.join(';')).join('\r\n')+'\r\n'}
+$('export').onclick=()=>last&&save('geodome_2V_axial_loads.csv',csvRows(),'text/csv;charset=utf-8');
+$('config').onclick=()=>save('geodome_2V_strength_inputs.json',JSON.stringify({version:'research-1',not_certified:true,inputs:Object.fromEntries(byId.map(id=>[id,$(id).value]))},null,2),'application/json');
+$('mode').addEventListener('change',()=>{const stretch=$('mode').value==='elongated';$('H').disabled=!stretch;$('H').value=(stretch?savedStretched:num('D')/2).toFixed(2);update()});
+$('section').addEventListener('change',()=>{const r=$('section').value==='round';$('diamRow').hidden=!r;$('widthRow').hidden=r;$('thickRow').hidden=r;$('pull').value='';$('push').value='';update()});
+$('H').addEventListener('input',()=>{if($('mode').value==='elongated')savedStretched=num('H');update()});
+$('joint').addEventListener('change',()=>{$('pull').value='';$('push').value='';updateJoint();update()});
+function updateJoint(){$('jointInfo').textContent=$('joint').value==='ball'?'Шаровая система: 6 пятилучевых + 20 шестилучевых корпуса; удержание шара прижимом М6. Нужны испытания конкретного пластика и металлического прижима.':'Наша система: цельные печатные гнёзда на 4/5/6 направлений. Расчёт не учитывает передачу изгибающих моментов и раскалывание у самореза.';}
+for(const id of byId.filter(id=>!['mode','H','section','joint'].includes(id)))$(id).addEventListener('input',()=>{if(['d','w','t'].includes(id)){$('pull').value='';$('push').value='';}update()});
+$('example').onclick=()=>{Object.entries({E:10000,fc:15,ft:8,pull:400,push:800}).forEach(([id,n])=>$(id).value=n);update();$('status').textContent='УЧЕБНЫЙ ПРИМЕР: все введённые прочности и силы соединителя вымышленные! Не применять как безопасные нагрузки.';};
+$('clearExample').onclick=()=>{for(const k of ['E','fc','ft','pull','push'])$(k).value='';update()};
+updateJoint();update();
+window.__geoTest={geometry,analyze,sectionProps,computeLimit,linearSolve};
+
+</script></body></html>
