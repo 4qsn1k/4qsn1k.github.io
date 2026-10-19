@@ -1,5 +1,21 @@
 # Issue #14 — native format evidence and serialization gate, 19.10.2026
 
+## Native Owen Logic editor geometry/save diff — independently verified, 19.10.2026
+
+**A genuine vendor save/diff pair is now available locally on HOME-PC.** In the third **TEST-clone-only** Owen Logic 3.3.378 instance (PID 7128), native simulator was stopped and the virtual element I1 moved vertically. Only the cloned `Airlock_NATIVE_14_UUID_REMAP_TEST_20261019.owle` was changed and saved by Owen Logic. The before file is an unmodified backup `Airlock_NATIVE_14_UUID_REMAP_BEFORE_GUI_SAVE_20261019.owle`.
+
+- Before SHA256 `35A3E289116C7924B398999AD68183CEA90927FFA59131A031DB49DD77BEB7A8`; after native **editor** Save SHA256 `36573D019A813C0595645A4C7318170C2B15734CE611BBD16BDB5D39C436A160`.
+- Every **25 element IDs, 64 port IDs and 16 connector IDs remains identical** across the save. Both ZIP members remain `Project` and `StFunctionBlocks`; all 3 ST definitions are JSON-semantically unchanged. Zero dangling connector or FB-definition references.
+- Native I1 `ElementModel.Location` changed from `{IsEmpty:true,X:0,Y:0}` to `{IsEmpty:false,X:0,Y:2.5}` (vendor canvas units). The I1 primitive path/text/output-line geometry shifts vertically by 2.5 units.
+- Owen Logic automatically rerouted exactly two connector geometries: `I1.Output0 -> FB_Room_N4.Input0` and `I1.Output0 -> FB_Room_N1.Input0`. The latter route was simplified from **3 points to 2**. Other connector `ZOrder` values and element array order may be normalized by the editor; they are not semantic connection changes.
+- Published a **strictly whitelisted semantic geometry-diff fixture**, not any raw OWLE or ST: `experimental/fixtures/owle-qa012-editor-geometry-delta.json`, checked by `tests/native-owle-geometry-diff.test.js`. Source UUIDs, entire native archive and program text never leave HOME-PC. Local screenshot `QA018-clone-geometry-drag-preview.png`.
+- This confirms native editor open/run/simulate/save of an **existing UUID-remapped TEST diagram** and provides an authentic geometry transformation. It does **not** prove the ability to construct an arbitrary OWLE from `fbd-generator.js`. **`ARBITRARY_NATIVE_WRITER=NOT_IMPLEMENTED`**, **`NATIVE_GRAPH_COMPILATION=NOT_TESTED`**, **`PHYSICAL_PLC_NOT_ACCESSED`**.
+
+**Saved-file reopen test, independent fourth GUI process:** copied only the Owen editor-saved version into `Airlock_NATIVE_14_EDITOR_REOPEN_VERIFY_20261019.owle` (same SHA256 `36573D019A813C0595645A4C7318170C2B15734CE611BBD16BDB5D39C436A160`), launched separate Owen Logic PID 9104, re-entered native simulation with `Shift+F5` and `F6`, and changed virtual I1 from `0` to `1`. Native `FB_Room_N1.O_State=90`, `O_Fault=1` appeared again; a fresh hash confirmed the reopened saved file was not modified by simulation. Local screenshots `QA018-reopened-saved-native-simulator.png` and `QA018-reopen-saved-live-toggle.png`. This is **`TEST_CLONE_GUI_SAVE_REOPEN_SIM_PASS`**, still **not `ARBITRARY_GRAPH_TO_OWLE_PASS`**.
+
+Next engineering task: codify these verified element/port/connector coordinate transformations, obtain safe test-only ST/interface metadata and remaining wrappers from the real GUI, and compile a *newly assembled small FBD graph* rather than cloning an existing document. Preserve explicit failure on unsupported data code 4 and unknown native fields.
+
+
 ## Verified independent HOME-PC checkpoints — 19.10.2026 (continuation)
 
 - **Real TEST archive strict mode:** still rejects numeric native port type code **4** as unsupported. Its meaning is not inferred.
