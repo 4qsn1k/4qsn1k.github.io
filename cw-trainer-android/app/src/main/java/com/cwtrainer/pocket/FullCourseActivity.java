@@ -169,9 +169,15 @@ public final class FullCourseActivity extends Activity {
         next=button("Далее",PANEL);add(root,next,5);
         next.setOnClickListener(v->nextTask());
         soundStatus=label("Аудио: ожидание",12,MUTED);add(root,soundStatus,10);
-        Button sos=button("🔊 Проверка SOS / смена способа звука",PANEL);
-        add(root,sos,5);sos.setOnClickListener(v->{
+        Button sos=button("🔊 ПРОВЕРКА ЗВУКА SOS",PANEL);
+        add(root,sos,5);sos.setOnClickListener(v->
+            audio.playText("SOS",charWpm,effectiveWpm));
+        Button switchSound=button("Аудио: WAV · переключить",PANEL);
+        switchSound.setTextSize(14);add(root,switchSound,4);
+        switchSound.setOnClickListener(v->{
             audio.setUseStream(!audio.usesStream());
+            switchSound.setText(audio.usesStream()?
+                "Аудио: AudioTrack · переключить":"Аудио: WAV · переключить");
             audio.playText("SOS",charWpm,effectiveWpm);
         });
         TextView note=label(
