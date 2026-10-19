@@ -67,7 +67,7 @@ jobs:
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot
           disable-animations: true
           script: |
-            set -euxo pipefail
+            set -eux
             adb install -r dist/cw-trainer-ci-debug.apk
             adb logcat -c
             adb shell am start -W -n com.cwtrainer.pocket/.MainActivity
