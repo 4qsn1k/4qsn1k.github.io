@@ -63,6 +63,38 @@ public class SrrActivitiesTest {
         SrrTheoryActivity activity=Robolectric.buildActivity(SrrTheoryActivity.class,i).setup().get();
         assertEquals(View.VISIBLE,((Button)field(activity,"sourcePdf")).getVisibility());
     }
+    @Test public void audioCompletionTimeNotHandwritingTimeDeterminesMorseResult()throws Exception {
+        android.content.SharedPreferences prefs=RuntimeEnvironment.getApplication()
+            .getSharedPreferences("srr_exam_results",0);
+        prefs.edit().remove("completed_history_v1").commit();
+        Intent intent=new Intent(RuntimeEnvironment.getApplication(),SrrMorseActivity.class);
+        intent.putExtra("exam",true);
+        SrrMorseActivity activity=Robolectric.buildActivity(SrrMorseActivity.class,intent).setup().get();
+        String radiogram=SrrExamEngine.randomRadiogram(new java.util.Random(411));
+        setField(activity,"reference",radiogram);
+        setField(activity,"completed",true);
+        setField(activity,"playedForMs",250000L);
+        setField(activity,"startedAt",android.os.SystemClock.elapsedRealtime()-3600000L);
+        ((android.widget.EditText)field(activity,"transcribed")).setText(radiogram);
+        ((Button)field(activity,"grade")).performClick();
+        assertTrue("Writing up a paper answer later must not fail reception",prefs.getBoolean("morse_pass",false));
+        java.util.List<TrainingOutcomeHistory.Record> records=TrainingOutcomeHistory.parse(
+            prefs.getString("completed_history_v1",""));
+        assertEquals(1,records.size());
+        assertTrue(records.get(0).isStrictPass());
+    }
+    private static void setField(Object target,String name,Object value)throws Exception{
+        Field f=target.getClass().getDeclaredField(name);f.setAccessible(true);f.set(target,value);
+    }
+    @Test public void recommendedPresetActuallyOpensAtRequestedDifficulty()throws Exception{
+        Intent intent=new Intent(RuntimeEnvironment.getApplication(),SrrMorseActivity.class);
+        intent.putExtra("exam",false);
+        intent.putExtra("training_signs",100);
+        intent.putExtra("training_cpm",60);
+        SrrMorseActivity activity=Robolectric.buildActivity(SrrMorseActivity.class,intent).setup().get();
+        assertEquals(100,field(activity,"length"));
+        assertEquals(60,field(activity,"cpm"));
+    }
     @Test public void practiceControlsAllowProgression()throws Exception{
         Intent intent=new Intent(RuntimeEnvironment.getApplication(),SrrMorseActivity.class);
         intent.putExtra("exam",false);
