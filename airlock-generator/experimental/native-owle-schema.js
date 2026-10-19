@@ -24,7 +24,8 @@ const GAPS=Object.freeze([
  "NEW_PROJECT_HOME_PC_OPEN_SAVE_COMPILE_SIMULATION"
 ]);
 function check(ok,code){if(!ok)throw Error(code)}
-const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const canonical=x=>Array.isArray(x)?x.map(canonical):x&&typeof x==="object"?Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])])):x;
+const same=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
 const keys=x=>Object.keys(x).sort();
 const endpoint=x=>JSON.stringify([x.element,x.port]);
 function inspectEvidence(x){

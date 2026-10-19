@@ -12,6 +12,7 @@ const test=(name,fn)=>{fn();count++;console.log("PASS NATIVE-SCHEMA "+name)};
 const mutate=(x,fn)=>{const y=structuredClone(x);fn(y);return y};
 test("authentic specimen distinguishes described and opaque elements",()=>{
  const report=native.inspectEvidence(specimen);
+ assert.equal(native.inspectEvidence({...specimen,counts:{connectors:16,elements:25}}).status,"NATIVE_STRUCTURE_FIXTURE_PASS");
  assert.equal(report.status,"NATIVE_STRUCTURE_FIXTURE_PASS");assert.equal(report.fullyDescribedElements,5);assert.equal(report.opaqueElements,20);
  assert.equal(report.nativeDocument,null);assert.equal(report.usableForSerialization,false);assert(report.missing.includes("ST_DEFINITION_INSTANCE_AND_MODIFICATION_REFERENCES"));
 });

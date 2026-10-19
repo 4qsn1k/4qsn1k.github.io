@@ -736,7 +736,7 @@
     "newProjectGui": "NEEDS_NATIVE_GUI",
     "physical": "PHYSICAL_NOT_TESTED",
     "fullCodexCheck": "PASS exit 0; new JS 8/8, Python 6/6; all FBD and Modbus suites retained; MODEL 8/8",
-    "fullCheckLogSha256": "bf2dfe9b92fe75343539183e94dab5f6a125fd67f12c920bdadb670ba89c1874",
+    "fullCheckLogSha256": "40884ad3043d09543745138696b3e6cf5322d4a0c5c4626b72529a3caf5f0863",
     "fourRoomMappingCoverage": {
       "nodes": 95,
       "mappedNodes": 35,
@@ -748,6 +748,13 @@
     "sourceArchiveSha256": "0e3f85bfc198aa298ebac5068e76b5c0408cb4590faee9530e74559a1a167a00",
     "guide": "docs/OWLE-NATIVE-SERIALIZATION-ISSUE-14.md",
     "reportCommand": "node scripts/export-native-evidence.js MODEL_JSON NEW_REPORT_DIRECTORY",
-    "noEquipmentAccess": true
+    "noEquipmentAccess": true,
+    "pullRequest": "https://github.com/4qsn1k/4qsn1k.github.io/pull/18",
+    "githubActions": {
+      "run": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39196526066",
+      "validatedCommit": "89c5a35f01c8ea5a9a030b059156f43b10055d3f",
+      "conclusion": "success",
+      "jobs": "all 3 success; final metadata/order-invariance follow-up validated by local full check; its CI follows the push"
+    }
   }
 }

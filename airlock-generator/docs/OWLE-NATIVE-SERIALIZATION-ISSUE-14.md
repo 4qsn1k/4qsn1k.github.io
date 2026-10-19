@@ -184,5 +184,8 @@ program change is part of this procedure.
 - `npm run test:native-schema`: JS **8/8**, Python **6/6** PASS.
 - Full `bash scripts/codex-check.sh`: **exit 0**, final `AIRLOCK_CODEX_FULL_OFFLINE_QA_PASS`; existing FBD generator **9/9**, evaluator **12/12** (256 combinations, 36 graphs), export **4/4**, MODEL **8/8**, all Modbus/fault suites and PR #17 fixture test retained.
 - Four-room example port-shape coverage: **35/95 nodes**, **4/197 edges**; remaining **60 nodes / 193 edges** explicitly blocked, with no dropped conditions.
-- Full log SHA256: `bf2dfe9b92fe75343539183e94dab5f6a125fd67f12c920bdadb670ba89c1874`. Runtime Node 24.19.0 / Python 3.12.14; CI targets Node 22 / Python 3.13.
+- Full log SHA256: `40884ad3043d09543745138696b3e6cf5322d4a0c5c4626b72529a3caf5f0863`. Runtime Node 24.19.0 / Python 3.12.14; CI targets Node 22 / Python 3.13.
 - PR #13 base commit `ac5fa80` [CI 39195791301](https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39195791301): all three jobs success, including memory-adapter RTU tests on Linux/Windows. This does not validate HOME-PC or physical equipment.
+
+Draft [PR #18](https://github.com/4qsn1k/4qsn1k.github.io/pull/18) targets PR #13.
+[CI 39196526066](https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39196526066) on implementation `89c5a35`: all three jobs success. A final follow-up corrects the graph's outdated no-OR-evidence wording and tests JSON object key-order independence; the complete local check passed again with the log hash above.
