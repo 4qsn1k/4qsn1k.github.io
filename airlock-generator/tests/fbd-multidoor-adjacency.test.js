@@ -249,4 +249,90 @@ test("parallel doors between adjacent rooms keep independent reeds and inhibits"
  for(const id of ["AB1","AB2","AX","BX"])
   assert.equal(s.traffic[id].logicalGreenPermit,false);
 });
+test("every A-B-C-D-E doorway blocks only remaining doors of both incident rooms",()=>{
+ const letters=["A","B","C","D","E"];
+ const model={rooms:[...letters.map((id,i)=>({id,
+  interlockMode:i%2===0?"purge":"mutual",purgeSec:2})),
+  {id:"X",interlockMode:"none"}],
+  doors:[...["AB","BC","CD","DE"].map(id=>({id,a:id[0],b:id[1]})),
+   ...letters.map(id=>({id:id+"X",a:id,b:"X"}))],
+  rules:[],exemptions:[],fireMode:"all-electrical-interlocks-off"};
+ const p=singlePLC(model);
+ for(const id of ["AB","BC","CD","DE"]){
+  const door=model.doors.find(d=>d.id===id),participants=new Set([door.a,door.b]);
+  const expectedBlocked=model.doors.filter(d=>d.id!==id&&(participants.has(d.a)||participants.has(d.b)))
+   .map(d=>d.id).sort(cmp);
+  const t=interzone.create(model,roomTest,wiring);
+  let s=t.step({},4200);
+  assert(letters.every(r=>s.rooms[r].state===10),"all rooms start READY");
+  s=t.step({Closed:{[id]:false}},100);
+  assert.equal(s.inputs.Closed[id],false,"single physical reed "+id);
+  assert.equal(s.rooms[door.a].state,20,id+" first room busy");
+  assert.equal(s.rooms[door.b].state,20,id+" second room busy");
+  assert.deepEqual(Object.keys(s.blocked).filter(key=>s.blocked[key]).sort(cmp),expectedBlocked,
+   id+" adjacent-only block requests");
+  assert.equal(s.blocked[id],false,id+" own open door remains able to close");
+  assert.equal(s.traffic[id].logicalGreenPermit,false,id+" never green when open");
+  for(const d of model.doors){
+   const forbidden=d.id===id||expectedBlocked.includes(d.id);
+   assert.equal(s.traffic[d.id].logicalGreenPermit,!forbidden,
+    id+" affects only its two incident rooms: "+d.id);
+  }
+  for(const r of letters.filter(n=>!participants.has(n)))
+   assert.equal(s.rooms[r].state,10,id+" remote "+r+" stays ready");
+  // Validate both room block outputs independently flow into this shared OR.
+  const gate=p.nodes.find(n=>n.kind==="OR"&&n.doorId===id);
+  assert(gate);assert.equal(gate.inputs.length,2);
+  const observed=Array.from(gate.inputs,pin=>{
+   const edge=p.edges.find(e=>e.to===pin.id);
+   assert(edge);
+   const owner=p.nodes.find(n=>n.outputs.some(port=>port.id===edge.from));
+   assert(owner);
+   return pin.name;
+  }).sort(cmp);
+  assert.deepEqual(observed,Array.from(participants).map(r=>
+   "FB_Room_N"+r+".O_D_"+id+"_Block").sort(cmp));
+ }
+});
+test("reversing both endpoints does not change A-B-C-D-E inhibition matrix",()=>{
+ const letters=["A","B","C","D","E"];
+ const make=reversed=>({rooms:[...letters.map((id,i)=>({id,
+  interlockMode:i%2?"mutual":"purge",purgeSec:2})),{id:"X",interlockMode:"none"}],
+  doors:[...["AB","BC","CD","DE"].map(id=>({
+   id,a:reversed?id[1]:id[0],b:reversed?id[0]:id[1]})),
+   ...letters.map(id=>({id:id+"X",a:reversed?"X":id,b:reversed?id:"X"}))],
+  rules:[],exemptions:[],fireMode:"all-electrical-interlocks-off"});
+ const reference=make(false),flipped=make(true);
+ for(const id of ["AB","BC","CD","DE"]){
+  const outcomes=[];
+  for(const model of [reference,flipped]){
+   const t=interzone.create(model,roomTest,wiring);
+   t.step({},4200);
+   const s=t.step({Closed:{[id]:false}},100);
+   outcomes.push({
+    blocked:Object.keys(s.blocked).filter(d=>s.blocked[d]).sort(cmp),
+    denied:Object.keys(s.traffic).filter(d=>!s.traffic[d].logicalGreenPermit).sort(cmp)
+   });
+  }
+  assert.deepEqual(outcomes[1],outcomes[0],id+" direction must not matter");
+ }
+});
+test("opening an outside exit inhibits only the controlled room, not the whole chain",()=>{
+ const rooms=[...["A","B","C","D","E"].map(id=>({id,interlockMode:"mutual"})),
+  {id:"X",interlockMode:"none"}];
+ const doors=[...["AB","BC","CD","DE"].map(id=>({id,a:id[0],b:id[1]})),
+  ...["A","B","C","D","E"].map(id=>({id:id+"X",a:id,b:"X"}))];
+ const m={rooms,doors,rules:[],exemptions:[]};
+ for(const letter of ["A","B","C","D","E"]){
+  const id=letter+"X",t=interzone.create(m,roomTest,wiring);
+  t.step({},200);
+  const s=t.step({Closed:{[id]:false}},100);
+  assert.equal(s.rooms[letter].state,20);
+  const expected=doors.filter(d=>d.id!==id&&(d.a===letter||d.b===letter)).map(d=>d.id).sort(cmp);
+  assert.deepEqual(Object.keys(s.blocked).filter(d=>s.blocked[d]).sort(cmp),expected);
+  assert.equal(s.traffic[id].logicalGreenPermit,false);
+  for(const key of ["A","B","C","D","E"].filter(k=>k!==letter))
+   assert.equal(s.rooms[key].state,10);
+ }
+});
 console.log("MULTIDOOR_ADJACENCY_QA "+checked+"/"+checked+" PASS — JS_MODEL_ONLY; NATIVE_OWLE_NOT_VERIFIED");
