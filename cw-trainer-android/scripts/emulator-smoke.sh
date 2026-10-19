@@ -36,23 +36,31 @@ if ! grep -E 'mResumedActivity|topResumedActivity|ResumedActivity' activities.lo
 fi
 echo 'PASS: Full Course opened from home button'
 tap_ui_text(){
-  adb shell uiautomator dump /sdcard/window.xml >/dev/null
-  adb exec-out cat /sdcard/window.xml > /tmp/cwtrainer-ui.xml
-  python3 - "$1" <<'PY'
+  local phrase="$1"
+  for attempt in 1 2 3 4 5; do
+    adb shell uiautomator dump /sdcard/window.xml >/dev/null
+    adb exec-out cat /sdcard/window.xml > /tmp/cwtrainer-ui.xml
+    if python3 - "$phrase" <<'PY'
 import re,sys,xml.etree.ElementTree as ET,subprocess
 phrase=sys.argv[1]
 root=ET.parse('/tmp/cwtrainer-ui.xml').getroot()
 matches=[n.attrib for n in root.iter() if phrase in n.attrib.get('text','')]
-if not matches:
-    raise SystemExit("Missing UI element '"+phrase+"': "+
-        repr([n.attrib.get('text') for n in root.iter() if n.attrib.get('text')][:35]))
+if not matches:sys.exit(3)
 numbers=list(map(int,re.findall(r'\d+',matches[0]['bounds'])))
-if len(numbers)!=4:raise SystemExit("Invalid tap bounds")
+if len(numbers)!=4:sys.exit(4)
 x=(numbers[0]+numbers[2])//2
 y=(numbers[1]+numbers[3])//2
 subprocess.run(['adb','shell','input','tap',str(x),str(y)],check=True)
 print('Tapped:',phrase,x,y)
 PY
+    then
+      return 0
+    fi
+    adb shell input swipe 540 1570 540 430 300
+    sleep 1
+  done
+  echo "UI element not found after scrolling: $phrase"
+  return 1
 }
 adb shell input keyevent KEYCODE_BACK
 sleep 2
