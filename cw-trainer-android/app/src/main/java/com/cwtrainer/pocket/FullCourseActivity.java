@@ -324,7 +324,7 @@ public final class FullCourseActivity extends Activity {
             state.grade(state.selected,kind,independent,System.currentTimeMillis());
             persist();
         }
-        answerInput.setEnabled(false);submit.setEnabled(false);unknown.setEnabled(false);
+        answerInput.setEnabled(false);submit.setEnabled(false);this.unknown.setEnabled(false);
         hero.setText(expected);hero.setTextSize(expected.length()>18?19:expected.length()>6?28:48);
         status.setText((right?"✓ Правильно":"✕ Ошибка")+
             (right&&replayCount>0?" · после повтора (не зачтено)":"")+
