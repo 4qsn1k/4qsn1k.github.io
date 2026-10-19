@@ -122,3 +122,35 @@ fi
 adb logcat -d -s AndroidRuntime:E > release-crashes.log
 if grep -q 'FATAL EXCEPTION' release-crashes.log; then cat release-crashes.log; exit 1; fi
 echo 'PASS: Stable 0.4.2 -> 0.4.3 installed in place, signed release starts successfully'
+
+echo 'VERIFY PRODUCTION SIGNED UPGRADE 0.5.0 -> 0.5.1'
+curl -fsSL --retry 3 "$BASE/CW-Trainer-Pocket-v0.5.0.apk" -o dist/release-v050.apk
+curl -fsSL --retry 3 "$BASE/CW-Trainer-Pocket-v0.5.1.apk" -o dist/release-v051.apk
+echo 'FFB78DDC4C33B83369CDB97EDD151C5D8CB34544F5C4A2CCE9840ED84817B92E  dist/release-v050.apk' | sha256sum -c -
+echo '98ABC41A96985927D63C73E70F4D52902160CDA166B8918FBBEEC46B8036403E  dist/release-v051.apk' | sha256sum -c -
+C50=$("$SIGNER" verify --print-certs dist/release-v050.apk | grep 'Signer #1 certificate SHA-256 digest')
+C51=$("$SIGNER" verify --print-certs dist/release-v051.apk | grep 'Signer #1 certificate SHA-256 digest')
+test "$C50" = "$C51"
+adb uninstall "$PKG"
+adb install dist/release-v050.apk
+adb shell am start -W -n "$PKG/.MainActivity"
+sleep 2
+# Check preservation when emulator permits root inspection of non-debuggable app data.
+if adb root 2>&1 | grep -qE 'restarting adbd as root|already running as root'; then
+  adb wait-for-device
+  adb shell "mkdir -p /data/user/0/$PKG/files && touch /data/user/0/$PKG/files/cw051-update-marker"
+  MARKER_AVAILABLE=1
+else
+  MARKER_AVAILABLE=0
+fi
+adb install -r dist/release-v051.apk
+adb shell am start -W -n "$PKG/.MainActivity"
+sleep 2
+adb shell dumpsys package "$PKG" | grep -q 'versionCode=11'
+if [ "$MARKER_AVAILABLE" -eq 1 ]; then
+  adb shell test -f "/data/user/0/$PKG/files/cw051-update-marker"
+  echo 'PASS: 0.5.0 -> 0.5.1 preserved private application files'
+fi
+adb logcat -d -s AndroidRuntime:E > signed-upgrade-crashes.log
+if grep -q 'FATAL EXCEPTION' signed-upgrade-crashes.log; then cat signed-upgrade-crashes.log; exit 1; fi
+echo 'PASS: Production upgrade 0.5.0 -> 0.5.1 with permanent signer'
