@@ -1,4 +1,4 @@
-name: CW Trainer Android APK
+name: CW Trainer Android CI
 on:
   push:
     branches: [codex/cw-trainer-apk-v01]
@@ -10,10 +10,10 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  build-apk:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,26 +28,57 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Build Android APK
-        run: gradle -p cw-trainer-android --no-daemon :app:assembleDebug
-      - name: Test Activity startup
+      - name: Unit and Robolectric interaction tests
         run: gradle -p cw-trainer-android --no-daemon :app:testDebugUnitTest
-      - name: Save APK
+      - name: Build APK (CI signature, NOT FOR DISTRIBUTION)
+        run: gradle -p cw-trainer-android --no-daemon :app:assembleDebug
+      - name: Stage temporary test-only APK
         run: |
-          mkdir -p cw-trainer-android/dist
-          cp cw-trainer-android/app/build/outputs/apk/debug/app-debug.apk cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.1-debug.apk
-          sha256sum cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.1-debug.apk
+          mkdir -p dist
+          cp cw-trainer-android/app/build/outputs/apk/debug/app-debug.apk dist/cw-trainer-ci-debug.apk
+          sha256sum dist/cw-trainer-ci-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: CW-Trainer-Pocket-v0.4.1-APK
-          path: cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.1-debug.apk
-      - name: Publish directly downloadable APK to build branch
-        continue-on-error: true
+          name: cw-trainer-ci-temporary-debug
+          path: dist/cw-trainer-ci-debug.apk
+
+  emulator-smoke:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: cw-trainer-ci-temporary-debug
+          path: dist
+      - name: Enable KVM
         run: |
-          git config user.name github-actions
-          git config user.email github-actions[bot]@users.noreply.github.com
-          git add cw-trainer-android/dist/CW-Trainer-Pocket-v0.4.1-debug.apk
-          git commit -m "Build Android debug APK" || exit 0
-          git fetch origin "$GITHUB_REF_NAME"
-          git rebase "origin/$GITHUB_REF_NAME"
-          git push origin "HEAD:$GITHUB_REF_NAME"
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Android emulator launch and update smoke test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot
+          disable-animations: true
+          script: |
+            set -euxo pipefail
+            adb install -r dist/cw-trainer-ci-debug.apk
+            adb logcat -c
+            adb shell am start -W -n com.cwtrainer.pocket/.MainActivity
+            sleep 2
+            adb shell am start -W -n com.cwtrainer.pocket/.FullCourseActivity
+            sleep 2
+            adb shell dumpsys activity activities | grep 'com.cwtrainer.pocket'
+            adb shell am force-stop com.cwtrainer.pocket
+            adb install -r dist/cw-trainer-ci-debug.apk
+            adb shell am start -W -n com.cwtrainer.pocket/.FullCourseActivity
+            sleep 2
+            adb logcat -d -s AndroidRuntime:E > android-crashes.log
+            if grep -q 'FATAL EXCEPTION' android-crashes.log; then cat android-crashes.log; exit 1; fi
+            echo 'PASS: Android app launches and same-signer update installs over it'
