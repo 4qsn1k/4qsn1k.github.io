@@ -189,7 +189,7 @@ function build(raw,options={}){
   unresolvedRequirements:["PHYSICAL_TERMINALS","MODBUS_REGISTER_MAP","SENSOR_HEALTH_SOURCE",
    "CONTROLLER_POWER_HEALTH_SOURCE","REED_POLARITY_AND_DIAGNOSTICS","FIRE_RECOVERY_POLICY","POWER_RECOVERY_POLICY","SENSOR_FAILURE_POLICY",
    ...(timeoutMs===null?["FRESHNESS_TIMEOUT"]:[])],
-  native:{status:"NEEDS_NATIVE_GUI",reason:"Existing GUI fixture has ST instances but no ConnectorModels/OR schema. PR #6 proves two-room simulation only; no reusable full serialization fixture is present."}};
+  native:{status:"NEEDS_NATIVE_GUI",reason:"Published sanitized evidence confirms native port/OR/connector shapes. Complete project metadata, geometry, definition references and guard templates are still missing; no writable native fixture is present."}};
  validate(plan);plan.verification.plan="FBD_PLAN_PASS";
  return plan;
 }

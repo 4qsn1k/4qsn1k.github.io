@@ -108,7 +108,8 @@ def main():
             raise ValueError("ST block count check failed")
     assert hashlib.sha256(src.read_bytes()).hexdigest() == original_digest
     print(f"Created {dst} with {len(merged)} total ST blocks.")
-    print("Native archive opened successfully in one Owen Logic installation.")
+    print("NATIVE_DOCUMENT_GENERATED_UNVERIFIED; NEEDS_NATIVE_GUI for this new output.")
+    print("SHA256 " + hashlib.sha256(dst.read_bytes()).hexdigest())
     print("ST compile, on-device I/O mapping and safety validation NOT verified.")
 
 if __name__ == "__main__":

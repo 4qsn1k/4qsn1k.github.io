@@ -1,3 +1,17 @@
+# Current coding checkpoint — Issue #14, 19.10.2026
+
+PR #13 was synchronized with main `986ec98` at `ac5fa80`; its complete offline
+checks pass, including all Modbus and FBD suites. PR #17 provides shape evidence.
+Issue #14 now has a strict evidence adapter, reference UUID validation/remapping,
+read-only ZIP inspector and hash-covered report CLI. Full native serialization is
+blocked by missing metadata; see [exact fixture request and new HOME-PC QA plan](OWLE-NATIVE-SERIALIZATION-ISSUE-14.md).
+
+No `.owle` output or new native GUI PASS. Older Issue #10 API/PR creation blockers
+and no-connector statements below are historical. Do not repeat accepted old QA
+or replace the existing typed graph. No physical equipment access.
+
+---
+
 # Codex task queue — Airlock Generator
 
 ## Issue #10 — code implementation checkpoint, 18.10.2026
