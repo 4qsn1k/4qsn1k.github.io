@@ -108,6 +108,10 @@ public final class CwCoursePlan {
         CODES.put("/","-..-.");CODES.put(".",".-.-.-");
         CODES.put("<AR>",".-.-.");CODES.put("<BT>","-...-");
         CODES.put("<BK>","-...-.-");CODES.put("<SK>","...-.-");
+        // Russian letters use the same international dot/dash codes.
+        for(MorseCourse.Symbol symbol:MorseCourse.alphabet(true))
+            CODES.put(symbol.ru,symbol.code.trim());
+        CODES.put("Ё",CODES.get("Е"));
     }
     public static Map<String,String> codes(){return Collections.unmodifiableMap(CODES);}
     public static String code(String token){return CODES.get(token);}
