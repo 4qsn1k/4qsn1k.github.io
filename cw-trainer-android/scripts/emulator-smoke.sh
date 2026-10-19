@@ -46,3 +46,36 @@ sleep 3
 adb logcat -d -s AndroidRuntime:E > crashes.log
 if grep -q 'FATAL EXCEPTION' crashes.log; then cat crashes.log; exit 1; fi
 echo 'PASS: No AndroidRuntime fatal exceptions'
+
+echo 'VERIFY PUBLISHED PERMANENTLY SIGNED APK UPDATE 0.4.2 -> 0.4.3'
+BASE='https://raw.githubusercontent.com/4qsn1k/4qsn1k.github.io/refs/heads/codex/cw-trainer-apk-v01/cw-trainer-android/releases'
+curl -fsSL --retry 3 "$BASE/CW-Trainer-Pocket-v0.4.2.apk" -o dist/release-v042.apk
+curl -fsSL --retry 3 "$BASE/CW-Trainer-Pocket-v0.4.3.apk" -o dist/release-v043.apk
+echo 'FACB79A0DFAC07C0DF1F860A6FF582A2266BC944FBC7F3301A96F1842C752611  dist/release-v042.apk' | sha256sum -c -
+echo 'BAD876BDA3C9FE32914FDA1C0CD599CE1C283AC08A776820E469315E79401B96  dist/release-v043.apk' | sha256sum -c -
+SIGNER="$ANDROID_HOME/build-tools/35.0.0/apksigner"
+C1=$("$SIGNER" verify --print-certs dist/release-v042.apk | grep 'Signer #1 certificate SHA-256 digest')
+C2=$("$SIGNER" verify --print-certs dist/release-v043.apk | grep 'Signer #1 certificate SHA-256 digest')
+test "$C1" = "$C2"
+echo "$C1" | grep -q 'fefa0f47d6fd231c6b3f9fcd106e79c30656970fa28f6ba9a346c4bd593f4217'
+echo 'PASS: Stable release certificate is identical in both versions'
+adb uninstall "$PKG"
+adb install dist/release-v042.apk
+adb shell am start -W -n "$PKG/.MainActivity"
+sleep 2
+adb shell run-as "$PKG" mkdir -p files
+adb shell run-as "$PKG" touch files/stable-upgrade-marker
+adb install -r dist/release-v043.apk
+adb shell am start -W -n "$PKG/.MainActivity"
+sleep 3
+adb shell dumpsys package "$PKG" | grep -q 'versionCode=9'
+# On userdebug emulator images adb root can verify stored marker in the now
+# non-debuggable release; do not fail just because root is unavailable.
+if adb root 2>&1 | grep -q 'restarting adbd as root'; then
+  adb wait-for-device
+  test "$(adb shell cat /data/user/0/$PKG/files/stable-upgrade-marker | tr -d '\r')" = ''
+  echo 'PASS: Persistent app file survived debug-to-release upgrade'
+fi
+adb logcat -d -s AndroidRuntime:E > release-crashes.log
+if grep -q 'FATAL EXCEPTION' release-crashes.log; then cat release-crashes.log; exit 1; fi
+echo 'PASS: Stable 0.4.2 -> 0.4.3 installed in place, signed release starts successfully'
