@@ -2,6 +2,7 @@ package com.cwtrainer.pocket;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Looper;
@@ -123,6 +124,9 @@ public final class MainActivity extends Activity {
         name.setTypeface(null,Typeface.BOLD);add(root,name,2);
         languageButton=button("",PANEL);languageButton.setTextSize(15);
         add(root,languageButton,6);
+        Button fullCourse=button("📚  ПОЛНЫЙ КУРС · 16 ЗАНЯТИЙ",GREEN);
+        add(root,fullCourse,7);
+        fullCourse.setOnClickListener(v->startActivity(new Intent(this,FullCourseActivity.class)));
         soundTestButton=button("🔊  ПРОВЕРИТЬ ЗВУК (SOS)",GREEN);
         add(root,soundTestButton,7);
         soundTestButton.setOnClickListener(v->{audio.play("...---...",25);});
