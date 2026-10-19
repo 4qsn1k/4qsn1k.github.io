@@ -226,3 +226,44 @@ Do not claim full native writer support. Preserve both existing source
 archives and the new strict test artifact. Avoid blind edits to Owen Logic
 project fields until a controlled vendor-generated minimal counterpart and
 a native Save-As differential are available.
+
+
+## Additional read-only Save-As differential: hardware I/O indices
+
+Independent offline inventory of the unmodified GUI-saved TEST source and
+the strict five-element output (19 Oct) found the following **observed**
+hardware wrapper indices, with no vendor inference:
+
+| Native wrapper | Index in saved source | Present in five-node TEST subset |
+| --- | ---: | --- |
+| AI1–AI4 | InputVariableIndex 0–3 | No |
+| I1–I3 | InputVariableIndex 4–6 | No |
+| I4 | InputVariableIndex 7 | **Yes** |
+| I5–I8 | InputVariableIndex 8–11 | No |
+| Q1–Q3 | OutputVariableIndex 0–2 | No |
+| Q4 | OutputVariableIndex 3 | **Yes** |
+| Q5–Q8 / F1–F2 | OutputVariableIndex 4–9 | No |
+
+The subset keeps a physical I/O wrapper with a **nonzero sparse index**
+(`I4 = 7`, `Q4 = 3`) while deleting the other indexed hardware
+wrappers. **It is not yet established** whether Owen Logic 3.3.378
+requires these wrappers to remain present or renumbered when saving.
+Do **not** silently renumber: the indices may be tied to the device
+model and real terminal addresses. This is a diagnostic lead, **not**
+a confirmed cause of the observed Save-As stack overflow.
+
+Both original and subset have `DocumentModel.Variables` with six
+date/time variables (Seconds, Minuts, Hours, Day, Month, Year). They
+are **not** the deleted hardware I/O slots. The native `ModelSerializedData`
+field in the surviving I4/Q4 wrappers is a short JSON string and
+contains no plaintext UUIDs in the inspected source. This does not
+exclude other hidden editor requirements.
+
+To isolate the issue safely, the next native software experiment should
+use an **independent vendor-saved TEST control project** with a sparse
+physical I/O element, or compare Save-As behavior of two disposal-only
+variants: a complete vendor-saved hardware-wrapper set and a minimal
+wrapper set. Do not send these projects to PR100. Until that controlled
+differential succeeds, the five-element archive remains
+`NATIVE_EDITOR_SAVE_AS_FAIL_STACK_OVERFLOW` and cannot authorize
+native compiler, controller programming or physical interlocks.
