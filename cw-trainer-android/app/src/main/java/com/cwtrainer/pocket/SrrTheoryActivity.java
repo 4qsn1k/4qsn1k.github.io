@@ -98,7 +98,7 @@ public final class SrrTheoryActivity extends Activity {
         topicButton.setVisibility(exam?android.view.View.GONE:android.view.View.VISIBLE);
         topicButton.setOnClickListener(v->{
             if(exam)return;
-            chosenTopic=(chosenTopic+1)%9-1;
+            chosenTopic=(chosenTopic>=7?-1:chosenTopic+1);
             // -1: whole bank, 0–7: individual subjects
             topicButton.setText(chosenTopic<0?"Тема: ВСЕ · выбрать раздел":
                 "Тема: "+SrrQuestionBank.TOPICS[chosenTopic]+" · изменить");
