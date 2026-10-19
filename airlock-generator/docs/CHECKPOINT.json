@@ -1,6 +1,6 @@
 {
   "schema": "airlock-generator-continuity/1",
-  "savedDate": "2026-10-18",
+  "savedDate": "2026-10-19",
   "project": "Airlock Generator — граф помещений, блокировки дверей, красно-зелёные светофоры, HMI, Owen Logic ST",
   "repository": "4qsn1k/4qsn1k.github.io",
   "projectPath": "airlock-generator",
@@ -784,5 +784,79 @@
     "externalGuiLaunch": "not performed: third-instance launch blocked by remote execution permissions; two original QA test instances untouched",
     "next": "In separate Owen Logic 3.3.378 test session: open NEW cloned OWLE, Save As distinct file, capture compiler diagnostics and native simulator; no actual PLC",
     "sourceChangesToPhysicalControllers": false
+  },
+  "currentCheckpoint": "airlock-generator/docs/CURRENT_CHECKPOINT_2026-10-19.md",
+  "currentVerified20261019": {
+    "repositoryBase": "main",
+    "mergedPRs": {
+      "fbdGraph": 13,
+      "reliablePolling": 16,
+      "nativeSchemaTooling": 18,
+      "physicalReadOnlyQa": 19,
+      "scadaCOMRelease": 20
+    },
+    "codexCloud": {
+      "environment": "airlock-generator-dev",
+      "publishedByUser": true,
+      "issue14Open": true
+    },
+    "computers": {
+      "physicalPR100": "Z4559",
+      "owenNativeGui": "HOME-PC"
+    },
+    "realPR100": {
+      "protocol": "Modbus RTU",
+      "com": "COM5",
+      "baud": 9600,
+      "parity": "N",
+      "stopbits": 1,
+      "unitId": 16,
+      "readFunctions": [
+        1,
+        2
+      ],
+      "DI": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "Q": [
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "panelLedMatchConfirmedByUser": true,
+      "persistentOnlineSamples": "11/12",
+      "fullAirlockCommissioned": false
+    },
+    "scadaCOMControl": {
+      "softwareQA": "6/6 PASS; full npm run check PASS; GitHub CI PASS",
+      "deployedSourceOnZ4559": true,
+      "physicalReleaseResumeTested": false,
+      "reason": "Other Owen Logic processes running on Z4559; did not touch them"
+    },
+    "nativeOWLE": {
+      "originalTestSha256": "0E3F85BFC198AA298EBAC5068E76B5C0408CB4590FAEE9530E74559A1A167A00",
+      "remappedTestCopySha256": "35A3E289116C7924B398999AD68183CEA90927FFA59131A031DB49DD77BEB7A8",
+      "remappedUUIDCount": 187,
+      "cloneOpenedAndRenderedInOwenLogic": true,
+      "cloneSaveVerified": false,
+      "cloneCompileVerified": false,
+      "cloneSimulationVerified": false,
+      "arbitraryOWLEGenerated": false,
+      "type4MeaningUnknown": true,
+      "diagnosticType4Count": 4
+    },
+    "electricalSafetyAndEgressHardwareAccepted": false
   }
 }

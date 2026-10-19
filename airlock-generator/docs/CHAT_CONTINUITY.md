@@ -1,3 +1,9 @@
+# ТЕКУЩАЯ ТОЧКА 19.10.2026
+
+**Актуальные проверенные сведения:** [CURRENT_CHECKPOINT_2026-10-19.md](CURRENT_CHECKPOINT_2026-10-19.md). Документ объединяет принятые PR #13/#16/#18/#19/#20, фактическую связь ПР100, показания, нативную GUI-копию и оставшиеся аппаратные/native ограничения. Записи ниже — исторический журнал; упоминания черновых PR, отсутствие связи или старые назначения компьютеров могли устареть.
+
+---
+
 # 19.10.2026 — Issue #14 evidence adapter and serialization gate
 
 Draft [PR #18](https://github.com/4qsn1k/4qsn1k.github.io/pull/18), branch `codex/airlock-14-native-schema`, targets PR #13 sync `ac5fa80`. Strict published-specimen validation, typed-plan mapping, fresh reference UUIDs/remapping, read-only ZIP/JSON inspector and hash-covered report CLI are implemented. Full `scripts/codex-check.sh`: exit 0; new JS 8/8 and Python 6/6; existing FBD/Modbus and MODEL 8/8 preserved. Log SHA256 `40884ad3043d09543745138696b3e6cf5322d4a0c5c4626b72529a3caf5f0863`. PR #13 GitHub Actions [39195791301](https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39195791301): all three jobs success.
