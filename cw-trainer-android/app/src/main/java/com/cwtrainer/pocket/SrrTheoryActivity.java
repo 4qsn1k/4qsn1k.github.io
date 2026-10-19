@@ -37,7 +37,8 @@ public final class SrrTheoryActivity extends Activity {
     private LinearLayout root;
     private TextView heading,timer,prompt,feedback;
     private final Button[] buttons=new Button[4];
-    private Button next,reset,sourcePdf;
+    private Button next,reset,sourcePdf,topicButton;
+    private int chosenTopic=-1;
     private ScrollView scroll;
     private final Runnable clock=new Runnable(){
         @Override public void run(){
@@ -92,6 +93,17 @@ public final class SrrTheoryActivity extends Activity {
         heading.setGravity(Gravity.CENTER);add(heading,0);
         timer=text(exam?"90 минут · 45 вопросов · нужно 40":"Тренировка без ограничения времени",15,MUTED);
         timer.setGravity(Gravity.CENTER);add(timer,7);
+        topicButton=button("Тема: ВСЕ · выбрать раздел",PANEL);
+        add(topicButton,6);
+        topicButton.setVisibility(exam?android.view.View.GONE:android.view.View.VISIBLE);
+        topicButton.setOnClickListener(v->{
+            if(exam)return;
+            chosenTopic=(chosenTopic+1)%9-1;
+            // -1: whole bank, 0–7: individual subjects
+            topicButton.setText(chosenTopic<0?"Тема: ВСЕ · выбрать раздел":
+                "Тема: "+SrrQuestionBank.TOPICS[chosenTopic]+" · изменить");
+            nextPractice();
+        });
         prompt=text("",19,WHITE);add(prompt,18);
         for(int i=0;i<4;i++){
             final int index=i;
@@ -121,9 +133,35 @@ public final class SrrTheoryActivity extends Activity {
         });
         add(text("Источники: опубликованный перечень СРР, вопросы 1–426. В экзамене ответы скрыты до завершения.",13,MUTED),16);
     }
+    private SrrQuestionBank.Question choosePracticeQuestion(){
+        java.util.ArrayList<Integer> weak=new java.util.ArrayList<>();
+        String saved=results.getString("weak_ids","");
+        for(String token:saved.split(",")) {
+            if(token.isEmpty())continue;
+            try {
+                int id=Integer.parseInt(token);
+                if(id>=1 && id<=426 && (chosenTopic<0||SrrQuestionBank.topicOf(id)==chosenTopic))
+                    weak.add(id);
+            }catch(NumberFormatException ignored){}
+        }
+        if(!weak.isEmpty() && random.nextInt(100)<60)
+            return bank.get(weak.get(random.nextInt(weak.size())));
+        return chosenTopic<0?bank.random(random):bank.randomFromTopic(chosenTopic,random);
+    }
+    private void changeWeakSet(int id,boolean right){
+        java.util.LinkedHashSet<Integer> weak=new java.util.LinkedHashSet<>();
+        for(String entry:results.getString("weak_ids","").split(",")){
+            try{int n=Integer.parseInt(entry);if(n>=1&&n<=426)weak.add(n);}
+            catch(NumberFormatException ignored){}
+        }
+        if(right)weak.remove(id);else weak.add(id);
+        StringBuilder values=new StringBuilder();
+        for(int n:weak){if(values.length()>0)values.append(',');values.append(n);}
+        results.edit().putString("weak_ids",values.toString()).apply();
+    }
     private void nextPractice(){
         if(bank==null)return;
-        active=false;answered=false;current=bank.random(random);
+        active=false;answered=false;current=choosePracticeQuestion();
         heading.setText("ТЕОРИЯ · ВОПРОС "+current.id+"/426");
         timer.setText("Практика · варианты из официального перечня");
         prompt.setText(current.prompt);
@@ -204,6 +242,7 @@ public final class SrrTheoryActivity extends Activity {
         }else{
             answered=true;
             boolean right=index==current.correct;
+            changeWeakSet(current.id,right);
             results.edit().putInt("practice_attempts",results.getInt("practice_attempts",0)+1)
                 .putInt("practice_correct",results.getInt("practice_correct",0)+(right?1:0)).apply();
             feedback.setText((right?"✓ Правильно":"✕ Неправильно")+
