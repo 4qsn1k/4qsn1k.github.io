@@ -104,3 +104,22 @@ HOME-PC: `python -B tests/native-owle-minimal-assembly.test.py` = **10/10 PASS**
 `npm.cmd run check` = **exit 0**, including the existing full independent
 model suite (`MODEL_QA_FINAL PASS 8/8`). This QA is offline only and does
 not run any real COM or PLC operation.
+
+## Native simulator observation (newly assembled file)
+
+The separate new-file Owen Logic window (PID 3612 at the time) was focused
+only after checking its exact full filename and foreground PID. The software
+simulator was entered with `Shift+F5`, then run with `F6`. The editor displayed
+live 0/1 input and output values, its simulator time advanced, and
+`FB_Room_N1` visually showed **O_State=99** and **O_Fault=1** with its
+unconnected test inputs at their initial values. This is an actual
+**native simulator execution observation for the newly assembled file**,
+not proof of the OR truth table or approved safety logic.
+
+Screenshot retained only on HOME-PC:
+`owen-tests/Airlock_NATIVE14_MINIMAL_SIM_FIRSTLOOK.png`.
+After the simulator started, the new OWLE SHA256 still matched
+`f11fb96128ed92b4e9b1cbad063b47037d87b556b3376889f107615e6384c1b3`.
+No editor Save/Save As or independent compiler diagnostic has been captured.
+`NEW_TEST_NATIVE_SIMULATOR_ENTERED_AND_RUNNING_OBSERVED`;
+`NEW_TEST_NATIVE_ACCEPTANCE_PASS=false`.
