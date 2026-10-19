@@ -66,6 +66,16 @@ public final class SrrMorseActivity extends Activity {
         getWindow().setStatusBarColor(BG);getWindow().setNavigationBarColor(BG);
         exam=getIntent().getBooleanExtra("exam",false);
         if(exam){length=250;cpm=60;}
+        else {
+            int recommendedCount=getIntent().getIntExtra("training_signs",-1);
+            int recommendedSpeed=getIntent().getIntExtra("training_cpm",-1);
+            if((recommendedCount==25||recommendedCount==50||
+                recommendedCount==100||recommendedCount==250) &&
+               (recommendedSpeed==30||recommendedSpeed==40||recommendedSpeed==50||
+                recommendedSpeed==60||recommendedSpeed==70||recommendedSpeed==80)) {
+                length=recommendedCount;cpm=recommendedSpeed;
+            }
+        }
         prefs=getSharedPreferences("srr_exam_results",Context.MODE_PRIVATE);
         audio=new MorseTonePlayer(this,message->{
             if(audioStatus!=null)audioStatus.setText("Звук: "+message);
