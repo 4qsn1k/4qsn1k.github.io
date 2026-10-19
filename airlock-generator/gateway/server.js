@@ -2,6 +2,7 @@
 const http=require("node:http");
 const fs=require("node:fs");
 const path=require("node:path");
+const crypto=require("node:crypto");
 const {load,createPoller}=require("./telemetry");
 const {createJournal}=require("./event-journal");
 const files={
@@ -15,6 +16,7 @@ function start({configPath,host="127.0.0.1",port=8787,logger=console,pollerFacto
  const project=load(configPath);
  const poller=pollerFactory(project);
  const journal=createJournal({filePath:process.env.AIRLOCK_EVENT_LOG||null});
+ const portControlToken=crypto.randomBytes(24).toString("hex");
  const tick=()=>{
   if(poller.tick){try{journal.observe(poller.tick());}catch{logger.error("POLL_OBSERVATION_FAILED");}return;}
   // Compatibility for injected/legacy pollers; never attach unlimited waiters.
@@ -29,7 +31,40 @@ function start({configPath,host="127.0.0.1",port=8787,logger=console,pollerFacto
   res.setHeader("X-Frame-Options","DENY");
   res.setHeader("Referrer-Policy","no-referrer");
   res.setHeader("Content-Security-Policy","default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'");
-  if(req.method!=="GET"){res.writeHead(405,{"Allow":"GET"});res.end("Read-only");return;}
+  if(req.method==="POST"&&url.startsWith("/api/ports/")){
+   const match=/^\/api\/ports\/(COM[1-9][0-9]{0,2})\/(release|resume)$/.exec(url);
+   const configured=match&&project.controllers.some(c=>c.protocol==="modbus-rtu"&&
+     c.comPort.toUpperCase()===match[1]);
+   if(!match||!configured){res.writeHead(404);res.end("Unknown port");return;}
+   const actualHost=host+":"+server.address()?.port;
+   const authenticated=req.headers.host===actualHost&&
+     req.headers.origin==="http://"+actualHost&&
+     req.headers["x-airlock-control"]===portControlToken&&
+     req.headers["content-length"]==="0";
+   if(!authenticated){res.writeHead(403);res.end("Local operator confirmation required");return;}
+   const status=poller.portStatus?.().find(c=>c.port===match[1]);
+   if(!status){res.writeHead(503);res.end("Port control unavailable");return;}
+   const action=match[2],port=match[1];
+   const work=Promise.resolve().then(()=>action==="release"?poller.pausePort(port):poller.resumePort(port));
+   work.then(result=>{
+    if(res.writableEnded)return;
+    journal.observe(poller.get());
+    res.writeHead(200,{"Content-Type":"application/json; charset=utf-8"});
+    res.end(JSON.stringify({ok:true,action,...result}));
+   }).catch(()=>{
+    if(res.writableEnded)return;
+    journal.observe(poller.get());
+    res.writeHead(503,{"Content-Type":"application/json; charset=utf-8"});
+    res.end(JSON.stringify({ok:false,error:"PORT_CONTROL_UNCONFIRMED"}));
+   });
+   return;
+  }
+  if(req.method!=="GET"){res.writeHead(405,{"Allow":"GET"});res.end("Read-only monitor");return;}
+  if(url==="/api/ports"){
+   res.writeHead(200,{"Content-Type":"application/json; charset=utf-8"});
+   res.end(JSON.stringify({ports:poller.portStatus?.()||[],controlToken:portControlToken}));
+   return;
+  }
   if(url==="/") {res.writeHead(302,{Location:"/scada.html"});res.end();return;}
   if(url==="/api/project"){
    // Server keeps controller IP/unit data private from the page. Only topology is exposed.

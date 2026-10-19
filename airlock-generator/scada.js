@@ -154,7 +154,73 @@
    }
   }
  }
- async function updateEvents(){
+ let portControlToken=null,portOperationPending=new Set();
+ async function refreshSerialPorts(){
+  const root=$("serialPortControls");
+  if(!gateway){root.textContent="Для управления портами откройте SCADA через локальный агент.";return;}
+  try{
+   const response=await fetch("./api/ports",{cache:"no-store"});
+   if(!response.ok)throw Error("API "+response.status);
+   const result=await response.json();
+   portControlToken=result.controlToken;
+   root.replaceChildren();
+   for(const item of result.ports||[]){
+    const line=document.createElement("div");line.className="row";
+    const name=document.createElement("span");
+    const ids=(item.controllerIds||[]).join(", ");
+    name.textContent=item.port+" · "+ids+" · "+(item.releasing?"ОСВОБОЖДАЕТСЯ":item.paused?"ОСВОБОЖДЁН":"ОПРОС");
+    const button=document.createElement("button");
+    const releasing=item.releasing||portOperationPending.has(item.port);
+    const action=item.paused?"resume":"release";
+    button.textContent=releasing?"Подождите…":item.paused?"▶ Возобновить опрос":"⏸ Освободить порт";
+    button.disabled=!!releasing;
+    button.onclick=()=>operateSerialPort(item.port,action,ids);
+    line.append(name,button);
+    root.append(line);
+   }
+   if(!root.children.length)root.textContent="В проекте нет последовательных COM-портов.";
+  }catch{
+   portControlToken=null;
+   root.textContent="Управление COM недоступно. Проверьте локальный агент.";
+  }
+ }
+ async function operateSerialPort(port,action,ids){
+  if(portOperationPending.has(port)||!portControlToken)return;
+  if(action==="release"){
+   const warning="Освободить "+port+"?\\n\\nОпрос контроллеров "+ids+
+     " будет остановлен, текущие данные станут НЕТ ДАННЫХ.\\n"+
+     "Порт освободится для UPROG/Owen Logic только после закрытия worker.\\n"+
+     "Программа ПР и его выходы НЕ изменяются.";
+   if(!window.confirm(warning))return;
+  }else{
+   if(!window.confirm("Возобновить опрос "+port+"?\\n\\n"+
+     "Сначала закройте UPROG, Owen Logic и другие программы, использующие порт.\\n"+
+     "До новых корректных ответов ПР все показания останутся НЕТ ДАННЫХ."))return;
+  }
+  portOperationPending.add(port);
+  $("serialPortMessage").textContent=action==="release"?
+   "Освобождение "+port+": ждём закрытия процесса…":"Возобновление "+port+": данные пока недостоверны…";
+  void refreshSerialPorts();
+  try{
+   const res=await fetch("./api/ports/"+encodeURIComponent(port)+"/"+action,{
+    method:"POST",headers:{"X-Airlock-Control":portControlToken},body:"",cache:"no-store"
+   });
+   if(!res.ok)throw Error("HTTP "+res.status);
+   const data=await res.json();
+   if(!data.ok)throw Error("Операция не подтверждена агентом");
+   $("serialPortMessage").textContent=action==="release"?
+    port+" освобождён: можно подключить UPROG. В SCADA данные этого порта недостоверны.":
+    port+" разрешён для опроса. Дождитесь свежих ответов ПР.";
+  }catch{
+   $("serialPortMessage").textContent="Не удалось подтвердить состояние "+port+
+     ". Не запускайте другую программу на этом COM до повторной проверки.";
+  }finally{
+   portOperationPending.delete(port);
+   await refreshSerialPorts();
+   void poll();
+  }
+ }
+  async function updateEvents(){
   const root=$("eventRows");
   if(!gateway){root.textContent="Локальный агент не подключён";return;}
   try{
@@ -190,7 +256,7 @@
    error(ok?"Получены данные "+ok+"/"+total+" контроллеров. Неизвестные состояния остаются серыми.":"Нет подтверждённого ответа от ПР — зелёный запрещён.");
   }catch(e){
    last=null;tag("offline");$("updateTime").textContent="Нет актуального пакета";error("Связь с локальным шлюзом потеряна: "+e.message);
-  }finally{requestBusy=false;render();renderHealth();void updateEvents();}
+  }finally{requestBusy=false;render();renderHealth();void updateEvents();void refreshSerialPorts();}
  }
  function setup(){
   for(const btn of document.querySelectorAll("nav.tabs button")){
