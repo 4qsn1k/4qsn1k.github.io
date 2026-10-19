@@ -6,6 +6,7 @@ on:
       - 'cw-trainer-android/app/**'
       - 'cw-trainer-android/settings.gradle.kts'
       - 'cw-trainer-android/gradle.properties'
+      - 'cw-trainer-android/scripts/**'
       - '.github/workflows/cw-trainer-apk.yml'
   workflow_dispatch:
 
@@ -66,19 +67,4 @@ jobs:
           profile: pixel_2
           emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot
           disable-animations: true
-          script: |
-            set -eux
-            adb install -r dist/cw-trainer-ci-debug.apk
-            adb logcat -c
-            adb shell am start -W -n com.cwtrainer.pocket/.MainActivity
-            sleep 2
-            adb shell am start -W -n com.cwtrainer.pocket/.FullCourseActivity
-            sleep 2
-            adb shell dumpsys activity activities | grep 'com.cwtrainer.pocket'
-            adb shell am force-stop com.cwtrainer.pocket
-            adb install -r dist/cw-trainer-ci-debug.apk
-            adb shell am start -W -n com.cwtrainer.pocket/.FullCourseActivity
-            sleep 2
-            adb logcat -d -s AndroidRuntime:E > android-crashes.log
-            if grep -q 'FATAL EXCEPTION' android-crashes.log; then cat android-crashes.log; exit 1; fi
-            echo 'PASS: Android app launches and same-signer update installs over it'
+          script: bash cw-trainer-android/scripts/emulator-smoke.sh
