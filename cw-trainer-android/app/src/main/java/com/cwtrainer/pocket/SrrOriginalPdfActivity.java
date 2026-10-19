@@ -26,6 +26,7 @@ public final class SrrOriginalPdfActivity extends Activity {
     private ImageView image;
     private TextView heading,status;
     private int page=1,scale=1;
+    private boolean restrictAnswers=false;
     private final float[] factors={1.3f,1.8f,2.5f};
     private Bitmap current;
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
@@ -37,6 +38,7 @@ public final class SrrOriginalPdfActivity extends Activity {
         super.onCreate(state);
         getWindow().setStatusBarColor(BG);getWindow().setNavigationBarColor(BG);
         int question=getIntent().getIntExtra("questionId",1);
+        restrictAnswers=getIntent().getBooleanExtra("restrictAnswers",false);
         try{page=SrrQuestionPages.page(question);}
         catch(RuntimeException ignored){page=1;}
         ScrollView vertical=new ScrollView(this);
@@ -74,9 +76,15 @@ public final class SrrOriginalPdfActivity extends Activity {
             status.setText("Не удалось открыть официальный документ: "+error.getMessage());
         }
     }
+    /** In mock exams the final PDF answer-key pages are inaccessible. */
+    public static int clampPage(int requested,int pages,boolean hideAnswerKeys){
+        if(pages<=0)throw new IllegalArgumentException("PDF has no pages");
+        int max=hideAnswerKeys?Math.min(103,pages-1):pages-1;
+        return Math.max(0,Math.min(max,requested));
+    }
     private void showPage(int requested){
         if(pdf==null)return;
-        page=Math.max(0,Math.min(pdf.getPageCount()-1,requested));
+        page=clampPage(requested,pdf.getPageCount(),restrictAnswers);
         renderPage();
     }
     private void renderPage(){
@@ -91,7 +99,9 @@ public final class SrrOriginalPdfActivity extends Activity {
             image.setImageBitmap(imageData);
             if(previous!=null && previous!=imageData) image.post(previous::recycle);
             heading.setText("Официальный перечень · стр. "+(page+1)+"/"+pdf.getPageCount());
-            status.setText("Показана исходная страница PDF, включая схемы и рисунки. Листай страницы, если вопрос переходит на следующую.");
+            status.setText(restrictAnswers?
+                "Пробный экзамен: исходные рисунки доступны, страницы с правильными ответами заблокированы.":
+                "Показана исходная страница PDF со схемами. Листай страницы, если вопрос переходит на следующую.");
         }catch(Exception error){
             status.setText("Ошибка изображения PDF: "+error.getMessage());
         }
