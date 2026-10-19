@@ -56,6 +56,12 @@ PY
 }
 adb shell input keyevent KEYCODE_BACK
 sleep 2
+tap_ui_text 'ЕЖЕДНЕВНАЯ ТРЕНИРОВКА'
+sleep 3
+adb shell dumpsys activity activities | grep -E 'ResumedActivity|mResumedActivity|topResumedActivity' | grep -q 'DailyPracticeActivity'
+echo 'PASS: Daily adaptive coaching opens and lesson starts'
+adb shell input keyevent KEYCODE_BACK
+sleep 2
 tap_ui_text 'ПОДГОТОВКА'
 sleep 3
 adb shell dumpsys activity activities | grep -E 'ResumedActivity|mResumedActivity|topResumedActivity' | grep -q 'SrrExamMenuActivity'
