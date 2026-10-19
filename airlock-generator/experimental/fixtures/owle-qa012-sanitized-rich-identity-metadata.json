@@ -1,0 +1,5786 @@
+{
+  "schema": "airlock-owle-test-native-rich-evidence/1",
+  "status": "READ_ONLY_TEST_METADATA_NOT_SERIALIZABLE",
+  "provenance": {
+    "sourceArchiveSha256": "0e3f85bfc198aa298ebac5068e76b5c0408cb4590faee9530e74559a1a167a00",
+    "sourceMembers": [
+      {
+        "name": "Project",
+        "uncompressedBytes": 264553,
+        "compressedBytes": 23114,
+        "compressionMethod": 8,
+        "crc32": "7529a7b4"
+      },
+      {
+        "name": "StFunctionBlocks",
+        "uncompressedBytes": 26717,
+        "compressedBytes": 3762,
+        "compressionMethod": 8,
+        "crc32": "bed8b94b"
+      }
+    ]
+  },
+  "knownDocumentKeys": [
+    "UniqueId",
+    "Bounds",
+    "ApplicationVersionCreated",
+    "LastChangingApplicationVersion",
+    "Elements",
+    "Variables",
+    "VariableCatalogSections",
+    "ConnectorModels",
+    "CommentBlockModels",
+    "DevValue",
+    "WorkRectangle",
+    "KeyFileName"
+  ],
+  "modelSummary": {
+    "allElements": 25,
+    "allConnectors": 16,
+    "virtualVariables": 6,
+    "stDefinitions": 3
+  },
+  "nativeElementExamples": [
+    {
+      "role": "OR_OBSERVER",
+      "nativeWrapper": {
+        "ElementModel": {
+          "Version": 0,
+          "UniqueId": "GUID_ALIAS_0001",
+          "Title": "Q4",
+          "Descriptor": {
+            "redactedStringBytes": 8
+          },
+          "Location": {
+            "IsEmpty": false,
+            "X": 355.03802,
+            "Y": 60
+          },
+          "IsInvertOutput": false,
+          "FontSize": 13.252205,
+          "Comment": null,
+          "PropertyNames": [],
+          "OldDisplayNames": [],
+          "NewDisplayNames": [],
+          "FbType": 13,
+          "Primitives": [
+            {
+              "Points": [
+                {
+                  "IsEmpty": false,
+                  "X": 357.53802,
+                  "Y": 60.7
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 357.53802,
+                  "Y": 60.3134
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 357.8514,
+                  "Y": 60
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 358.238,
+                  "Y": 60
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 358.23807,
+                  "Y": 60.000004
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 366.83804,
+                  "Y": 60.000004
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 366.838,
+                  "Y": 60
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 367.22464,
+                  "Y": 60
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 367.53802,
+                  "Y": 60.3134
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 367.53802,
+                  "Y": 60.699997
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 367.53802,
+                  "Y": 60.699997
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 367.53802,
+                  "Y": 60.7
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 367.53802,
+                  "Y": 60.7
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 367.53806,
+                  "Y": 60.700005
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 367.53806,
+                  "Y": 69.3
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 367.53802,
+                  "Y": 69.29999
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 367.53802,
+                  "Y": 69.6866
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 367.22464,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 366.83804,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 366.83804,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 358.23807,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 358.23804,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 357.8514,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 357.53802,
+                  "Y": 69.6866
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 357.53802,
+                  "Y": 69.3
+                }
+              ],
+              "PointTypes": {
+                "redactedStringBytes": 36
+              },
+              "StyleSheetName": {
+                "redactedStringBytes": 8
+              },
+              "Discriminator": 1
+            },
+            {
+              "Text": {
+                "redactedStringBytes": 2
+              },
+              "Name": {
+                "redactedStringBytes": 9
+              },
+              "X": 357.53802,
+              "Y": 60,
+              "Width": 10,
+              "Height": 10,
+              "TextStyleModel": {
+                "HorzAlign": 0,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": {
+                  "redactedStringBytes": 8
+                },
+                "FontSize": 13.252205,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 355.03802,
+                "StartPointY": 65,
+                "EndPointX": 357.53802,
+                "EndPointY": 65,
+                "Discriminator": 4
+              },
+              "UniqueId": "GUID_ALIAS_0002",
+              "Name": "Input0",
+              "Color": -16777216,
+              "Discriminator": 3
+            }
+          ],
+          "Ports": [
+            {
+              "UniqueId": "GUID_ALIAS_0003",
+              "AnchorUniqueId": "GUID_ALIAS_0002",
+              "ElementOwnerUId": "ZERO_UUID",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Input0",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            }
+          ],
+          "IsAddToMacroProperty": false,
+          "ZOrder": 7
+        },
+        "OutputVariableIndex": 3,
+        "ModuleName": {
+          "redactedStringBytes": 20
+        },
+        "Company": {
+          "redactedStringBytes": 11
+        },
+        "ModelSerializedData": {
+          "redactedStringBytes": 64,
+          "sha256": "126c87b8e9b36abcb3176458fc7cfb3111202f51af7b3b8602ecd9ed00db2a58"
+        },
+        "UsedBitMask": true,
+        "OrderExecution": 4,
+        "Discriminator": 3
+      }
+    },
+    {
+      "role": "SHARED_DI",
+      "nativeWrapper": {
+        "ElementModel": {
+          "Version": 0,
+          "UniqueId": "GUID_ALIAS_0004",
+          "Title": "I4",
+          "Descriptor": {
+            "redactedStringBytes": 7
+          },
+          "Location": {
+            "IsEmpty": false,
+            "X": 0,
+            "Y": 60
+          },
+          "IsInvertOutput": false,
+          "FontSize": 13.252205,
+          "Comment": null,
+          "PropertyNames": [],
+          "OldDisplayNames": [],
+          "NewDisplayNames": [],
+          "FbType": 12,
+          "Primitives": [
+            {
+              "Points": [
+                {
+                  "IsEmpty": false,
+                  "X": 2.3841858e-7,
+                  "Y": 60.7
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 0,
+                  "Y": 60.3134
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 0.31340036,
+                  "Y": 60
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 0.6999996,
+                  "Y": 60
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 0.7000003,
+                  "Y": 60.000004
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 9.3,
+                  "Y": 60.000004
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 9.299998,
+                  "Y": 60
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 9.686598,
+                  "Y": 60
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 9.999999,
+                  "Y": 60.3134
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 10,
+                  "Y": 60.699997
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 10,
+                  "Y": 60.699997
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 10,
+                  "Y": 60.7
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 10,
+                  "Y": 60.7
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 10,
+                  "Y": 60.700005
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 10,
+                  "Y": 69.3
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 10,
+                  "Y": 69.29999
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 10,
+                  "Y": 69.6866
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 9.686599,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 9.3,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 9.3,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 0.7000003,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 0.7000007,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 0.31340143,
+                  "Y": 70
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 5.9604645e-7,
+                  "Y": 69.6866
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 2.9802322e-7,
+                  "Y": 69.3
+                }
+              ],
+              "PointTypes": {
+                "redactedStringBytes": 36
+              },
+              "StyleSheetName": {
+                "redactedStringBytes": 8
+              },
+              "Discriminator": 1
+            },
+            {
+              "Text": {
+                "redactedStringBytes": 2
+              },
+              "Name": {
+                "redactedStringBytes": 9
+              },
+              "X": 0,
+              "Y": 60,
+              "Width": 10,
+              "Height": 10,
+              "TextStyleModel": {
+                "HorzAlign": 0,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": {
+                  "redactedStringBytes": 8
+                },
+                "FontSize": 13.252205,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            },
+            {
+              "LineModel": {
+                "StartPointX": 10,
+                "StartPointY": 65,
+                "EndPointX": 12.5,
+                "EndPointY": 65,
+                "Discriminator": 4
+              },
+              "UniqueId": "GUID_ALIAS_0005",
+              "Name": "Output0",
+              "Color": -16777216,
+              "Discriminator": 3
+            }
+          ],
+          "Ports": [
+            {
+              "UniqueId": "GUID_ALIAS_0006",
+              "AnchorUniqueId": "GUID_ALIAS_0005",
+              "ElementOwnerUId": "ZERO_UUID",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": false,
+              "Name": "Output0",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            }
+          ],
+          "IsAddToMacroProperty": false,
+          "ZOrder": 14
+        },
+        "InputVariableIndex": 7,
+        "ModuleName": {
+          "redactedStringBytes": 19
+        },
+        "Company": {
+          "redactedStringBytes": 11
+        },
+        "ModelSerializedData": {
+          "redactedStringBytes": 63,
+          "sha256": "9f49f8a37dd514c75d0a1fa5be7c2281bef11503abe5dfb1836b0a8fe9a9e4e1"
+        },
+        "VariableTypeExtensionName": null,
+        "ValueToTypes": null,
+        "UsedBitMask": true,
+        "Discriminator": 2
+      }
+    },
+    {
+      "role": "OR_NATIVE",
+      "nativeWrapper": {
+        "ElementModel": {
+          "Version": 0,
+          "UniqueId": "GUID_ALIAS_0007",
+          "Title": "OR",
+          "Descriptor": {
+            "redactedStringBytes": 22
+          },
+          "Location": {
+            "IsEmpty": false,
+            "X": 272.5,
+            "Y": 57.5
+          },
+          "IsInvertOutput": false,
+          "FontSize": 8,
+          "Comment": {
+            "redactedStringBytes": 0
+          },
+          "PropertyNames": [],
+          "OldDisplayNames": [],
+          "NewDisplayNames": [],
+          "FbType": 4,
+          "Primitives": [
+            {
+              "Points": [
+                {
+                  "IsEmpty": false,
+                  "X": 275,
+                  "Y": 58.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 275,
+                  "Y": 57.8134
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 275.3134,
+                  "Y": 57.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 275.7,
+                  "Y": 57.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 275.7,
+                  "Y": 57.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 284.3,
+                  "Y": 57.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 284.3,
+                  "Y": 57.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 284.68658,
+                  "Y": 57.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 285,
+                  "Y": 57.8134
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 285,
+                  "Y": 58.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 285,
+                  "Y": 58.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 285,
+                  "Y": 58.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 285,
+                  "Y": 58.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 285,
+                  "Y": 58.2
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 285,
+                  "Y": 66.8
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 285,
+                  "Y": 66.8
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 285,
+                  "Y": 67.1866
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 284.68658,
+                  "Y": 67.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 284.3,
+                  "Y": 67.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 275.7,
+                  "Y": 67.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 275.7,
+                  "Y": 67.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 275.31342,
+                  "Y": 67.5
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 275,
+                  "Y": 67.1866
+                },
+                {
+                  "IsEmpty": false,
+                  "X": 275,
+                  "Y": 66.8
+                }
+              ],
+              "PointTypes": {
+                "redactedStringBytes": 32
+              },
+              "StyleSheetName": {
+                "redactedStringBytes": 8
+              },
+              "Discriminator": 1
+            },
+            {
+              "LineModel": {
+                "StartPointX": 272.5,
+                "StartPointY": 60,
+                "EndPointX": 275,
+                "EndPointY": 60,
+                "Discriminator": 4
+              },
+              "UniqueId": "GUID_ALIAS_0008",
+              "Name": "Input0",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "LineModel": {
+                "StartPointX": 272.5,
+                "StartPointY": 65,
+                "EndPointX": 275,
+                "EndPointY": 65,
+                "Discriminator": 4
+              },
+              "UniqueId": "GUID_ALIAS_0009",
+              "Name": "Input1",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "LineModel": {
+                "StartPointX": 285,
+                "StartPointY": 62.5,
+                "EndPointX": 287.5,
+                "EndPointY": 62.5,
+                "Discriminator": 4
+              },
+              "UniqueId": "GUID_ALIAS_0010",
+              "Name": "Output2",
+              "Color": -16777216,
+              "Discriminator": 3
+            },
+            {
+              "Text": {
+                "redactedStringBytes": 2
+              },
+              "Name": {
+                "redactedStringBytes": 9
+              },
+              "X": 275,
+              "Y": 57.5,
+              "Width": 10,
+              "Height": 10,
+              "TextStyleModel": {
+                "HorzAlign": 0,
+                "VertAlign": 0,
+                "TextOffset": {
+                  "IsEmpty": true,
+                  "X": 0,
+                  "Y": 0
+                },
+                "FontName": {
+                  "redactedStringBytes": 8
+                },
+                "FontSize": 8,
+                "FontStyle": 0,
+                "TextColor": -16777216
+              },
+              "Discriminator": 2
+            }
+          ],
+          "Ports": [
+            {
+              "UniqueId": "GUID_ALIAS_0011",
+              "AnchorUniqueId": "GUID_ALIAS_0008",
+              "ElementOwnerUId": "ZERO_UUID",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": true,
+              "Name": "Input0",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "GUID_ALIAS_0012",
+              "AnchorUniqueId": "GUID_ALIAS_0009",
+              "ElementOwnerUId": "ZERO_UUID",
+              "PortType": 0,
+              "DataType": 0,
+              "IsFloating": true,
+              "Name": "Input1",
+              "PointIndexMode": 0,
+              "ArrayType": null
+            },
+            {
+              "UniqueId": "GUID_ALIAS_0013",
+              "AnchorUniqueId": "GUID_ALIAS_0010",
+              "ElementOwnerUId": "ZERO_UUID",
+              "PortType": 1,
+              "DataType": 0,
+              "IsFloating": true,
+              "Name": "Output2",
+              "PointIndexMode": 1,
+              "ArrayType": null
+            }
+          ],
+          "IsAddToMacroProperty": false,
+          "ZOrder": 15
+        },
+        "PinDefaultValue": 0,
+        "FbType": 4,
+        "Discriminator": 18
+      }
+    },
+    {
+      "role": "ROOM_A",
+      "nativeWrapper": {
+        "ElementBlockStoreModel": {
+          "ElementModel": {
+            "Version": 0,
+            "UniqueId": "GUID_ALIAS_0014",
+            "Title": "FB_Room_N1",
+            "Descriptor": {
+              "redactedStringBytes": 0
+            },
+            "Location": {
+              "IsEmpty": false,
+              "X": 22.499996,
+              "Y": 0.0000038146973
+            },
+            "IsInvertOutput": false,
+            "FontSize": 8,
+            "Comment": {
+              "redactedStringBytes": 0
+            },
+            "PropertyNames": [],
+            "OldDisplayNames": [],
+            "NewDisplayNames": [],
+            "FbType": -1,
+            "Primitives": [
+              {
+                "Points": [
+                  {
+                    "IsEmpty": false,
+                    "X": 24.999996,
+                    "Y": 0.7000048
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 24.999996,
+                    "Y": 0.3134056
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 25.313396,
+                    "Y": 0.0000047683716
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 25.699995,
+                    "Y": 0.0000044107437
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 25.699997,
+                    "Y": 0.0000044703484
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.299995,
+                    "Y": 0.0000044703484
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.29999,
+                    "Y": 0.0000044703484
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.686584,
+                    "Y": 0.0000038146973
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.999985,
+                    "Y": 0.31340402
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.999985,
+                    "Y": 0.7000042
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.999985,
+                    "Y": 0.70000434
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.999985,
+                    "Y": 0.7000045
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.999985,
+                    "Y": 0.70000464
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 85,
+                    "Y": 0.70000446
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 85,
+                    "Y": 69.30001
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.999985,
+                    "Y": 69.299995
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.999985,
+                    "Y": 69.6866
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.686584,
+                    "Y": 70
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.29999,
+                    "Y": 70
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 84.299995,
+                    "Y": 70.00001
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 25.699997,
+                    "Y": 70.00001
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 25.699997,
+                    "Y": 70
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 25.313396,
+                    "Y": 70
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 24.999996,
+                    "Y": 69.6866
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 24.999996,
+                    "Y": 69.3
+                  }
+                ],
+                "PointTypes": {
+                  "redactedStringBytes": 36
+                },
+                "StyleSheetName": {
+                  "redactedStringBytes": 8
+                },
+                "Discriminator": 1
+              },
+              {
+                "StartPointX": 24.999996,
+                "StartPointY": 5.000004,
+                "EndPointX": 85,
+                "EndPointY": 5.000004,
+                "Discriminator": 4
+              },
+              {
+                "StartPointX": 54.6,
+                "StartPointY": 5.000004,
+                "EndPointX": 54.6,
+                "EndPointY": 70,
+                "Discriminator": 4
+              },
+              {
+                "StartPointX": 55.399994,
+                "StartPointY": 5.000004,
+                "EndPointX": 55.399994,
+                "EndPointY": 70,
+                "Discriminator": 4
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 10
+                },
+                "Name": {
+                  "redactedStringBytes": 13
+                },
+                "X": 24.999996,
+                "Y": 5.000004,
+                "Width": 28.288914,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 1,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": false,
+                    "X": 2,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 22.499996,
+                  "StartPointY": 7.500004,
+                  "EndPointX": 24.999996,
+                  "EndPointY": 7.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0015",
+                "Name": "Input0",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 10
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 24.999996,
+                "Y": 10.000004,
+                "Width": 28.288914,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 1,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": false,
+                    "X": 2,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 22.499996,
+                  "StartPointY": 12.500004,
+                  "EndPointX": 24.999996,
+                  "EndPointY": 12.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0016",
+                "Name": "Input1",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 14
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 24.999996,
+                "Y": 15.000004,
+                "Width": 28.288914,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 1,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": false,
+                    "X": 2,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 22.499996,
+                  "StartPointY": 17.500004,
+                  "EndPointX": 24.999996,
+                  "EndPointY": 17.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0017",
+                "Name": "Input2",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 14
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 24.999996,
+                "Y": 20.000004,
+                "Width": 28.288914,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 1,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": false,
+                    "X": 2,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 22.499996,
+                  "StartPointY": 22.500004,
+                  "EndPointX": 24.999996,
+                  "EndPointY": 22.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0018",
+                "Name": "Input3",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 14
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 24.999996,
+                "Y": 25.000004,
+                "Width": 28.288914,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 1,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": false,
+                    "X": 2,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 22.499996,
+                  "StartPointY": 27.500004,
+                  "EndPointX": 24.999996,
+                  "EndPointY": 27.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0019",
+                "Name": "Input4",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 7
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 56.711082,
+                "Y": 5.000004,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 7.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 7.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0020",
+                "Name": "Output0",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 5
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 56.711082,
+                "Y": 10.000004,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 12.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 12.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0021",
+                "Name": "Output1",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 7
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 56.711082,
+                "Y": 15.000004,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 17.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 17.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0022",
+                "Name": "Output2",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 7
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 56.711082,
+                "Y": 20.000004,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 22.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 22.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0023",
+                "Name": "Output3",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 6
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 56.711082,
+                "Y": 25.000004,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 27.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 27.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0024",
+                "Name": "Output4",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 7
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 56.711082,
+                "Y": 30.000004,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 32.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 32.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0025",
+                "Name": "Output5",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 7
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 56.711082,
+                "Y": 35.000004,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 37.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 37.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0026",
+                "Name": "Output6",
+                "Color": -47872,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 13
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 56.711082,
+                "Y": 40.000004,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 42.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 42.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0027",
+                "Name": "Output7",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 13
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 56.711082,
+                "Y": 45.000004,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 47.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 47.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0028",
+                "Name": "Output8",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 13
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 56.711082,
+                "Y": 50.000004,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 52.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 52.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0029",
+                "Name": "Output9",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 16
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 56.711082,
+                "Y": 55.000004,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 57.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 57.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0030",
+                "Name": "Output10",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 16
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 56.711082,
+                "Y": 60.000004,
+                "Width": 28.288918,
+                "Height": 4.999996,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 62.500004,
+                  "EndPointX": 87.5,
+                  "EndPointY": 62.500004,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0031",
+                "Name": "Output11",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 16
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 56.711082,
+                "Y": 65,
+                "Width": 28.288918,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 85,
+                  "StartPointY": 67.5,
+                  "EndPointX": 87.5,
+                  "EndPointY": 67.5,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0032",
+                "Name": "Output12",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 11
+                },
+                "Name": {
+                  "redactedStringBytes": 17
+                },
+                "X": 24.999996,
+                "Y": 0.0000038146973,
+                "Width": 60.000004,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 0,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              }
+            ],
+            "Ports": [
+              {
+                "UniqueId": "GUID_ALIAS_0033",
+                "AnchorUniqueId": "GUID_ALIAS_0015",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 0,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Input0",
+                "PointIndexMode": 0,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0034",
+                "AnchorUniqueId": "GUID_ALIAS_0016",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 0,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Input1",
+                "PointIndexMode": 0,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0035",
+                "AnchorUniqueId": "GUID_ALIAS_0017",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 0,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Input2",
+                "PointIndexMode": 0,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0036",
+                "AnchorUniqueId": "GUID_ALIAS_0018",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 0,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Input3",
+                "PointIndexMode": 0,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0037",
+                "AnchorUniqueId": "GUID_ALIAS_0019",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 0,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Input4",
+                "PointIndexMode": 0,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0038",
+                "AnchorUniqueId": "GUID_ALIAS_0020",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output0",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0039",
+                "AnchorUniqueId": "GUID_ALIAS_0021",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output1",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0040",
+                "AnchorUniqueId": "GUID_ALIAS_0022",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output2",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0041",
+                "AnchorUniqueId": "GUID_ALIAS_0023",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output3",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0042",
+                "AnchorUniqueId": "GUID_ALIAS_0024",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output4",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0043",
+                "AnchorUniqueId": "GUID_ALIAS_0025",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output5",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0044",
+                "AnchorUniqueId": "GUID_ALIAS_0026",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 3,
+                "IsFloating": false,
+                "Name": "Output6",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0045",
+                "AnchorUniqueId": "GUID_ALIAS_0027",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output7",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0046",
+                "AnchorUniqueId": "GUID_ALIAS_0028",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output8",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0047",
+                "AnchorUniqueId": "GUID_ALIAS_0029",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output9",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0048",
+                "AnchorUniqueId": "GUID_ALIAS_0030",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output10",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0049",
+                "AnchorUniqueId": "GUID_ALIAS_0031",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output11",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0050",
+                "AnchorUniqueId": "GUID_ALIAS_0032",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output12",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              }
+            ],
+            "IsAddToMacroProperty": false,
+            "ZOrder": 24
+          },
+          "Identificator": 1
+        },
+        "FunctionBlockUId": "GUID_ALIAS_0051",
+        "LastModificationId": "GUID_ALIAS_0052",
+        "FunctionalBlocksDirectorStoreModel": {
+          "InputNames": [
+            {
+              "redactedStringBytes": 10
+            },
+            {
+              "redactedStringBytes": 10
+            },
+            {
+              "redactedStringBytes": 14
+            },
+            {
+              "redactedStringBytes": 14
+            },
+            {
+              "redactedStringBytes": 14
+            }
+          ],
+          "InputDataTypes": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "InputArrayRanges": [
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            }
+          ],
+          "OutputNames": [
+            {
+              "redactedStringBytes": 7
+            },
+            {
+              "redactedStringBytes": 5
+            },
+            {
+              "redactedStringBytes": 7
+            },
+            {
+              "redactedStringBytes": 7
+            },
+            {
+              "redactedStringBytes": 6
+            },
+            {
+              "redactedStringBytes": 7
+            },
+            {
+              "redactedStringBytes": 7
+            },
+            {
+              "redactedStringBytes": 13
+            },
+            {
+              "redactedStringBytes": 13
+            },
+            {
+              "redactedStringBytes": 13
+            },
+            {
+              "redactedStringBytes": 16
+            },
+            {
+              "redactedStringBytes": 16
+            },
+            {
+              "redactedStringBytes": 16
+            }
+          ],
+          "OutputDataTypes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "OutputArrayRanges": [
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            }
+          ]
+        },
+        "Name": "FB_Room_N1",
+        "Discriminator": 41
+      }
+    },
+    {
+      "role": "ROOM_B",
+      "nativeWrapper": {
+        "ElementBlockStoreModel": {
+          "ElementModel": {
+            "Version": 0,
+            "UniqueId": "GUID_ALIAS_0053",
+            "Title": "FB_Room_N4",
+            "Descriptor": {
+              "redactedStringBytes": 0
+            },
+            "Location": {
+              "IsEmpty": false,
+              "X": 152.5,
+              "Y": 127.5
+            },
+            "IsInvertOutput": false,
+            "FontSize": 8,
+            "Comment": {
+              "redactedStringBytes": 0
+            },
+            "PropertyNames": [],
+            "OldDisplayNames": [],
+            "NewDisplayNames": [],
+            "FbType": -1,
+            "Primitives": [
+              {
+                "Points": [
+                  {
+                    "IsEmpty": false,
+                    "X": 155,
+                    "Y": 128.2
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 155,
+                    "Y": 127.8134
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 155.3134,
+                    "Y": 127.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 155.7,
+                    "Y": 127.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 155.7,
+                    "Y": 127.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 214.3,
+                    "Y": 127.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 214.29999,
+                    "Y": 127.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 214.68658,
+                    "Y": 127.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 215,
+                    "Y": 127.8134
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 215,
+                    "Y": 128.2
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 215,
+                    "Y": 128.2
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 215,
+                    "Y": 128.2
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 215,
+                    "Y": 128.2
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 215,
+                    "Y": 128.2
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 215,
+                    "Y": 206.8
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 215,
+                    "Y": 206.79999
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 215,
+                    "Y": 207.18658
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 214.68658,
+                    "Y": 207.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 214.29999,
+                    "Y": 207.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 214.3,
+                    "Y": 207.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 155.7,
+                    "Y": 207.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 155.7,
+                    "Y": 207.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 155.3134,
+                    "Y": 207.5
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 155,
+                    "Y": 207.18658
+                  },
+                  {
+                    "IsEmpty": false,
+                    "X": 155,
+                    "Y": 206.79999
+                  }
+                ],
+                "PointTypes": {
+                  "redactedStringBytes": 36
+                },
+                "StyleSheetName": {
+                  "redactedStringBytes": 8
+                },
+                "Discriminator": 1
+              },
+              {
+                "StartPointX": 155,
+                "StartPointY": 132.5,
+                "EndPointX": 215,
+                "EndPointY": 132.5,
+                "Discriminator": 4
+              },
+              {
+                "StartPointX": 184.6,
+                "StartPointY": 132.5,
+                "EndPointX": 184.6,
+                "EndPointY": 207.5,
+                "Discriminator": 4
+              },
+              {
+                "StartPointX": 185.4,
+                "StartPointY": 132.5,
+                "EndPointX": 185.4,
+                "EndPointY": 207.5,
+                "Discriminator": 4
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 10
+                },
+                "Name": {
+                  "redactedStringBytes": 13
+                },
+                "X": 155,
+                "Y": 132.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 1,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": false,
+                    "X": 2,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 152.5,
+                  "StartPointY": 135,
+                  "EndPointX": 155,
+                  "EndPointY": 135,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0054",
+                "Name": "Input0",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 10
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 155,
+                "Y": 137.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 1,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": false,
+                    "X": 2,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 152.5,
+                  "StartPointY": 140,
+                  "EndPointX": 155,
+                  "EndPointY": 140,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0055",
+                "Name": "Input1",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 14
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 155,
+                "Y": 142.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 1,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": false,
+                    "X": 2,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 152.5,
+                  "StartPointY": 145,
+                  "EndPointX": 155,
+                  "EndPointY": 145,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0056",
+                "Name": "Input2",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 14
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 155,
+                "Y": 147.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 1,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": false,
+                    "X": 2,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 152.5,
+                  "StartPointY": 150,
+                  "EndPointX": 155,
+                  "EndPointY": 150,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0057",
+                "Name": "Input3",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 14
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 155,
+                "Y": 152.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 1,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": false,
+                    "X": 2,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 152.5,
+                  "StartPointY": 155,
+                  "EndPointX": 155,
+                  "EndPointY": 155,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0058",
+                "Name": "Input4",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 14
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 155,
+                "Y": 157.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 1,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": false,
+                    "X": 2,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 152.5,
+                  "StartPointY": 160,
+                  "EndPointX": 155,
+                  "EndPointY": 160,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0059",
+                "Name": "Input5",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 7
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 186.71109,
+                "Y": 132.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 135,
+                  "EndPointX": 217.5,
+                  "EndPointY": 135,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0060",
+                "Name": "Output0",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 5
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 186.71109,
+                "Y": 137.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 140,
+                  "EndPointX": 217.5,
+                  "EndPointY": 140,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0061",
+                "Name": "Output1",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 7
+                },
+                "Name": {
+                  "redactedStringBytes": 15
+                },
+                "X": 186.71109,
+                "Y": 142.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 145,
+                  "EndPointX": 217.5,
+                  "EndPointY": 145,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0062",
+                "Name": "Output2",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 7
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 147.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 150,
+                  "EndPointX": 217.5,
+                  "EndPointY": 150,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0063",
+                "Name": "Output3",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 6
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 152.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 155,
+                  "EndPointX": 217.5,
+                  "EndPointY": 155,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0064",
+                "Name": "Output4",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 7
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 157.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 160,
+                  "EndPointX": 217.5,
+                  "EndPointY": 160,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0065",
+                "Name": "Output5",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 7
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 162.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 165,
+                  "EndPointX": 217.5,
+                  "EndPointY": 165,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0066",
+                "Name": "Output6",
+                "Color": -47872,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 13
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 167.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 170,
+                  "EndPointX": 217.5,
+                  "EndPointY": 170,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0067",
+                "Name": "Output7",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 13
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 172.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 175,
+                  "EndPointX": 217.5,
+                  "EndPointY": 175,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0068",
+                "Name": "Output8",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 13
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 177.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 180,
+                  "EndPointX": 217.5,
+                  "EndPointY": 180,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0069",
+                "Name": "Output9",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 13
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 182.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 185,
+                  "EndPointX": 217.5,
+                  "EndPointY": 185,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0070",
+                "Name": "Output10",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 16
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 187.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 190,
+                  "EndPointX": 217.5,
+                  "EndPointY": 190,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0071",
+                "Name": "Output11",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 16
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 192.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 195,
+                  "EndPointX": 217.5,
+                  "EndPointY": 195,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0072",
+                "Name": "Output12",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 16
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 197.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 200,
+                  "EndPointX": 217.5,
+                  "EndPointY": 200,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0073",
+                "Name": "Output13",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 16
+                },
+                "Name": {
+                  "redactedStringBytes": 16
+                },
+                "X": 186.71109,
+                "Y": 202.5,
+                "Width": 28.28891,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 2,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              },
+              {
+                "LineModel": {
+                  "StartPointX": 215,
+                  "StartPointY": 205,
+                  "EndPointX": 217.5,
+                  "EndPointY": 205,
+                  "Discriminator": 4
+                },
+                "UniqueId": "GUID_ALIAS_0074",
+                "Name": "Output14",
+                "Color": -16777216,
+                "Discriminator": 3
+              },
+              {
+                "Text": {
+                  "redactedStringBytes": 11
+                },
+                "Name": {
+                  "redactedStringBytes": 17
+                },
+                "X": 155,
+                "Y": 127.5,
+                "Width": 60,
+                "Height": 5,
+                "TextStyleModel": {
+                  "HorzAlign": 0,
+                  "VertAlign": 0,
+                  "TextOffset": {
+                    "IsEmpty": true,
+                    "X": 0,
+                    "Y": 0
+                  },
+                  "FontName": {
+                    "redactedStringBytes": 8
+                  },
+                  "FontSize": 8,
+                  "FontStyle": 0,
+                  "TextColor": -16777216
+                },
+                "Discriminator": 2
+              }
+            ],
+            "Ports": [
+              {
+                "UniqueId": "GUID_ALIAS_0075",
+                "AnchorUniqueId": "GUID_ALIAS_0054",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 0,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Input0",
+                "PointIndexMode": 0,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0076",
+                "AnchorUniqueId": "GUID_ALIAS_0055",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 0,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Input1",
+                "PointIndexMode": 0,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0077",
+                "AnchorUniqueId": "GUID_ALIAS_0056",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 0,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Input2",
+                "PointIndexMode": 0,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0078",
+                "AnchorUniqueId": "GUID_ALIAS_0057",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 0,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Input3",
+                "PointIndexMode": 0,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0079",
+                "AnchorUniqueId": "GUID_ALIAS_0058",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 0,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Input4",
+                "PointIndexMode": 0,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0080",
+                "AnchorUniqueId": "GUID_ALIAS_0059",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 0,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Input5",
+                "PointIndexMode": 0,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0081",
+                "AnchorUniqueId": "GUID_ALIAS_0060",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output0",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0082",
+                "AnchorUniqueId": "GUID_ALIAS_0061",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output1",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0083",
+                "AnchorUniqueId": "GUID_ALIAS_0062",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output2",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0084",
+                "AnchorUniqueId": "GUID_ALIAS_0063",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output3",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0085",
+                "AnchorUniqueId": "GUID_ALIAS_0064",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output4",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0086",
+                "AnchorUniqueId": "GUID_ALIAS_0065",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output5",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0087",
+                "AnchorUniqueId": "GUID_ALIAS_0066",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 3,
+                "IsFloating": false,
+                "Name": "Output6",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0088",
+                "AnchorUniqueId": "GUID_ALIAS_0067",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output7",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0089",
+                "AnchorUniqueId": "GUID_ALIAS_0068",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output8",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0090",
+                "AnchorUniqueId": "GUID_ALIAS_0069",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output9",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0091",
+                "AnchorUniqueId": "GUID_ALIAS_0070",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output10",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0092",
+                "AnchorUniqueId": "GUID_ALIAS_0071",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output11",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0093",
+                "AnchorUniqueId": "GUID_ALIAS_0072",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output12",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0094",
+                "AnchorUniqueId": "GUID_ALIAS_0073",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output13",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              },
+              {
+                "UniqueId": "GUID_ALIAS_0095",
+                "AnchorUniqueId": "GUID_ALIAS_0074",
+                "ElementOwnerUId": "ZERO_UUID",
+                "PortType": 1,
+                "DataType": 0,
+                "IsFloating": false,
+                "Name": "Output14",
+                "PointIndexMode": 1,
+                "ArrayType": null
+              }
+            ],
+            "IsAddToMacroProperty": false,
+            "ZOrder": 32
+          },
+          "Identificator": 1
+        },
+        "FunctionBlockUId": "GUID_ALIAS_0096",
+        "LastModificationId": "GUID_ALIAS_0097",
+        "FunctionalBlocksDirectorStoreModel": {
+          "InputNames": [
+            {
+              "redactedStringBytes": 10
+            },
+            {
+              "redactedStringBytes": 10
+            },
+            {
+              "redactedStringBytes": 14
+            },
+            {
+              "redactedStringBytes": 14
+            },
+            {
+              "redactedStringBytes": 14
+            },
+            {
+              "redactedStringBytes": 14
+            }
+          ],
+          "InputDataTypes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "InputArrayRanges": [
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            }
+          ],
+          "OutputNames": [
+            {
+              "redactedStringBytes": 7
+            },
+            {
+              "redactedStringBytes": 5
+            },
+            {
+              "redactedStringBytes": 7
+            },
+            {
+              "redactedStringBytes": 7
+            },
+            {
+              "redactedStringBytes": 6
+            },
+            {
+              "redactedStringBytes": 7
+            },
+            {
+              "redactedStringBytes": 7
+            },
+            {
+              "redactedStringBytes": 13
+            },
+            {
+              "redactedStringBytes": 13
+            },
+            {
+              "redactedStringBytes": 13
+            },
+            {
+              "redactedStringBytes": 13
+            },
+            {
+              "redactedStringBytes": 16
+            },
+            {
+              "redactedStringBytes": 16
+            },
+            {
+              "redactedStringBytes": 16
+            },
+            {
+              "redactedStringBytes": 16
+            }
+          ],
+          "OutputDataTypes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "OutputArrayRanges": [
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            },
+            {
+              "Start": [],
+              "End": []
+            }
+          ]
+        },
+        "Name": "FB_Room_N4",
+        "Discriminator": 41
+      }
+    }
+  ],
+  "nativeConnectors": [
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0098",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 287.5,
+            "Y": 62.5
+          },
+          {
+            "IsEmpty": false,
+            "X": 355.03802,
+            "Y": 62.5
+          },
+          {
+            "IsEmpty": false,
+            "X": 355.03802,
+            "Y": 65
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0013",
+        "ToPortUId": "GUID_ALIAS_0003",
+        "ZOrder": 16
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0099",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 12.5,
+            "Y": 5
+          },
+          {
+            "IsEmpty": false,
+            "X": 22.499996,
+            "Y": 5
+          },
+          {
+            "IsEmpty": false,
+            "X": 22.499996,
+            "Y": 7.500004
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0100",
+        "ToPortUId": "GUID_ALIAS_0033",
+        "ZOrder": 25
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0101",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 12.5,
+            "Y": 25
+          },
+          {
+            "IsEmpty": false,
+            "X": 22.499996,
+            "Y": 25
+          },
+          {
+            "IsEmpty": false,
+            "X": 22.499996,
+            "Y": 12.500004
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0102",
+        "ToPortUId": "GUID_ALIAS_0034",
+        "ZOrder": 26
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0103",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 12.5,
+            "Y": 45
+          },
+          {
+            "IsEmpty": false,
+            "X": 22.499996,
+            "Y": 45
+          },
+          {
+            "IsEmpty": false,
+            "X": 22.499996,
+            "Y": 17.500004
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0104",
+        "ToPortUId": "GUID_ALIAS_0035",
+        "ZOrder": 27
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0105",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 12.5,
+            "Y": 65
+          },
+          {
+            "IsEmpty": false,
+            "X": 22.499996,
+            "Y": 65
+          },
+          {
+            "IsEmpty": false,
+            "X": 22.499996,
+            "Y": 22.500004
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0006",
+        "ToPortUId": "GUID_ALIAS_0036",
+        "ZOrder": 28
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0106",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 12.5,
+            "Y": 85
+          },
+          {
+            "IsEmpty": false,
+            "X": 22.499996,
+            "Y": 85
+          },
+          {
+            "IsEmpty": false,
+            "X": 22.499996,
+            "Y": 27.500004
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0107",
+        "ToPortUId": "GUID_ALIAS_0037",
+        "ZOrder": 29
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0108",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 87.5,
+            "Y": 7.500004
+          },
+          {
+            "IsEmpty": false,
+            "X": 355.03802,
+            "Y": 7.500004
+          },
+          {
+            "IsEmpty": false,
+            "X": 355.03802,
+            "Y": 5
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0038",
+        "ToPortUId": "GUID_ALIAS_0109",
+        "ZOrder": 30
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0110",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 87.5,
+            "Y": 47.500004
+          },
+          {
+            "IsEmpty": false,
+            "X": 272.5,
+            "Y": 47.500004
+          },
+          {
+            "IsEmpty": false,
+            "X": 272.5,
+            "Y": 60
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0046",
+        "ToPortUId": "GUID_ALIAS_0011",
+        "ZOrder": 31
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0111",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 12.5,
+            "Y": 5
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 5
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 135
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0100",
+        "ToPortUId": "GUID_ALIAS_0075",
+        "ZOrder": 33
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0112",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 12.5,
+            "Y": 25
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 25
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 140
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0102",
+        "ToPortUId": "GUID_ALIAS_0076",
+        "ZOrder": 34
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0113",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 12.5,
+            "Y": 65
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 65
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 145
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0006",
+        "ToPortUId": "GUID_ALIAS_0077",
+        "ZOrder": 35
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0114",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 12.5,
+            "Y": 105
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 105
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 150
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0115",
+        "ToPortUId": "GUID_ALIAS_0078",
+        "ZOrder": 36
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0116",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 12.5,
+            "Y": 125
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 125
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 155
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0117",
+        "ToPortUId": "GUID_ALIAS_0079",
+        "ZOrder": 37
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0118",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 12.5,
+            "Y": 145
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 145
+          },
+          {
+            "IsEmpty": false,
+            "X": 152.5,
+            "Y": 160
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0119",
+        "ToPortUId": "GUID_ALIAS_0080",
+        "ZOrder": 38
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0120",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 217.5,
+            "Y": 135
+          },
+          {
+            "IsEmpty": false,
+            "X": 355.03802,
+            "Y": 135
+          },
+          {
+            "IsEmpty": false,
+            "X": 355.03802,
+            "Y": 25
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0081",
+        "ToPortUId": "GUID_ALIAS_0121",
+        "ZOrder": 39
+      },
+      "Discriminator": 1
+    },
+    {
+      "ConnectorModel": {
+        "UniqueId": "GUID_ALIAS_0122",
+        "Color": -16777216,
+        "Points": [
+          {
+            "IsEmpty": false,
+            "X": 217.5,
+            "Y": 170
+          },
+          {
+            "IsEmpty": false,
+            "X": 272.5,
+            "Y": 170
+          },
+          {
+            "IsEmpty": false,
+            "X": 272.5,
+            "Y": 65
+          }
+        ],
+        "FromPortUId": "GUID_ALIAS_0088",
+        "ToPortUId": "GUID_ALIAS_0012",
+        "ZOrder": 40
+      },
+      "Discriminator": 1
+    }
+  ],
+  "nativeVariables": [
+    {
+      "VariableModel": {
+        "UniqueId": "GUID_ALIAS_0123",
+        "OwnerUniqueId": "GUID_ALIAS_0124",
+        "Comment": null,
+        "DefaultValue": 0
+      },
+      "Name": {
+        "redactedStringBytes": 7
+      },
+      "DisplayName": {
+        "redactedStringBytes": 44
+      },
+      "GroupName": {
+        "redactedStringBytes": 67
+      },
+      "Description": {
+        "redactedStringBytes": 125
+      },
+      "DataType": 3,
+      "IsReadOnly": true,
+      "VariableGetterType": 1,
+      "VariableGetterArguments": {
+        "redactedStringBytes": 1
+      },
+      "Discriminator": 4
+    },
+    {
+      "VariableModel": {
+        "UniqueId": "GUID_ALIAS_0125",
+        "OwnerUniqueId": "GUID_ALIAS_0124",
+        "Comment": null,
+        "DefaultValue": 0
+      },
+      "Name": {
+        "redactedStringBytes": 6
+      },
+      "DisplayName": {
+        "redactedStringBytes": 43
+      },
+      "GroupName": {
+        "redactedStringBytes": 67
+      },
+      "Description": {
+        "redactedStringBytes": 124
+      },
+      "DataType": 3,
+      "IsReadOnly": true,
+      "VariableGetterType": 1,
+      "VariableGetterArguments": {
+        "redactedStringBytes": 1
+      },
+      "Discriminator": 4
+    },
+    {
+      "VariableModel": {
+        "UniqueId": "GUID_ALIAS_0126",
+        "OwnerUniqueId": "GUID_ALIAS_0124",
+        "Comment": null,
+        "DefaultValue": 0
+      },
+      "Name": {
+        "redactedStringBytes": 5
+      },
+      "DisplayName": {
+        "redactedStringBytes": 39
+      },
+      "GroupName": {
+        "redactedStringBytes": 67
+      },
+      "Description": {
+        "redactedStringBytes": 122
+      },
+      "DataType": 3,
+      "IsReadOnly": true,
+      "VariableGetterType": 1,
+      "VariableGetterArguments": {
+        "redactedStringBytes": 1
+      },
+      "Discriminator": 4
+    },
+    {
+      "VariableModel": {
+        "UniqueId": "GUID_ALIAS_0127",
+        "OwnerUniqueId": "GUID_ALIAS_0124",
+        "Comment": null,
+        "DefaultValue": 0
+      },
+      "Name": {
+        "redactedStringBytes": 3
+      },
+      "DisplayName": {
+        "redactedStringBytes": 37
+      },
+      "GroupName": {
+        "redactedStringBytes": 67
+      },
+      "Description": {
+        "redactedStringBytes": 116
+      },
+      "DataType": 3,
+      "IsReadOnly": true,
+      "VariableGetterType": 1,
+      "VariableGetterArguments": {
+        "redactedStringBytes": 1
+      },
+      "Discriminator": 4
+    },
+    {
+      "VariableModel": {
+        "UniqueId": "GUID_ALIAS_0128",
+        "OwnerUniqueId": "GUID_ALIAS_0124",
+        "Comment": null,
+        "DefaultValue": 0
+      },
+      "Name": {
+        "redactedStringBytes": 5
+      },
+      "DisplayName": {
+        "redactedStringBytes": 40
+      },
+      "GroupName": {
+        "redactedStringBytes": 67
+      },
+      "Description": {
+        "redactedStringBytes": 103
+      },
+      "DataType": 3,
+      "IsReadOnly": true,
+      "VariableGetterType": 1,
+      "VariableGetterArguments": {
+        "redactedStringBytes": 1
+      },
+      "Discriminator": 4
+    },
+    {
+      "VariableModel": {
+        "UniqueId": "GUID_ALIAS_0129",
+        "OwnerUniqueId": "GUID_ALIAS_0124",
+        "Comment": null,
+        "DefaultValue": 0
+      },
+      "Name": {
+        "redactedStringBytes": 4
+      },
+      "DisplayName": {
+        "redactedStringBytes": 37
+      },
+      "GroupName": {
+        "redactedStringBytes": 67
+      },
+      "Description": {
+        "redactedStringBytes": 100
+      },
+      "DataType": 3,
+      "IsReadOnly": true,
+      "VariableGetterType": 1,
+      "VariableGetterArguments": {
+        "redactedStringBytes": 1
+      },
+      "Discriminator": 4
+    }
+  ],
+  "stDefinitionsRedacted": [
+    {
+      "name": "ST_TEST_0",
+      "interface": {
+        "Id": "GUID_ALIAS_0130",
+        "InputNames": [
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 3
+          }
+        ],
+        "InputDataTypes": [
+          6,
+          6,
+          6
+        ],
+        "InputVariableIndexes": [
+          0,
+          1,
+          2
+        ],
+        "InputArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ],
+        "OutputNames": [
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 9
+          }
+        ],
+        "OutputDataTypes": [
+          6,
+          6,
+          6,
+          6,
+          3
+        ],
+        "OutputVariableIndexes": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "OutputArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ],
+        "LastModificationId": "GUID_ALIAS_0131",
+        "VariableStorageTypes": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "VariableDataTypes": [
+          6,
+          6,
+          6,
+          3,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          3
+        ],
+        "VariableNames": [
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 5
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 10
+          },
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 3
+          },
+          {
+            "redactedStringBytes": 9
+          }
+        ],
+        "DefaultValues": [
+          null,
+          null,
+          null,
+          {
+            "redactedStringBytes": 1
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "VariableIndexes": [
+          0,
+          1,
+          2,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "FbInstances": [
+          {
+            "Name": {
+              "redactedStringBytes": 7
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 7
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 10
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 10
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 10
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          }
+        ],
+        "FbInstanceIndexes": [
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "ArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ],
+        "Discriminator": 2
+      },
+      "sourceSha256": "e30b829017635e11cec283a7312320f85422c880e0655f0f2ba9d248877d7dfb",
+      "sourceLength": 2169
+    },
+    {
+      "name": "ST_TEST_1",
+      "interface": {
+        "Id": "GUID_ALIAS_0051",
+        "InputNames": [
+          {
+            "redactedStringBytes": 10
+          },
+          {
+            "redactedStringBytes": 10
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 14
+          }
+        ],
+        "InputDataTypes": [
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "InputVariableIndexes": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "InputArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ],
+        "OutputNames": [
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 5
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 6
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 16
+          },
+          {
+            "redactedStringBytes": 16
+          },
+          {
+            "redactedStringBytes": 16
+          }
+        ],
+        "OutputDataTypes": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          3,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "OutputVariableIndexes": [
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29
+        ],
+        "OutputArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ],
+        "LastModificationId": "GUID_ALIAS_0052",
+        "VariableStorageTypes": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "VariableDataTypes": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          3,
+          6,
+          6,
+          3,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          3,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "VariableNames": [
+          {
+            "redactedStringBytes": 10
+          },
+          {
+            "redactedStringBytes": 10
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 5
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 9
+          },
+          {
+            "redactedStringBytes": 9
+          },
+          {
+            "redactedStringBytes": 10
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 5
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 6
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 16
+          },
+          {
+            "redactedStringBytes": 16
+          },
+          {
+            "redactedStringBytes": 16
+          }
+        ],
+        "DefaultValues": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "redactedStringBytes": 1
+          },
+          null,
+          null,
+          null,
+          {
+            "redactedStringBytes": 5
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "VariableIndexes": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29
+        ],
+        "FbInstances": [
+          {
+            "Name": {
+              "redactedStringBytes": 11
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 11
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 11
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 10
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 10
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 10
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 10
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          }
+        ],
+        "FbInstanceIndexes": [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11
+        ],
+        "ArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ],
+        "Discriminator": 2
+      },
+      "sourceSha256": "238e8b6dda40e62b112fb95c8b1d0a06ba74a225b6d9eca55bd1a808b8d7a865",
+      "sourceLength": 3026
+    },
+    {
+      "name": "ST_TEST_2",
+      "interface": {
+        "Id": "GUID_ALIAS_0096",
+        "InputNames": [
+          {
+            "redactedStringBytes": 10
+          },
+          {
+            "redactedStringBytes": 10
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 14
+          }
+        ],
+        "InputDataTypes": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "InputVariableIndexes": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "InputArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ],
+        "OutputNames": [
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 5
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 6
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 16
+          },
+          {
+            "redactedStringBytes": 16
+          },
+          {
+            "redactedStringBytes": 16
+          },
+          {
+            "redactedStringBytes": 16
+          }
+        ],
+        "OutputDataTypes": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          3,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "OutputVariableIndexes": [
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33
+        ],
+        "OutputArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ],
+        "LastModificationId": "GUID_ALIAS_0097",
+        "VariableStorageTypes": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "VariableDataTypes": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          3,
+          6,
+          6,
+          3,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          3,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "VariableNames": [
+          {
+            "redactedStringBytes": 10
+          },
+          {
+            "redactedStringBytes": 10
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 14
+          },
+          {
+            "redactedStringBytes": 5
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 9
+          },
+          {
+            "redactedStringBytes": 9
+          },
+          {
+            "redactedStringBytes": 10
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 5
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 6
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 7
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 13
+          },
+          {
+            "redactedStringBytes": 16
+          },
+          {
+            "redactedStringBytes": 16
+          },
+          {
+            "redactedStringBytes": 16
+          },
+          {
+            "redactedStringBytes": 16
+          }
+        ],
+        "DefaultValues": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "redactedStringBytes": 1
+          },
+          null,
+          null,
+          null,
+          {
+            "redactedStringBytes": 5
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "VariableIndexes": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33
+        ],
+        "FbInstances": [
+          {
+            "Name": {
+              "redactedStringBytes": 11
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 11
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 11
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 11
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 10
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 10
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 10
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          },
+          {
+            "Name": {
+              "redactedStringBytes": 10
+            },
+            "TemplateName": {
+              "redactedStringBytes": 7
+            },
+            "VariableDataType": 3
+          }
+        ],
+        "FbInstanceIndexes": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "ArrayRanges": [
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          },
+          {
+            "Start": [],
+            "End": []
+          }
+        ],
+        "Discriminator": 2
+      },
+      "sourceSha256": "0baed3c734a4093448504268b90d6a4c407879350198d0301fcdec259cd79cb1",
+      "sourceLength": 3271
+    }
+  ],
+  "projectSettingTypes": [
+    {
+      "kind": "ProjectSettingModels",
+      "type": "list",
+      "count": 2
+    },
+    {
+      "kind": "ExternalVariableReferences",
+      "type": "list",
+      "count": 0
+    },
+    {
+      "kind": "VariableUniqueIdModificators",
+      "type": "list",
+      "count": 0
+    },
+    {
+      "kind": "Discriminator",
+      "type": "int",
+      "count": null
+    }
+  ],
+  "identityGraph": {
+    "aliasCount": 131,
+    "appearanceCounts": {
+      "GUID_ALIAS_0001": 1,
+      "GUID_ALIAS_0002": 2,
+      "GUID_ALIAS_0003": 2,
+      "GUID_ALIAS_0004": 1,
+      "GUID_ALIAS_0005": 2,
+      "GUID_ALIAS_0006": 3,
+      "GUID_ALIAS_0007": 1,
+      "GUID_ALIAS_0008": 2,
+      "GUID_ALIAS_0009": 2,
+      "GUID_ALIAS_0010": 2,
+      "GUID_ALIAS_0011": 2,
+      "GUID_ALIAS_0012": 2,
+      "GUID_ALIAS_0013": 2,
+      "GUID_ALIAS_0014": 1,
+      "GUID_ALIAS_0015": 2,
+      "GUID_ALIAS_0016": 2,
+      "GUID_ALIAS_0017": 2,
+      "GUID_ALIAS_0018": 2,
+      "GUID_ALIAS_0019": 2,
+      "GUID_ALIAS_0020": 2,
+      "GUID_ALIAS_0021": 2,
+      "GUID_ALIAS_0022": 2,
+      "GUID_ALIAS_0023": 2,
+      "GUID_ALIAS_0024": 2,
+      "GUID_ALIAS_0025": 2,
+      "GUID_ALIAS_0026": 2,
+      "GUID_ALIAS_0027": 2,
+      "GUID_ALIAS_0028": 2,
+      "GUID_ALIAS_0029": 2,
+      "GUID_ALIAS_0030": 2,
+      "GUID_ALIAS_0031": 2,
+      "GUID_ALIAS_0032": 2,
+      "GUID_ALIAS_0033": 2,
+      "GUID_ALIAS_0034": 2,
+      "GUID_ALIAS_0035": 2,
+      "GUID_ALIAS_0036": 2,
+      "GUID_ALIAS_0037": 2,
+      "GUID_ALIAS_0038": 2,
+      "GUID_ALIAS_0039": 1,
+      "GUID_ALIAS_0040": 1,
+      "GUID_ALIAS_0041": 1,
+      "GUID_ALIAS_0042": 1,
+      "GUID_ALIAS_0043": 1,
+      "GUID_ALIAS_0044": 1,
+      "GUID_ALIAS_0045": 1,
+      "GUID_ALIAS_0046": 2,
+      "GUID_ALIAS_0047": 1,
+      "GUID_ALIAS_0048": 1,
+      "GUID_ALIAS_0049": 1,
+      "GUID_ALIAS_0050": 1,
+      "GUID_ALIAS_0051": 2,
+      "GUID_ALIAS_0052": 2,
+      "GUID_ALIAS_0053": 1,
+      "GUID_ALIAS_0054": 2,
+      "GUID_ALIAS_0055": 2,
+      "GUID_ALIAS_0056": 2,
+      "GUID_ALIAS_0057": 2,
+      "GUID_ALIAS_0058": 2,
+      "GUID_ALIAS_0059": 2,
+      "GUID_ALIAS_0060": 2,
+      "GUID_ALIAS_0061": 2,
+      "GUID_ALIAS_0062": 2,
+      "GUID_ALIAS_0063": 2,
+      "GUID_ALIAS_0064": 2,
+      "GUID_ALIAS_0065": 2,
+      "GUID_ALIAS_0066": 2,
+      "GUID_ALIAS_0067": 2,
+      "GUID_ALIAS_0068": 2,
+      "GUID_ALIAS_0069": 2,
+      "GUID_ALIAS_0070": 2,
+      "GUID_ALIAS_0071": 2,
+      "GUID_ALIAS_0072": 2,
+      "GUID_ALIAS_0073": 2,
+      "GUID_ALIAS_0074": 2,
+      "GUID_ALIAS_0075": 2,
+      "GUID_ALIAS_0076": 2,
+      "GUID_ALIAS_0077": 2,
+      "GUID_ALIAS_0078": 2,
+      "GUID_ALIAS_0079": 2,
+      "GUID_ALIAS_0080": 2,
+      "GUID_ALIAS_0081": 2,
+      "GUID_ALIAS_0082": 1,
+      "GUID_ALIAS_0083": 1,
+      "GUID_ALIAS_0084": 1,
+      "GUID_ALIAS_0085": 1,
+      "GUID_ALIAS_0086": 1,
+      "GUID_ALIAS_0087": 1,
+      "GUID_ALIAS_0088": 2,
+      "GUID_ALIAS_0089": 1,
+      "GUID_ALIAS_0090": 1,
+      "GUID_ALIAS_0091": 1,
+      "GUID_ALIAS_0092": 1,
+      "GUID_ALIAS_0093": 1,
+      "GUID_ALIAS_0094": 1,
+      "GUID_ALIAS_0095": 1,
+      "GUID_ALIAS_0096": 2,
+      "GUID_ALIAS_0097": 2,
+      "GUID_ALIAS_0098": 1,
+      "GUID_ALIAS_0099": 1,
+      "GUID_ALIAS_0100": 2,
+      "GUID_ALIAS_0101": 1,
+      "GUID_ALIAS_0102": 2,
+      "GUID_ALIAS_0103": 1,
+      "GUID_ALIAS_0104": 1,
+      "GUID_ALIAS_0105": 1,
+      "GUID_ALIAS_0106": 1,
+      "GUID_ALIAS_0107": 1,
+      "GUID_ALIAS_0108": 1,
+      "GUID_ALIAS_0109": 1,
+      "GUID_ALIAS_0110": 1,
+      "GUID_ALIAS_0111": 1,
+      "GUID_ALIAS_0112": 1,
+      "GUID_ALIAS_0113": 1,
+      "GUID_ALIAS_0114": 1,
+      "GUID_ALIAS_0115": 1,
+      "GUID_ALIAS_0116": 1,
+      "GUID_ALIAS_0117": 1,
+      "GUID_ALIAS_0118": 1,
+      "GUID_ALIAS_0119": 1,
+      "GUID_ALIAS_0120": 1,
+      "GUID_ALIAS_0121": 1,
+      "GUID_ALIAS_0122": 1,
+      "GUID_ALIAS_0123": 1,
+      "GUID_ALIAS_0124": 6,
+      "GUID_ALIAS_0125": 1,
+      "GUID_ALIAS_0126": 1,
+      "GUID_ALIAS_0127": 1,
+      "GUID_ALIAS_0128": 1,
+      "GUID_ALIAS_0129": 1,
+      "GUID_ALIAS_0130": 1,
+      "GUID_ALIAS_0131": 1
+    }
+  },
+  "gaps": [
+    "ST_SOURCE_NOT_PUBLIC",
+    "PROJECT_SETTINGS_VALUES_WITHHELD",
+    "20_OTHER_ELEMENT_WRAPPERS_MISSING",
+    "GUI_SAVE_DIFF_PAIR_MISSING",
+    "QUALITY_GREEN_REMOTE_ELEMENTS_MISSING"
+  ],
+  "guarantees": {
+    "newNativeProjectGenerated": false,
+    "nativeGuiPass": false,
+    "hardwareTested": false
+  }
+}

@@ -57,3 +57,10 @@ Only synthetic `ROOM_A`, `ROOM_B`, `INPUT_SHARED`, `OUTPUT_OR`, `OR_SHARED`, `NO
 6. Never change real equipment or its project.
 
 Standalone validation: `node tests/native-owle-sanitized.test.js`. It proves the data shape and five critical links, **not** native compilation.
+
+## 19.10.2026 — Issue #14 consumer
+
+The strict evidence adapter, read-only archive inspector, reference remapping tests
+and exact additional-fixture request are documented in
+[OWLE-NATIVE-SERIALIZATION-ISSUE-14.md](OWLE-NATIVE-SERIALIZATION-ISSUE-14.md).
+Serialization remains blocked; no new native document or HOME-PC PASS is claimed.
