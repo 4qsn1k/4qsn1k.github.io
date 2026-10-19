@@ -1,3 +1,11 @@
+# 19.10.2026 — Issue #14 evidence adapter and serialization gate
+
+Branch `codex/airlock-14-native-schema` starts at PR #13 sync `ac5fa80`. Strict published-specimen validation, typed-plan mapping, fresh reference UUIDs/remapping, read-only ZIP/JSON inspector and hash-covered report CLI are implemented. Full `scripts/codex-check.sh`: exit 0; new JS 8/8 and Python 6/6; existing FBD/Modbus and MODEL 8/8 preserved. Log SHA256 `bf2dfe9b92fe75343539183e94dab5f6a125fd67f12c920bdadb670ba89c1874`. PR #13 GitHub Actions [39195791301](https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39195791301): all three jobs success.
+
+**SERIALIZATION_BLOCKED_INCOMPLETE_NATIVE_FIXTURE**: no `.owle` produced, `nativeDocument: null`, `usableForSerialization: false`, `NEEDS_NATIVE_GUI`, `PHYSICAL_NOT_TESTED`. Five described elements are structural evidence; 20 other native elements are opaque. A fresh UUID reference index is not an Owen document. No HOME-PC/Z4559/equipment access occurred. Full metadata samples and a new HOME-PC open/Save/compiler/simulation run are required; exact request and acceptance steps: [OWLE-NATIVE-SERIALIZATION-ISSUE-14.md](OWLE-NATIVE-SERIALIZATION-ISSUE-14.md). Issue #14 stays open.
+
+---
+
 # 19.10.2026 — PR #13 synchronized with main
 
 Merged main `986ec9899f2e1e22eeb7a2547d0ba9d5777888ba` (PR #16 and #17) into `codex/airlock-10-fbd-graph`. Resolved package/checkpoint conflicts by preserving both test suites and histories. Full `bash scripts/codex-check.sh`: exit 0, FBD 9/9, evaluator 12/12 (256 cases, 36 graphs), export 4/4, MODEL 8/8; Modbus fault/recovery and sanitized native evidence tests pass. GitHub PR #13 exists as draft; earlier API/creation blocker is historical.

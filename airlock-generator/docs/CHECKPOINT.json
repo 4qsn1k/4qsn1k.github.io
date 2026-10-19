@@ -629,7 +629,7 @@
     "z4559OfflineQa": "PASS",
     "autostartInstalled": false
   },
-  "latestCheckpoint": "fbdGraphMainSync20261019",
+  "latestCheckpoint": "nativeSchemaIssue14",
   "fbdGraphIssue10": {
     "date": "2026-10-18",
     "branch": "codex/airlock-10-fbd-graph",
@@ -717,6 +717,37 @@
     "fullCodexCheck": "PASS exit 0; FBD 9/9, evaluator 12/12 (256 cases, 36 graphs), export 4/4, MODEL 8/8; all main Modbus and sanitized fixture tests retained",
     "logSha256": "777e000610c06b4381692eb69cd378a4c904b65f18722356bb6e471efae0e855",
     "nativeNewProject": "NEEDS_NATIVE_GUI",
-    "physical": "PHYSICAL_NOT_TESTED"
+    "physical": "PHYSICAL_NOT_TESTED",
+    "githubActions": {
+      "run": "https://github.com/4qsn1k/4qsn1k.github.io/actions/runs/39195791301",
+      "conclusion": "success",
+      "jobs": "all 3 success: full Linux offline QA, RTU memory-adapter Linux and Windows"
+    }
+  },
+  "nativeSchemaIssue14": {
+    "date": "2026-10-19",
+    "branch": "codex/airlock-14-native-schema",
+    "basedOn": "ac5fa80a99dce042e3773bd0fdc72ad9e209c106",
+    "issue": "https://github.com/4qsn1k/4qsn1k.github.io/issues/14",
+    "status": "SERIALIZATION_BLOCKED_INCOMPLETE_NATIVE_FIXTURE",
+    "structure": "NATIVE_STRUCTURE_FIXTURE_PASS",
+    "nativeDocument": null,
+    "usableForSerialization": false,
+    "newProjectGui": "NEEDS_NATIVE_GUI",
+    "physical": "PHYSICAL_NOT_TESTED",
+    "fullCodexCheck": "PASS exit 0; new JS 8/8, Python 6/6; all FBD and Modbus suites retained; MODEL 8/8",
+    "fullCheckLogSha256": "bf2dfe9b92fe75343539183e94dab5f6a125fd67f12c920bdadb670ba89c1874",
+    "fourRoomMappingCoverage": {
+      "nodes": 95,
+      "mappedNodes": 35,
+      "blockedNodes": 60,
+      "edges": 197,
+      "mappedEdges": 4,
+      "blockedEdges": 193
+    },
+    "sourceArchiveSha256": "0e3f85bfc198aa298ebac5068e76b5c0408cb4590faee9530e74559a1a167a00",
+    "guide": "docs/OWLE-NATIVE-SERIALIZATION-ISSUE-14.md",
+    "reportCommand": "node scripts/export-native-evidence.js MODEL_JSON NEW_REPORT_DIRECTORY",
+    "noEquipmentAccess": true
   }
 }
