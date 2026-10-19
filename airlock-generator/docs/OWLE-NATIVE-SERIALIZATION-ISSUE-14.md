@@ -1,5 +1,18 @@
 # Issue #14 — native format evidence and serialization gate, 19.10.2026
 
+## Independent HOME-PC evidence update — 19.10.2026
+
+The actual GUI-saved `Airlock_FBD_QA012_HOME.owle` was inspected **read-only** on HOME-PC. Its SHA256 remains `0E3F85BFC198AA298EBAC5068E76B5C0408CB4590FAEE9530E74559A1A167A00` (no edits). ZIP contains only two members, `Project` (264553 bytes decompressed) and `StFunctionBlocks` (26717 bytes decompressed). There are 25 native elements, 16 connectors, 6 virtual variable records, and 3 ST definitions (one generic and two test room FBs).
+
+A second, much richer, **redacted derivative fixture** is now checked into this PR: `experimental/fixtures/owle-qa012-sanitized-rich-identity-metadata.json`. It contains all 16 connector geometry objects, the complete five confirmed DI/DO/OR/FB wrapper *structures and numeric fields*, virtual variable structures and ST interface-index arrays (but **no source code**). All 131 observed GUID references are replaced by consistent synthetic `GUID_ALIAS_NNNN` labels, including ST-definition and FB-instance IDs, port/anchor references and two different rooms' version references. Native element port-owner IDs are the original **zero/sentinel identity**, represented by `ZERO_UUID`, rather than guessed per-element owners. Test evidence confirms 44 ports have anchors in their owning wrapper's primitive list.
+
+**Proven matching relations:** `ROOM_A.FunctionBlockUId` and `ROOM_B.FunctionBlockUId` each match one of the three stored ST definition ID aliases; their `LastModificationId` references also match the respective stored version. Five critical links (I4 fanout, two OR inputs, Q4 observer) all resolve to the actual port aliases. Full raw project root UUIDs, ST source, `ModelSerializedData` raw strings, company/site text and raw project settings values are deliberately withheld, so this evidence **cannot** be used as a writer template.
+
+**Independent limitation observed:** Running this PR's original strict archive inspector on the actual GUI-saved TEST archive returned `ARCHIVE_REJECTED`, diagnostic `INVALID_NATIVE_PORT_TYPE`. Numeric port direction/type census over all elements: `(0,0)×23`, `(1,0)×35`, `(1,3)×2`, `(1,4)×4`. Type code **4** occurs on four virtual-input output ports; its native semantic meaning is currently unverified. Fix the read-only inspector to surface recognized-but-not-yet-supported type 4 safely, without interpreting it as BOOL or allowing it in the serializer. This does **not** invalidate its synthetic negative tests.
+
+**Remaining hard gate:** source ST definitions, raw native serialization blobs, all 20 additional wrappers, actual saved project metadata values, GUI save/diff pair, real quality/GREEN/remote native element templates, and native GUI compile/sim of a new generated file. The richer fixture only narrows the information gap; it is **not a serializable OWLE**.
+
+
 This branch builds on synchronized PR #13 (`ac5fa80`, main `986ec98`, including
 PR #16 and #17). It reuses `fbd-generator.js` and its typed port map. It adds no
 room state machine, controller transport, live I/O mapping or equipment access.
