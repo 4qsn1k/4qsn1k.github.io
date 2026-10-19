@@ -169,7 +169,29 @@ def verify_raw_zip_member_names(raw, archive, infos):
         pos = end
 
 
-def inspect_archive(path):
+def native_port_census(documents):
+    """Report numeric port codes, not inferred IEC types or serializer capabilities."""
+    counts = {}
+    for document in documents:
+        for wrapper in document.get("Elements", []):
+            if not isinstance(wrapper, dict):
+                continue
+            node = wrapper.get("ElementModel") or (wrapper.get("ElementBlockStoreModel") or {}).get("ElementModel") or {}
+            if not isinstance(node, dict):
+                continue
+            for port in node.get("Ports", []):
+                if not isinstance(port, dict):
+                    continue
+                direction, kind = port.get("PortType"), port.get("DataType")
+                if type(direction) is not int or type(kind) is not int:
+                    continue
+                pair = (direction, kind)
+                counts[pair] = counts.get(pair, 0) + 1
+    return [{"portType": direction, "dataType": kind, "count": count}
+            for (direction, kind), count in sorted(counts.items())]
+
+
+def inspect_archive(path, diagnostic=False):
     require(Path(path).stat().st_size <= LIMIT, "ZIP_SIZE_LIMIT")
     raw = Path(path).read_bytes()
     require(len(raw) <= LIMIT, "ZIP_SIZE_LIMIT")
@@ -199,9 +221,25 @@ def inspect_archive(path):
                     raise ValueError("INVALID_MEMBER_JSON") from exc
                 discover(value, documents)
         summary = []
+        unsupported = None
         for document in documents:
-            summary.append(inspect_document(document, fixture))
-        return {"schema": "airlock-owle-envelope-inspection/1", "status": "ZIP_JSON_ENVELOPE_INSPECTED_ONLY",
+            try:
+                summary.append(inspect_document(document, fixture))
+            except ValueError as exc:
+                # Diagnostic mode reports the observed vendor numeric code,
+                # but does NOT relax the strict native format validator.
+                if not diagnostic or str(exc) != "INVALID_NATIVE_PORT_TYPE":
+                    raise
+                observed = native_port_census(documents)
+                if not any(row["dataType"] == 4 for row in observed):
+                    raise
+                unsupported = "INVALID_NATIVE_PORT_TYPE"
+                break
+        return {"schema": "airlock-owle-envelope-inspection/1",
+                "status": "NATIVE_TYPE_UNSUPPORTED_DIAGNOSTIC_ONLY" if unsupported else "ZIP_JSON_ENVELOPE_INSPECTED_ONLY",
+                "strictValidation": unsupported,
+                "observedNativePortCodes": native_port_census(documents) if diagnostic else [],
+
                 "archiveSha256": hashlib.sha256(raw).hexdigest(), "archiveBytes": len(raw),
                 "knownMembers": sorted(MEMBERS), "otherMemberCount": len(infos) - len(MEMBERS),
                 "documentSummaries": summary, "nativeDocument": None, "usableForSerialization": False,
@@ -212,9 +250,10 @@ def inspect_archive(path):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("archive")
+    parser.add_argument("--diagnostic", action="store_true", help="Report unsupported numeric native port codes without accepting the archive for serialization")
     args = parser.parse_args()
     try:
-        print(json.dumps(inspect_archive(args.archive), indent=2))
+        print(json.dumps(inspect_archive(args.archive, diagnostic=args.diagnostic), indent=2))
     except (ValueError, OSError, zipfile.BadZipFile, NotImplementedError, RecursionError, KeyError, TypeError, AttributeError):
         # Avoid leaking member names, paths, source code or project metadata in errors.
         print(json.dumps({"status": "ARCHIVE_REJECTED", "nativeGui": "NEEDS_NATIVE_GUI"}))
