@@ -33,6 +33,17 @@ jobs:
         run: gradle -p cw-trainer-android --no-daemon :app:testDebugUnitTest
       - name: Build APK (CI signature, NOT FOR DISTRIBUTION)
         run: gradle -p cw-trainer-android --no-daemon :app:assembleDebug
+      - name: Build unsigned production release
+        run: gradle -p cw-trainer-android --no-daemon :app:assembleRelease
+      - name: Save unsigned release for private HOME-PC signing
+        run: |
+          mkdir -p dist
+          cp cw-trainer-android/app/build/outputs/apk/release/app-release-unsigned.apk dist/cw-trainer-release-unsigned.apk
+          sha256sum dist/cw-trainer-release-unsigned.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cw-trainer-unsigned-release-FOR-SIGNING-ONLY
+          path: dist/cw-trainer-release-unsigned.apk
       - name: Stage temporary test-only APK
         run: |
           mkdir -p dist
