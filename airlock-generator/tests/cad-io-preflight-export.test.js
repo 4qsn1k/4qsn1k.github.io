@@ -14,6 +14,8 @@ try{
   assert.equal(report.hardwareWriteCount,0);
   assert.equal(report.nativeOwleGenerated,false);
   assert.equal(report.verifiedTerminalCount,0);
+  assert.equal(report.cncRequestDiPlanned,false);
+  assert.equal(report.cncRequestInterfaceWiringApproved,false);
   assert.deepEqual(report.counts,{di:15,relayDo:15,doors:7,rooms:6});
   assert.deepEqual(fs.readdirSync(a).sort(),
    ["IO-CHANNELS.csv","IO-PLAN-RU.md","IO-PREFLIGHT.json","MANIFEST-SHA256.json"]);
@@ -45,6 +47,18 @@ try{
   assert.equal(p.totals.requiredRelayDo,15);
   assert.equal(p.proposedHardware.spareDi,3);
   assert(p.inputs.some(x=>x.tentativeChannel.unit.startsWith("PRM-1.24")));
+  assert.equal(p.cncRequestArbitration.status,"BLOCKED_NO_CNC_REQUEST_SIGNAL");
+ });
+ test("two local buttons plus isolated K1 monitor require 22 DI and leave two spare",()=>{
+  const dest=path.join(tmp,"twoButtonsWithK1");
+  const report=exportPlan([source,dest,"--buttons=2","--k1-feedback"]);
+  assert.equal(report.counts.di,22);
+  assert.equal(report.counts.relayDo,15);
+  assert.equal(report.cncRequestDiPlanned,true);
+  const p=JSON.parse(fs.readFileSync(path.join(dest,"IO-PREFLIGHT.json"),"utf8"));
+  assert.equal(p.proposedHardware.spareDi,2);
+  assert.equal(p.inputs.filter(x=>x.source==="PHYSICAL_REED").length,7);
+  assert.equal(p.inputs.filter(x=>x.source==="LOCAL_BUTTON").length,12);
  });
  test("additional alarm, room lamps and K1 monitor accepted only when explicit",()=>{
   const dest=path.join(tmp,"custom");
@@ -52,6 +66,8 @@ try{
   const p=JSON.parse(fs.readFileSync(path.join(dest,"IO-PREFLIGHT.json"),"utf8"));
   assert.equal(p.totals.requiredDi,16);
   assert.equal(p.totals.requiredRelayDo,15);
+  assert.equal(p.cncRequestArbitration.preOpenReservationInputPresent,true);
+  assert.equal(p.cncRequestArbitration.wiringApproved,false);
   assert(p.outputs.some(x=>x.id==="ANY_ALARM_RELAY"));
  });
  test("fail closed on unknown and duplicate command flags",()=>{

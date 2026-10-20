@@ -48,6 +48,9 @@ test("the CNC-to-1257 K1 is EXTERNAL auth, no extra Owen DI assumed",()=>{
  assert.equal(q.totals.requiredDi,16);
  assert.equal(q.totals.requiredRelayDo,15);
  assert(q.inputs.some(x=>x.id==="BOLID_K1_MONITOR"));
+ assert.equal(q.cncRequestArbitration.preOpenReservationInputPresent,true);
+ assert.equal(q.cncRequestArbitration.wiringApproved,false);
+ assert.equal(p.cncRequestArbitration.status,"BLOCKED_NO_CNC_REQUEST_SIGNAL");
 });
 test("physical shared doors have exactly one DI and one normal relay request",()=>{
  const p=build(candidate,opts);

@@ -40,6 +40,10 @@ function renderReport(p){
   "- Местных кнопок на дверь вне СКУД: **"+p.policy.localButtonsPerDoor+"** (гипотеза для расчёта).",
   "- Карту читает только С2000-2 на CNC → 1257; его K1 — внешнее",
   "  штатное разрешение, физический выход BUSY от ПР: **0**.",
+  p.cncRequestArbitration.preOpenReservationInputPresent?
+   "- K1 добавлен отдельным DI для **раннего арбитража**, но электрическое подключение НЕ проверено.":
+   "- **БЛОКЕР:** DI от K1 отсутствует. ПР не видит запрос CNC до геркона; 15 DI — только бюджет, НЕ готовый арбитраж.",
+  "- Для безопасного предварительного планирования K1 DI запустите CLI с `--k1-feedback`; требуется согласованный изолированный интерфейс.",
   "- Выходы ПР управляют только штатным разрешением замка.",
   "  Аварийное освобождение не считается или не проектируется этим документом.",
   "- Светофоры: "+(p.policy.lampMode==="door"?"по каждой двери":"по каждому помещению")+
@@ -123,7 +127,9 @@ function exportPlan(args){
   filesSha256:Object.fromEntries(Object.entries(files).map(([name,text])=>[name,digest(Buffer.from(text))])),
   counts:{di:p.totals.requiredDi,relayDo:p.totals.requiredRelayDo,
    doors:p.totals.physicalDoors,rooms:p.totals.controlledRooms},
-  hardwareWriteCount:0,nativeOwleGenerated:false,verifiedTerminalCount:0
+  hardwareWriteCount:0,nativeOwleGenerated:false,verifiedTerminalCount:0,
+  cncRequestDiPlanned:p.cncRequestArbitration.preOpenReservationInputPresent,
+  cncRequestInterfaceWiringApproved:false
  };
  files["MANIFEST-SHA256.json"]=json(manifest);
  fs.mkdirSync(target,{recursive:false});

@@ -170,6 +170,14 @@ function build(candidate,opts={}){
    lampMode,hasSeparateCommonAlarmRelay:extraAlarm,
    holdSeconds:10,openDoorAlarmSeconds:"SITE_SETTING_UNCONFIRMED"
   },
+  cncRequestArbitration:{
+   k1AuthorizationReadByPlc:readerFeedback,
+   preOpenReservationInputPresent:readerFeedback,
+   status:readerFeedback?"REQUEST_SIGNAL_PLANNED_ELECTRICAL_NOT_VERIFIED":
+    "BLOCKED_NO_CNC_REQUEST_SIGNAL",
+   wiringApproved:false,
+   note:"Isolated K1 request observation is required for native pre-open reservation; permission must still be gated externally by actual K1."
+  },
   totals:{physicalDoors:doors.length,controlledRooms:rooms.length,
    localButtonChannels:localDoors.length*perLocalDoorButtons,
    physicalReedChannels:doors.length,
@@ -192,6 +200,7 @@ function build(candidate,opts={}){
   })),
   networkAlternative:planned.networkAlternative,
   warnings:[
+   ...(readerFeedback?["K1 feedback is only an unapproved DI scenario; verify isolation and edge semantics before reservation."]:["BLOCKER: no K1 request DI means the PR cannot reserve the CNC doorway before reed opening. 15 DI is capacity accounting only."]),
    "Buttons per local door is a SCENARIO, not a confirmed on-site button count or direction. One reed cannot determine travel direction.",
    "Source fixture contains a LEGACY busyContactToBolid flag; later operator decision overrides it for this lock-permit scenario. Physical BUSY output is ZERO.",
    "K1 of S2000-2 is part of external normal access authorisation. No implicit Owen DI is consumed unless optional isolated K1 monitoring is selected.",
