@@ -102,3 +102,15 @@ This is Owen Logic 3.3 official manual. It confirms custom ST functional blocks 
 Manual lists F7 Stop Simulator, F8 Pause, F10 Step, useful for observing request scan priority. Actual menu labels/version and compile result must be confirmed in installed GUI.
 
 These specimen files are still MISSING; leave native status ST_NATIVE_NOT_VERIFIED until physically captured and checked. Never replace a required .owle with only a .fbst.
+
+
+## Extra offline ST reference vectors
+The preparation branch also contains:
+- scripts/export-st-reference-vectors.js
+- tests/st-reference-vectors.test.js
+- experimental/issue28/ST_REFERENCE_VECTORS_OFFLINE.json
+
+The JSON captures 11 two-door state transitions (initial 9.0/9.9/10.0 second hold; same-scan A/B grants; open/close; second full hold; new B request), six group memberships and all 128 seven-door request combinations. It comes from the EXISTING Issue #28 JS reference evaluator and is reproducible; do not modify it just to make the new ST code pass. It is an expected-behavior oracle, not an independent Owen Logic native simulator trace. Any disagreement must be investigated, not papered over. Run:
+node tests/st-reference-vectors.test.js
+
+This test is deliberately separate from old npm check until its runtime and native contract are reviewed.
