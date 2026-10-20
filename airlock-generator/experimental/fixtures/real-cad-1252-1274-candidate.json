@@ -1,0 +1,81 @@
+{
+  "schema": "airlock-cad-candidate/1",
+  "id": "CLEANROOM_1252_1274",
+  "label": "Чистые помещения: фрагмент CAD 1252–1274 (20.10.2026)",
+  "status": "DRAFT_NEEDS_OPERATOR_DOOR_AND_ZONE_CONFIRMATION",
+  "source": "User-provided CAD image dated 2026-10-20; visible labels and pressure only",
+  "outputSafety": "NOT_FOR_NATIVE_OWLE_GENERATION_OR_PLC",
+  "physicalSpaces": [
+    {
+      "id": "R1252",
+      "number": "1252",
+      "purpose": "AIR LOCK",
+      "classText": "B",
+      "pressurePa": 50
+    },
+    {
+      "id": "R1253",
+      "number": "1253",
+      "purpose": "CHANGE ROOM",
+      "classText": "C-B",
+      "pressurePa": 37.5
+    },
+    {
+      "id": "R1254",
+      "number": "1254",
+      "purpose": "CHANGE OUT",
+      "classText": "C-B",
+      "pressurePa": 37.5
+    },
+    {
+      "id": "R1255",
+      "number": "1255",
+      "purpose": "CHANGE ROOM",
+      "classText": "B-C",
+      "pressurePa": 25
+    },
+    {
+      "id": "R1256",
+      "number": "1256",
+      "purpose": "CHANGE OUT",
+      "classText": "D-C",
+      "pressurePa": 25
+    },
+    {
+      "id": "R1257",
+      "number": "1257",
+      "purpose": "CHANGE ROOM",
+      "classText": "D",
+      "pressurePa": 12.5
+    },
+    {
+      "id": "R1274",
+      "number": "1274",
+      "purpose": "CHANGE PARTS",
+      "classText": "CNC",
+      "pressurePa": null
+    }
+  ],
+  "physicalDoors": [],
+  "interlockZones": [],
+  "controllerAssignments": [],
+  "inputAssignments": [],
+  "outputAssignments": [],
+  "designInvariants": {
+    "onePhysicalReedPerDoor": true,
+    "doorMayConnectTwoRooms": true,
+    "doorMayParticipateInTwoInterlockZones": true,
+    "openingOnlyBlocksOtherDoorsInIncidentZones": true,
+    "closingResetsPurgeTimerAccordingToConfiguredZonePolicy": true,
+    "softwareInterlocksDoNotControlEmergencyEgressWithoutSeparateSafetyReview": true
+  },
+  "blockedUntilConfirmed": [
+    "Number each physically controlled door on the full plan",
+    "Mark actual door endpoint spaces and distinguish non-controlled corridors",
+    "Define each interlock zone and list its member doors",
+    "Mark shared physical doors once and reference the same ID from both zones",
+    "Choose independently mutual/purge logic and timeouts for every zone",
+    "Confirm planned lock hardware polarity, S2000-2 BUSY and fire-safe wiring",
+    "Approve controller and DI/DO capacity and cross-controller communications"
+  ]
+}
