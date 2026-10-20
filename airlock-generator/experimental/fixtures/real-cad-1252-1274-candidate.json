@@ -1,9 +1,9 @@
 {
   "schema": "airlock-cad-candidate/1",
-  "id": "CLEANROOM_1252_1274",
-  "label": "Чистые помещения: фрагмент CAD 1252–1274 (20.10.2026)",
-  "status": "DRAFT_NEEDS_OPERATOR_DOOR_AND_ZONE_CONFIRMATION",
-  "source": "User-provided CAD image dated 2026-10-20; visible labels and pressure only",
+  "id": "CLEANROOM_1252_1257_CNC_D",
+  "label": "CAD 1252–1257: confirmed first three-door airlock 1257 CNC–D",
+  "status": "FIRST_STAGE_1257_CONFIRMED_DOWNSTREAM_UNVERIFIED",
+  "source": "User-provided CAD crop and explicit operator clarification 2026-10-20",
   "outputSafety": "NOT_FOR_NATIVE_OWLE_GENERATION_OR_PLC",
   "physicalSpaces": [
     {
@@ -11,53 +11,130 @@
       "number": "1252",
       "purpose": "AIR LOCK",
       "classText": "B",
-      "pressurePa": 50
+      "pressurePa": 50,
+      "topologyStatus": "NOT_VERIFIED"
     },
     {
       "id": "R1253",
       "number": "1253",
       "purpose": "CHANGE ROOM",
       "classText": "C-B",
-      "pressurePa": 37.5
+      "pressurePa": 37.5,
+      "topologyStatus": "NOT_VERIFIED"
     },
     {
       "id": "R1254",
       "number": "1254",
       "purpose": "CHANGE OUT",
       "classText": "C-B",
-      "pressurePa": 37.5
+      "pressurePa": 37.5,
+      "topologyStatus": "NOT_VERIFIED"
     },
     {
       "id": "R1255",
       "number": "1255",
       "purpose": "CHANGE ROOM",
       "classText": "B-C",
-      "pressurePa": 25
+      "pressurePa": 25,
+      "topologyStatus": "FIRST_STAGE_SHARED_DOOR_CONFIRMED"
     },
     {
       "id": "R1256",
       "number": "1256",
       "purpose": "CHANGE OUT",
       "classText": "D-C",
-      "pressurePa": 25
+      "pressurePa": 25,
+      "topologyStatus": "FIRST_STAGE_SHARED_DOOR_CONFIRMED"
     },
     {
       "id": "R1257",
       "number": "1257",
       "purpose": "CHANGE ROOM",
       "classText": "D",
-      "pressurePa": 12.5
-    },
+      "pressurePa": 12.5,
+      "topologyStatus": "CONFIRMED_FIRST_AIRLOCK_CNC_D",
+      "airlockGroupId": "Z_R1257"
+    }
+  ],
+  "externalSpaces": [
+    {
+      "id": "CNC",
+      "purpose": "CNC side before first airlock",
+      "pressurePa": null,
+      "controlledAsAirlock": false
+    }
+  ],
+  "excludedSpaces": [
     {
       "id": "R1274",
       "number": "1274",
-      "purpose": "CHANGE PARTS",
+      "purpose": "PARTS STORAGE",
       "classText": "CNC",
-      "pressurePa": null
+      "pressurePa": null,
+      "reason": "Operator explicitly excluded room 1274 from airlock interlocking; not a transition zone"
     }
   ],
-  "physicalDoors": [],
-  "interlockZones": [],
+  "physicalDoors": [
+    {
+      "id": "D_CNC_1257",
+      "a": "CNC",
+      "b": "R1257",
+      "description": "First entrance CNC–D (existing old test airlock)",
+      "source": "OPERATOR_CONFIRMED",
+      "hardwareTerminal": null
+    },
+    {
+      "id": "D_1257_1256",
+      "a": "R1257",
+      "b": "R1256",
+      "description": "Door from first airlock 1257 to change-out 1256",
+      "source": "OPERATOR_CONFIRMED",
+      "hardwareTerminal": null
+    },
+    {
+      "id": "D_1257_1255",
+      "a": "R1257",
+      "b": "R1255",
+      "description": "Door from first airlock 1257 to change room 1255",
+      "source": "OPERATOR_CONFIRMED",
+      "hardwareTerminal": null
+    }
+  ],
+  "interlockZones": [
+    {
+      "id": "Z_R1257",
+      "name": "CNC–D first airlock 1257",
+      "source": "OPERATOR_CONFIRMED",
+      "doorIds": [
+        "D_CNC_1257",
+        "D_1257_1256",
+        "D_1257_1255"
+      ],
+      "timingMode": null,
+      "purgeSeconds": null,
+      "doorOpenAlarmSeconds": null,
+      "note": "Opening any member denies admission through the other two; exact dwell and hardware assignment pending"
+    }
+  ],
+  "confirmedRules": [
+    {
+      "triggerOpen": "D_CNC_1257",
+      "inhibitDoors": [
+        "D_1257_1256",
+        "D_1257_1255"
+      ],
+      "source": "OPERATOR_EXPLICIT_2026_10_20"
+    }
+  ],
+  "unresolvedTopology": {
+    "downstreamFromRooms": [
+      "R1256",
+      "R1255"
+    ],
+    "downstreamDoorIds": [],
+    "interlockZoneIds": [],
+    "notes": "Subsequent transitions toward clean zone require full CAD door inventory; do not infer additional links"
+  },
   "controllerAssignments": [],
   "inputAssignments": [],
   "outputAssignments": [],
@@ -70,12 +147,10 @@
     "softwareInterlocksDoNotControlEmergencyEgressWithoutSeparateSafetyReview": true
   },
   "blockedUntilConfirmed": [
-    "Number each physically controlled door on the full plan",
-    "Mark actual door endpoint spaces and distinguish non-controlled corridors",
-    "Define each interlock zone and list its member doors",
-    "Mark shared physical doors once and reference the same ID from both zones",
-    "Choose independently mutual/purge logic and timeouts for every zone",
-    "Confirm planned lock hardware polarity, S2000-2 BUSY and fire-safe wiring",
-    "Approve controller and DI/DO capacity and cross-controller communications"
+    "Identify all downstream doors from 1256 and 1255 and later clean zones on complete CAD",
+    "Confirm whether each downstream shared doorway belongs to two interlock groups",
+    "Choose independent mutual/purge logic and timeout for each group",
+    "Confirm door lock hardware polarity, S2000-2 BUSY, alarm and fire-safe wiring",
+    "Approve controller physical DI/DO resources, remote link fail-safe handling, and full native compile"
   ]
 }
