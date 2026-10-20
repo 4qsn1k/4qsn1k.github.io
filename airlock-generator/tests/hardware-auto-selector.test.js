@@ -11,7 +11,7 @@ test("vendor catalog exact 24V relay models, 1-2 RS485 port variants",()=>{
  assert.deepEqual(h.PRM.map(p=>[p.id,p.di,p.relayDo]),
   [["PRM-1.24",8,8],["PRM-5.24",0,16],["PRM-6.24",16,12]]);
 });
-test("seven real doors one Bolid input, independent lamp and lock DO count",()=>{
+test("legacy budget without sampled requests, independent lamp and lock DO count",()=>{
  const s=h.select(7);
  assert.equal(s.required.di,9);
  assert.equal(s.required.relayDo,16);
@@ -78,4 +78,16 @@ test("reject impossible values and fail-closed instead of equipment suggestion",
 test("same input always yields deterministic recommendation",()=>{
  assert.equal(JSON.stringify(h.select(7)),JSON.stringify(h.select(7)));
 });
+test("reservation uses seven actual request DI including K1, zero BUSY, reserves",()=>{
+ const s=h.select(7,{requestInputs:7,busyChannels:0,lampOutputsPerDoor:0});
+ assert.equal(s.required.di,16);assert.equal(s.required.requestInputs,7);assert.equal(s.required.relayDo,8);
+ assert(s.primary.reservesMet);assert(s.primary.totalDi>=18);assert(s.primary.totalDo>=10);
+ assert.notEqual(s.primary.family,'PR100');assert(s.primary.moduleCount<=2);
+ const zeroReserve=h.select(7,{requestInputs:7,busyChannels:0,lampOutputsPerDoor:0,reserveDi:0,reserveDo:0});
+ assert.equal(zeroReserve.primary.family,'PR102');assert.equal(zeroReserve.primary.moduleCount,0);
+ const ethernet=h.select(7,{requestInputs:7,busyChannels:0,lampOutputsPerDoor:0,networkMode:'ethernet-modbus-tcp'});
+ assert.equal(ethernet.primary.family,'PR103');assert(ethernet.primary.totalDi>=18);
+ assert.throws(()=>h.select(7,{requestInputs:-1}),/BAD_REQUEST_INPUTS/);
+});
+
 console.log("HARDWARE_AUTO_QA "+tests+"/"+tests+" PASS ADVISORY_NOT_BOM");

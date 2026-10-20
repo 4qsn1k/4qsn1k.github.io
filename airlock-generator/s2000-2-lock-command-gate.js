@@ -31,6 +31,7 @@ function assess({doors,scudDoorIds=[],settings={}}){
  }));
  const hardware=selector.select(doors.length,{...settings,
   readers:scudDoorIds.length,
+  requestInputs:doors.length,
   busyChannels:0,
   lockOutputsPerDoor:1});
  return {
@@ -39,10 +40,13 @@ function assess({doors,scudDoorIds=[],settings={}}){
   scudDoorIds:[...scudDoorIds],
   scudPhysicalBusyChannelsUsed:0,
   plcLockPermissionOutputs:doors.length,
-  inputsRequiredForScudRelayFeedback:0,
+  inputsRequiredForScudRelayFeedback:scudDoorIds.length,
+  localRequestInputs:doors.length-scudDoorIds.length,
+  requestInputs:doors.length,
   channels,hardware,
   booleanExample:"NORMAL_UNLOCK = SCUD_OR_BUTTON_GRANT AND PLC_TIMED_PERMISSION",
   warnings:[
+   "Each door requires a sampled request DI, including isolated S2000-2 K authorization feedback for reservation before reed motion.",
    "This count replaces BUSY with individual existing lock-control DO channels; do NOT add both for the same physical door.",
    "The Bolid K relay and the PLC gate must be independently authorized for normal release; correct dry-contact series/parallel arrangement depends on the exact lock input.",
    "The ALer AL-400 PRemium manufacturer's close-contact-to-unlock applies ONLY if that precise model is confirmed.",

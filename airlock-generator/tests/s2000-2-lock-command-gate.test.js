@@ -9,11 +9,11 @@ test("one S2000-2 access door no BUSY, seven independent PLC lock permits",()=>{
  const a=f.assess({doors,scudDoorIds:["D_CNC_1257"]});
  assert.equal(a.scudPhysicalBusyChannelsUsed,0);
  assert.equal(a.plcLockPermissionOutputs,7);
- assert.equal(a.inputsRequiredForScudRelayFeedback,0);
+ assert.equal(a.inputsRequiredForScudRelayFeedback,1);
  assert.equal(a.channels.length,7);
  assert.equal(a.channels[0].normalGrantSource,"S2000_2_K_RELAY_AUTHORIZED_CARD_OR_NORMAL_EXIT");
  assert.equal(a.channels[1].normalGrantSource,"LOCAL_AIRLOCK_BUTTON_OR_REQUEST");
- assert.equal(a.hardware.required.di,9);
+ assert.equal(a.hardware.required.di,16);
  assert.equal(a.hardware.required.relayDo,15);
  assert.equal(a.hardware.required.breakdown.busy,0);
  assert.equal(a.hardware.required.breakdown.locks,7);
