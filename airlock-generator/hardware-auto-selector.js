@@ -43,12 +43,13 @@ function requirements(doors,settings={}){
  const fireInputs=integer(settings.fireInputs??1,"FIRE_INPUTS");
  const resetInputs=integer(settings.resetInputs??1,"RESET_INPUTS");
  const extraInputs=integer(settings.extraInputs??0,"EXTRA_INPUTS");
+ const requestInputs=integer(settings.requestInputs??0,"REQUEST_INPUTS");
  const extraOutputs=integer(settings.extraOutputs??0,"EXTRA_OUTPUTS");
  const reserveDi=integer(settings.reserveDi??2,"RESERVE_DI");
  const reserveDo=integer(settings.reserveDo??2,"RESERVE_DO");
- const di=n*sensorsPerDoor+fireInputs+resetInputs+extraInputs;
+ const di=n*sensorsPerDoor+fireInputs+resetInputs+extraInputs+requestInputs;
  const relayDo=n*locksPerDoor+lampChannelTotal+buzzerChannels+busyChannels+extraOutputs;
- return {doors:n,readers,di,relayDo,reserve:{di:reserveDi,relayDo:reserveDo},
+ return {doors:n,readers,di,relayDo,requestInputs,reserve:{di:reserveDi,relayDo:reserveDo},
   breakdown:{reedInputs:n*sensorsPerDoor,fireInputs,resetInputs,extraInputs,
    locks:n*locksPerDoor,lamps:lampChannelTotal,
    buzzer:buzzerChannels,busy:busyChannels,extraOutputs},

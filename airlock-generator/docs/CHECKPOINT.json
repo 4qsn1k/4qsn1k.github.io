@@ -1,6 +1,6 @@
 {
   "schema": "airlock-generator-continuity/1",
-  "savedDate": "2026-10-19",
+  "savedDate": "2026-10-20",
   "project": "Airlock Generator — граф помещений, блокировки дверей, красно-зелёные светофоры, HMI, Owen Logic ST",
   "repository": "4qsn1k/4qsn1k.github.io",
   "projectPath": "airlock-generator",
@@ -886,5 +886,23 @@
     "fullNativeOwleGeneratorPass": false,
     "physicalSafetyPass": false,
     "next": "Offline Issue #14 native Owen Logic writer until explicit permission to open COM5"
+  },
+  "issue28": {
+    "branch": "codex/airlock-28-native-fbd-generator",
+    "baseBranch": "codex/airlock-multidoor-adjacent-qa",
+    "status": "NATIVE_GUI_NOT_VERIFIED",
+    "report": "docs/ISSUE28-NATIVE-FBD-STATUS-2026-10-20.md",
+    "nativeObservations": "experimental/issue28/native-gui-observations.json",
+    "deliveredTwoDoorOwle": "experimental/issue28/Airlock_2DOOR_FBD_TEST_ONLY_UNVERIFIED.owle",
+    "originalProofUnchanged": true,
+    "sevenDoorNativeExport": "BLOCKED_CANNOT_FIT_PR100_CAPTURE",
+    "fullOfflineCheckExit": 0,
+    "referenceGraphTests": "16/16",
+    "nativeSerializerTests": "11/11",
+    "nativeAcceptanceCompleted": false,
+    "physicalDeviceWrites": 0,
+    "nextAction": "Resolve native feedback/delay-line ordering and complete two-door compiler/simulator acceptance; obtain a genuine PR102/PR103+PRM GUI device envelope before seven-door native serialization.",
+    "nativeSaveAsPassed": true,
+    "nativeGuiRoundtrip": "experimental/issue28/Airlock_2DOOR_GUI_ROUNDTRIP_UNVERIFIED.owle"
   }
 }

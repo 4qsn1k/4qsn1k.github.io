@@ -1,0 +1,14 @@
+{
+  "schema": "airlock-issue28-offline-qa/1",
+  "fullCommand": "bash scripts/codex-check.sh",
+  "exitCode": 0,
+  "logSha256": "688d9fc71a464fcf27486f43e321e8b3bcfda15d4057f7093d7029c47ef1d714",
+  "model": "8/8",
+  "reservedGraph": "16/16",
+  "nativeSerialization": "11/11",
+  "cliRegression": "PASS two-door real archive / explicit seven-door blocker / no overwrite",
+  "followup": "Full suite rerun including actual vendor Save As regression, committed candidate byte drift and CLI checks; exit 0",
+  "nativeCompilerVerified": false,
+  "completeNativeSimulatorAcceptance": false,
+  "physicalDeviceWrites": 0
+}

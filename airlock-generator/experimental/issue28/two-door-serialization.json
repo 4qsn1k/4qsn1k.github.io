@@ -1,0 +1,34 @@
+{
+  "status": "NATIVE_GUI_NOT_VERIFIED",
+  "noStructuredText": true,
+  "device": "PR100ED1",
+  "captureSha256": "13b67febaee0dbf0f1ea8396ea90d5ad912c9825b40fc7a48e29d5e90ba66884",
+  "planSha256": "8f945341029e40a662e1bdd2a79d29602e834fb4965be397f906fc1bdc9ba48e",
+  "owleSha256": "a1ee3c06a22795fb5be23d582e3d745e136a591d2fdddf96527429e00b375737",
+  "nativeElements": 134,
+  "nativeWires": 194,
+  "timers": {
+    "10000": 1,
+    "5000": 2,
+    "30000": 2
+  },
+  "inputMap": {
+    "CLOSED_A": "I1",
+    "CLOSED_B": "I2",
+    "REQUEST_A": "I3",
+    "REQUEST_B": "I4",
+    "FIRE_NORMAL": "I5",
+    "RESET": "I6",
+    "DATA_HEALTHY": "I7"
+  },
+  "outputMap": {
+    "PERMIT_A": "Q1",
+    "PERMIT_B": "Q2",
+    "BUZZER": "Q3",
+    "FAULT_LATCH": "Q4"
+  },
+  "physicalTerminalsAssigned": false,
+  "scanContractVerified": false,
+  "compileVerified": false,
+  "simulatorVerified": false
+}
