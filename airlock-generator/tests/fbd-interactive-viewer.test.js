@@ -21,7 +21,7 @@ function dom(id){
  if(!elements.has(id))elements.set(id,{
   value:({fire:"1",filter:"selected","sizing-doors":"7","sizing-lamps":"7",
   "sizing-extra-di":"0","sizing-reserve-di":"2","sizing-reserve-do":"2",
-  "sizing-network":"rs485-modbus-rtu"})[id]||"",
+  "sizing-network":"rs485-modbus-rtu","sizing-interlock":"lock-gate"})[id]||"",
   textContent:"",innerHTML:"",handlers:{},options:[],
   addEventListener(name,fn){this.handlers[name]=fn},
   appendChild(value){this.options.push(value)}
@@ -67,13 +67,38 @@ test("Fire input drops Bolid busy and denies green",()=>{
  dom("fire").value="0";
  dom("fire").handlers.change({target:{value:"0"}});
  assert.match(dom("bolid").innerHTML,/0<\/span>/);
- assert.match(dom("doors").innerHTML,/GREEN: 0/);
+ assert.match(dom("doors").innerHTML,/Разрешение ПР: 0/);
+});
+test("a denied card event stays denied after 10s and needs a new attempt",()=>{
+ dom("reset").handlers.click();
+ const card=()=>dom("doors").handlers.click({target:{closest:selector=>
+  selector==="button[data-request]"?{dataset:{request:"D_CNC_1257"}}:null}});
+ card();
+ assert.match(dom("doors").innerHTML,/ЗАПРЕЩЁН/);
+ buttons[3].handlers.click();
+ assert.match(dom("doors").innerHTML,/ЗАПРЕЩЁН/);
+ card();
+ assert.match(dom("doors").innerHTML,/РАЗРЕШЁН/);
+ dom("reset").handlers.click();
+ assert.doesNotMatch(dom("doors").innerHTML,/Последний запрос/);
+});
+test("one physical S2000-2 without BUSY consumes no extra relay DO",()=>{
+ dom("sizing-interlock").value="lock-gate";
+ dom("sizing-interlock").handlers.change();
+ assert.match(dom("hardware-result").innerHTML,/DO: <strong>15<\/strong>/);
+ assert.match(dom("bolid").innerHTML,/BUSY: не используется/);
+ dom("sizing-interlock").value="busy";
+ dom("sizing-interlock").handlers.change();
+ assert.match(dom("hardware-result").innerHTML,/DO: <strong>16<\/strong>/);
+ assert.match(dom("bolid").innerHTML,/Bolid BUSY/);
+ dom("sizing-interlock").value="lock-gate";
+ dom("sizing-interlock").handlers.change();
 });
 test("numeric hardware inputs recalculate controller/PRM options",()=>{
  dom("sizing-doors").value="18";
  dom("sizing-doors").handlers.change();
  assert.match(dom("hardware-result").innerHTML,/DI: <strong>20<\/strong>/);
- assert.match(dom("hardware-result").innerHTML,/DO: <strong>38<\/strong>/);
+ assert.match(dom("hardware-result").innerHTML,/DO: <strong>37<\/strong>/);
  assert.match(dom("hardware-result").innerHTML,/ПРМ/);
  dom("sizing-doors").value="60";
  dom("sizing-doors").handlers.change();

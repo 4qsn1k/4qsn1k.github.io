@@ -67,7 +67,7 @@ label{display:inline-flex;gap:5px;align-items:center}.gridflow{display:grid;grid
 <span class="arrow">↘  ↙</span><span>1256 / 1255</span>
 <span class="arrow">→</span><span>1254 / 1253</span><span class="arrow">→</span><span>1252</span></div>
 <small>Общая дверь учитывается одним герконом; каждая смежная группа имеет собственный таймер.</small></section>
-<section><h2>Герконы и состояния дверей</h2><div id="doors"></div></section>
+<section><h2>Герконы и запросы штатного прохода</h2><div id="doors"></div><p class="muted">Проверка карты и кнопки здесь — только логическое событие. Она не отпирает замок. Для нового запроса нажмите ещё раз.</p></section>
 <section><h2>Состояния всех шести шлюзов</h2><div id="zones" class="allzones"></div>
 <p class="muted">TON = 1 только после 10 секунд непрерывного закрытия всех дверей группы.</p></section>
 <section class="full"><h2>Визуальная FBD-цепь выбранного шлюза</h2>
@@ -82,17 +82,18 @@ label{display:inline-flex;gap:5px;align-items:center}.gridflow{display:grid;grid
 <div class="toolbar" style="margin-bottom:10px">
 <label>Двери <input id="sizing-doors" type="number" min="2" max="100" value="7" style="width:70px"></label>
 <label>Выходы светофоров <input id="sizing-lamps" type="number" min="0" max="100" value="7" style="width:70px"></label>
+<label>Интеграция СКУД <select id="sizing-interlock"><option value="lock-gate" selected>Разрешение замка / BUSY 0</option><option value="busy">Внешний BUSY / BUSY 1</option></select></label>
 <label>Дополнительные DI <input id="sizing-extra-di" type="number" min="0" max="100" value="0" style="width:70px"></label>
 <label>Резерв DI <input id="sizing-reserve-di" type="number" min="0" max="30" value="2" style="width:70px"></label>
 <label>Резерв DO <input id="sizing-reserve-do" type="number" min="0" max="30" value="2" style="width:70px"></label>
 <label>Связь <select id="sizing-network"><option value="rs485-modbus-rtu">RS-485</option><option value="ethernet-modbus-tcp">Ethernet</option></select></label>
 </div>
 <div id="hardware-result" class="allzones" aria-live="polite"></div>
-<p class="muted">Принято: один геркон и один выход замка на дверь; выход светофора выбирается по проекту; один зуммер и один BUSY на CNC; входы АПС и сброса. Для кнопок выхода увеличь дополнительные DI. При распределении по нескольким ПР потребуется отдельное размещение клемм и проверка Modbus/отказов.</p>
+<p class="muted">Принято: один геркон и один выход разрешения нормального отпирания на дверь; светофоры по проекту, один зуммер. BUSY учитывается только при выборе внешней блокировки СКУД. Для кнопок, подключённых к ПР, увеличь дополнительные DI. При распределении по нескольким ПР потребуется отдельное размещение клемм и проверка Modbus/отказов.</p>
 </section>
 </main>
 <div class="note"><strong>Ограничения:</strong> кнопки не управляют настоящими замками, светофорами, АПС или С2000-2.
-Не моделируются электрическая полярность замков, безопасное отпирание, связь RS-485, фильтр дребезга и отказ оборудования.
+Не моделируются полярность замков, удержание физического отпирания, аварийный выход, связь RS-485, фильтр дребезга и отказ оборудования.
 Это эталонная программная симуляция FBD-соединений, не компиляция Owen Logic.</div>
 </div>
 <script>${engine}</script>
@@ -104,6 +105,7 @@ return {select,requirements,PRS,PRM};
 "use strict";
 const PLAN=${raw};
 let test=simulator(PLAN), snap=test.step({},0), selected=PLAN.groups[0].zoneId;
+let lastNormalRequests=Object.create(null);
 const byId=id=>document.getElementById(id);
 const yn=b=>b?"1":"0";
 const sig=id=>Boolean(snap.signals[id]);
@@ -112,13 +114,21 @@ const roomNum=z=>z.replace("Z_R","");
 function stateBadge(on,yes,no){return "<span class='"+(on?"ok":"warn")+"'>"+(on?yes:no)+"</span>"}
 function redraw(){
  byId("clock").textContent=(snap.timeMs/1000).toFixed(1).replace(".",",")+" с";
- byId("bolid").innerHTML="Bolid BUSY: "+stateBadge(snap.bolidBusy,"1 (запрет)","0");
+ byId("bolid").innerHTML=byId("sizing-interlock").value==="lock-gate"?
+  "Логическая занятость 1257: "+stateBadge(snap.bolidBusy,"1 (запрет)","0")+" · физический BUSY: не используется":
+  "Bolid BUSY: "+stateBadge(snap.bolidBusy,"1 (запрет)","0");
  byId("fire").value=snap.FireNormal?"1":"0";
  byId("doors").innerHTML=PLAN.doors.map(d=>{
-  const open=!snap.Closed[d.doorId];
+  const open=!snap.Closed[d.doorId],plcPermit=snap.green[d.doorId],last=lastNormalRequests[d.doorId];
+  const result=last?"Последний запрос @"+(last.atMs/1000).toFixed(1)+" с: "+(last.accepted?"РАЗРЕШЁН":"ЗАПРЕЩЁН"):"Нет запросов";
   return "<div class='door'><div><div class='doorname'>"+d.doorId.replaceAll("_","–")+"</div><div class='doorstates'>"+
-   stateBadge(!open,!open?"ЗАКРЫТА":"","ОТКРЫТА")+" <span>Блокировка: "+yn(snap.inhibit[d.doorId])+"</span> <span>GREEN: "+yn(snap.green[d.doorId])+"</span></div></div>"+
-   "<button type='button' data-door='"+d.doorId+"' class='"+(open?"urgent":"")+"'>"+(open?"Закрыть":"Открыть")+"</button></div>"
+   stateBadge(!open,!open?"ЗАКРЫТА":"","ОТКРЫТА")+
+   " <span>Блокировка: "+yn(snap.inhibit[d.doorId])+"</span>"+
+   " <span>Разрешение ПР: "+yn(plcPermit)+"</span>"+
+   " <span>"+result+"</span></div></div>"+
+   "<div style='display:flex;gap:5px;flex-wrap:wrap'>"+
+   "<button type='button' data-request='"+d.doorId+"'>"+(d.doorId==="D_CNC_1257"?"Проверить карту":"Запрос кнопки")+"</button>"+
+   "<button type='button' data-door='"+d.doorId+"' class='"+(open?"urgent":"")+"'>"+(open?"Закрыть":"Открыть")+"</button></div></div>"
  }).join("");
  byId("zones").innerHTML=PLAN.groups.map(g=>{
   const elapsed=snap.tonElapsedMs[g.tonId]||0;
@@ -168,6 +178,8 @@ function refreshHardware(){
    extraInputs:int("sizing-extra-di"),
    reserveDi:int("sizing-reserve-di"),
    reserveDo:int("sizing-reserve-do"),
+   readers:1,
+   busyChannels:byId("sizing-interlock").value==="busy"?1:0,
    networkMode:byId("sizing-network").value
   });
   const required=result.required;
@@ -207,7 +219,7 @@ function refreshHardware(){
 }
 let lastDoorCount=PLAN.doors.length;
 for(const id of ["sizing-doors","sizing-lamps","sizing-extra-di",
- "sizing-reserve-di","sizing-reserve-do","sizing-network"])
+ "sizing-reserve-di","sizing-reserve-do","sizing-network","sizing-interlock"])
  byId(id).addEventListener("change",()=>{
   if(id==="sizing-doors"){
    const next=Number(byId("sizing-doors").value);
@@ -216,6 +228,7 @@ for(const id of ["sizing-doors","sizing-lamps","sizing-extra-di",
    lastDoorCount=next;
   }
   refreshHardware();
+  if(id==="sizing-interlock")redraw();
  });
 for(const group of PLAN.groups){
  const o=document.createElement("option");o.value=group.zoneId;o.textContent=roomNum(group.zoneId);byId("zone").appendChild(o);
@@ -223,13 +236,22 @@ for(const group of PLAN.groups){
 byId("zone").value=selected;
 byId("zone").addEventListener("change",e=>{selected=e.target.value;redraw()});
 byId("filter").addEventListener("change",redraw);
-byId("reset").addEventListener("click",()=>{test=simulator(PLAN);snap=test.step({},0);redraw()});
+byId("reset").addEventListener("click",()=>{test=simulator(PLAN);snap=test.step({},0);lastNormalRequests=Object.create(null);redraw()});
 byId("fire").addEventListener("change",e=>{snap=test.step({FireNormal:e.target.value==="1"},100);redraw()});
 document.querySelectorAll("[data-step]").forEach(b=>b.addEventListener("click",()=>{
  snap=test.step({},Number(b.dataset.step));redraw()
 }));
 byId("doors").addEventListener("click",e=>{
- const b=e.target.closest("button[data-door]");if(!b)return;
+ const request=e.target.closest("button[data-request]");
+ if(request&&request.dataset.request){
+  const id=request.dataset.request;
+  // An individual edge-like test EVENT. A denied request will NOT
+  // automatically become accepted after the 10-second hold expires.
+  const ready=Boolean(snap.green[id]);
+  lastNormalRequests[id]={accepted:ready,atMs:snap.timeMs};
+  redraw();return;
+ }
+ const b=e.target.closest("button[data-door]");if(!b||!b.dataset.door)return;
  const id=b.dataset.door;const change={};change[id]=!snap.Closed[id];
  snap=test.step({Closed:change},100);redraw();
 });
