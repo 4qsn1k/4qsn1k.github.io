@@ -1,52 +1,73 @@
 "use strict";
-/* Real operator-confirmed FIRST stage 1257 only. Downstream NOT inferred.
- * Pure JS offline test; no COM, native .owle, PLC or hardware writes.
+/* Confirmed physical ROUTES 1257→1256→1254→1252 and
+ * 1257→1255→1253→1252. No field I/O or native .owle is generated.
  */
-const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const vm = require("node:vm");
-const root=path.join(__dirname,"..");
+const assert=require("node:assert/strict");
+const fs=require("node:fs"),path=require("node:path"),vm=require("node:vm");
+const root=path.resolve(__dirname,"..");
 const candidate=JSON.parse(fs.readFileSync(path.join(root,
-  "experimental/fixtures/real-cad-1252-1274-candidate.json"),"utf8"));
+ "experimental/fixtures/real-cad-1252-1274-candidate.json"),"utf8"));
+const expectedRoutes=[
+ ["CNC","1257","1256","1254","1252"],
+ ["CNC","1257","1255","1253","1252"]
+];
+const expectedDoors=[
+ ["D_CNC_1257","CNC","R1257"],
+ ["D_1257_1256","R1257","R1256"],
+ ["D_1256_1254","R1256","R1254"],
+ ["D_1254_1252","R1254","R1252"],
+ ["D_1257_1255","R1257","R1255"],
+ ["D_1255_1253","R1255","R1253"],
+ ["D_1253_1252","R1253","R1252"]
+];
+const expectedBlocked={
+ D_CNC_1257:["D_1257_1256","D_1257_1255"],
+ D_1257_1256:["D_CNC_1257","D_1257_1255","D_1256_1254"],
+ D_1256_1254:["D_1257_1256","D_1254_1252"],
+ D_1254_1252:["D_1256_1254","D_1253_1252"],
+ D_1257_1255:["D_CNC_1257","D_1257_1256","D_1255_1253"],
+ D_1255_1253:["D_1257_1255","D_1253_1252"],
+ D_1253_1252:["D_1255_1253","D_1254_1252"]
+};
+const sort=x=>Array.from(x).sort();
 assert.equal(candidate.schema,"airlock-cad-candidate/1");
-assert.equal(candidate.status,"FIRST_STAGE_1257_CONFIRMED_DOWNSTREAM_UNVERIFIED");
+assert.equal(candidate.status,"TWO_PATHS_SEVEN_DOORS_CONFIRMED_TIMING_AND_HARDWARE_PENDING");
 assert.equal(candidate.outputSafety,"NOT_FOR_NATIVE_OWLE_GENERATION_OR_PLC");
+assert.deepEqual(candidate.confirmedRoutes,expectedRoutes);
 assert.deepEqual(candidate.physicalSpaces.map(s=>s.number),
  ["1252","1253","1254","1255","1256","1257"]);
 assert.deepEqual(candidate.physicalSpaces.map(s=>s.pressurePa),
  [50,37.5,37.5,25,25,12.5]);
 assert.deepEqual(candidate.excludedSpaces.map(s=>s.number),["1274"]);
-assert.equal(candidate.physicalSpaces.some(x=>x.number==="1274"),false);
-assert.equal(candidate.excludedSpaces[0].purpose,"PARTS STORAGE");
+assert(!candidate.physicalSpaces.some(s=>s.number==="1274"));
 assert.deepEqual(candidate.externalSpaces.map(s=>s.id),["CNC"]);
-
-const doorIds=["D_CNC_1257","D_1257_1256","D_1257_1255"];
-assert.deepEqual(candidate.physicalDoors.map(x=>x.id),doorIds);
-assert.deepEqual(candidate.physicalDoors.map(x=>[x.a,x.b]),
- [["CNC","R1257"],["R1257","R1256"],["R1257","R1255"]]);
-assert(candidate.physicalDoors.every(x=>x.source==="OPERATOR_CONFIRMED"));
-assert(candidate.physicalDoors.every(x=>x.hardwareTerminal===null));
-assert.deepEqual(candidate.interlockZones.map(z=>z.id),["Z_R1257"]);
-assert.deepEqual(candidate.interlockZones[0].doorIds,doorIds);
-assert.equal(candidate.interlockZones[0].purgeSeconds,null);
-assert.equal(candidate.interlockZones[0].timingMode,null);
-assert.deepEqual(candidate.confirmedRules,[{
- triggerOpen:"D_CNC_1257",
- inhibitDoors:["D_1257_1256","D_1257_1255"],
- source:"OPERATOR_EXPLICIT_2026_10_20"
-}]);
-assert.deepEqual(candidate.unresolvedTopology.downstreamFromRooms,["R1256","R1255"]);
-assert.deepEqual(candidate.unresolvedTopology.downstreamDoorIds,[]);
-assert.deepEqual(candidate.unresolvedTopology.interlockZoneIds,[]);
+assert.deepEqual(candidate.physicalDoors.map(d=>[d.id,d.a,d.b]),expectedDoors);
+assert(candidate.physicalDoors.every(d=>d.reedInput===null&&d.hardwareTerminal===null&&d.lockType===null));
+assert.equal(new Set(candidate.physicalDoors.map(d=>d.id)).size,7);
+assert.equal(candidate.interlockZones.length,6);
+assert(candidate.interlockZones.every(z=>z.timingMode===null&&z.purgeSeconds===null&&z.doorOpenAlarmSeconds===null));
+assert.deepEqual(candidate.confirmedRules[0].inhibitDoors,expectedBlocked.D_CNC_1257);
+assert.equal(candidate.topologyPolicy,"INCIDENT_ROOM_ONLY_NO_TRANSITIVE_CASCADE");
+assert.equal(candidate.unresolvedTopology.allAdditionalDoorsVerifiedAbsent,false);
 assert.deepEqual(candidate.controllerAssignments,[]);
 assert.deepEqual(candidate.inputAssignments,[]);
 assert.deepEqual(candidate.outputAssignments,[]);
+
+// Confirm one reed identity, one physical door object, but two logical
+// incident-room consumers for all six internal doors.
+const expectedDoorIds=expectedDoors.map(d=>d[0]);
+const counted=new Map();
+for(const z of candidate.interlockZones){
+ const room=z.roomId;
+ const expected=expectedDoors.filter(([,a,b])=>a===room||b===room).map(([d])=>d);
+ assert.deepEqual(z.doorIds,expected,"wrong interlock zone "+room);
+ for(const d of z.doorIds)counted.set(d,(counted.get(d)||0)+1);
+}
+for(const [id,a,b] of expectedDoors)
+ assert.equal(counted.get(id),a==="CNC"||b==="CNC"?1:2,id+" member count");
 assert.equal(candidate.designInvariants.onePhysicalReedPerDoor,true);
 assert.equal(candidate.designInvariants.doorMayParticipateInTwoInterlockZones,true);
-assert.equal(candidate.designInvariants.openingOnlyBlocksOtherDoorsInIncidentZones,true);
 
-// A CAD candidate MUST NOT be considered a deployable generator project.
 const ctx=vm.createContext({});
 for(const name of ["st-generator.js","st-testbench.js","project-wiring.js",
  "hardware-planner.js","distributed-planner.js","fbd-generator.js","interzone-testbench.js"]){
@@ -56,47 +77,51 @@ const [fbd,roomTest,interzone,wiring]=vm.runInContext(
  "[AirlockFbdGenerator,AirlockStTestbench,AirlockInterzoneTestbench,AirlockProjectWiring]",ctx);
 assert.throws(()=>fbd.build(candidate),/rooms\[\] and doors\[\]/);
 
-// OFFLINE-only isolated first-stage model: the other rooms remain unmodeled
-// as interlock zones; choosing "mutual" here is not confirmation of its
-// site operating time or fire/lock polarity.
+// A temporary 1-PLC, mutual-only LOGIC FIXTURE for topology testing.
+// This is *not* the configured site behavior, timing or I/O resource plan.
 const model={
- rooms:[...candidate.physicalSpaces.map(s=>({id:s.id,
-  interlockMode:s.id==="R1257"?"mutual":"none"})),
-  {id:"CNC",interlockMode:"none"}],
+ rooms:[...candidate.physicalSpaces.map(s=>({
+  id:s.id,interlockMode:"mutual"})),{id:"CNC",interlockMode:"none"}],
  doors:candidate.physicalDoors.map(d=>({id:d.id,a:d.a,b:d.b})),
  rules:[],exemptions:[],fireMode:"all-electrical-interlocks-off",
  defaultOpenDoorAlarmSec:30
 };
-const roomIds=new Set(model.rooms.map(x=>x.id));
-assert(model.doors.every(d=>roomIds.has(d.a)&&roomIds.has(d.b)));
-const t=interzone.create(model,roomTest,wiring);
-let state=t.step({},3200);
-assert.equal(state.rooms.R1257.state,10);
-state=t.step({Closed:{D_CNC_1257:false}},100);
-assert.equal(state.rooms.R1257.state,20);
-assert.equal(state.blocked.D_CNC_1257,false,"the opened door cannot self-block");
-assert.equal(state.blocked.D_1257_1256,true);
-assert.equal(state.blocked.D_1257_1255,true);
-assert.equal(state.traffic.D_CNC_1257.logicalGreenPermit,false);
-state=t.step({Closed:{D_CNC_1257:true}},100);
-assert.equal(state.rooms.R1257.state,10,"test-only mutual release after close");
+for(const [open,expected] of Object.entries(expectedBlocked)){
+ const t=interzone.create(model,roomTest,wiring);
+ t.step({},3200);
+ const state=t.step({Closed:{[open]:false}},100);
+ assert.equal(state.blocked[open],false,"open physical door cannot inhibit itself "+open);
+ assert.equal(state.traffic[open].logicalGreenPermit,false,"opened door GREEN denied "+open);
+ assert.deepEqual(sort(Object.entries(state.blocked).filter(([,yes])=>yes).map(([d])=>d)),
+  sort(expected),"nonlocal/incomplete block for "+open);
+ for(const other of expectedDoorIds.filter(d=>d!==open&&!expected.includes(d)))
+  assert.equal(state.blocked[other],false,"transitive block forbidden "+open+"→"+other);
+ const restored=t.step({Closed:{[open]:true}},100);
+ for(const id of expectedDoorIds)
+  assert.equal(restored.blocked[id],false,"not restored "+open+"→"+id);
+}
 
-// Verify the same three-door structure can be converted into a typed FBD
-// PLAN, without materializing hardware wiring, Q outputs or a native file.
+// Typed FBD intermediate plan: six room FBs and seven physical reeds.
+// All assignments remain test-only; no terminal, real lock or vendor OWLE.
 const hardware={primary:{family:"PR103",baseDi:32,baseDo:32,modules:[]},
  secondary:[],link:"none",signaling:"door"};
-const topology={roomOwners:{R1257:"PLC1"},
- doorInputOwners:Object.fromEntries(doorIds.map(d=>[d,"PLC1"])),
- doorOutputOwners:Object.fromEntries(doorIds.map(d=>[d,"PLC1"])),
+const topology={roomOwners:Object.fromEntries(
+ candidate.physicalSpaces.map(s=>[s.id,"PLC1"])),
+ doorInputOwners:Object.fromEntries(expectedDoorIds.map(d=>[d,"PLC1"])),
+ doorOutputOwners:Object.fromEntries(expectedDoorIds.map(d=>[d,"PLC1"])),
  alarmOwner:"PLC1"};
 const plan=fbd.build(model,{hardware,topology,timeoutMs:500});
 assert.equal(plan.verification.plan,"FBD_PLAN_PASS");
-assert.equal(plan.blocks.length,1);
-assert.equal(plan.blocks[0].roomId,"R1257");
-assert.equal(plan.doors.length,3);
-assert.equal(plan.nodes.filter(n=>n.physicalReed).length,3);
+assert.equal(plan.blocks.length,6);
+assert.equal(plan.doors.length,7);
+assert.equal(plan.nodes.filter(n=>n.physicalReed).length,7);
 assert.equal(plan.native.status,"NEEDS_NATIVE_GUI");
 assert.equal(plan.verification.physical,"NOT_TESTED");
-for(const door of plan.doors)assert.equal(door.lockCommand,null);
+for(const d of expectedDoors){
+ const entry=plan.doors.find(x=>x.doorId===d[0]);
+ assert(entry);assert.equal(entry.lockCommand,null);
+ const consumers=d[1]==="CNC"||d[2]==="CNC"?1:2;
+ assert.equal(plan.nodes.find(n=>n.kind==="OR"&&n.doorId===d[0]).inputs.length,consumers);
+}
 fbd.validate(plan);
-console.log("CAD_1257_FIRST_STAGE_PASS 6_INTERLOCK_ROOMS_METADATA 3_DOORS 1_CONTROLLED_ROOM EXCLUDED_1274 NO_PLC_EXPORT");
+console.log("CAD_TWO_PATHS_1257_1252_PASS 6_ROOMS 7_SHARED_PHYSICAL_DOORS 7_OPEN_CASES EXCLUDED_1274 NO_NATIVE_OR_PLC_EXPORT");
