@@ -31,7 +31,39 @@ const expectedBlocked={
 };
 const sort=x=>Array.from(x).sort();
 assert.equal(candidate.schema,"airlock-cad-candidate/1");
-assert.equal(candidate.status,"TWO_PATHS_SEVEN_DOORS_CONFIRMED_TIMING_AND_HARDWARE_PENDING");
+assert.equal(candidate.status,"TWO_ROUTES_SCUD_ENTRY_ONLY_TIMED_10S_TRIGGER_UNCONFIRMED");
+const scudDoor="D_CNC_1257";
+const secondaryDoors=expectedDoors.map(x=>x[0]).filter(d=>d!==scudDoor);
+assert.equal(candidate.accessControlTopology.cardReaderDoorId,scudDoor);
+assert.equal(candidate.accessControlTopology.cardReaderController,"BOLID_S2000_2");
+assert.equal(candidate.accessControlTopology.authorizationDirection,"CNC_TO_R1257");
+assert.equal(candidate.accessControlTopology.reverseDirectionExitPolicy,null);
+assert.equal(candidate.accessControlTopology.bolidBusyContactMapping,"UNVERIFIED_PHYSICAL");
+assert.equal(candidate.accessControlTopology.noReadersOnOtherDoors,true);
+assert.deepEqual(candidate.accessControlTopology.otherDoorIds,secondaryDoors);
+assert.deepEqual(candidate.timedBlockingRequirement.doorIds,secondaryDoors);
+assert.equal(candidate.timedBlockingRequirement.holdSeconds,10);
+assert.equal(candidate.timedBlockingRequirement.prohibitedCurrentInterpretation,"mutual_immediate_release");
+assert.equal(candidate.timedBlockingRequirement.timerStartsOn,null);
+assert.equal(candidate.timedBlockingRequirement.doorHeldOpenBehavior,null);
+assert.equal(candidate.timedBlockingRequirement.timerResetOnRepeatedOpening,null);
+assert.equal(candidate.timedBlockingRequirement.scopeBetweenAdjacentZones,null);
+assert.equal(candidate.timedBlockingRequirement.requiresOperatorClarification,true);
+assert.equal(candidate.physicalDoors.filter(d=>d.readerRequired).length,1);
+assert.equal(candidate.physicalDoors.filter(d=>d.busyContactToBolid).length,1);
+for(const door of candidate.physicalDoors){
+ const isEntry=door.id===scudDoor;
+ assert.equal(door.accessControl,isEntry?"BOLID_S2000_2_ENTRY_ONLY":"LOCAL_AIRLOCK_NO_SCUD_READER");
+ assert.equal(door.readerRequired,isEntry);
+ assert.equal(door.busyContactToBolid,isEntry);
+ assert.equal(door.timedBlockHoldSec,isEntry?null:10);
+ assert.equal(door.timedBlockTrigger,null);
+}
+for(const zone of candidate.interlockZones){
+ assert.equal(zone.timingMode,null,"never turn example mutual simulation into physical site mode");
+ assert.equal(zone.timedBlockHoldSec,10);
+ assert.equal(zone.timedBlockStartEvent,null);
+}
 assert.equal(candidate.outputSafety,"NOT_FOR_NATIVE_OWLE_GENERATION_OR_PLC");
 assert.deepEqual(candidate.confirmedRoutes,expectedRoutes);
 assert.deepEqual(candidate.physicalSpaces.map(s=>s.number),

@@ -2,8 +2,8 @@
   "schema": "airlock-cad-candidate/1",
   "id": "CLEANROOM_1252_1257_CNC_D",
   "label": "CAD 1252–1257: confirmed two CNC→1252 paths, first airlock 1257",
-  "status": "TWO_PATHS_SEVEN_DOORS_CONFIRMED_TIMING_AND_HARDWARE_PENDING",
-  "source": "User-supplied CAD crop and explicit user sequence 2026-10-20: 1257–1256–1254–1252 and 1257–1255–1253–1252",
+  "status": "TWO_ROUTES_SCUD_ENTRY_ONLY_TIMED_10S_TRIGGER_UNCONFIRMED",
+  "source": "User-supplied CAD crop and explicit user sequence 2026-10-20: 1257–1256–1254–1252 and 1257–1255–1253–1252; operator 2026-10-20: SCUD only CNC to 1257, other doors timed 10s block instead of mutual",
   "outputSafety": "NOT_FOR_NATIVE_OWLE_GENERATION_OR_PLC",
   "physicalSpaces": [
     {
@@ -97,7 +97,12 @@
       "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
       "reedInput": null,
       "hardwareTerminal": null,
-      "lockType": null
+      "lockType": null,
+      "accessControl": "BOLID_S2000_2_ENTRY_ONLY",
+      "readerRequired": true,
+      "busyContactToBolid": true,
+      "timedBlockHoldSec": null,
+      "timedBlockTrigger": null
     },
     {
       "id": "D_1257_1256",
@@ -106,7 +111,12 @@
       "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
       "reedInput": null,
       "hardwareTerminal": null,
-      "lockType": null
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": null
     },
     {
       "id": "D_1256_1254",
@@ -115,7 +125,12 @@
       "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
       "reedInput": null,
       "hardwareTerminal": null,
-      "lockType": null
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": null
     },
     {
       "id": "D_1254_1252",
@@ -124,7 +139,12 @@
       "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
       "reedInput": null,
       "hardwareTerminal": null,
-      "lockType": null
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": null
     },
     {
       "id": "D_1257_1255",
@@ -133,7 +153,12 @@
       "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
       "reedInput": null,
       "hardwareTerminal": null,
-      "lockType": null
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": null
     },
     {
       "id": "D_1255_1253",
@@ -142,7 +167,12 @@
       "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
       "reedInput": null,
       "hardwareTerminal": null,
-      "lockType": null
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": null
     },
     {
       "id": "D_1253_1252",
@@ -151,7 +181,12 @@
       "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
       "reedInput": null,
       "hardwareTerminal": null,
-      "lockType": null
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": null
     }
   ],
   "interlockZones": [
@@ -165,7 +200,9 @@
       ],
       "timingMode": null,
       "purgeSeconds": null,
-      "doorOpenAlarmSeconds": null
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": null
     },
     {
       "id": "Z_R1253",
@@ -177,7 +214,9 @@
       ],
       "timingMode": null,
       "purgeSeconds": null,
-      "doorOpenAlarmSeconds": null
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": null
     },
     {
       "id": "Z_R1254",
@@ -189,7 +228,9 @@
       ],
       "timingMode": null,
       "purgeSeconds": null,
-      "doorOpenAlarmSeconds": null
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": null
     },
     {
       "id": "Z_R1255",
@@ -201,7 +242,9 @@
       ],
       "timingMode": null,
       "purgeSeconds": null,
-      "doorOpenAlarmSeconds": null
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": null
     },
     {
       "id": "Z_R1256",
@@ -213,7 +256,9 @@
       ],
       "timingMode": null,
       "purgeSeconds": null,
-      "doorOpenAlarmSeconds": null
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": null
     },
     {
       "id": "Z_R1257",
@@ -226,7 +271,9 @@
       ],
       "timingMode": null,
       "purgeSeconds": null,
-      "doorOpenAlarmSeconds": null
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": null
     }
   ],
   "confirmedRules": [
@@ -257,10 +304,46 @@
     "softwareInterlocksDoNotControlEmergencyEgressWithoutSeparateSafetyReview": true
   },
   "blockedUntilConfirmed": [
+    "Define when the ten-second blocking interval starts: on opening or only when the door has closed; what occurs while held open and if reopened",
+    "Define whether the CNC-to-1257 entrance participates in 10s hold, and return passage emergency release independent of Bolid",
     "Verify whether any further controlled doorways exist outside the two specified routes",
     "Set actual mutual/purge mode, runtime alarm and purge timing independently for each interlock group",
     "Confirm lock controller output polarity, S2000-2 BUSY, APS and independently approved egress",
     "Confirm controller DI/DO resources and quality of inter-controller communication",
     "Independently save, compile and simulate native vendor .owle before physical commissioning"
-  ]
+  ],
+  "accessControlTopology": {
+    "cardReaderDoorId": "D_CNC_1257",
+    "cardReaderController": "BOLID_S2000_2",
+    "authorizationDirection": "CNC_TO_R1257",
+    "bolidBusyContactMapping": "UNVERIFIED_PHYSICAL",
+    "reverseDirectionExitPolicy": null,
+    "noReadersOnOtherDoors": true,
+    "otherDoorIds": [
+      "D_1257_1256",
+      "D_1256_1254",
+      "D_1254_1252",
+      "D_1257_1255",
+      "D_1255_1253",
+      "D_1253_1252"
+    ]
+  },
+  "timedBlockingRequirement": {
+    "doorIds": [
+      "D_1257_1256",
+      "D_1256_1254",
+      "D_1254_1252",
+      "D_1257_1255",
+      "D_1255_1253",
+      "D_1253_1252"
+    ],
+    "holdSeconds": 10,
+    "prohibitedCurrentInterpretation": "mutual_immediate_release",
+    "timerStartsOn": null,
+    "doorHeldOpenBehavior": null,
+    "timerResetOnRepeatedOpening": null,
+    "scopeBetweenAdjacentZones": null,
+    "requiresOperatorClarification": true,
+    "source": "OPERATOR_EXPLICIT_2026_10_20"
+  }
 }
