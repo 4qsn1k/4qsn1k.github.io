@@ -18,7 +18,11 @@ def read(path):
  with zipfile.ZipFile(path) as z:
   assert z.namelist()==['Project'],'NO_ST'
   r=json.loads(z.read('Project'));return next(iter(r.values()))['DocumentModel']
-def logical(w):return m['element'](w)['Comment'].split(' | ')[0]
+def logical(w):
+ e=m['element'](w)
+ if e['Comment'] is None and w['Discriminator'] in (2,3):
+  return 'DEVICE_'+e['Title']  # GUI regenerates physical IO wrappers without comments.
+ return e['Comment'].split(' | ')[0]
 def semantic_check(doc):
  m['validate_document'](doc)
  native={logical(w):w for w in doc['Elements']}
@@ -57,6 +61,11 @@ with tempfile.TemporaryDirectory(prefix='airlock-reserved-') as tmp:
   points=[tuple(m['element'](w)['Location'][k] for k in ('X','Y')) for w in doc['Elements'] if w['Discriminator'] in (2,3)]
   assert len(set(points))==len(points),'OVERLAPPING_DEVICE_IO'
  test('all physical device IO labels have distinct positions',io_layout)
+ def vendor_roundtrip():
+  saved=ROOT/'experimental/issue28/Airlock_2DOOR_GUI_ROUNDTRIP_UNVERIFIED.owle'
+  assert hashlib.sha256(saved.read_bytes()).hexdigest()=='fb281472d40eae84da2dee8a1896cd29de5ee6f4e7ae5e2a1da62d2a1fc7c999'
+  semantic_check(read(saved))
+ test('actual vendor Save As preserves all native wiring and timers',vendor_roundtrip)
  def determinism():
   other=tmp/'again.owle';m['generate'](plan,capture,other);assert out.read_bytes()==other.read_bytes()
   committed=ROOT/'experimental/issue28/Airlock_2DOOR_FBD_TEST_ONLY_UNVERIFIED.owle'

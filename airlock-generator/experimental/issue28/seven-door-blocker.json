@@ -1,0 +1,6 @@
+{
+  "mode": "seven",
+  "status": "NATIVE_GUI_NOT_VERIFIED",
+  "physicalDeviceWrites": 0,
+  "nativeExportBlocked": "NATIVE_EXPORT_REFUSED CANNOT_FIT_PR100_CAPTURE: seven-door target requires GUI-saved PR102/PR103+PRM device envelope; never clone extra I/O"
+}

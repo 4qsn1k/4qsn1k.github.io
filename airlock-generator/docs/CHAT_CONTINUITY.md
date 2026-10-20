@@ -1,3 +1,15 @@
+# 20.10.2026 — Issue #28: reserved native FBD test generator
+
+New task branch `codex/airlock-28-native-fbd-generator` from `codex/airlock-multidoor-adjacent-qa`; PR #25 unchanged. Full status: [ISSUE28-NATIVE-FBD-STATUS-2026-10-20.md](ISSUE28-NATIVE-FBD-STATUS-2026-10-20.md).
+
+Implemented two-door/seven-door stateful primitive graph, before-opening reservations and deterministic arbitration, fresh request/cancellation/expiry, 10s continuous post-close hold, 30s overtime, separate latched fault/emergency and proposed manual recovery. Actual two-door vendor `.owle` serializer uses newly GUI-captured OR/NOT/RS/RTRIG plus verified AND/TON. RS Input0=R, Input1=S. No ST. Fixed missing request DI in lock-gate sizing: seven-door minimum 16 DI/8 DO, zero BUSY; reserve requires expansion.
+
+**NATIVE_GUI_NOT_VERIFIED / NEEDS_OWEN_VALIDATION.** Candidate OWLE opened in real HOME-PC Owen Logic; revision 1 simulator ran and I1 0→1 was observed. Revised native layout opened after fixing F1/F2 overlapping Q1/Q2; native Save As preserved every wire endpoint and timer, covered by regression. Editor reports 10 cyclic wires; vendor delay/scan semantics, standalone zero-error compiler report and complete native acceptance remain unconfirmed. Seven-door export refuses the PR100 envelope and needs a genuine PR102/PR103+PRM GUI save. No seven-door native PASS, no working-file or field-safety claim. Original proof SHA256 is unchanged; production PLC/SCUD/physical outputs untouched.
+
+Full offline `bash scripts/codex-check.sh` exit 0, MODEL 8/8; reserved graph 16/16, native serializer 11/11 and CLI export regression pass. Native and physical tests are separate. See `experimental/issue28/native-gui-observations.json` and `two-door-serialization.json` for exact hashes and gates. Historical entries follow.
+
+---
+
 # ТЕКУЩАЯ ТОЧКА 19.10.2026
 
 **Актуальные проверенные сведения:** [CURRENT_CHECKPOINT_2026-10-19.md](CURRENT_CHECKPOINT_2026-10-19.md). Документ объединяет принятые PR #13/#16/#18/#19/#20, фактическую связь ПР100, показания, нативную GUI-копию и оставшиеся аппаратные/native ограничения. Записи ниже — исторический журнал; упоминания черновых PR, отсутствие связи или старые назначения компьютеров могли устареть.

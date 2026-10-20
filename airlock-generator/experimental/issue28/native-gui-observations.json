@@ -1,0 +1,66 @@
+{
+  "schema": "airlock-issue28-native-observations/1",
+  "date": "2026-10-20",
+  "host": "HOME-PC",
+  "owenVersion": "3.3.378.0",
+  "status": "NATIVE_GUI_NOT_VERIFIED",
+  "physicalDeviceWrites": 0,
+  "originalProofHashUnchanged": true,
+  "guiCapture": {
+    "savedByVendorGui": true,
+    "sha256": "13b67febaee0dbf0f1ea8396ea90d5ad912c9825b40fc7a48e29d5e90ba66884",
+    "addedPrimitives": [
+      "OR",
+      "NOT",
+      "RS",
+      "RTRIG"
+    ],
+    "rsPins": {
+      "Input0": "R",
+      "Input1": "S",
+      "Output0": "Q"
+    }
+  },
+  "revision1": {
+    "sha256": "a15646859da5ef62a0ad5c4582124b8b2933017eefaf9b586563d50e4d79d17c",
+    "opened": true,
+    "simulatorOpened": true,
+    "simulatorClockAdvanced": true,
+    "inputI1ZeroToOneObserved": true,
+    "fullSimulatorAcceptance": false,
+    "layoutIssue": "F1/F2 overlapped Q1/Q2; fixed in delivered revision"
+  },
+  "deliveredRevision": {
+    "sha256": "a1ee3c06a22795fb5be23d582e3d745e136a591d2fdddf96527429e00b375737",
+    "opened": true,
+    "simulatorAcceptance": false,
+    "standaloneCompilerZeroErrorsConfirmed": false,
+    "saveAsConfirmed": true,
+    "nativeCyclicConnectionsReported": 10,
+    "nativeCyclicBlocksReported": 0,
+    "simulatorOpened": true
+  },
+  "remaining": [
+    "Resolve native feedback/delay-line scan ordering; reference snapshot semantics are not vendor evidence",
+    "Record native compiler zero-error result for a qualified scan/delay implementation",
+    "Complete all native two-door races, timeout, open/close, timer, reset and emergency scenarios",
+    "Capture actual PR102/PR103+PRM device envelope; implement and qualify seven-door native device map"
+  ],
+  "sevenDoorOwle": "BLOCKED_CANNOT_FIT_PR100_CAPTURE",
+  "evidenceScreenshot": "native-r2-simulator-overview.jpg",
+  "evidenceScreenshotScope": "Owen native FBD and simulator loaded; not a timer/race/zero-error compiler PASS",
+  "guiRoundtrip": {
+    "file": "Airlock_2DOOR_GUI_ROUNDTRIP_UNVERIFIED.owle",
+    "sha256": "fb281472d40eae84da2dee8a1896cd29de5ee6f4e7ae5e2a1da62d2a1fc7c999",
+    "savedViaVendorFileSaveProjectAs": true,
+    "elements": 134,
+    "wires": 194,
+    "elementAndPortUuidsPreserved": true,
+    "everyWireEndpointPairPreserved": true,
+    "timerPresetsPreserved": true,
+    "nativeWireDiscriminators": {
+      "1": 194
+    },
+    "note": "GUI clears comments on regenerated physical IO wrappers; no native delay-line template acquired. Full compile/simulator acceptance remains unverified."
+  }
+}
