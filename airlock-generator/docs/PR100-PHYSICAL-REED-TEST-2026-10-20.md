@@ -57,14 +57,19 @@ not universal and may differ by lock type and electrical wiring.
   fail-safe release in the field.**
 - Q2 — DPDT relay controlling the red/green door lamp; in the
   operator's old circuit, Q2 ON selects RED.
-- Q3 — BUSY contact to Bolid S2000-2, inhibiting access through
-  the CNC entry on the old test configuration.
-- Q4 — overtime buzzer, intended to activate after an open door
-  exceeds 30 seconds. The observed Q4=1 in both open-door snapshots
-  **does not establish the timeout**. Operator action preceded
-  readout by an unspecified interval. Verify threshold separately
-  using a controlled elapsed-time experiment; no such timing proof
-  was performed.
+- Earlier **operator description** assigned Q3=BUSY and Q4=buzzer.
+  **A later inspection of the uploaded old OWLE found the opposite**:
+  Q3 native comment is "Зуммер", Q4 native comment is "BUSY".
+  The preserved original operator account must not be mistaken for
+  a verified wiring map. The saved diagram routes identical signals
+  to Q2 and Q4, and a separate two-TON open-door path to Q3.
+  These are **source-file** facts, not proof that the flashed PR100
+  program and its physical terminal connections are identical.
+- The observed Q3=1 after both open-door actions does **not**
+  establish the 30-second timeout: physical movement preceded readout
+  by an unmeasured interval. Native TON fields encode
+  ImpulseTime=3, TimeScale=0; the exact time unit is still unverified.
+  See docs/PR100-CNC-D-OLD-OWLE-STRUCTURAL-AUDIT-2026-10-20.md.
 - DI3 jumper 1 means APS normal under the old circuit's
   normally-closed break-to-alarm convention. It **does not**
   validate a real fire system, reliable APS fault handling,
@@ -86,7 +91,7 @@ by the diagnostic.
 **Scope PASS:** standalone RS-485 Modbus polling, repeatable two
 dry-contact transitions and restoration of reported PLC Q states.
 
-**Still NOT PASSED:** 30-second Q4 response timing; actual S2000-2
+**Still NOT PASSED:** 30-second buzzer timing (Q3 per archived OWLE; physical output assignment unverified); actual S2000-2
 BUSY behavior; lamp wiring; either lock release type; hardware
 APS/fire-fail-safe release; pressure or ventilation; all multiroom
 wiring; full native generated .owle save/compile/simulation; loading
