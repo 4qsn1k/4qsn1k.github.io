@@ -31,7 +31,7 @@ const expectedBlocked={
 };
 const sort=x=>Array.from(x).sort();
 assert.equal(candidate.schema,"airlock-cad-candidate/1");
-assert.equal(candidate.status,"TWO_ROUTES_SCUD_ENTRY_ONLY_TIMED_10S_TRIGGER_UNCONFIRMED");
+assert.equal(candidate.status,"TWO_ROUTES_10S_POST_CLOSE_HOLD_CONFIRMED_HARDWARE_PENDING");
 const scudDoor="D_CNC_1257";
 const secondaryDoors=expectedDoors.map(x=>x[0]).filter(d=>d!==scudDoor);
 assert.equal(candidate.accessControlTopology.cardReaderDoorId,scudDoor);
@@ -41,14 +41,21 @@ assert.equal(candidate.accessControlTopology.reverseDirectionExitPolicy,null);
 assert.equal(candidate.accessControlTopology.bolidBusyContactMapping,"UNVERIFIED_PHYSICAL");
 assert.equal(candidate.accessControlTopology.noReadersOnOtherDoors,true);
 assert.deepEqual(candidate.accessControlTopology.otherDoorIds,secondaryDoors);
-assert.deepEqual(candidate.timedBlockingRequirement.doorIds,secondaryDoors);
+assert.deepEqual(candidate.timedBlockingRequirement.doorIds,expectedDoors.map(x=>x[0]));
 assert.equal(candidate.timedBlockingRequirement.holdSeconds,10);
 assert.equal(candidate.timedBlockingRequirement.prohibitedCurrentInterpretation,"mutual_immediate_release");
-assert.equal(candidate.timedBlockingRequirement.timerStartsOn,null);
-assert.equal(candidate.timedBlockingRequirement.doorHeldOpenBehavior,null);
-assert.equal(candidate.timedBlockingRequirement.timerResetOnRepeatedOpening,null);
-assert.equal(candidate.timedBlockingRequirement.scopeBetweenAdjacentZones,null);
-assert.equal(candidate.timedBlockingRequirement.requiresOperatorClarification,true);
+assert.equal(candidate.timedBlockingRequirement.timerStartsOn,
+ "AFTER_ALL_DOORS_OF_EACH_INCIDENT_GROUP_CONFIRMED_CLOSED");
+assert.equal(candidate.timedBlockingRequirement.doorHeldOpenBehavior,
+ "BLOCK_OTHER_DOORS_OF_INCIDENT_GROUP_WHILE_OPEN");
+assert.equal(candidate.timedBlockingRequirement.timerResetOnRepeatedOpening,
+ "RESET_AND_RESTART_FULL_TEN_SECONDS_AFTER_RE_CLOSE");
+assert.equal(candidate.timedBlockingRequirement.scopeBetweenAdjacentZones,
+ "ONLY_INCIDENT_GROUPS_OR_SHARED_DOOR_REQUESTS");
+assert.equal(candidate.timedBlockingRequirement.requiresOperatorClarification,false);
+assert.equal(candidate.timedBlockingRequirement.appliesToCncDoorWithinFirstZone,true);
+assert.equal(candidate.timedBlockingRequirement.independentVentilationCommand,false);
+assert.equal(candidate.timedBlockingRequirement.heldGroupLogicMode,"TIMED_HOLD_NOT_VENTILATION");
 assert.equal(candidate.physicalDoors.filter(d=>d.readerRequired).length,1);
 assert.equal(candidate.physicalDoors.filter(d=>d.busyContactToBolid).length,1);
 for(const door of candidate.physicalDoors){
@@ -56,13 +63,15 @@ for(const door of candidate.physicalDoors){
  assert.equal(door.accessControl,isEntry?"BOLID_S2000_2_ENTRY_ONLY":"LOCAL_AIRLOCK_NO_SCUD_READER");
  assert.equal(door.readerRequired,isEntry);
  assert.equal(door.busyContactToBolid,isEntry);
- assert.equal(door.timedBlockHoldSec,isEntry?null:10);
- assert.equal(door.timedBlockTrigger,null);
+ assert.equal(door.timedBlockHoldSec,10);
+ assert.equal(door.timedBlockTrigger,"CLOSED_DOOR_EVENT_IN_INCIDENT_GROUP");
 }
 for(const zone of candidate.interlockZones){
- assert.equal(zone.timingMode,null,"never turn example mutual simulation into physical site mode");
+ assert.equal(zone.timingMode,"timed-hold");
  assert.equal(zone.timedBlockHoldSec,10);
- assert.equal(zone.timedBlockStartEvent,null);
+ assert.equal(zone.timedBlockStartEvent,"ALL_ZONE_DOORS_CLOSED_STABLE");
+ assert.equal(zone.timedBlockRepeatOpenPolicy,"RESTART_AFTER_RE_CLOSE");
+ assert.equal(zone.purgeSeconds,null,"no ventilation/purge process configured");
 }
 assert.equal(candidate.outputSafety,"NOT_FOR_NATIVE_OWLE_GENERATION_OR_PLC");
 assert.deepEqual(candidate.confirmedRoutes,expectedRoutes);
@@ -77,7 +86,8 @@ assert.deepEqual(candidate.physicalDoors.map(d=>[d.id,d.a,d.b]),expectedDoors);
 assert(candidate.physicalDoors.every(d=>d.reedInput===null&&d.hardwareTerminal===null&&d.lockType===null));
 assert.equal(new Set(candidate.physicalDoors.map(d=>d.id)).size,7);
 assert.equal(candidate.interlockZones.length,6);
-assert(candidate.interlockZones.every(z=>z.timingMode===null&&z.purgeSeconds===null&&z.doorOpenAlarmSeconds===null));
+assert(candidate.interlockZones.every(z=>z.timingMode==="timed-hold"&&
+ z.purgeSeconds===null&&z.doorOpenAlarmSeconds===null));
 assert.deepEqual(candidate.confirmedRules[0].inhibitDoors,expectedBlocked.D_CNC_1257);
 assert.equal(candidate.topologyPolicy,"INCIDENT_ROOM_ONLY_NO_TRANSITIVE_CASCADE");
 assert.equal(candidate.unresolvedTopology.allAdditionalDoorsVerifiedAbsent,false);
@@ -109,28 +119,88 @@ const [fbd,roomTest,interzone,wiring]=vm.runInContext(
  "[AirlockFbdGenerator,AirlockStTestbench,AirlockInterzoneTestbench,AirlockProjectWiring]",ctx);
 assert.throws(()=>fbd.build(candidate),/rooms\[\] and doors\[\]/);
 
-// A temporary 1-PLC, mutual-only LOGIC FIXTURE for topology testing.
-// This is *not* the configured site behavior, timing or I/O resource plan.
+// A TEST-ONLY model using the existing timed "purge" state machine
+// as a ten-second POST-CLOSE HOLD, with ventilation explicitly independent.
+// This is NOT authorization for a ventilation action or physical relay output.
 const model={
  rooms:[...candidate.physicalSpaces.map(s=>({
-  id:s.id,interlockMode:"mutual"})),{id:"CNC",interlockMode:"none"}],
+  id:s.id,interlockMode:"purge",purgeSec:10,
+  ventilationControlMode:"independent"})),{id:"CNC",interlockMode:"none"}],
  doors:candidate.physicalDoors.map(d=>({id:d.id,a:d.a,b:d.b})),
  rules:[],exemptions:[],fireMode:"all-electrical-interlocks-off",
  defaultOpenDoorAlarmSec:30
 };
+let cases=0;
 for(const [open,expected] of Object.entries(expectedBlocked)){
  const t=interzone.create(model,roomTest,wiring);
- t.step({},3200);
- const state=t.step({Closed:{[open]:false}},100);
+ let state=t.step({},11000);
+ for(const id of expectedDoorIds)
+  assert.equal(state.blocked[id],false,"initial 10s restart must complete "+id);
+ // The incident rooms are occupied; only their OTHER doors inhibit.
+ state=t.step({Closed:{[open]:false}},100);
  assert.equal(state.blocked[open],false,"open physical door cannot inhibit itself "+open);
  assert.equal(state.traffic[open].logicalGreenPermit,false,"opened door GREEN denied "+open);
  assert.deepEqual(sort(Object.entries(state.blocked).filter(([,yes])=>yes).map(([d])=>d)),
-  sort(expected),"nonlocal/incomplete block for "+open);
+  sort(expected),"nonlocal/incomplete open-door block for "+open);
  for(const other of expectedDoorIds.filter(d=>d!==open&&!expected.includes(d)))
   assert.equal(state.blocked[other],false,"transitive block forbidden "+open+"→"+other);
- const restored=t.step({Closed:{[open]:true}},100);
+ state=t.step({},20000);
+ assert.deepEqual(sort(Object.entries(state.blocked).filter(([,yes])=>yes).map(([d])=>d)),
+  sort(expected),"open indefinitely: never remove interlocks "+open);
+ // All affected incident-room doors are closed again. Their OWN timers
+ // must hold every incident door (including the previously open door).
+ state=t.step({Closed:{[open]:true}},100);
+ assert.deepEqual(sort(Object.entries(state.blocked).filter(([,yes])=>yes).map(([d])=>d)),
+  sort([open,...expected]),"post-close hold should include all incident doors "+open);
+ for(const room of candidate.interlockZones.filter(z=>z.doorIds.includes(open)))
+  assert.equal(state.rooms[room.roomId].state,30,"incident room starts post-close hold "+room.roomId);
+ state=t.step({},9000);
+ assert.deepEqual(sort(Object.entries(state.blocked).filter(([,yes])=>yes).map(([d])=>d)),
+  sort([open,...expected]),"must hold nine seconds "+open);
+ state=t.step({},700);
+ assert.deepEqual(sort(Object.entries(state.blocked).filter(([,yes])=>yes).map(([d])=>d)),
+  sort([open,...expected]),"must hold through 9.7 seconds "+open);
+ state=t.step({},600);
  for(const id of expectedDoorIds)
-  assert.equal(restored.blocked[id],false,"not restored "+open+"→"+id);
+  assert.equal(state.blocked[id],false,"must release after >10s following closure "+open+"→"+id);
+ for(const door of expectedDoorIds)
+  assert.equal(state.traffic[door].logicalGreenPermit,true,"green after full delay "+open+"→"+door);
+ assert.equal(state.alarm,false,"closed reed cannot indicate overtime");
+ cases++;
+}
+assert.equal(cases,7);
+// A door reopened DURING the ten-second hold resets the timer fully.
+{
+ const t=interzone.create(model,roomTest,wiring);
+ const id="D_1257_1256";
+ t.step({},11000);
+ t.step({Closed:{[id]:false}},100);
+ t.step({Closed:{[id]:true}},100);
+ let s=t.step({},6500);
+ assert.equal(s.blocked.D_CNC_1257,true);
+ s=t.step({Closed:{[id]:false}},100);
+ assert.equal(s.blocked.D_1256_1254,true);
+ s=t.step({},11000);
+ assert.equal(s.blocked.D_1256_1254,true,"holding a door open never expires hold");
+ s=t.step({Closed:{[id]:true}},100);
+ assert.equal(s.blocked.D_CNC_1257,true);
+ s=t.step({},9500);
+ assert.equal(s.blocked.D_CNC_1257,true,"no premature release after reopen");
+ s=t.step({},900);
+ assert.equal(s.blocked.D_CNC_1257,false,"new full 10s complete");
+ assert.equal(s.blocked.D_1256_1254,false);
+ assert.equal(s.blocked.D_1255_1253,false,"nonincident zone never blocked");
+}
+// Fire input removes only software interlock requests and DENIES green:
+// it is NOT a physical demonstration of fail-safe emergency unlock.
+{
+ const t=interzone.create(model,roomTest,wiring);
+ t.step({},11000);
+ const s=t.step({FireNormal:false},100);
+ for(const id of expectedDoorIds){
+  assert.equal(s.blocked[id],false,id+" software release in fire state");
+  assert.equal(s.traffic[id].logicalGreenPermit,false,id+" no green in fire state");
+ }
 }
 
 // Typed FBD intermediate plan: six room FBs and seven physical reeds.
@@ -148,6 +218,14 @@ assert.equal(plan.blocks.length,6);
 assert.equal(plan.doors.length,7);
 assert.equal(plan.nodes.filter(n=>n.physicalReed).length,7);
 assert.equal(plan.native.status,"NEEDS_NATIVE_GUI");
+for(const block of plan.blocks){
+ assert.equal(block.mode,"purge","offline timing state machine used for timed hold");
+ assert.equal(block.ventilationControlMode,"independent");
+ assert(block.st.includes("PurgeTimer(I := (State = 30) AND AllClosed AND FireNormal AND NOT FaultLatch, T := T#10s);"),
+  "the post-close timed hold must use 10 seconds");
+ assert.equal(block.st.includes("O_VentilationRequest"),false,
+  "ten-second lockout does not operate ventilation");
+}
 assert.equal(plan.verification.physical,"NOT_TESTED");
 for(const d of expectedDoors){
  const entry=plan.doors.find(x=>x.doorId===d[0]);
@@ -156,4 +234,4 @@ for(const d of expectedDoors){
  assert.equal(plan.nodes.find(n=>n.kind==="OR"&&n.doorId===d[0]).inputs.length,consumers);
 }
 fbd.validate(plan);
-console.log("CAD_TWO_PATHS_1257_1252_PASS 6_ROOMS 7_SHARED_PHYSICAL_DOORS 7_OPEN_CASES EXCLUDED_1274 NO_NATIVE_OR_PLC_EXPORT");
+console.log("CAD_10S_POST_CLOSE_HOLD_PASS 6_ROOMS 7_DOORS 7_OPEN_CLOSE_CASES REOPEN_RESET SCUD_ENTRY_ONLY NO_NATIVE_OR_PLC_EXPORT");
