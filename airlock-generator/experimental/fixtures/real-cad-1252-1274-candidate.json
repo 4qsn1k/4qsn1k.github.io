@@ -1,0 +1,359 @@
+{
+  "schema": "airlock-cad-candidate/1",
+  "id": "CLEANROOM_1252_1257_CNC_D",
+  "label": "CAD 1252–1257: confirmed two CNC→1252 paths, first airlock 1257",
+  "status": "TWO_ROUTES_10S_POST_CLOSE_HOLD_CONFIRMED_HARDWARE_PENDING",
+  "source": "User-supplied CAD crop and explicit user sequence 2026-10-20: 1257–1256–1254–1252 and 1257–1255–1253–1252; operator 2026-10-20: SCUD only CNC to 1257, other doors timed 10s block instead of mutual",
+  "outputSafety": "NOT_FOR_NATIVE_OWLE_GENERATION_OR_PLC",
+  "physicalSpaces": [
+    {
+      "id": "R1252",
+      "number": "1252",
+      "purpose": "AIR LOCK",
+      "classText": "B",
+      "pressurePa": 50,
+      "topologyStatus": "USER_CONFIRMED_PATH"
+    },
+    {
+      "id": "R1253",
+      "number": "1253",
+      "purpose": "CHANGE ROOM",
+      "classText": "C-B",
+      "pressurePa": 37.5,
+      "topologyStatus": "USER_CONFIRMED_PATH"
+    },
+    {
+      "id": "R1254",
+      "number": "1254",
+      "purpose": "CHANGE OUT",
+      "classText": "C-B",
+      "pressurePa": 37.5,
+      "topologyStatus": "USER_CONFIRMED_PATH"
+    },
+    {
+      "id": "R1255",
+      "number": "1255",
+      "purpose": "CHANGE ROOM",
+      "classText": "B-C",
+      "pressurePa": 25,
+      "topologyStatus": "USER_CONFIRMED_PATH"
+    },
+    {
+      "id": "R1256",
+      "number": "1256",
+      "purpose": "CHANGE OUT",
+      "classText": "D-C",
+      "pressurePa": 25,
+      "topologyStatus": "USER_CONFIRMED_PATH"
+    },
+    {
+      "id": "R1257",
+      "number": "1257",
+      "purpose": "CHANGE ROOM",
+      "classText": "D",
+      "pressurePa": 12.5,
+      "topologyStatus": "USER_CONFIRMED_PATH"
+    }
+  ],
+  "externalSpaces": [
+    {
+      "id": "CNC",
+      "purpose": "Uncontrolled CNC-side origin",
+      "pressurePa": null,
+      "controlledAsAirlock": false
+    }
+  ],
+  "excludedSpaces": [
+    {
+      "id": "R1274",
+      "number": "1274",
+      "purpose": "PARTS STORAGE",
+      "classText": "CNC",
+      "pressurePa": null,
+      "reason": "Operator explicitly excluded 1274 from airlock system"
+    }
+  ],
+  "confirmedRoutes": [
+    [
+      "CNC",
+      "1257",
+      "1256",
+      "1254",
+      "1252"
+    ],
+    [
+      "CNC",
+      "1257",
+      "1255",
+      "1253",
+      "1252"
+    ]
+  ],
+  "physicalDoors": [
+    {
+      "id": "D_CNC_1257",
+      "a": "CNC",
+      "b": "R1257",
+      "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
+      "reedInput": null,
+      "hardwareTerminal": null,
+      "lockType": null,
+      "accessControl": "BOLID_S2000_2_ENTRY_ONLY",
+      "readerRequired": true,
+      "busyContactToBolid": true,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": "CLOSED_DOOR_EVENT_IN_INCIDENT_GROUP"
+    },
+    {
+      "id": "D_1257_1256",
+      "a": "R1257",
+      "b": "R1256",
+      "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
+      "reedInput": null,
+      "hardwareTerminal": null,
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": "CLOSED_DOOR_EVENT_IN_INCIDENT_GROUP"
+    },
+    {
+      "id": "D_1256_1254",
+      "a": "R1256",
+      "b": "R1254",
+      "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
+      "reedInput": null,
+      "hardwareTerminal": null,
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": "CLOSED_DOOR_EVENT_IN_INCIDENT_GROUP"
+    },
+    {
+      "id": "D_1254_1252",
+      "a": "R1254",
+      "b": "R1252",
+      "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
+      "reedInput": null,
+      "hardwareTerminal": null,
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": "CLOSED_DOOR_EVENT_IN_INCIDENT_GROUP"
+    },
+    {
+      "id": "D_1257_1255",
+      "a": "R1257",
+      "b": "R1255",
+      "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
+      "reedInput": null,
+      "hardwareTerminal": null,
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": "CLOSED_DOOR_EVENT_IN_INCIDENT_GROUP"
+    },
+    {
+      "id": "D_1255_1253",
+      "a": "R1255",
+      "b": "R1253",
+      "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
+      "reedInput": null,
+      "hardwareTerminal": null,
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": "CLOSED_DOOR_EVENT_IN_INCIDENT_GROUP"
+    },
+    {
+      "id": "D_1253_1252",
+      "a": "R1253",
+      "b": "R1252",
+      "source": "OPERATOR_CONFIRMED_BY_TWO_PATHS",
+      "reedInput": null,
+      "hardwareTerminal": null,
+      "lockType": null,
+      "accessControl": "LOCAL_AIRLOCK_NO_SCUD_READER",
+      "readerRequired": false,
+      "busyContactToBolid": false,
+      "timedBlockHoldSec": 10,
+      "timedBlockTrigger": "CLOSED_DOOR_EVENT_IN_INCIDENT_GROUP"
+    }
+  ],
+  "interlockZones": [
+    {
+      "id": "Z_R1252",
+      "roomId": "R1252",
+      "source": "INCIDENT_DOORS_FROM_OPERATOR_ROUTES",
+      "doorIds": [
+        "D_1254_1252",
+        "D_1253_1252"
+      ],
+      "timingMode": "timed-hold",
+      "purgeSeconds": null,
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": "ALL_ZONE_DOORS_CLOSED_STABLE",
+      "timedBlockRepeatOpenPolicy": "RESTART_AFTER_RE_CLOSE"
+    },
+    {
+      "id": "Z_R1253",
+      "roomId": "R1253",
+      "source": "INCIDENT_DOORS_FROM_OPERATOR_ROUTES",
+      "doorIds": [
+        "D_1255_1253",
+        "D_1253_1252"
+      ],
+      "timingMode": "timed-hold",
+      "purgeSeconds": null,
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": "ALL_ZONE_DOORS_CLOSED_STABLE",
+      "timedBlockRepeatOpenPolicy": "RESTART_AFTER_RE_CLOSE"
+    },
+    {
+      "id": "Z_R1254",
+      "roomId": "R1254",
+      "source": "INCIDENT_DOORS_FROM_OPERATOR_ROUTES",
+      "doorIds": [
+        "D_1256_1254",
+        "D_1254_1252"
+      ],
+      "timingMode": "timed-hold",
+      "purgeSeconds": null,
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": "ALL_ZONE_DOORS_CLOSED_STABLE",
+      "timedBlockRepeatOpenPolicy": "RESTART_AFTER_RE_CLOSE"
+    },
+    {
+      "id": "Z_R1255",
+      "roomId": "R1255",
+      "source": "INCIDENT_DOORS_FROM_OPERATOR_ROUTES",
+      "doorIds": [
+        "D_1257_1255",
+        "D_1255_1253"
+      ],
+      "timingMode": "timed-hold",
+      "purgeSeconds": null,
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": "ALL_ZONE_DOORS_CLOSED_STABLE",
+      "timedBlockRepeatOpenPolicy": "RESTART_AFTER_RE_CLOSE"
+    },
+    {
+      "id": "Z_R1256",
+      "roomId": "R1256",
+      "source": "INCIDENT_DOORS_FROM_OPERATOR_ROUTES",
+      "doorIds": [
+        "D_1257_1256",
+        "D_1256_1254"
+      ],
+      "timingMode": "timed-hold",
+      "purgeSeconds": null,
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": "ALL_ZONE_DOORS_CLOSED_STABLE",
+      "timedBlockRepeatOpenPolicy": "RESTART_AFTER_RE_CLOSE"
+    },
+    {
+      "id": "Z_R1257",
+      "roomId": "R1257",
+      "source": "INCIDENT_DOORS_FROM_OPERATOR_ROUTES",
+      "doorIds": [
+        "D_CNC_1257",
+        "D_1257_1256",
+        "D_1257_1255"
+      ],
+      "timingMode": "timed-hold",
+      "purgeSeconds": null,
+      "doorOpenAlarmSeconds": null,
+      "timedBlockHoldSec": 10,
+      "timedBlockStartEvent": "ALL_ZONE_DOORS_CLOSED_STABLE",
+      "timedBlockRepeatOpenPolicy": "RESTART_AFTER_RE_CLOSE"
+    }
+  ],
+  "confirmedRules": [
+    {
+      "triggerOpen": "D_CNC_1257",
+      "inhibitDoors": [
+        "D_1257_1256",
+        "D_1257_1255"
+      ],
+      "source": "OPERATOR_EXPLICIT_2026_10_20"
+    }
+  ],
+  "topologyPolicy": "INCIDENT_ROOM_ONLY_NO_TRANSITIVE_CASCADE",
+  "unresolvedTopology": {
+    "unshownAdditionalDoorways": [],
+    "allAdditionalDoorsVerifiedAbsent": false,
+    "note": "These seven route edges are confirmed. Other external doors outside the shown routes have not been checked."
+  },
+  "controllerAssignments": [],
+  "inputAssignments": [],
+  "outputAssignments": [],
+  "designInvariants": {
+    "onePhysicalReedPerDoor": true,
+    "doorMayConnectTwoRooms": true,
+    "doorMayParticipateInTwoInterlockZones": true,
+    "openingOnlyBlocksOtherDoorsInIncidentZones": true,
+    "closingResetsPurgeTimerAccordingToConfiguredZonePolicy": true,
+    "softwareInterlocksDoNotControlEmergencyEgressWithoutSeparateSafetyReview": true
+  },
+  "blockedUntilConfirmed": [
+    "Determine reverse CNC passage and emergency egress independently of Bolid access control",
+    "Verify whether any further controlled doorways exist outside the two specified routes",
+    "Specify independent ventilation purge (if any) and open-door alarm timing; 10-second interlock hold is confirmed",
+    "Confirm lock controller output polarity, S2000-2 BUSY, APS and independently approved egress",
+    "Confirm controller DI/DO resources and quality of inter-controller communication",
+    "Independently save, compile and simulate native vendor .owle before physical commissioning"
+  ],
+  "accessControlTopology": {
+    "cardReaderDoorId": "D_CNC_1257",
+    "cardReaderController": "BOLID_S2000_2",
+    "authorizationDirection": "CNC_TO_R1257",
+    "bolidBusyContactMapping": "UNVERIFIED_PHYSICAL",
+    "reverseDirectionExitPolicy": null,
+    "noReadersOnOtherDoors": true,
+    "otherDoorIds": [
+      "D_1257_1256",
+      "D_1256_1254",
+      "D_1254_1252",
+      "D_1257_1255",
+      "D_1255_1253",
+      "D_1253_1252"
+    ]
+  },
+  "timedBlockingRequirement": {
+    "doorIds": [
+      "D_CNC_1257",
+      "D_1257_1256",
+      "D_1256_1254",
+      "D_1254_1252",
+      "D_1257_1255",
+      "D_1255_1253",
+      "D_1253_1252"
+    ],
+    "holdSeconds": 10,
+    "prohibitedCurrentInterpretation": "mutual_immediate_release",
+    "timerStartsOn": "AFTER_ALL_DOORS_OF_EACH_INCIDENT_GROUP_CONFIRMED_CLOSED",
+    "doorHeldOpenBehavior": "BLOCK_OTHER_DOORS_OF_INCIDENT_GROUP_WHILE_OPEN",
+    "timerResetOnRepeatedOpening": "RESET_AND_RESTART_FULL_TEN_SECONDS_AFTER_RE_CLOSE",
+    "scopeBetweenAdjacentZones": "ONLY_INCIDENT_GROUPS_OR_SHARED_DOOR_REQUESTS",
+    "requiresOperatorClarification": false,
+    "source": "OPERATOR_EXPLICIT_2026_10_20",
+    "appliesToCncDoorWithinFirstZone": true,
+    "independentVentilationCommand": false,
+    "confirmationSource": "OPERATOR_EXPLICIT_2026_10_20_POST_CLOSE",
+    "heldGroupLogicMode": "TIMED_HOLD_NOT_VENTILATION"
+  }
+}

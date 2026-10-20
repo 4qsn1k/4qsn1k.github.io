@@ -1,0 +1,139 @@
+{
+  "name": "Issue #14 TEST ONLY five adjacent rooms with external exits; logical three-PLC layout",
+  "defaultOpenDoorAlarmSec": 30,
+  "rooms": [
+    {
+      "id": "A",
+      "interlockMode": "purge",
+      "purgeSec": 30
+    },
+    {
+      "id": "B",
+      "interlockMode": "mutual"
+    },
+    {
+      "id": "C",
+      "interlockMode": "purge",
+      "purgeSec": 30
+    },
+    {
+      "id": "D",
+      "interlockMode": "mutual"
+    },
+    {
+      "id": "E",
+      "interlockMode": "purge",
+      "purgeSec": 30
+    },
+    {
+      "id": "X",
+      "interlockMode": "none"
+    }
+  ],
+  "doors": [
+    {
+      "id": "AB",
+      "a": "A",
+      "b": "B"
+    },
+    {
+      "id": "BC",
+      "a": "B",
+      "b": "C"
+    },
+    {
+      "id": "CD",
+      "a": "C",
+      "b": "D"
+    },
+    {
+      "id": "DE",
+      "a": "D",
+      "b": "E"
+    },
+    {
+      "id": "AX",
+      "a": "A",
+      "b": "X"
+    },
+    {
+      "id": "BX",
+      "a": "B",
+      "b": "X"
+    },
+    {
+      "id": "CX",
+      "a": "C",
+      "b": "X"
+    },
+    {
+      "id": "DX",
+      "a": "D",
+      "b": "X"
+    },
+    {
+      "id": "EX",
+      "a": "E",
+      "b": "X"
+    }
+  ],
+  "rules": [],
+  "exemptions": [],
+  "fireMode": "all-electrical-interlocks-off",
+  "hardware": {
+    "primary": {
+      "family": "PR103",
+      "baseDi": 8,
+      "baseDo": 10,
+      "modules": []
+    },
+    "secondary": [
+      {
+        "family": "PR103",
+        "baseDi": 8,
+        "baseDo": 10,
+        "modules": []
+      },
+      {
+        "family": "PR103",
+        "baseDi": 8,
+        "baseDo": 10,
+        "modules": []
+      }
+    ],
+    "link": "ethernet-modbus-tcp",
+    "signaling": "door",
+    "placements": {
+      "roomOwners": {
+        "A": "PLC1",
+        "B": "PLC1",
+        "C": "PLC2",
+        "D": "PLC2",
+        "E": "PLC3"
+      },
+      "doorInputOwners": {
+        "AB": "PLC1",
+        "BC": "PLC1",
+        "CD": "PLC2",
+        "DE": "PLC3",
+        "AX": "PLC1",
+        "BX": "PLC1",
+        "CX": "PLC2",
+        "DX": "PLC2",
+        "EX": "PLC3"
+      },
+      "doorOutputOwners": {
+        "AB": "PLC1",
+        "BC": "PLC1",
+        "CD": "PLC2",
+        "DE": "PLC3",
+        "AX": "PLC1",
+        "BX": "PLC1",
+        "CX": "PLC2",
+        "DX": "PLC2",
+        "EX": "PLC3"
+      },
+      "alarmOwner": "PLC1"
+    }
+  }
+}
