@@ -68,6 +68,8 @@ with tempfile.TemporaryDirectory(prefix='airlock-reserved-') as tmp:
  test('actual vendor Save As preserves all native wiring and timers',vendor_roundtrip)
  def determinism():
   other=tmp/'again.owle';m['generate'](plan,capture,other);assert out.read_bytes()==other.read_bytes()
+  with zipfile.ZipFile(out) as archive:
+   info=archive.getinfo('Project');assert info.create_system==3 and info.external_attr==0o600 << 16
   committed=ROOT/'experimental/issue28/Airlock_2DOOR_FBD_TEST_ONLY_UNVERIFIED.owle'
   assert out.read_bytes()==committed.read_bytes(),'COMMITTED_OWLE_DRIFT'
  test('deterministic bytes, source untouched, status remains unverified',determinism)

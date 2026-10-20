@@ -34,6 +34,10 @@ node scripts/export-reserved-fbd.js seven ../work/seven-new
 bash scripts/codex-check.sh
 ```
 
+ZIP timestamps, creator platform and file attributes are pinned so Windows and
+Linux exports retain the same bytes. Windows CI also runs serialization and CLI
+regression; those jobs do not have Owen Logic GUI.
+
 Both destination directories must be new. `PYTHON` optionally chooses the Python
 executable. `seven` deliberately reports a native-export blocker and exits 2;
 no `.owle` exists in that directory. Output file names containing `UNVERIFIED`

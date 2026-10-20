@@ -68,6 +68,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+      - name: Native FBD serialization on Windows (no Owen GUI)
+        if: runner.os == 'Windows'
+        run: python -B tests/native-reserved-owle.py
+      - name: Native FBD CLI on Windows (no equipment)
+        if: runner.os == 'Windows'
+        run: node tests/reserved-fbd-export.test.js
       - name: Install pinned test-only RTU library
         run: python -m pip install -r tests/requirements-rtu.txt
       - name: Real pymodbus CRC and fake serial recovery

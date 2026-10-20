@@ -222,6 +222,8 @@ def generate(plan, capture, destination):
     with out.open('xb') as stream:
         with zipfile.ZipFile(stream,'w',compression=zipfile.ZIP_DEFLATED) as z:
             info = zipfile.ZipInfo('Project',(2026,10,20,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED
+            # Pin platform metadata: the same CLI must emit identical bytes on Windows.
+            info.create_system = 3;info.external_attr = 0o600 << 16
             z.writestr(info,json.dumps(final,ensure_ascii=False,separators=(',',':')).encode())
     return {'status':'NATIVE_GUI_NOT_VERIFIED','noStructuredText':True,'device':'PR100ED1',
             'captureSha256':CAPTURE_SHA,'planSha256':digest,'owleSha256':hashlib.sha256(out.read_bytes()).hexdigest(),
