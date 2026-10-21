@@ -70,7 +70,9 @@ END_IF;
 
 IF (FaultLatch OR RecoveryLatch) AND FreshReset AND
    FIRE_NORMAL AND DATA_HEALTHY AND AllClosed AND
-   NOT REQUEST_A AND NOT REQUEST_B THEN
+   NOT REQUEST_A AND NOT REQUEST_B AND
+   ((State = 0) OR (State = 10) OR (State = 20) OR
+    (State = 21) OR (State = 30) OR (State = 31) OR (State = 90)) THEN
   FaultLatch := FALSE;
   RecoveryLatch := FALSE;
   RecoveryAccepted := TRUE;

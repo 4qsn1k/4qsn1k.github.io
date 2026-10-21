@@ -9,7 +9,7 @@
     "test:fbd": "node tests/reserved-fbd-export.test.js && node tests/native-airlock-fbd.test.js && node tests/fbd-generator.test.js && node tests/fbd-evaluator.test.js && node tests/fbd-export.test.js && node tests/fbd-multidoor-adjacency.test.js && node tests/cad-candidate-1252-1274.test.js && node tests/native-timed-fbd-plan.test.js && node tests/native-timed-fbd-export.test.js && node tests/hardware-auto-selector.test.js && node tests/fbd-interactive-viewer.test.js && node tests/s2000-2-busy-planner.test.js && node tests/s2000-2-hardware-bridge.test.js && node tests/s2000-2-access-methods.test.js && node tests/s2000-2-lock-command-gate.test.js && node tests/normal-access-event-qa.test.js",
     "test:native-schema": "node tests/native-owle-schema.test.js && python -B tests/native-owle-envelope.py && node tests/native-owle-rich-evidence.test.js",
     "test:native-gui": "python -B tests/native-gui-two-door-proof.py experimental/native-gui/Airlock_NATIVE_2DOOR_INTERLOCK_10S_GUI_20261020.owle && python -B tests/native-gui-two-door-rejects.py && python -B tests/native-reserved-owle.py",
-    "test:st-source": "python -B tests/st-airlock2-source.py && python -B tests/st-native-stage0-evidence.py"
+    "test:st-source": "python -B tests/st-airlock2-source.py && python -B tests/st-native-stage0-evidence.py && python -B tests/st-airlock7-source.py && python -B tests/st-native-review-package.py && node tests/st-reference-vectors.test.js"
   },
   "engines": {
     "node": ">=22"

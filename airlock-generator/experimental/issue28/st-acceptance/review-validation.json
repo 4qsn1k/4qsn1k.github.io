@@ -1,0 +1,73 @@
+{
+  "schema": "airlock-st-review-validation/1",
+  "date": "2026-10-21",
+  "branch": "codex/airlock-28-st-native-acceptance",
+  "baselineCommit": "b0b1280",
+  "qualification": "HOST_ST_SUBSET_ONLY_NOT_OWEN",
+  "status": "ST_NATIVE_NOT_VERIFIED",
+  "runtime": {
+    "node": "24.19.0",
+    "python": "3.12.14"
+  },
+  "baseline": {
+    "command": "python -B tests/st-airlock2-source.py",
+    "passed": 27,
+    "exitCode": 0
+  },
+  "regressionBeforeFix": {
+    "command": "python -B tests/st-airlock2-source.py",
+    "exitCode": 1,
+    "expectedFailure": "test_24_corrupt_state_and_fresh_reset_cannot_hide_same_scan_fault"
+  },
+  "validation": {
+    "command": "bash scripts/codex-check.sh",
+    "exitCode": 0,
+    "twoDoorSourceUnitTests": 28,
+    "sevenDoorSourceUnitTests": 15,
+    "nativeContainerStructureUnitTests": 5,
+    "stage0Structure": "PASS_NOT_NATIVE_EXECUTION",
+    "frozenOracle": "11_TRACE_STEPS_128_SEVEN_MASKS_6_GROUPS_PASS",
+    "all128RequestMasks": "EXACT_GRANT_SETS_MATCH_FROZEN_ORACLE_AND_INDEPENDENT_ARBITER",
+    "occupiedMaskCases": 1792,
+    "adverseSevenDoorScans": 1500,
+    "modelScenarios": {
+      "passed": 8,
+      "failed": 0
+    },
+    "knownWindowsIssue31": "NOT_REPRODUCED_IN_LINUX_TEST_UNCHANGED",
+    "postFullCheck": {
+      "command": "python -B tests/st-native-review-package.py",
+      "exitCode": 0,
+      "passed": 5,
+      "reason": "Compare decompressed ZIP contents across Python/zlib versions; pinned LF for hash-covered Windows inputs"
+    }
+  },
+  "files": {
+    "FB_Airlock2.st": "c0f831eb74330ec95cb2230af159013c085e5763f6e1dc2c447aa78126e11a5c",
+    "FB_Airlock7.st": "11e105be1221c6cc1b79677aaa96b0386bac7e0b96fd9e3e13c867d5b95a9527",
+    "FB_RequestMask7_SIMULATOR_ONLY.st": "24b7c4028645f300042f78f18a0b5e266eb22ed77ad4a53537d76e6cba8788bf",
+    "Airlock_2DOOR_ST_REVIEW_UNVERIFIED_20261021.owle": "beb136dcb1f67cfacb3f8969feca5b2e368b4c45f1dd3ea00a7e3ea537003b39",
+    "Airlock_2DOOR_ST_VENDOR_UNVERIFIED_20261021.owle": "22fb493dad414d2e32e36987464293c25d98bb9ea87bddb5dbec3516ee59e77a",
+    "seven-door-package.json": "1c3315e47072886ca2f0147ef9db970cfd20d18f8de372d3f175a81a0eb187ce",
+    "seven-door-native-128.csv": "9f80a722b3e60659348476b260da26fd7d8b5a828b90fd95a3eaf6128a1c9dea"
+  },
+  "logs": {
+    "qa-reports/issue28-st-review-b0b1280/full-linux.log": "a2927957c301ac3cebaa7bec56d88de9be58e0ed4a04ce9fffdf6cab481b50ef",
+    "qa-reports/issue28-st-review-b0b1280/baseline-two-door.log": "3f669eb464c0577b76202add51b24ebfe494f8c59891a99f905b5f5495814072",
+    "qa-reports/issue28-st-review-b0b1280/regression-before-fix.log": "2aa86e162c4c083d240a3ca027c976640fdc108a7009aa31e5149b98d3482ac1"
+  },
+  "originalEvidenceUnchanged": true,
+  "nativeCompileVerified": false,
+  "nativeSimulationVerified": false,
+  "nativePr102PrmEnvelope": null,
+  "blockers": [
+    "No HOME-PC/Windows GUI tool available in this session",
+    "Missing vendor-saved PR102+PRM envelope; no fabricated extension metadata",
+    "Windows ST00/A compile and simulator matrix still pending"
+  ],
+  "physicalAccessPerformed": false,
+  "pushPerformed": false,
+  "newPrCreated": false,
+  "mergePerformed": false,
+  "deployPerformed": false
+}

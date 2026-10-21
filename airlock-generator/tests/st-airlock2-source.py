@@ -279,6 +279,20 @@ class ActualSourceTests(unittest.TestCase):
         self.assertTrue(value["FAULT"])
         self.assertEqual(value["STATE_CODE"], 90)
 
+    def test_24_corrupt_state_and_fresh_reset_cannot_hide_same_scan_fault(self):
+        rig = Rig()
+        rig.ready()
+        rig.runtime.set_local_for_fault_injection("State", 1234)
+        value = rig.step({"RESET": True})
+        self.assertTrue(value["FAULT"], "new invalid-state fault must dominate simultaneous Reset")
+        self.assert_off(value)
+        self.assertEqual(value["STATE_CODE"], 90)
+        rig.step({"RESET": False})
+        self.assertFalse(rig.step({"RESET": True})["FAULT"])
+        rig.step({"RESET": False}, 9999)
+        self.assertFalse(rig.last["READY"])
+        self.assertTrue(rig.step({}, 1)["READY"])
+
     def test_21_deterministic_adverse_scan_sequences_preserve_invariants(self):
         rig = Rig()
         scan = rig.runtime.scan

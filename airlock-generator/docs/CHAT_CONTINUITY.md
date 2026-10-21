@@ -1,3 +1,21 @@
+# 21.10.2026 — Issue #28: продолжение от b0b1280
+
+Рабочая ветка `codex/airlock-28-st-native-acceptance`. Техническая ревизия:
+[ISSUE28-ST-REVIEW-2026-10-21.md](ISSUE28-ST-REVIEW-2026-10-21.md).
+Исправлена гонка invalid State + свежий Reset, добавлен воспроизводимый
+двухдверный OWLE source-only кандидат с сохранением vendor-структуры и
+11 проводов. Подготовлены семидверный ST из CAD-топологии, шесть независимых
+10 s групп, 30 s тревоги, ранние резервы, 128 масок/1792 занятых комбинации,
+Windows-протокол и симуляторный ST-стимулятор. Это подготовка по новому заданию,
+не native PASS; **ST_NATIVE_NOT_VERIFIED / NEEDS_OWEN_VALIDATION**.
+Нет доступного HOME-PC GUI tool и подтверждённого PR102+PRM envelope.
+Оригинальные OWLE/fbst и frozen oracle сохранены. Только airlock-generator;
+без доступа к приборам, push, нового PR, merge или deploy.
+Хеши и фактическая валидация: `experimental/issue28/st-acceptance/review-validation.json`.
+Исторические записи ниже сохранены.
+
+---
+
 # 21.10.2026 — Issue #28: ST acceptance branch
 
 Current work: `codex/airlock-28-st-native-acceptance`, baseline `6dc6481`.
