@@ -8,6 +8,8 @@ node_modules/
 *.log
 # Local experimental native project files must never be committed implicitly
 *.owle
+# Deliberate, hash-pinned vendor GUI evidence for Issue #28 (never generated).
+!experimental/issue28/st-acceptance/Airlock_ST00_TimerProbe_VENDOR_20261021.owle
 
 # Local telemetry profiles, backups and temporary atomic writes
 .local/

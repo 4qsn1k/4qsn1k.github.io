@@ -1,0 +1,12 @@
+{
+  "schema": "airlock-st-immutable-inputs/1",
+  "baselineCommit": "6dc6481",
+  "note": "Hashes of prior vendor evidence and frozen JS oracle; no ST native acceptance implied.",
+  "files": {
+    "experimental/issue28/Airlock_2DOOR_FBD_TEST_ONLY_UNVERIFIED.owle": "a1ee3c06a22795fb5be23d582e3d745e136a591d2fdddf96527429e00b375737",
+    "experimental/issue28/Airlock_2DOOR_GUI_ROUNDTRIP_UNVERIFIED.owle": "fb281472d40eae84da2dee8a1896cd29de5ee6f4e7ae5e2a1da62d2a1fc7c999",
+    "experimental/issue28/ST_REFERENCE_VECTORS_OFFLINE.json": "47abf35e5dd482530127306175cd0a47642a2d7849f5a400c0bf0584535a8173",
+    "experimental/native-gui/Airlock_NATIVE_2DOOR_INTERLOCK_10S_GUI_20261020.owle": "040de07825dee60d0ae726073e9c2fc2a0931f27e4ae170b1e4d714eaea8b0ef",
+    "experimental/native-gui/Issue28_PR100_PRIMITIVES_GUI_CAPTURE.owle": "13b67febaee0dbf0f1ea8396ea90d5ad912c9825b40fc7a48e29d5e90ba66884"
+  }
+}

@@ -14,6 +14,14 @@ try {
     'AGENTS.md',
     'docs/CODEX-ST-START-HERE-2026-10-20.md',
     'docs/CODEX-ST-NATIVE-QA-MATRIX.csv',
+    'experimental/issue28/ST_REFERENCE_VECTORS_OFFLINE.json',
+    'experimental/issue28/st-acceptance/FB_ST_TimerProbe.st',
+    'experimental/issue28/st-acceptance/FB_Airlock2.st',
+    'docs/ISSUE28-ST-NATIVE-ACCEPTANCE.md',
+    'tests/st-airlock2-source.py',
+    'tests/st_source_runtime.py',
+    'tests/st-native-stage0-evidence.py',
+    'experimental/issue28/st-acceptance/Airlock_ST00_TimerProbe_VENDOR_20261021.owle',
     'native-airlock-fbd.js',
     'tests/native-airlock-fbd.test.js',
     'experimental/fixtures/real-cad-1252-1274-candidate.json',
@@ -39,6 +47,11 @@ try {
   if ($free -lt 3GB) { Write-Warning 'LOW_DISK_SPACE: do not generate large test artifacts.' }
   Write-Output 'HARDWARE_ACCESS=NOT_PERFORMED'
   if ($RunTests) {
+    & python -B tests/st-airlock2-source.py
+    if ($LASTEXITCODE -ne 0) { throw 'ST_SOURCE_QA_FAILED' }
+    Write-Output 'ST_SOURCE_QA=HOST_ST_SUBSET_ONLY_NOT_OWEN'
+    & python -B tests/st-native-stage0-evidence.py
+    if ($LASTEXITCODE -ne 0) { throw 'ST_VENDOR_SAVE_STRUCTURE_QA_FAILED' }
     & node tests/native-airlock-fbd.test.js
     if ($LASTEXITCODE -ne 0) { throw 'REFERENCE_QA_FAILED' }
     & node tests/reserved-fbd-export.test.js

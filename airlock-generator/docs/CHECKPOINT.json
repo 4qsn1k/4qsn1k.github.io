@@ -1,6 +1,6 @@
 {
   "schema": "airlock-generator-continuity/1",
-  "savedDate": "2026-10-20",
+  "savedDate": "2026-10-21",
   "project": "Airlock Generator — граф помещений, блокировки дверей, красно-зелёные светофоры, HMI, Owen Logic ST",
   "repository": "4qsn1k/4qsn1k.github.io",
   "projectPath": "airlock-generator",
@@ -904,5 +904,28 @@
     "nextAction": "Resolve native feedback/delay-line ordering and complete two-door compiler/simulator acceptance; obtain a genuine PR102/PR103+PRM GUI device envelope before seven-door native serialization.",
     "nativeSaveAsPassed": true,
     "nativeGuiRoundtrip": "experimental/issue28/Airlock_2DOOR_GUI_ROUNDTRIP_UNVERIFIED.owle"
+  },
+  "issue28ST": {
+    "branch": "codex/airlock-28-st-native-acceptance",
+    "baselineCommit": "6dc6481",
+    "status": "ST_NATIVE_NOT_VERIFIED",
+    "report": "docs/ISSUE28-ST-STATUS-2026-10-21.md",
+    "nativeProcedure": "docs/ISSUE28-ST-NATIVE-ACCEPTANCE.md",
+    "stage0": "VENDOR_SAVE_CONFIRMED_NATIVE_TIMER_QA_PENDING",
+    "stageA": "SOURCE_READY_NATIVE_NOT_VERIFIED",
+    "stageB": "NOT_STARTED_REQUIRES_TWO_DOOR_NATIVE_PASS",
+    "source": "experimental/issue28/st-acceptance/FB_Airlock2.st",
+    "sourceSha256": "06acc6e6cc81b480c0fab9f057c3a6165cb47bc4983a9690a77009a4e4710c0c",
+    "hostSourceTests": "27/27 HOST_ST_SUBSET_ONLY_NOT_OWEN",
+    "fullOfflineCheckExit": 0,
+    "nativeCompileVerified": false,
+    "nativeSimulationVerified": false,
+    "originalEvidenceUnchanged": true,
+    "physicalDeviceWrites": 0,
+    "pushPerformed": false,
+    "mergePerformed": false,
+    "nextAction": "Finish isolated native ST00 Save As/Compile/Simulator, then validate FB_Airlock2 before starting seven doors.",
+    "stage0VendorSave": "experimental/issue28/st-acceptance/Airlock_ST00_TimerProbe_VENDOR_20261021.owle",
+    "stage0VendorSaveSha256": "59e5bea9403c1a6e26724ece4e3791e6505aabb6cd7132c6bb8e9f8b73162336"
   }
 }
