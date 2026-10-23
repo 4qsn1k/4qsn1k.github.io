@@ -99,6 +99,7 @@
     L.control.layers(layers,null,{position:'topright',collapsed:false}).addTo(map);
     overlay=L.layerGroup().addTo(map);
     map.on('click',ev=>{
+      if(window.TerrainGridEditor?.getState()?.active)return;
       const i=clickNumber%2===0?1:2;clickNumber++;
       $('lat'+i).value=ev.latlng.lat.toFixed(6);$('lon'+i).value=ev.latlng.lng.toFixed(6);recalc();
     });

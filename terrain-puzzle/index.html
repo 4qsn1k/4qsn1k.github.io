@@ -19,8 +19,46 @@
 #qualityWarning{margin-top:8px;color:#f9c790;font-size:12px;line-height:1.55}
 #paperStatus{font-size:12px;color:#99dcca;line-height:1.5;margin-top:8px}
 @media(max-width:920px){#preview3d{min-height:470px}.maparea .toolbar{padding:10px;gap:7px}}
+
+.gridEditorToolbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;background:#101e2a;border:1px solid #375162;padding:5px 8px;border-radius:10px}
+.gridEditorToolbar .gridCompactLabel{font-size:12px;margin:0;color:#adc4d6}
+.gridEditorToolbar select{width:80px;min-height:32px;padding:4px 6px;font-size:12px}
+.gridEditorToolbar .ghost{min-height:32px;font-size:12px;white-space:nowrap}
+.gridEditorToolbar .activeGrid{background:#4dd5b2;color:#08291e;border-color:#65dfc1;font-weight:750}
+.grid-corner{width:23px;height:23px;border:3px solid #0d2934;background:#fcffff;border-radius:6px;box-shadow:0 0 0 2px #53eac6;cursor:nwse-resize}
+.grid-move{width:31px;height:31px;background:#51dbbe;color:#10342e;border-radius:50%;border:2px solid white;box-shadow:0 0 12px #0009;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:bold;cursor:move;user-select:none}
+#map{position:relative}
+#gridHelp{font-size:12px;padding:7px 14px;background:#152736;color:#95e5d2;border-top:1px solid #345367}
+@media(max-width:650px){.gridEditorToolbar{width:100%;justify-content:space-between}.gridEditorToolbar .ghost{font-size:11px}#gridHelp{font-size:11px}}
+
+.gridNudge{display:flex;align-items:center;gap:3px}
+.gridNudge button{width:29px;height:32px;border-radius:7px;border:1px solid #486477;background:#253b4b;color:#cceee8;font-size:17px;cursor:pointer}
+.gridNudge .gridVertical{display:flex;flex-direction:column;gap:2px}
+.gridNudge .gridVertical button{width:27px;height:16px;line-height:10px;padding:0;font-size:13px}
+.gridNudge button:hover{background:#368c79;color:white}
+.gridEditorToolbar #nudgeStep{width:76px;min-height:32px;font-size:11px}
+.optionAvailability{font-size:12px;line-height:1.55;color:#b8d8ce;background:#192b35;border:1px solid #375563;border-radius:10px;padding:11px;margin:12px 0 4px}
+.optionAvailability strong{color:#77e7c2}
+.optionAvailability .blockReason{color:#f4ba9a}
+select option:disabled{color:#8895a5;background:#202a35}
+
+/* Desktop layout: preserve a visible, stable map while the lengthy settings scroll independently. */
+@media(min-width:921px){
+ main{height:calc(100dvh - 76px);min-height:580px;overflow:hidden;align-items:stretch}
+ aside{height:100%;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+ .maparea{height:100%;min-height:0;overflow:hidden}
+ #map{min-height:280px}
+ #preview3d{min-height:280px}
+}
+@media(max-width:920px){
+ main{height:auto;min-height:0;overflow:visible}
+ aside{height:auto;max-height:none;overflow:visible}
+ .maparea{height:75dvh;min-height:530px;overflow:hidden}
+ #map{min-height:260px}
+ #preview3d{min-height:260px}
+}
 </style></head><body>
-<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v1.2</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
+<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v1.4</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
 <main><aside>
 <section><div class="heading">01 · Выбор местности</div><p class="hint" style="margin-bottom:12px">Нажми на карте два раза: сначала первый угол, затем противоположный. Либо введи координаты вручную (широта, долгота).</p>
 <div class="topPaste"><div class="panelTitle">Вставить координаты или ссылку</div>
@@ -31,9 +69,12 @@
 <div class="tools"><button class="ghost" id="clear">Выбрать A → B на карте</button><button class="ghost" id="fit">Показать участок</button></div></section>
 <section><div class="heading">02 · Размер и масштаб</div>
 <div class="field"><label for="scale">Масштаб по горизонтали</label><select id="scale"><option value="5000">1:5 000 · высокая детализация</option><option value="10000">1:10 000</option><option value="15000">1:15 000</option><option selected value="25000">1:25 000</option><option value="50000">1:50 000</option><option value="100000">1:100 000</option><option value="200000">1:200 000</option></select></div>
+<div class="field"><label for="printerLimit">Рабочая зона печати одной детали</label>
+<select id="printerLimit"><option value="150">150 × 150 мм</option><option value="180">180 × 180 мм</option><option selected value="200">200 × 200 мм · стандарт</option><option value="210">210 × 210 мм</option></select></div>
 <button class="ghost" id="autoScale" style="width:100%;margin:-1px 0 11px">Автоматический масштаб под выбранную точность</button><div class="cols2"><div class="field"><label for="tile_size">Макс. сторона STL</label><select id="tile_size"><option value="100">100 мм</option><option value="150">150 мм</option><option value="180">180 мм</option><option selected value="200">200 мм</option><option value="210">210 мм</option></select></div><div class="field"><label for="exaggeration">Высоты ×</label><select id="exaggeration"><option value="0.5">0,5</option><option value="1">1 · натуральные</option><option selected value="2">2</option><option value="3">3</option><option value="5">5</option><option value="8">8</option></select></div></div>
 <div class="cols2"><div class="field"><label for="mesh_step">Шаг сетки STL</label><select id="mesh_step"><option value="0.5">0,5 мм · сверхточно</option><option value="0.75">0,75 мм</option><option value="1">1 мм · плавно</option><option value="1.5">1,5 мм</option><option value="2">2 мм · детально</option><option value="3">3 мм</option><option selected value="4">4 мм · оптимально</option><option value="6">6 мм</option><option value="8">8 мм · быстро</option></select></div><div class="field"><label for="source">Высоты</label><select id="source"><option selected value="terrarium">Реальные · Mapzen</option><option value="demo">Демо · синтетика</option></select></div></div>
-<div class="field"><label for="smooth_m">Сглаживание поверхности DEM</label><select id="smooth_m"><option selected value="0">Без сглаживания — исходные высоты</option><option value="15">15 м — лёгкое</option><option value="30">30 м — умеренное</option><option value="60">60 м — сильное</option><option value="100">100 м — очень сильное</option></select><p class="hint">Убирает резкие изломы. Сглаживание уменьшает мелкие детали. Совпадает на границах плиток.</p></div><div class="check"><input type="checkbox" checked id="puzzle"><label for="puzzle">Соединения как у пазла</label></div><p id="qualityWarning">Плотность сетки увеличивает объём STL. Исходные высоты имеют ограниченное разрешение.</p><p class="hint">Выступы учтены в предельных 200 мм. Плоское основание 3 мм, номинальный зазор соединения 0,2 мм.</p></section>
+<div class="field"><label for="smooth_m">Сглаживание поверхности DEM</label><select id="smooth_m"><option selected value="0">Без сглаживания — исходные высоты</option><option value="15">15 м — лёгкое</option><option value="30">30 м — умеренное</option><option value="60">60 м — сильное</option><option value="100">100 м — очень сильное</option></select><p class="hint">Убирает резкие изломы. Сглаживание уменьшает мелкие детали. Совпадает на границах плиток.</p></div><div class="check"><input type="checkbox" checked id="puzzle"><label for="puzzle">Соединения как у пазла</label></div><div id="optionAvailability" class="optionAvailability" aria-live="polite">Проверяю допустимые размеры и детализацию.</div>
+<p id="qualityWarning">Плотность сетки увеличивает объём STL. Исходные высоты имеют ограниченное разрешение.</p><p class="hint">Выступы учтены в предельных 200 мм. Плоское основание 3 мм, номинальный зазор соединения 0,2 мм.</p></section>
 <section><div class="heading">03 · Экспорт</div><button id="go" class="button">Сформировать STL + схему сборки ↓</button><p class="hint">Все расчёты выполняются прямо в браузере. Скачается ZIP: отдельные STL, схема с номерами и параметры.</p></section>
 <section><div class="heading">04 · Бумажные топографические карты</div>
 <p class="hint">Рельефная раскраска по высотам, теням и горизонталям. Точные границы совпадают с макетом.</p>
@@ -45,10 +86,28 @@
 <div class="tools"><button class="ghost" id="exportTileMaps">Карты по плиткам PNG ↓</button><button class="ghost" id="exportPaperMap">Карта для печати PDF ↓</button></div>
 <div id="paperStatus">Бумажный масштаб задаётся отдельно от STL. Печать PDF: 100%.</div></section></aside>
 <div class="maparea"><div class="toolbar">
+<div class="gridEditorToolbar" role="group" aria-label="Редактор сетки">
+<button id="gridToggle" class="ghost activeGrid" type="button">✥ Сетка на карте</button>
+<label for="gridCount" class="gridCompactLabel">Плитки</label>
+<select id="gridCount" aria-label="Количество плиток по стороне">
+<option value="1">1×1</option><option value="2" selected>2×2</option><option value="3">3×3</option><option value="4">4×4</option><option value="5">5×5</option><option value="6">6×6</option>
+</select>
+<button id="gridFitScreen" type="button" class="ghost">Вписать в экран</button>
+<div class="gridNudge" title="Точная подстройка положения сетки">
+ <button type="button" data-nudge="west" title="На запад">←</button>
+ <div class="gridVertical">
+ <button type="button" data-nudge="north" title="На север">↑</button>
+ <button type="button" data-nudge="south" title="На юг">↓</button>
+ </div>
+ <button type="button" data-nudge="east" title="На восток">→</button>
+</div>
+<select id="nudgeStep" aria-label="Шаг перемещения" title="Расстояние перемещения сетки"><option value="10">10 м</option><option selected value="50">50 м</option><option value="100">100 м</option><option value="500">500 м</option></select>
+
+</div>
 <div class="tabs"><button id="tabMap" class="active">Карта</button><button id="tab3d">Объёмный макет</button></div>
 <div class="mapSwitch"><button data-layer="osm" class="active">Схема</button><button data-layer="topo">Топо</button><button data-layer="sat">Спутник</button></div>
 <button class="ghost" id="refreshPreview" style="display:none">Обновить 3D</button>
-</div><div id="map"></div>
+</div><div id="map"></div><div id="gridHelp" aria-live="polite">Тяни угол — изменить размер · центр или сетку — переместить · каждый квадрат помещается на стол принтера</div>
 <div id="preview3d"><canvas id="previewCanvas"></canvas><div class="overlayTip">Перетащи для поворота · Колесо мыши — масштаб</div></div><div class="stats"><div class="stat"><small>Выбранный участок</small><b id="selected">—</b></div><div class="stat"><small>Фактический охват</small><b id="coverage">—</b></div><div class="stat"><small>Плитки</small><b id="tiles">—</b></div><div class="stat"><small>Размер макета</small><b id="dimensions">—</b></div></div><div id="status" class="status">При экспорте загружаются настоящие высоты. Расчёт STL выполняется на устройстве; Python и внешний сервер не нужны.</div></div></main>
 <script src="./vendor/leaflet.js"></script>
-<script src="./terrain.js"></script><script src="./preview.js"></script><script src="./maps-print.js"></script><script src="./enhancements.js"></script></body></html>
+<script src="./terrain.js"></script><script src="./preview.js"></script><script src="./maps-print.js"></script><script src="./enhancements.js"></script><script src="./grid-editor.js"></script><script src="./availability.js"></script></body></html>

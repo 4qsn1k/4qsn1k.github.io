@@ -43,7 +43,7 @@ function paste(index){
   const source=$('coordinatePaste').value;
   const [lat,lon]=parsed(source);
   $('lat'+index).value=lat.toFixed(6);$('lon'+index).value=lon.toFixed(6);
-  resetTerrain();api.recalc();api.say('Точка '+(index===1?'A':'B')+' установлена: '+lat.toFixed(6)+', '+lon.toFixed(6),'good');
+  resetTerrain();api.recalc();window.TerrainGridEditor?.syncFromCurrentInputs();api.say('Точка '+(index===1?'A':'B')+' установлена: '+lat.toFixed(6)+', '+lon.toFixed(6),'good');
  }catch(e){api.say(e.message,'error');}
 }
 $('pasteA').onclick=()=>paste(1);$('pasteB').onclick=()=>paste(2);
@@ -53,7 +53,7 @@ $('pasteBoth').onclick=()=>{
   if(items.length!==2)throw Error('Для двух точек вставь: широта, долгота; широта, долгота.');
   const a=parsed(items[0]),b=parsed(items[1]);
   [a,b].forEach((t,i)=>{$('lat'+(i+1)).value=t[0];$('lon'+(i+1)).value=t[1];});
-  resetTerrain();api.recalc();api.say('Обе координаты установлены.','good');
+  resetTerrain();api.recalc();window.TerrainGridEditor?.syncFromCurrentInputs();api.say('Обе координаты установлены.','good');
  }catch(e){api.say(e.message,'error');}
 };
 $('autoScale').onclick=()=>{
@@ -71,6 +71,7 @@ $('autoScale').onclick=()=>{
  $('scale').value=final;
  const result=api.recalc();
  if(!result){quality();return;}
+ window.TerrainGridEditor?.syncFromCurrentInputs();
  api.say('Масштаб 1:'+final.toLocaleString('ru-RU')+' — не более '+target+'×'+target+' деталей при выбранной точности.','good');
  resetTerrain();
 };
@@ -81,7 +82,7 @@ function quality(){
  const mb=tri*50/1048576;
  $('qualityWarning').textContent='Оценка: '+(tri/1e6).toFixed(2)+' млн треугольников; '+Math.round(mb)+' МБ несжатых STL. '+'Шаг сетки '+p.s.mesh_step+' мм; данные высот не становятся точнее при сгущении сетки.';
 }
-function resetTerrain(){lastDEM=null;lastRange=null;lastKey='';quality();}
+function resetTerrain(){lastDEM=null;lastRange=null;lastKey='';quality();window.dispatchEvent(new Event('terrain:invalidate'));}
 ['lat1','lat2','lon1','lon2','scale','tile_size','exaggeration','mesh_step','smooth_m','puzzle'].forEach(id=>
  $(id).addEventListener('change',()=>{resetTerrain();}));
 function mapLayer(code){
@@ -110,6 +111,7 @@ async function elevations(){
  if(lastDEM&&key===lastKey)return{p,dem:lastDEM,range:lastRange};
  const dem=await api.demData(p),range=api.getRange(p,dem);
  lastDEM=dem;lastRange=range;lastKey=key;
+ window.dispatchEvent(new CustomEvent('terrain:elevations',{detail:{range}}));
  return {p,dem,range};
 }
 async function loadPreview(){
