@@ -94,7 +94,7 @@
     });
     activeLayer.on('tileload',()=>{loaded++;});
     layers['Спутник Esri'].on('tileerror',()=>say('Не загрузились изображения карты. Проверь доступ к OpenStreetMap/Esri. Координаты можно ввести вручную.','error'));
-    L.control.layers(layers,null,{position:'topright'}).addTo(map);
+    L.control.layers(layers,null,{position:'topright',collapsed:false}).addTo(map);
     overlay=L.layerGroup().addTo(map);
     map.on('click',ev=>{
       const i=clickNumber%2===0?1:2;clickNumber++;
