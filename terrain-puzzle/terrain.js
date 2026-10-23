@@ -12,7 +12,7 @@
     const v = id => +$(id).value;
     return { lat1:v('lat1'), lon1:v('lon1'), lat2:v('lat2'), lon2:v('lon2'),
       scale:v('scale'), tile_size:v('tile_size'), exaggeration:v('exaggeration'),
-      mesh_step:v('mesh_step'), puzzle:$('puzzle').checked, source:$('source').value, max_tiles:36 };
+      mesh_step:v('mesh_step'), smooth_m:v('smooth_m'), puzzle:$('puzzle').checked, source:$('source').value, max_tiles:196 };
   }
   function pointXY(lat, lon, centerLat, centerLon) {
     return [(lon-centerLon)*RD*EARTH*Math.cos(centerLat*RD), (lat-centerLat)*RD*EARTH];
@@ -26,7 +26,7 @@
     if(Math.max(Math.abs(s.lat1),Math.abs(s.lat2))>85 || Math.max(Math.abs(s.lon1),Math.abs(s.lon2))>180)
       throw Error('Широта должна быть ±85°, долгота ±180°.');
     if(Math.abs(s.lat1-s.lat2)>5 || Math.abs(s.lon1-s.lon2)>5)throw Error('Участок ограничен 5° по широте и долготе.');
-    if(s.scale<1000||s.scale>2000000||s.tile_size<70||s.tile_size>210||s.mesh_step<2||s.mesh_step>10||s.exaggeration<.25||s.exaggeration>10)
+    if(s.scale<1000||s.scale>2000000||s.tile_size<70||s.tile_size>210||s.mesh_step<.35||s.mesh_step>10||s.exaggeration<.25||s.exaggeration>10||s.smooth_m<0||s.smooth_m>150)
       throw Error('Проверь масштаб, максимальный размер детали, шаг сетки и высоты.');
     const lat0=(s.lat1+s.lat2)/2,lon0=(s.lon1+s.lon2)/2;
     const p1=pointXY(s.lat1,s.lon1,lat0,lon0), p2=pointXY(s.lat2,s.lon2,lat0,lon0);
@@ -34,7 +34,9 @@
     if(selected<50)throw Error('Между точками должно быть не менее 50 метров.');
     const tab=s.puzzle?8:0,pitch=s.tile_size-2*tab;
     const n=Math.max(1,Math.ceil(selected/(pitch*s.scale/1000)-1e-10));
-    if(n*n>s.max_tiles)throw Error('Нужно '+n+'×'+n+'='+n*n+' плиток. Лимит 36. Увеличь масштаб 1:N или уменьши участок.');
+    if(n*n>s.max_tiles)throw Error('Нужно '+n+'×'+n+'='+n*n+' плиток. Лимит '+s.max_tiles+'. Нажми «Автоматический масштаб» или уменьши участок.');
+    const approxFaces=n*n*(4*Math.ceil(pitch/s.mesh_step)**2 + 4*Math.ceil(pitch/s.mesh_step));
+    if(approxFaces>6000000)throw Error('При этом масштабе получится около '+(approxFaces/1e6).toFixed(1)+' млн треугольников. Увеличь шаг сетки или масштаб. Предел 6 млн.');
     const coverage=n*pitch*s.scale/1000, cx=(p1[0]+p2[0])/2, cy=(p1[1]+p2[1])/2;
     const p={ s, lat0, lon0, cols:n,rows:n,total:n*n,pitch,tab,coverage,selected,
       minx:cx-coverage/2,miny:cy-coverage/2,maxx:cx+coverage/2,maxy:cy+coverage/2 };
@@ -116,6 +118,13 @@
     for(let z=13;z>=5;z--){const [a,b,c,d]=tileBounds(p,z);if((b-a+1)*(d-c+1)<=72)return z;}
     throw Error('Слишком большой участок для загрузки цифровых высот.');
   }
+  function smoothHeight(fn,p) {
+    const m=p.s.smooth_m;
+    if(!(m>0))return fn;
+    const insideX=x=>Math.min(p.maxx,Math.max(p.minx,x));
+    const insideY=y=>Math.min(p.maxy,Math.max(p.miny,y));
+    return (x,y)=>(4*fn(x,y)+fn(insideX(x+m),y)+fn(insideX(x-m),y)+fn(x,insideY(y+m))+fn(x,insideY(y-m)))/8;
+  }
   async function demData(p) {
     if(p.s.source==='demo')return { demo:true,min:0,max:1200,height:(x,y)=>450+520*Math.exp(-(((x-500)/1100)**2)-(((y+1000)/1500)**2))
       +290*Math.exp(-(((x+1700)/2000)**2)-(((y-500)/1700)**2))+75*Math.sin(x/500)*Math.cos(y/450)
@@ -159,7 +168,7 @@
       return (1-fy)*((1-fx)*px(ix,iy)+fx*px(ix+1,iy))
         +fy*((1-fx)*px(ix,iy+1)+fx*px(ix+1,iy+1));
     };
-    return {demo:false,zoom:z,pixelResolution:Math.cos(p.lat0*RD)*2*Math.PI*EARTH/(256*2**z),height:sample};
+    return {demo:false,zoom:z,pixelResolution:Math.cos(p.lat0*RD)*2*Math.PI*EARTH/(256*2**z),height:smoothHeight(sample,p)};
   }
   function getRange(p,dem) {
     let min=Infinity,max=-Infinity;
@@ -332,12 +341,12 @@
     }catch(err){console.error(err);say('Ошибка: '+err.message,'error');}
     finally{btn.disabled=false;btn.textContent='Сформировать STL + схему сборки ↓';}
   }
-  for(const id of ['lat1','lat2','lon1','lon2','scale','tile_size','exaggeration','mesh_step','puzzle','source'])
+  for(const id of ['lat1','lat2','lon1','lon2','scale','tile_size','exaggeration','mesh_step','smooth_m','puzzle','source'])
     $(id).addEventListener('change',schedule);
   for(const id of ['lat1','lat2','lon1','lon2'])$(id).addEventListener('input',schedule);
   $('clear').onclick=()=>{clickNumber=0;say('Нажми на карте точку A, затем противоположный угол B.');};
   $('fit').onclick=()=>{if(map&&currentPlan)map.fitBounds(L.latLngBounds(currentPlan.corners).pad(.12));};
   $('go').onclick=generate;
   initMap();recalc();
-  window.terrainPuzzleDebug={plan:()=>plan(inputs()),makeSTL,zip,demData,getRange};
+  window.terrainPuzzleDebug={plan:()=>plan(inputs()),makeSTL,zip,demData,getRange,pointLL,pointXY,inputs,drawSelection,recalc,say,map:()=>map,overlay:()=>overlay};
 })();
