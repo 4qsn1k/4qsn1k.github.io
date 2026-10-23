@@ -120,7 +120,8 @@ async function loadPreview(){
   const o=await elevations();
   if($('preview3d').style.display==='none')return;
   window.TerrainViewer.render(o.p,o.dem,o.range);
-  api.say('3D-просмотр: '+o.p.total+' плиток, '+(o.p.cols*o.p.pitch).toFixed(0)+'×'+(o.p.cols*o.p.pitch).toFixed(0)+' мм; высота ×'+o.p.s.exaggeration+'.','good');
+  const side=Math.round(o.p.cols*o.p.pitch),height=3+(o.range.max-o.range.min)*1000/o.p.s.scale*o.p.s.exaggeration;
+  api.say('3D-макет: '+side+'×'+side+'×'+height.toFixed(1)+' мм, '+o.p.total+' плиток. '+(height>210?'Высота больше 210 мм — уменьши усиление рельефа.':'Габарит по высоте допустимый.'),height>210?'error':'good');
  }catch(e){api.say('Не удалось построить 3D: '+e.message,'error');}
  finally{loading=false;$('refreshPreview').disabled=false;}
 }
