@@ -96,6 +96,8 @@ function render(p,dem,range){
  }
  lines=upload(lv,Array.from({length:lv.length/9},(_,i)=>i));
  span=Math.max(W,3*(maxHeight+5));midz=Math.min(maxHeight,80)/2;draw();
+ const details=document.querySelector('#preview3d .overlayTip');
+ if(details)details.textContent='Размер '+Math.round(W)+' × '+Math.round(W)+' × '+(maxHeight+3).toFixed(1)+' мм · '+p.cols+'×'+p.cols+' плиток · перетащи для поворота · колесо — масштаб';
  $('preview3d').dataset.shape=p.total;
 }
 let pointer=false,px=0,py=0;
