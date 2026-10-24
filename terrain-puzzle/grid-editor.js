@@ -121,7 +121,7 @@ function bestScale(val){
  const select=$('scale'); const existing=[...select.options].find(o=>Math.abs(+o.value-val)<.000001);
  if(existing){select.value=existing.value;return;}
  for(const option of [...select.options])if(option.dataset.gridGenerated==='yes')option.remove();
- const option=new Option('1:'+val.toLocaleString('ru-RU',{maximumFractionDigits:1})+' · по сетке',String(val));
+ const option=new Option('1:'+Math.round(val).toLocaleString('ru-RU')+' · по сетке',String(val));
  option.dataset.gridGenerated='yes';select.add(option);select.value=option.value;
 }
 function commit(){
@@ -204,8 +204,23 @@ btnView.onclick=()=>{
    if(!active||editing)return;
    if(id==='lat1'||id==='lat2'||id==='lon1'||id==='lon2'){
      const p=api.plan();state.center=L.latLng(p.lat0,p.lon0);state.size=p.selected;
-   } else if(id==='scale'||id==='tile_size'||id==='puzzle'){
-     state.size=state.count*pitch()*api.inputs().scale/1000;
+   } else if(id==='scale'){
+     // Preserve the selected world footprint; change the number of print tiles.
+     const s=api.inputs(),need=Math.max(1,Math.ceil(state.size/(pitch()*s.scale/1000)-1e-8));
+     if(need>6){api.say('Масштаб требует '+need+'×'+need+' деталей. Выбери доступный вариант.','error');return;}
+     try{limits(need);}catch(err){api.say(err.message,'error');return;}
+     state.count=need;elCount.value=String(need);
+     state.size=need*pitch()*s.scale/1000;
+     clearGraphics();
+   } else if(id==='tile_size'||id==='puzzle'){
+     // The geographic selection stays fixed when changing a printable part size.
+     // More/smaller tiles are chosen automatically instead of silently shrinking the region.
+     const setting=api.inputs(),need=Math.max(1,Math.ceil(state.size/(pitch()*setting.scale/1000)-1e-8));
+     if(need>6){api.say('Размер детали требует '+need+'×'+need+' плиток. Выбери доступный размер.','error');return;}
+     try{limits(need);}catch(err){api.say(err.message,'error');return;}
+     state.count=need;elCount.value=String(need);
+     state.size=need*pitch()*setting.scale/1000;
+     clearGraphics();
    }
    try{state.size=clampSize(state.size,state.count);redraw();commit();}
    catch(err){api.say(err.message,'error');}

@@ -57,8 +57,23 @@ select option:disabled{color:#8895a5;background:#202a35}
  #map{min-height:260px}
  #preview3d{min-height:260px}
 }
+
+#viewerToolbar{position:absolute;z-index:3;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 24px);background:#122633e8;border:1px solid #3b6573;border-radius:10px;padding:8px}
+#viewerToolbar button{background:#294253;border:1px solid #3b6172;border-radius:7px;padding:8px 10px;color:#e4fcf7;font-size:12px;cursor:pointer}
+#viewerToolbar button:hover,#viewerToolbar button:focus{background:#317e72}
+#viewerToolbar label{display:flex;align-items:center;gap:6px;font-size:12px;color:#d6eee7;margin:0;padding:3px 5px}
+#viewerToolbar input{width:16px;height:16px;min-height:16px;accent-color:#58d6b6}
+#previewCanvas{touch-action:none}
+@media(max-width:650px){#viewerToolbar button{padding:6px 8px}#viewerToolbar{left:6px;top:6px;max-width:calc(100% - 12px)}}
+
+.helpPanel{position:absolute;right:18px;top:84px;z-index:900;max-height:min(70vh,650px);width:min(460px,calc(100% - 36px));overflow:auto;box-shadow:0 22px 60px #0009;background:#1b3040;border:1px solid #4c777f;color:#e0f0fa;border-radius:14px;padding:16px 20px;line-height:1.5}
+.helpPanel[hidden]{display:none}
+.helpPanel p{font-size:13px;margin:12px 0}.helpPanel b{color:#75e7bf}
+.helpPanelHead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.helpPanelHead button{background:#314c5d;color:white;border:0;border-radius:8px;font-size:22px;cursor:pointer;width:34px;height:34px}
+.maparea{position:relative}
 </style></head><body>
-<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v1.4</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
+<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v1.5</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
 <main><aside>
 <section><div class="heading">01 · Выбор местности</div><p class="hint" style="margin-bottom:12px">Нажми на карте два раза: сначала первый угол, затем противоположный. Либо введи координаты вручную (широта, долгота).</p>
 <div class="topPaste"><div class="panelTitle">Вставить координаты или ссылку</div>
@@ -66,33 +81,35 @@ select option:disabled{color:#8895a5;background:#202a35}
 <div class="controls"><button class="ghost" id="pasteA">В точку A</button><button class="ghost" id="pasteB">В точку B</button><button class="ghost" id="pasteBoth">Обе точки</button></div>
 <p class="hint">Google Maps, Яндекс Карты, OpenStreetMap, широта и долгота. Короткие ссылки могут потребовать раскрытия.</p></div><div class="coordinateSet"><strong>ТОЧКА A</strong><div class="coords"><div><label for="lat1">Широта</label><input id="lat1" value="53.96000" type="number" step="any"></div><div><label for="lon1">Долгота</label><input id="lon1" value="58.30000" type="number" step="any"></div></div></div>
 <div class="coordinateSet"><strong>ТОЧКА B</strong><div class="coords"><div><label for="lat2">Широта</label><input id="lat2" value="53.99000" type="number" step="any"></div><div><label for="lon2">Долгота</label><input id="lon2" value="58.35000" type="number" step="any"></div></div></div>
-<div class="tools"><button class="ghost" id="clear">Выбрать A → B на карте</button><button class="ghost" id="fit">Показать участок</button></div></section>
+<div class="tools"><button class="ghost" id="clear" title="Выключает редактор сетки. Затем выбери два угла участка на карте">Отметить две точки</button><button class="ghost" id="fit" title="Переместить карту к выделенной области">Показать выделение</button></div></section>
 <section><div class="heading">02 · Размер и масштаб</div>
-<div class="field"><label for="scale">Масштаб по горизонтали</label><select id="scale"><option value="5000">1:5 000 · высокая детализация</option><option value="10000">1:10 000</option><option value="15000">1:15 000</option><option selected value="25000">1:25 000</option><option value="50000">1:50 000</option><option value="100000">1:100 000</option><option value="200000">1:200 000</option></select></div>
+<div class="field"><label for="scale">Масштаб по горизонтали · недоступные варианты отключены</label><select id="scale"><option value="5000">1:5 000 · высокая детализация</option><option value="10000">1:10 000</option><option value="15000">1:15 000</option><option selected value="25000">1:25 000</option><option value="50000">1:50 000</option><option value="100000">1:100 000</option><option value="200000">1:200 000</option></select></div>
 <div class="field"><label for="printerLimit">Рабочая зона печати одной детали</label>
 <select id="printerLimit"><option value="150">150 × 150 мм</option><option value="180">180 × 180 мм</option><option selected value="200">200 × 200 мм · стандарт</option><option value="210">210 × 210 мм</option></select></div>
 <button class="ghost" id="autoScale" style="width:100%;margin:-1px 0 11px">Автоматический масштаб под выбранную точность</button><div class="cols2"><div class="field"><label for="tile_size">Макс. сторона STL</label><select id="tile_size"><option value="100">100 мм</option><option value="150">150 мм</option><option value="180">180 мм</option><option selected value="200">200 мм</option><option value="210">210 мм</option></select></div><div class="field"><label for="exaggeration">Высоты ×</label><select id="exaggeration"><option value="0.5">0,5</option><option value="1">1 · натуральные</option><option selected value="2">2</option><option value="3">3</option><option value="5">5</option><option value="8">8</option></select></div></div>
 <div class="cols2"><div class="field"><label for="mesh_step">Шаг сетки STL</label><select id="mesh_step"><option value="0.5">0,5 мм · сверхточно</option><option value="0.75">0,75 мм</option><option value="1">1 мм · плавно</option><option value="1.5">1,5 мм</option><option value="2">2 мм · детально</option><option value="3">3 мм</option><option selected value="4">4 мм · оптимально</option><option value="6">6 мм</option><option value="8">8 мм · быстро</option></select></div><div class="field"><label for="source">Высоты</label><select id="source"><option selected value="terrarium">Реальные · Mapzen</option><option value="demo">Демо · синтетика</option></select></div></div>
-<div class="field"><label for="smooth_m">Сглаживание поверхности DEM</label><select id="smooth_m"><option selected value="0">Без сглаживания — исходные высоты</option><option value="15">15 м — лёгкое</option><option value="30">30 м — умеренное</option><option value="60">60 м — сильное</option><option value="100">100 м — очень сильное</option></select><p class="hint">Убирает резкие изломы. Сглаживание уменьшает мелкие детали. Совпадает на границах плиток.</p></div><div class="check"><input type="checkbox" checked id="puzzle"><label for="puzzle">Соединения как у пазла</label></div><div id="optionAvailability" class="optionAvailability" aria-live="polite">Проверяю допустимые размеры и детализацию.</div>
+<div class="field"><label for="smooth_m">Сглаживание поверхности DEM</label><select id="smooth_m"><option selected value="0">Без сглаживания — исходные высоты</option><option value="15">15 м — лёгкое</option><option value="30">30 м — умеренное</option><option value="60">60 м — сильное</option><option value="100">100 м — очень сильное</option></select><p class="hint">Убирает резкие изломы. Сглаживание уменьшает мелкие детали. Совпадает на границах плиток.</p></div><div class="check"><input type="checkbox" checked id="puzzle"><label for="puzzle">Соединения как у пазла</label></div><div id="scaleEstimate" class="optionAvailability" aria-live="polite">Расчёт допустимых масштабов.</div><div id="optionAvailability" class="optionAvailability" aria-live="polite">Проверяю допустимые размеры и детализацию.</div>
 <p id="qualityWarning">Плотность сетки увеличивает объём STL. Исходные высоты имеют ограниченное разрешение.</p><p class="hint">Выступы учтены в предельных 200 мм. Плоское основание 3 мм, номинальный зазор соединения 0,2 мм.</p></section>
 <section><div class="heading">03 · Экспорт</div><button id="go" class="button">Сформировать STL + схему сборки ↓</button><p class="hint">Все расчёты выполняются прямо в браузере. Скачается ZIP: отдельные STL, схема с номерами и параметры.</p></section>
 <section><div class="heading">04 · Бумажные топографические карты</div>
 <p class="hint">Рельефная раскраска по высотам, теням и горизонталям. Точные границы совпадают с макетом.</p>
 <div class="cols2" style="margin-top:13px">
 <div class="field"><label for="paper_scale">Масштаб карты</label><select id="paper_scale"><option value="5000">1:5 000</option><option value="10000">1:10 000</option><option selected value="25000">1:25 000</option><option value="50000">1:50 000</option><option value="100000">1:100 000</option><option value="200000">1:200 000</option></select></div>
-<div class="field"><label for="paper_format">Лист бумаги</label><select id="paper_format"><option value="A4">А4</option><option value="A3">А3</option></select></div>
+<div class="field"><label for="paper_format">Лист бумаги</label><select id="paper_format"><option value="A4">А4</option><option value="A3">А3</option><option value="A2">А2</option><option value="A1">А1</option><option value="A0">А0 — типография</option></select></div>
 </div>
-<div class="cols2"><div class="field"><label for="paper_dpi">Разрешение</label><select id="paper_dpi"><option value="150">150 DPI</option><option selected value="300">300 DPI</option></select></div><div class="field"><label for="contour_interval">Горизонтали</label><select id="contour_interval"><option value="10">10 м</option><option selected value="20">20 м</option><option value="50">50 м</option><option value="100">100 м</option></select></div></div>
-<div class="tools"><button class="ghost" id="exportTileMaps">Карты по плиткам PNG ↓</button><button class="ghost" id="exportPaperMap">Карта для печати PDF ↓</button></div>
-<div id="paperStatus">Бумажный масштаб задаётся отдельно от STL. Печать PDF: 100%.</div></section></aside>
+<div class="field"><label for="paper_orientation">Расположение бумаги</label><select id="paper_orientation"><option value="auto">Автоматически</option><option value="portrait">Книжная</option><option value="landscape">Альбомная</option></select></div>
+<div class="cols2"><div class="field"><label for="paper_dpi">Разрешение</label><select id="paper_dpi"><option value="150">150 DPI</option><option value="200">200 DPI</option><option selected value="300">300 DPI</option><option value="400">400 DPI</option><option value="600">600 DPI</option></select></div><div class="field"><label for="contour_interval">Горизонтали</label><select id="contour_interval"><option value="10">10 м</option><option selected value="20">20 м</option><option value="50">50 м</option><option value="100">100 м</option></select></div></div>
+<div class="tools"><button class="ghost" id="exportTileMaps" title="PNG-раскраска каждого квадрата 3D-пазла в топографических цветах">Скачать карты для окраски PNG</button><button class="ghost" id="exportPaperMap" title="PDF с реальным масштабом бумаги, постраничной разбивкой и высоким разрешением для типографии">Скачать карту PDF для типографии</button></div>
+<div id="paperEstimate" class="optionAvailability" aria-live="polite">Расчёт разрешения и числа листов появится после выбора параметров.</div>
+<div id="paperStatus">Бумажный масштаб задаётся отдельно от STL. Печать PDF строго 100%. Высотные данные ограничены разрешением DEM.</div></section></aside>
 <div class="maparea"><div class="toolbar">
 <div class="gridEditorToolbar" role="group" aria-label="Редактор сетки">
-<button id="gridToggle" class="ghost activeGrid" type="button">✥ Сетка на карте</button>
+<button id="gridToggle" class="ghost activeGrid" type="button" title="Включить перемещение и изменение размера готовой сетки">✥ Редактор сетки</button>
 <label for="gridCount" class="gridCompactLabel">Плитки</label>
 <select id="gridCount" aria-label="Количество плиток по стороне">
 <option value="1">1×1</option><option value="2" selected>2×2</option><option value="3">3×3</option><option value="4">4×4</option><option value="5">5×5</option><option value="6">6×6</option>
 </select>
-<button id="gridFitScreen" type="button" class="ghost">Вписать в экран</button>
+<button id="gridFitScreen" type="button" class="ghost" title="Растянуть квадратную сетку до размеров видимой карты">Сетка по экрану</button>
 <div class="gridNudge" title="Точная подстройка положения сетки">
  <button type="button" data-nudge="west" title="На запад">←</button>
  <div class="gridVertical">
@@ -104,10 +121,31 @@ select option:disabled{color:#8895a5;background:#202a35}
 <select id="nudgeStep" aria-label="Шаг перемещения" title="Расстояние перемещения сетки"><option value="10">10 м</option><option selected value="50">50 м</option><option value="100">100 м</option><option value="500">500 м</option></select>
 
 </div>
-<div class="tabs"><button id="tabMap" class="active">Карта</button><button id="tab3d">Объёмный макет</button></div>
+<div class="tabs"><button id="tabMap" class="active" title="Карта и редактор квадратной сетки">Карта</button><button id="tab3d" title="3D-просмотр с масштабом, поворотом и перемещением модели">3D-просмотр макета</button></div>
 <div class="mapSwitch"><button data-layer="osm" class="active">Схема</button><button data-layer="topo">Топо</button><button data-layer="sat">Спутник</button></div>
-<button class="ghost" id="refreshPreview" style="display:none">Обновить 3D</button>
+<button id="helpToggle" class="ghost" type="button" title="Описание каждой функции и порядок создания макета">? Как пользоваться</button><button class="ghost" id="refreshPreview" style="display:none">Обновить 3D</button>
 </div><div id="map"></div><div id="gridHelp" aria-live="polite">Тяни угол — изменить размер · центр или сетку — переместить · каждый квадрат помещается на стол принтера</div>
-<div id="preview3d"><canvas id="previewCanvas"></canvas><div class="overlayTip">Перетащи для поворота · Колесо мыши — масштаб</div></div><div class="stats"><div class="stat"><small>Выбранный участок</small><b id="selected">—</b></div><div class="stat"><small>Фактический охват</small><b id="coverage">—</b></div><div class="stat"><small>Плитки</small><b id="tiles">—</b></div><div class="stat"><small>Размер макета</small><b id="dimensions">—</b></div></div><div id="status" class="status">При экспорте загружаются настоящие высоты. Расчёт STL выполняется на устройстве; Python и внешний сервер не нужны.</div></div></main>
+<div id="preview3d"><canvas id="previewCanvas"></canvas>
+<div id="viewerToolbar" role="toolbar" aria-label="Управление 3D-макетом">
+<button type="button" data-view="fit" title="Уместить весь макет в окно">Весь макет</button>
+<button type="button" data-view="iso" title="Показать изометрический вид">Изометрия</button>
+<button type="button" data-view="top" title="Посмотреть строго сверху">Сверху</button>
+<button type="button" data-view="reset" title="Вернуть стандартное положение и масштаб">Сброс</button>
+<button type="button" data-view="plus" title="Приблизить модель">＋</button>
+<button type="button" data-view="minus" title="Отдалить модель">−</button>
+<label title="Показать или скрыть границы деталей"><input type="checkbox" id="viewerBorders" checked> Границы</label>
+<label title="Показать сеточную структуру модели"><input type="checkbox" id="viewerWire"> Каркас</label>
+</div>
+<div class="overlayTip">Вращение: перетащи · в нижней части направление инвертировано · два пальца: масштаб и сдвиг · Shift+мышь: сдвиг</div></div><div class="stats"><div class="stat"><small>Выбранный участок</small><b id="selected">—</b></div><div class="stat"><small>Фактический охват</small><b id="coverage">—</b></div><div class="stat"><small>Плитки</small><b id="tiles">—</b></div><div class="stat"><small>Размер макета</small><b id="dimensions">—</b></div></div><div id="helpPanel" class="helpPanel" hidden>
+ <div class="helpPanelHead"><strong>Как пользоваться генератором</strong><button id="helpClose" type="button" aria-label="Закрыть справку">×</button></div>
+ <p><b>Редактор сетки.</b> Перемещай всю сетку за центр или любое место внутри квадрата. Тяни белые углы для изменения охвата. Стрелки сдвигают сетку точно на 10–500 м.</p>
+ <p><b>Размер детали.</b> Размер одного квадрата для принтера. Ограниченные варианты становятся неактивными. Число плиток и доступные масштабы пересчитываются.</p>
+ <p><b>Масштаб.</b> 1:5000 даёт крупный рельеф, но больше плиток. Недоступные варианты отключены. Рядом написано, сколько деталей потребуется.</p>
+ <p><b>Высоты ×.</b> Вертикальное преувеличение. Для горного рельефа часто подходит ×3–×8. Превышение 210 мм блокируется.</p>
+ <p><b>Шаг сетки STL.</b> 0,5–1 мм — плавнее, файлы больше. Это не повышает точность исходных DEM.</p>
+ <p><b>3D-макет.</b> Перетащи для вращения. Внизу горизонтальное направление инвертировано. Колесо мыши / два пальца — приближение. Shift+мышь / два пальца — сдвиг. Кнопки «Изометрия», «Сверху», «Весь макет» изменяют камеру.</p>
+ <p><b>PDF для типографии.</b> A4–A0, 150–600 DPI. Установи масштаб, ориентацию и DPI. Неактивные значения превышают лимит обработки. PDF имеет реальные размеры страницы. Печатай 100%, без автоматической подгонки.</p>
+ <p><b>Точность.</b> Число пикселей PDF не равно точности исходных высот. Это цветной рельеф, не кадастровая или геодезическая карта. Для типографии используется RGB, согласуй преобразование CMYK с печатником.</p>
+ </div><div id="status" class="status">При экспорте загружаются настоящие высоты. Расчёт STL выполняется на устройстве; Python и внешний сервер не нужны.</div></div></main>
 <script src="./vendor/leaflet.js"></script>
-<script src="./terrain.js"></script><script src="./preview.js"></script><script src="./maps-print.js"></script><script src="./enhancements.js"></script><script src="./grid-editor.js"></script><script src="./availability.js"></script></body></html>
+<script src="./terrain.js"></script><script src="./preview.js"></script><script src="./maps-print.js"></script><script src="./enhancements.js"></script><script src="./grid-editor.js"></script><script src="./availability.js"></script><script src="./print-v15.js"></script><script src="./help-v15.js"></script></body></html>

@@ -2,7 +2,8 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),canvas=$('previewCanvas');
-let gl,prog,surface,lines,yaw=-.85,tilt=.58,zoom=1.65,span=200,midz=0;
+let gl,prog,surface,lines,wire,yaw=-.85,tilt=.58,zoom=1.65,span=200,midz=0;
+let panX=0,panY=0,panZ=0,bordersOn=true,wireOn=false,modelH=20;
 const vs='attribute vec3 pos;attribute vec3 col;attribute vec3 nor;uniform mat4 mvp;varying vec3 c;varying float light;void main(){gl_Position=mvp*vec4(pos,1.);c=col;light=clamp(dot(normalize(nor),normalize(vec3(-.38,-.62,.87))),.40,1.);}',
 fs='precision mediump float;varying vec3 c;varying float light;void main(){gl_FragColor=vec4(c*light,1.);}';
 function init(){
@@ -54,14 +55,17 @@ function draw(){
  const dpi=Math.min(2,devicePixelRatio||1),w=Math.max(280,canvas.clientWidth),h=Math.max(220,canvas.clientHeight);
  if(canvas.width!==Math.round(w*dpi)||canvas.height!==Math.round(h*dpi)){canvas.width=Math.round(w*dpi);canvas.height=Math.round(h*dpi);}
  gl.viewport(0,0,canvas.width,canvas.height);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
- const r=span*zoom,eye=[r*Math.cos(yaw)*Math.cos(tilt),r*Math.sin(yaw)*Math.cos(tilt),midz+r*Math.sin(tilt)];
- gl.uniformMatrix4fv(gl.getUniformLocation(prog,'mvp'),false,mul(perspective(canvas.width/canvas.height,span*60),lookAt(eye,[0,0,midz])));
- drawPart(surface,gl.TRIANGLES);drawPart(lines,gl.LINES);
+ const r=Math.max(span*zoom,modelH*1.35),eye=[panX+r*Math.cos(yaw)*Math.cos(tilt),panY+r*Math.sin(yaw)*Math.cos(tilt),midz+panZ+r*Math.sin(tilt)];
+ gl.uniformMatrix4fv(gl.getUniformLocation(prog,'mvp'),false,mul(perspective(canvas.width/canvas.height,Math.max(span*80,r*10)),lookAt(eye,[panX,panY,midz+panZ])));
+ drawPart(surface,gl.TRIANGLES);
+ if(bordersOn)drawPart(lines,gl.LINES);
+ if(wireOn)drawPart(wire,gl.LINES);
 }
 function render(p,dem,range){
  init();
  if(surface){gl.deleteBuffer(surface.v);gl.deleteBuffer(surface.i);}
  if(lines){gl.deleteBuffer(lines.v);gl.deleteBuffer(lines.i);}
+ if(wire){gl.deleteBuffer(wire.v);gl.deleteBuffer(wire.i);}
  const segments=125,n=segments+1,W=p.cols*p.pitch,gain=1000/p.s.scale*p.s.exaggeration;
  const z=new Float32Array(n*n),v=[],idx=[],maxHeight=Math.max(1,(range.max-range.min)*gain);
  const sample=(u,t)=>3+Math.max(0,dem.height(p.minx+p.coverage*u,p.maxy-p.coverage*t)-range.min)*gain;
@@ -84,6 +88,20 @@ function render(p,dem,range){
   for(let i=0;i<group.length-1;i++)idx.push(group[i],below[i],below[i+1],group[i],below[i+1],group[i+1]);
  }
  surface=upload(v,idx);
+ const meshLines=[],meshIds=[];
+ for(let j=0;j<=segments;j+=4)for(let i=0;i<segments;i+=4){
+   const t=id(i,j),u=id(Math.min(segments,i+4),j),start=meshLines.length/9;
+   for(const k of [t,u]){
+     const a=k*9;meshLines.push(v[a],v[a+1],v[a+2]+.25,.08,.09,.11,0,0,1);
+   }
+   meshIds.push(start,start+1);
+ }
+ for(let i=0;i<=segments;i+=4)for(let j=0;j<segments;j+=4){
+   const t=id(i,j),u=id(i,Math.min(segments,j+4)),start=meshLines.length/9;
+   for(const k of [t,u]){const a=k*9;meshLines.push(v[a],v[a+1],v[a+2]+.25,.08,.09,.11,0,0,1);}
+   meshIds.push(start,start+1);
+ }
+ wire=upload(meshLines,meshIds);
  const lv=[];
  const add=(x,y,h)=>lv.push(x,y,h+.85,.03,.17,.20,0,0,1);
  for(let t=0;t<=p.cols;t++){
@@ -95,20 +113,85 @@ function render(p,dem,range){
   }
  }
  lines=upload(lv,Array.from({length:lv.length/9},(_,i)=>i));
- span=Math.max(W,3*(maxHeight+5));midz=Math.min(maxHeight,80)/2;draw();
+ span=Math.max(W,3*(maxHeight+5));midz=Math.min(maxHeight,80)/2;modelH=maxHeight+3;
+ fitView();
  const details=document.querySelector('#preview3d .overlayTip');
  if(details)details.textContent='Размер '+Math.round(W)+' × '+Math.round(W)+' × '+(maxHeight+3).toFixed(1)+' мм · '+p.cols+'×'+p.cols+' плиток · перетащи для поворота · колесо — масштаб';
  $('preview3d').dataset.shape=p.total;
 }
-let pointer=false,px=0,py=0;
-canvas.addEventListener('pointerdown',e=>{pointer=true;px=e.clientX;py=e.clientY;canvas.setPointerCapture(e.pointerId);});
-canvas.addEventListener('pointermove',e=>{
- if(!pointer)return;yaw+=(e.clientX-px)*.009;tilt=Math.min(1.48,Math.max(.16,tilt+(e.clientY-py)*.006));
- px=e.clientX;py=e.clientY;draw();
+// Camera controls: orbit, pan, pinch zoom, wheel, fit/top/isometric.
+function fitView(){yaw=-.85;tilt=.68;panX=0;panY=0;panZ=0;zoom=1.45;draw();}
+function isoView(){yaw=-Math.PI/4;tilt=.64;draw();}
+function topView(){yaw=-Math.PI/2;tilt=1.566;draw();}
+function zoomBy(factor){zoom=Math.max(.12,Math.min(10,zoom*factor));draw();}
+const pointers=new Map();
+let lastPointer=null,gesture=null;
+function point(e){return {x:e.clientX,y:e.clientY};}
+function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
+function panBy(dx,dy){
+ // Screen movement follows the cursor in the current horizontal view.
+ const pxScale=Math.max(1,span*zoom)*Math.tan(.78/2)*2/Math.max(200,canvas.clientHeight);
+ panX+=(-Math.sin(yaw)*dx+Math.cos(yaw)*dy)*pxScale;
+ panY+=(Math.cos(yaw)*dx+Math.sin(yaw)*dy)*pxScale;
+ draw();
+}
+canvas.addEventListener('pointerdown',e=>{
+ if(!surface)return;
+ e.preventDefault();
+ pointers.set(e.pointerId,point(e));
+ canvas.setPointerCapture(e.pointerId);
+ if(pointers.size===1){
+  lastPointer={...point(e),mode:e.shiftKey||e.button===1||e.button===2?'pan':'rotate',
+   // At the lower edge the model follows the movement of the hand.
+   invert:e.offsetY>canvas.clientHeight/2?-1:1};
+ }else if(pointers.size===2){
+  const a=[...pointers.values()];
+  gesture={dist:distance(a[0],a[1]),center:{x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2}};
+  lastPointer=null;
+ }
 });
-canvas.addEventListener('pointerup',()=>pointer=false);
-canvas.addEventListener('pointercancel',()=>pointer=false);
-canvas.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.min(4,Math.max(.65,zoom*Math.exp(e.deltaY*.001)));draw();},{passive:false});
+canvas.addEventListener('pointermove',e=>{
+ if(!pointers.has(e.pointerId))return;
+ e.preventDefault();
+ pointers.set(e.pointerId,point(e));
+ if(pointers.size>=2){
+  const a=[...pointers.values()],d=distance(a[0],a[1]);
+  const center={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2};
+  if(gesture){
+    if(d>4&&gesture.dist>4)zoomBy(gesture.dist/d);
+    panBy(center.x-gesture.center.x,center.y-gesture.center.y);
+  }
+  gesture={dist:d,center};
+  return;
+ }
+ if(!lastPointer)return;
+ const dx=e.clientX-lastPointer.x,dy=e.clientY-lastPointer.y;
+ if(lastPointer.mode==='pan')panBy(dx,dy);
+ else{
+   yaw+=dx*.008*lastPointer.invert;
+   tilt=Math.max(.08,Math.min(1.57,tilt+dy*.007));
+   draw();
+ }
+ lastPointer.x=e.clientX;lastPointer.y=e.clientY;
+});
+function endPointer(e){
+ pointers.delete(e.pointerId);
+ try{canvas.releasePointerCapture(e.pointerId);}catch(_){}
+ if(pointers.size===1){const p=[...pointers.values()][0];lastPointer={...p,mode:'pan',invert:1};gesture=null;}
+ else if(!pointers.size){lastPointer=null;gesture=null;}
+}
+canvas.addEventListener('pointerup',endPointer);
+canvas.addEventListener('pointercancel',endPointer);
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+canvas.addEventListener('dblclick',e=>{e.preventDefault();fitView();});
+canvas.addEventListener('wheel',e=>{e.preventDefault();zoomBy(Math.exp(e.deltaY*.0012));},{passive:false});
+document.querySelectorAll('#viewerToolbar [data-view]').forEach(b=>b.addEventListener('click',()=>{
+ const modes={fit:fitView,reset:fitView,iso:isoView,top:topView,plus:()=>zoomBy(.72),minus:()=>zoomBy(1.4)};
+ modes[b.dataset.view]?.();
+}));
+$('viewerBorders')?.addEventListener('change',e=>{bordersOn=e.target.checked;draw();});
+$('viewerWire')?.addEventListener('change',e=>{wireOn=e.target.checked;draw();});
 window.addEventListener('resize',draw);
-window.TerrainViewer={render,resize:draw};
+window.TerrainViewer={render,resize:draw,fit:fitView,top:topView,iso:isoView,zoomBy,
+ state:()=>({yaw,tilt,zoom,panX,panY,panZ,bordersOn,wireOn})};
 })();

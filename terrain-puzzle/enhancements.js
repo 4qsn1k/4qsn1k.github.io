@@ -111,7 +111,7 @@ async function elevations(){
  if(lastDEM&&key===lastKey)return{p,dem:lastDEM,range:lastRange};
  const dem=await api.demData(p),range=api.getRange(p,dem);
  lastDEM=dem;lastRange=range;lastKey=key;
- window.dispatchEvent(new CustomEvent('terrain:elevations',{detail:{range}}));
+ window.dispatchEvent(new CustomEvent('terrain:elevations',{detail:{range,dem}}));
  return {p,dem,range};
 }
 async function loadPreview(){
