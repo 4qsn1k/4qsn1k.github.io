@@ -17,7 +17,7 @@ node terrain-puzzle/tests/browser-smoke.cjs
 node terrain-puzzle/tests/browser-smoke.cjs --real-dem
 ```
 
-The second command uses production Mapzen loading around Beloretsk (53.96 N, 58.30 E). It must complete separately; demo PASS does not imply real DEM PASS. The script checks initial Leaflet/grid state, renders WebGL, downloads ZIP and A4 PDF into `/tmp/terrain-smoke.*`. It fails on page JavaScript errors. Use `TERRAIN_TEST_URL` to change the internal test URL. A proxy/network denial is a blocked integration check, not missing terrain coverage. Mapzen Z15 raster pixel spacing does not establish source DEM accuracy.
+The `--real-dem` command uses production Mapzen loading around Beloretsk (53.96 N, 58.30 E). It must complete separately; demo PASS does not imply real DEM PASS. In this cloud image Chromium lacks the proxy CA in its isolated trust store. The real-DEM test bridges only Mapzen HTTP transport through curl, preserving the inherited proxy, TLS verification, actual PNG payload and server CORS headers. It does not bypass verification or use synthetic responses. Direct Chromium HTTPS access still requires browser CA provisioning. The script checks initial Leaflet/grid state, renders WebGL, downloads ZIP and A4 PDF into `/tmp/terrain-smoke.*`. It fails on page JavaScript errors. Use `TERRAIN_TEST_URL` to change the internal test URL. A proxy/network denial is a blocked integration check, not missing terrain coverage. Mapzen Z15 raster pixel spacing does not establish source DEM accuracy.
 
 Independent exported STL validation:
 
