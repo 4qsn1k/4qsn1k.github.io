@@ -11,11 +11,11 @@ const cornersSigns=[[-1,-1],[1,-1],[1,1],[-1,1]];
 const elCount=$('gridCount'),btn=$('gridToggle'),btnView=$('gridFitScreen'),help=$('gridHelp');
 let active=false,editing=false,state=null,polygon=null,segments=[],handles=[],centerHandle=null,polygonMove=null,lastInfo='';
 function mToLL(x,y,at){
- const lat=at.lat+y/earth/rad,lon=at.lng+x/(earth*Math.cos(at.lat*rad))/rad;
+ const [lat,lon]=window.TerrainProjection.get(at.lat,at.lng).toGeographic(x,y);
  return L.latLng(lat,lon);
 }
 function llToM(pt,at) {
- return [(pt.lng-at.lng)*rad*earth*Math.cos(at.lat*rad),(pt.lat-at.lat)*rad*earth];
+ return window.TerrainProjection.get(at.lat,at.lng).toLocal(pt.lat,pt.lng);
 }
 function corners(st=state) {
  const h=st.size/2;
@@ -136,7 +136,7 @@ function commit(){
    // SW/NE: preserve square extent, same local metric projection as STL plan.
    $('lat1').value=c[0].lat.toFixed(9);$('lon1').value=c[0].lng.toFixed(9);
    $('lat2').value=c[2].lat.toFixed(9);$('lon2').value=c[2].lng.toFixed(9);
-   bestScale(desiredScale*(1+1e-5)); // Keep requested N×N even with decimal lat/lon rounding.
+   bestScale(desiredScale*1.001); // UTM-corner roundoff: retain 0.1% slack without adding a puzzle row.
    const result=api.recalc();
    if(!result||result.cols!==n)throw Error('Ошибка синхронизации границ: '+(result?result.cols+' плиток вместо '+n:'некорректные координаты'));
    // Keep the dragged extent stable. The tiny export-scale safety margin must not grow on each move.
@@ -269,7 +269,11 @@ document.querySelectorAll('[data-nudge]').forEach(button=>button.addEventListene
 // Publish a small QA surface; the data source/selection model remains in terrain.js.
 window.TerrainGridEditor={getState:()=>state?{center:[state.center.lat,state.center.lng],sideMeters:state.size,count:state.count,active}:null,
  setSquare(center,side,n){
-   if(!active&&!turnOn())throw Error('Cannot enable grid');
+   if(!active){
+     const p=api.plan();
+     state={center:L.latLng(center[0],center[1]),size:side,count:n};
+     active=true;map.removeLayer(base);group.addTo(map);
+   }
    state.center=L.latLng(center[0],center[1]);state.count=n;elCount.value=String(n);
    state.size=clampSize(side,n);clearGraphics();redraw();return commit();
  },syncFromCurrentInputs(){

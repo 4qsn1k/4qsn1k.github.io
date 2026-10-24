@@ -4,7 +4,7 @@
 const $=id=>document.getElementById(id),api=window.terrainPuzzleDebug;
 let route=null,layer=null,lastFile='';
 const IDs=['lat1','lon1','lat2','lon2','scale','tile_size','exaggeration','mesh_step','smooth_m',
- 'puzzle','export3mf','source','printerLimit','gridCount','paper_scale','paper_format','paper_orientation','paper_dpi','contour_interval'];
+ 'puzzle','export3mf','source','printerLimit','gridCount','paper_scale','paper_format','paper_orientation','paper_dpi','contour_interval','forestSpacing','forestExport','layerForest','layerRivers','layerRoads','layer3DTrees'];
 function safePoint(lat,lon,ele){
  lat=Number(lat);lon=Number(lon);
  if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>85||Math.abs(lon)>180)
@@ -79,7 +79,7 @@ function snapshot(){
   const e=$(id);if(e)settings[id]=e.type==='checkbox'?e.checked:e.value;
  }
  return {format:'TerrainPuzzleProject',version:2,created:new Date().toISOString(),
-         settings,route,description:'WGS84 coordinates and print settings; no elevation data embedded'};
+         settings,route,landcover:window.TerrainOSMLayers?.snapshot()||null,description:'WGS84 coordinates and print settings; no elevation data embedded'};
 }
 function applyState(doc){
  if(!doc||doc.format!=='TerrainPuzzleProject'||doc.version>2||!doc.settings)
@@ -96,6 +96,7 @@ function applyState(doc){
   e.value=String(val);
  }
  route=doc.route?{name:String(doc.route.name||'Маршрут'),points:validate(doc.route.points)}:null;
+ if(doc.landcover&&window.TerrainOSMLayers)window.TerrainOSMLayers.restore(doc.landcover);
  const p=api.recalc();if(!p)throw Error('Настройки проекта не проходят проверку');
  window.TerrainGridEditor?.enable();
  if(doc.settings.gridCount)$('gridCount').value=String(doc.settings.gridCount);
