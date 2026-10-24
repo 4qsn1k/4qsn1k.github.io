@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),canvas=$('previewCanvas');
-let gl,prog,surface,lines,wire,yaw=-.85,tilt=.58,zoom=1.65,span=200,midz=0;
+let gl,prog,surface,lines,wire,routeLines=null,lastModel=null,yaw=-.85,tilt=.58,zoom=1.65,span=200,midz=0;
 let panX=0,panY=0,panZ=0,bordersOn=true,wireOn=false,modelH=20;
 const vs='attribute vec3 pos;attribute vec3 col;attribute vec3 nor;uniform mat4 mvp;varying vec3 c;varying float light;void main(){gl_Position=mvp*vec4(pos,1.);c=col;light=clamp(dot(normalize(nor),normalize(vec3(-.38,-.62,.87))),.40,1.);}',
 fs='precision mediump float;varying vec3 c;varying float light;void main(){gl_FragColor=vec4(c*light,1.);}';
@@ -60,12 +60,41 @@ function draw(){
  for(const part of surface)drawPart(part,gl.TRIANGLES);
  if(bordersOn)drawPart(lines,gl.LINES);
  if(wireOn)drawPart(wire,gl.LINES);
+ if(routeLines)drawPart(routeLines,gl.LINES);
+}
+function refreshRoute(){
+ if(routeLines&&gl){gl.deleteBuffer(routeLines.v);gl.deleteBuffer(routeLines.i);}
+ routeLines=null;
+ if(!lastModel||!gl||!window.TerrainProject)return;
+ const {p,dem,range}=lastModel;
+ const samples=window.TerrainProject.getRoute();
+ if(samples.length<2)return;
+ const coordinates=[],ids=[],W=p.cols*p.pitch,gain=1000/p.s.scale*p.s.exaggeration;
+ let previous=null;
+ const stride=Math.max(1,Math.ceil(samples.length/15000));
+ for(let k=0;k<samples.length;k+=stride){
+   const o=samples[k];
+   const xy=window.terrainPuzzleDebug.pointXY(o.lat,o.lon,p.lat0,p.lon0);
+   if(xy[0]<p.minx||xy[0]>p.maxx||xy[1]<p.miny||xy[1]>p.maxy){previous=null;continue;}
+   const z=3+(dem.height(xy[0],xy[1])-range.min)*gain+1.2;
+   const pt=[(xy[0]-p.minx)/p.coverage*W-W/2,(xy[1]-p.miny)/p.coverage*W-W/2,z];
+   if(previous){
+     for(const q of [previous,pt]){
+       const i=coordinates.length/9;
+       coordinates.push(...q,.98,.14,.07,0,0,1);ids.push(i);
+     }
+   }
+   previous=pt;
+ }
+ if(ids.length)routeLines=upload(coordinates,ids);
+ draw();
 }
 function render(p,dem,range){
  init();
  if(surface)for(const part of surface){gl.deleteBuffer(part.v);gl.deleteBuffer(part.i);}
  if(lines){gl.deleteBuffer(lines.v);gl.deleteBuffer(lines.i);}
  if(wire){gl.deleteBuffer(wire.v);gl.deleteBuffer(wire.i);}
+ if(routeLines){gl.deleteBuffer(routeLines.v);gl.deleteBuffer(routeLines.i);routeLines=null;}
  const W=p.cols*p.pitch,gain=1000/p.s.scale*p.s.exaggeration;
  const maxHeight=Math.max(1,(range.max-range.min)*gain);
  // LOD changes sampling density only; tile warping, datum and topology share STL core.
@@ -103,6 +132,7 @@ function render(p,dem,range){
  fitView();
  const details=document.querySelector('#preview3d .overlayTip');
  if(details)details.textContent='Размер '+Math.round(W)+' × '+Math.round(W)+' × '+(maxHeight+3).toFixed(1)+' мм · '+p.cols+'×'+p.cols+' плиток · перетащи для поворота · колесо — масштаб';
+ lastModel={p,dem,range};refreshRoute();
  $('preview3d').dataset.shape=p.total;
 }
 // Camera controls: orbit, pan, pinch zoom, wheel, fit/top/isometric.
@@ -178,6 +208,6 @@ document.querySelectorAll('#viewerToolbar [data-view]').forEach(b=>b.addEventLis
 $('viewerBorders')?.addEventListener('change',e=>{bordersOn=e.target.checked;draw();});
 $('viewerWire')?.addEventListener('change',e=>{wireOn=e.target.checked;draw();});
 window.addEventListener('resize',draw);
-window.TerrainViewer={render,resize:draw,fit:fitView,top:topView,iso:isoView,zoomBy,
+window.TerrainViewer={render,resize:draw,fit:fitView,top:topView,iso:isoView,zoomBy,refreshRoute,
  state:()=>({yaw,tilt,zoom,panX,panY,panZ,bordersOn,wireOn})};
 })();

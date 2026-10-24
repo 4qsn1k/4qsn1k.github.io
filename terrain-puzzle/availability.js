@@ -94,7 +94,10 @@ function update(){
  }
  const valid=evaluate(n,mm,step,s)||(selectScale.selectedOptions[0]?.disabled?'Недоступный масштаб':''); const height=heightRange?3+(heightRange.max-heightRange.min)*1000/s.scale*s.exaggeration:0;
  // Prevent generating known-invalid settings. Unknown terrain height remains checked by the original engine.
- $('go').disabled=Boolean(valid)||(heightRange&&height>MAX_Z);
+ const triangle3mf=4*Math.ceil((mm-(s.puzzle?16:0))/step)**2+4*Math.ceil((mm-(s.puzzle?16:0))/step);
+ const tooLarge3mf=$('export3mf')?.checked&&triangle3mf>160000;
+ $('go').disabled=Boolean(valid)||(heightRange&&height>MAX_Z)||tooLarge3mf;
+ if(tooLarge3mf)unavailable.push('3MF: слишком много полигонов на плитку ('+triangle3mf+'). Увеличь шаг сетки STL');
  out.innerHTML='<strong>Доступно сейчас:</strong> '+n+'×'+n+' ('+n*n+' плиток), '+mm+'×'+mm+' мм, шаг '+step+' мм.'+
    '<div>Расчёт: '+(faces/1e6).toFixed(2)+' млн треугольников из 6 млн · ≈ '+meg+' МБ STL без сжатия.</div>'+
    '<div>'+heightText+'</div>'+
@@ -114,7 +117,7 @@ function selectedLimits(){
  update();
 }
 $('printerLimit').addEventListener('change',selectedLimits);
-for(const id of ['gridCount','tile_size','mesh_step','puzzle','scale','exaggeration','smooth_m'])
+for(const id of ['gridCount','tile_size','mesh_step','puzzle','export3mf','scale','exaggeration','smooth_m'])
  $(id).addEventListener('change',update);
 window.addEventListener('terrain:gridchange',update);
 window.addEventListener('terrain:elevations',e=>{heightRange=e.detail?.range??null;update();});

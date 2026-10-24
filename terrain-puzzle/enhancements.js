@@ -137,7 +137,7 @@ function displaySource(o){
  }else{
    const px=source.pixelResolution,chosen=o.p.s.mesh_step*o.p.s.scale/1000;
    x.innerHTML='<strong>Качество исходных высот</strong>'+
-     '<p>Источник: Mapzen / AWS Terrain Tiles · уровень Z'+source.zoom+' · '+source.tileCount+' файлов.</p>'+
+     '<p>Источник: '+source.sourceName+' · уровень Z'+source.zoom+' · '+source.tileCount+' файлов.</p>'+
      '<p>Размер пикселя запрошенного растра: ≈ '+px.toFixed(1)+' м. Расстояние между вершинами STL по земле: ≈ '+chosen.toFixed(1)+' м.</p>'+
      '<p><b>Важно:</b> размер пикселя растра — не измеренная точность высот. Источник может использовать DEM с шагом 30 м и интерполировать его на Z15. Для более точного рельефа нужны данные более высокого разрешения.</p>'+
      '<button type="button" class="ghost" id="checkDEM">Проверить ещё раз</button>';

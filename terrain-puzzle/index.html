@@ -73,7 +73,7 @@ select option:disabled{color:#8895a5;background:#202a35}
 .helpPanelHead button{background:#314c5d;color:white;border:0;border-radius:8px;font-size:22px;cursor:pointer;width:34px;height:34px}
 .maparea{position:relative}
 </style></head><body>
-<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v1.6</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
+<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v2.0</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
 <main><aside>
 <section><div class="heading">01 · Выбор местности</div><p class="hint" style="margin-bottom:12px">Нажми на карте два раза: сначала первый угол, затем противоположный. Либо введи координаты вручную (широта, долгота).</p>
 <div class="topPaste"><div class="panelTitle">Вставить координаты или ссылку</div>
@@ -87,7 +87,7 @@ select option:disabled{color:#8895a5;background:#202a35}
 <div class="field"><label for="printerLimit">Рабочая зона печати одной детали</label>
 <select id="printerLimit"><option value="150">150 × 150 мм</option><option value="180">180 × 180 мм</option><option selected value="200">200 × 200 мм · стандарт</option><option value="210">210 × 210 мм</option></select></div>
 <button class="ghost" id="autoScale" style="width:100%;margin:-1px 0 11px">Автоматический масштаб под выбранную точность</button><div class="cols2"><div class="field"><label for="tile_size">Макс. сторона STL</label><select id="tile_size"><option value="100">100 мм</option><option value="150">150 мм</option><option value="180">180 мм</option><option selected value="200">200 мм</option><option value="210">210 мм</option></select></div><div class="field"><label for="exaggeration">Высоты ×</label><select id="exaggeration"><option value="0.5">0,5</option><option value="1">1 · натуральные</option><option selected value="2">2</option><option value="3">3</option><option value="5">5</option><option value="8">8</option></select></div></div>
-<div class="cols2"><div class="field"><label for="mesh_step">Шаг сетки STL</label><select id="mesh_step"><option value="0.5">0,5 мм · сверхточно</option><option value="0.75">0,75 мм</option><option value="1">1 мм · плавно</option><option value="1.5">1,5 мм</option><option value="2">2 мм · детально</option><option value="3">3 мм</option><option selected value="4">4 мм · оптимально</option><option value="6">6 мм</option><option value="8">8 мм · быстро</option></select></div><div class="field"><label for="source">Высоты</label><select id="source"><option selected value="terrarium">Реальные · Mapzen</option><option value="demo">Демо · синтетика</option></select></div></div>
+<div class="cols2"><div class="field"><label for="mesh_step">Шаг сетки STL</label><select id="mesh_step"><option value="0.5">0,5 мм · сверхточно</option><option value="0.75">0,75 мм</option><option value="1">1 мм · плавно</option><option value="1.5">1,5 мм</option><option value="2">2 мм · детально</option><option value="3">3 мм</option><option selected value="4">4 мм · оптимально</option><option value="6">6 мм</option><option value="8">8 мм · быстро</option></select></div><div class="field"><label for="source">Высоты</label><select id="source"><option selected value="terrarium">Автоматически · Mapzen</option><option value="mapterhorn">Mapterhorn (резерв)</option><option value="auto">Авто + резервный источник</option><option value="demo">Демо · синтетика</option></select></div></div>
 <div class="optionAvailability" id="demQuality">
   <strong>Качество исходных высот</strong>
   <p>Источник: Mapzen. Точное разрешение исходного DEM неизвестно до проверки геоданных. Плотная сетка STL не повышает точность высот.</p>
@@ -95,8 +95,22 @@ select option:disabled{color:#8895a5;background:#202a35}
 </div>
 <div class="field"><label for="smooth_m">Сглаживание поверхности DEM</label><select id="smooth_m"><option selected value="0">Без сглаживания — исходные высоты</option><option value="15">15 м — лёгкое</option><option value="30">30 м — умеренное</option><option value="60">60 м — сильное</option><option value="100">100 м — очень сильное</option></select><p class="hint">Убирает резкие изломы. Сглаживание уменьшает мелкие детали. Совпадает на границах плиток.</p></div><div class="check"><input type="checkbox" checked id="puzzle"><label for="puzzle">Соединения как у пазла</label></div><div id="scaleEstimate" class="optionAvailability" aria-live="polite">Расчёт допустимых масштабов.</div><div id="optionAvailability" class="optionAvailability" aria-live="polite">Проверяю допустимые размеры и детализацию.</div>
 <p id="qualityWarning">Плотность сетки увеличивает объём STL. Исходные высоты имеют ограниченное разрешение.</p><p class="hint">Выступы учтены в предельных 200 мм. Плоское основание 3 мм, номинальный зазор соединения 0,2 мм.</p></section>
-<section><div class="heading">03 · Экспорт</div><button id="go" class="button">Сформировать STL + схему сборки ↓</button><p class="hint">Все расчёты выполняются прямо в браузере. Скачается ZIP: отдельные STL, схема с номерами и параметры.</p></section>
-<section><div class="heading">04 · Бумажные топографические карты</div>
+<section id="projectControls"><div class="heading">03 · Проект и маршрут</div>
+<p class="hint">Сохрани координаты и параметры для продолжения печати. GPX/KML/GeoJSON отображается на карте и поверх рельефа в 3D.</p>
+<div class="tools" style="margin:12px 0"><button class="ghost" id="saveProject" type="button" title="Сохранить настройки, координаты и маршрут в JSON">Сохранить проект</button>
+<button class="ghost" id="openProject" type="button" title="Восстановить настройки проекта из JSON">Открыть проект</button></div>
+<input type="file" id="projectFile" accept=".json,application/json" hidden>
+<div class="tools"><button class="ghost" id="loadRoute" type="button" title="Загрузить GPX, KML либо GeoJSON линию маршрута">Добавить GPS-маршрут</button>
+<button class="ghost" id="removeRoute" type="button" title="Убрать маршрут с карты и 3D-просмотра">Убрать маршрут</button></div>
+<input type="file" id="routeFile" accept=".gpx,.kml,.geojson,.json" hidden>
+<div id="routeStatus" class="hint" aria-live="polite">Маршрут не загружен.</div></section>
+
+<section><div class="heading">04 · Печатные модели</div>
+<div class="check" style="margin-bottom:12px"><input type="checkbox" id="export3mf">
+<label for="export3mf">Также создать цветные 3MF для каждой детали</label></div>
+<p class="hint" style="margin:0 0 12px">3MF использует цвета шести диапазонов высот. Это материалы поверхности, а не реальные цвета леса или воды. Для многокрасочной печати необходим совместимый слайсер и принтер.</p>
+<button id="go" class="button">Сформировать STL + схему сборки ↓</button><p class="hint">Все расчёты выполняются прямо в браузере. Скачается ZIP: отдельные STL, схема с номерами и параметры.</p></section>
+<section><div class="heading">05 · Бумажные топографические карты</div>
 <p class="hint">Рельефная раскраска по высотам, теням и горизонталям. Точные границы совпадают с макетом.</p>
 <div class="cols2" style="margin-top:13px">
 <div class="field"><label for="paper_scale">Масштаб карты</label><select id="paper_scale"><option value="5000">1:5 000</option><option value="10000">1:10 000</option><option selected value="25000">1:25 000</option><option value="50000">1:50 000</option><option value="100000">1:100 000</option><option value="200000">1:200 000</option></select></div>
@@ -153,4 +167,4 @@ select option:disabled{color:#8895a5;background:#202a35}
  <p><b>Точность.</b> Число пикселей PDF не равно точности исходных высот. Это цветной рельеф, не кадастровая или геодезическая карта. Для типографии используется RGB, согласуй преобразование CMYK с печатником.</p>
  </div><div id="status" class="status">При экспорте загружаются настоящие высоты. Расчёт STL выполняется на устройстве; Python и внешний сервер не нужны.</div></div></main>
 <script src="./vendor/leaflet.js"></script>
-<script src="./geometry.js"></script><script src="./terrain.js"></script><script src="./preview.js"></script><script src="./maps-print.js"></script><script src="./enhancements.js"></script><script src="./grid-editor.js"></script><script src="./availability.js"></script><script src="./print-v15.js"></script><script src="./help-v15.js"></script></body></html>
+<script src="./vendor/proj4.js"></script><script src="./terrain-projection.js"></script><script src="./geometry.js"></script><script src="./elevation-providers.js"></script><script src="./terrain.js"></script><script src="./preview.js"></script><script src="./maps-print.js"></script><script src="./enhancements.js"></script><script src="./grid-editor.js"></script><script src="./availability.js"></script><script src="./print-v15.js"></script><script src="./help-v15.js"></script><script src="./export3mf.js"></script><script src="./project-routes.js"></script></body></html>

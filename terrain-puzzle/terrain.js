@@ -12,13 +12,13 @@
     const v = id => +$(id).value;
     return { lat1:v('lat1'), lon1:v('lon1'), lat2:v('lat2'), lon2:v('lon2'),
       scale:v('scale'), tile_size:v('tile_size'), exaggeration:v('exaggeration'),
-      mesh_step:v('mesh_step'), smooth_m:v('smooth_m'), puzzle:$('puzzle').checked, source:$('source').value, max_tiles:196 };
+      mesh_step:v('mesh_step'), smooth_m:v('smooth_m'), puzzle:$('puzzle').checked, export_3mf:$('export3mf')?.checked===true, source:$('source').value, max_tiles:196 };
   }
   function pointXY(lat, lon, centerLat, centerLon) {
-    return [(lon-centerLon)*RD*EARTH*Math.cos(centerLat*RD), (lat-centerLat)*RD*EARTH];
+    return window.TerrainProjection.get(centerLat,centerLon).toLocal(lat,lon);
   }
   function pointLL(x,y,p) {
-    return [p.lat0+y/EARTH/RD, p.lon0+x/(EARTH*Math.cos(p.lat0*RD))/RD];
+    return (p.projectionContext || window.TerrainProjection.get(p.lat0,p.lon0)).toGeographic(x,y);
   }
   function plan(s) {
     const a = [s.lat1,s.lon1,s.lat2,s.lon2,s.scale,s.tile_size,s.exaggeration,s.mesh_step];
@@ -38,7 +38,7 @@
     const approxFaces=n*n*(4*Math.ceil(pitch/s.mesh_step)**2 + 4*Math.ceil(pitch/s.mesh_step));
     if(approxFaces>6000000)throw Error('При этом масштабе получится около '+(approxFaces/1e6).toFixed(1)+' млн треугольников. Увеличь шаг сетки или масштаб. Предел 6 млн.');
     const coverage=n*pitch*s.scale/1000, cx=(p1[0]+p2[0])/2, cy=(p1[1]+p2[1])/2;
-    const p={ s, lat0, lon0, cols:n,rows:n,total:n*n,pitch,tab,coverage,selected,
+    const p={ s, lat0, lon0, projectionContext:window.TerrainProjection.get(lat0,lon0), cols:n,rows:n,total:n*n,pitch,tab,coverage,selected,
       minx:cx-coverage/2,miny:cy-coverage/2,maxx:cx+coverage/2,maxy:cy+coverage/2 };
     p.corners=[[p.minx,p.miny],[p.maxx,p.miny],[p.maxx,p.maxy],[p.minx,p.maxy]].map(q=>pointLL(q[0],q[1],p));
     p.grid_lines=[];
@@ -130,48 +130,37 @@
     if(p.s.source==='demo')return { demo:true,min:0,max:1200,height:(x,y)=>450+520*Math.exp(-(((x-500)/1100)**2)-(((y+1000)/1500)**2))
       +290*Math.exp(-(((x+1700)/2000)**2)-(((y-500)/1700)**2))+75*Math.sin(x/500)*Math.cos(y/450)
       -200*Math.exp(-(((y-220*Math.sin(x/600))/230)**2)) };
-    const z=chooseZoom(p), [minx,maxx,miny,maxy]=tileBounds(p,z), images=new Map();
-    let done=0,total=(maxx-minx+1)*(maxy-miny+1);
-    const tasks=[];
-    for(let ty=miny;ty<=maxy;ty++)for(let tx=minx;tx<=maxx;tx++)tasks.push([tx,ty]);
-    // Bounded parallel downloads keep browser memory and source traffic under control.
-    let cursor=0; const workers=Array.from({length:Math.min(5,tasks.length)},async()=>{
-      while(cursor<tasks.length){
-        const [tx,ty]=tasks[cursor++],key=z+'/'+tx+'/'+ty;
-        if(!cache.has(key)){
-          const url='https://s3.amazonaws.com/elevation-tiles-prod/terrarium/'+key+'.png';
-          const response=await fetch(url,{mode:'cors'});
-          if(!response.ok)throw Error('Ошибка загрузки высот: HTTP '+response.status+' ('+key+')');
-          const bmp=await createImageBitmap(await response.blob());
-          const canvas=document.createElement('canvas');canvas.width=256;canvas.height=256;
-          const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(bmp,0,0);
-          cache.set(key,ctx.getImageData(0,0,256,256).data);bmp.close();
+    const limits={south:Math.min(...p.corners.map(q=>q[0])),north:Math.max(...p.corners.map(q=>q[0])),
+      west:Math.min(...p.corners.map(q=>q[1])),east:Math.max(...p.corners.map(q=>q[1]))};
+    const engine=window.TerrainElevationProviders;
+    if(!engine)throw Error('Не удалось загрузить модуль цифровых высот. Обнови страницу.');
+    // Mapzen is preferred for 'automatic': Mapterhorn tiles in the Urals can be 404 above Z12,
+    // and larger WebP tile dimensions do not establish higher original-source DEM precision.
+    const requested=p.s.source==='mapterhorn'?['mapterhorn']:p.s.source==='auto'?['mapzen','mapterhorn']:['mapzen'];
+    const errors=[];
+    for(const provider of requested){
+      let z=provider==='mapterhorn'?12:15;
+      for(let attempt=0;attempt<4;attempt++){
+        try{
+          const dem=await engine.load({bbox:limits,provider,maxTiles:72,maxZoom:z,cache,
+            progress:(done,total)=>say('Высоты '+provider+': '+done+'/'+total+' файлов…')});
+          const height=(x,y)=>{
+            const [lat,lon]=pointLL(x,y,p);
+            return dem.sample(lat,lon);
+          };
+          return {demo:false,zoom:dem.zoom,tileCount:dem.count,
+            sourceName:provider==='mapterhorn'?'Mapterhorn Terrarium WebP':'Mapzen Terrain Tiles (AWS)',
+            sourceResolutionUnknown:true,pixelResolution:dem.pixelSizeMeters,
+            sourceVerticalDatum:dem.sourceVerticalDatum,sourceAttribution:dem.attribution,
+            originalDemResolutionMeters:null,height:smoothHeight(height,p)};
+        }catch(err){
+          errors.push(provider+' Z'+z+': '+err.message);
+          z=Math.max(provider==='mapterhorn'?5:5,z-2);
+          // No silent data blending: retries use one source and a lower zoom for the whole project.
         }
-        images.set(tx+','+ty,cache.get(key));done++;
-        say('Загрузка реальных высот: '+done+' / '+total+' файлов…');
       }
-    });
-    try{await Promise.all(workers);}catch(err){throw Error('Не удалось получить высоты. '+err.message+' Проверь интернет или выбери демо.');}
-    const sample=(x,y)=>{
-      const [lat,lon]=pointLL(x,y,p), [xx,yy]=toPixel(lon,lat,z);
-      function px(ix,iy) {
-        const tx=Math.floor(ix/256),ty=Math.floor(iy/256),img=images.get(tx+','+ty);
-        if(!img)throw Error('Нет высот на границе участка. Измени координаты на несколько метров.');
-        const q=((iy-ty*256)*256+(ix-tx*256))*4;
-        return img[q]*256+img[q+1]+img[q+2]/256-32768;
-      }
-      let ix=Math.floor(xx),iy=Math.floor(yy),fx=xx-ix,fy=yy-iy;
-      // Avoid requesting neighbor raster at the exact outer border.
-      const left=Math.max(minx*256,Math.min((maxx+1)*256-2,ix));
-      const top=Math.max(miny*256,Math.min((maxy+1)*256-2,iy));
-      if(ix!==left)fx=0;if(iy!==top)fy=0;
-      ix=left;iy=top;
-      return (1-fy)*((1-fx)*px(ix,iy)+fx*px(ix+1,iy))
-        +fy*((1-fx)*px(ix,iy+1)+fx*px(ix+1,iy+1));
-    };
-    return {demo:false,zoom:z,tileCount:total,sourceName:'Mapzen Terrain Tiles (AWS)',
-     sourceResolutionUnknown:true,pixelResolution:Math.cos(p.lat0*RD)*2*Math.PI*EARTH/(256*2**z),
-     height:smoothHeight(sample,p)};
+    }
+    throw Error('Нет доступного DEM. '+errors.join(' | ')+'; попробуй другой источник.');
   }
   async function getRange(p,dem) {
     const frame=await window.TerrainGeometry.createHeightFrameAsync(p,dem,q=>say('Общее поле высот: '+Math.round(q*100)+'%…'));
@@ -242,7 +231,7 @@
       const maxHeight=3+(range.max-range.min)*1000/p.s.scale*p.s.exaggeration;
       if(maxHeight>210)throw Error('Высота модели '+maxHeight.toFixed(1)+' мм больше 210 мм. Уменьши высоты × или масштаб.');
       const files=[],metadata={
-        app:'Terrain Puzzle Generator',version:'1.1.0',generated:new Date().toISOString(),
+        app:'Terrain Puzzle Generator',version:'2.0.0',generated:new Date().toISOString(),
         settings:p.s,plan:{corners:p.corners,selected_m:p.selected,coverage_m:p.coverage,cols:p.cols,total:p.total,
           tile_pitch_mm:p.pitch,printed_size_mm:p.cols*p.pitch},
         min_elevation_m:range.min,max_elevation_m:range.max,approx_max_height_mm:maxHeight,
@@ -250,8 +239,8 @@
         geometry:{height_field:range.rangeMethod,samples:range.sampleCount,segments:range.count,
           range_margin_m:range.marginMeters,interpolation:'bilinear',base_mm:3,
           seam:{profile:'sin-squared',amplitude_mm:p.tab,width_mm:26,gap_mm:.2},
-          projection:'local-equirectangular',vertical_reference:'source DEM; not normalized'},
-        dem_zoom:dem.zoom??null,dem_tiles:dem.tileCount??null,requested_raster_pixel_m:dem.pixelResolution??null,source:p.s.source==='demo'?'SYNTHETIC TEST DATA':'Mapzen Terrarium DEM',tiles:[]
+          projection:p.projectionContext.projection,vertical_reference:'source DEM; not normalized'},
+        dem_zoom:dem.zoom??null,dem_tiles:dem.tileCount??null,requested_raster_pixel_m:dem.pixelResolution??null,source:dem.sourceName??'SYNTHETIC TEST DATA',vertical_datum:dem.sourceVerticalDatum??'not applicable',source_attribution:dem.sourceAttribution??'synthetic',original_dem_resolution_m:dem.originalDemResolutionMeters??null,tiles:[]
       };
       for(let r=0;r<p.cols;r++)for(let c=0;c<p.cols;c++){
         say('Генерация STL: '+(r*p.cols+c+1)+' из '+p.total+'…');
@@ -259,12 +248,26 @@
         const binary=makeSTL(p,dem,range,r,c);
         const filename='STL/'+id+'_row'+(r+1)+'_col'+(c+1)+'.stl';
         files.push([filename,binary]);
+        if(p.s.export_3mf){
+          say('Создание цветного 3MF: '+id+'…');
+          const color3mf=await window.Terrain3MF.makeTile(p,dem,range,r,c,zip);
+          files.push(['3MF/'+id+'_height_colors.3mf',color3mf]);
+        }
         const bounds=window.TerrainGeometry.stlBounds(binary);
         metadata.tiles.push({id,filename,triangles:(binary.length-84)/50,
           bounds_mm:bounds,extents_mm:bounds.map(([a,b])=>b-a),finite:true});
         await new Promise(resolve=>setTimeout(resolve,0));
       }
+      metadata.color3mf=p.s.export_3mf?{enabled:true,bands:6,
+        meaning:'elevation categories, not surveyed land cover; slicer compatibility not verified'}:{enabled:false};
       files.push(['ASSEMBLY_PLAN.png',await assemblyImage(p,dem,range)]);
+      const project=window.TerrainProject;
+      if(project?.getRouteInfo()){
+        files.push(['ROUTE/route.geojson',encoder.encode(project.toGeoJSON())]);
+        metadata.gps_route={name:project.getRouteInfo().name,points:project.getRoute().length,
+          file:'ROUTE/route.geojson',description:'GPS overlay, not separate printed geometry'};
+      }
+
       files.push(['project.json',encoder.encode(JSON.stringify(metadata,null,2))]);
       files.push(['README_RU.txt',encoder.encode('Terrain Puzzle Generator 1.1\n'+
         'Ряд A — север (верх схемы). Установи все детали плоской стороной на стол.\n'+
