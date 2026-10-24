@@ -116,7 +116,7 @@
       Math.floor(Math.min(...q.map(x=>x[1]))/256),Math.floor(Math.max(...q.map(x=>x[1]))/256)];
   }
   function chooseZoom(p) {
-    for(let z=13;z>=5;z--){const [a,b,c,d]=tileBounds(p,z);if((b-a+1)*(d-c+1)<=72)return z;}
+    for(let z=15;z>=5;z--){const [a,b,c,d]=tileBounds(p,z);if((b-a+1)*(d-c+1)<=72)return z;}
     throw Error('Слишком большой участок для загрузки цифровых высот.');
   }
   function smoothHeight(fn,p) {
@@ -169,7 +169,9 @@
       return (1-fy)*((1-fx)*px(ix,iy)+fx*px(ix+1,iy))
         +fy*((1-fx)*px(ix,iy+1)+fx*px(ix+1,iy+1));
     };
-    return {demo:false,zoom:z,pixelResolution:Math.cos(p.lat0*RD)*2*Math.PI*EARTH/(256*2**z),height:smoothHeight(sample,p)};
+    return {demo:false,zoom:z,tileCount:total,sourceName:'Mapzen Terrain Tiles (AWS)',
+     sourceResolutionUnknown:true,pixelResolution:Math.cos(p.lat0*RD)*2*Math.PI*EARTH/(256*2**z),
+     height:smoothHeight(sample,p)};
   }
   function getRange(p,dem) {
     let min=Infinity,max=-Infinity;
@@ -316,7 +318,7 @@
         settings:p.s,plan:{corners:p.corners,selected_m:p.selected,coverage_m:p.coverage,cols:p.cols,total:p.total,
           tile_pitch_mm:p.pitch,printed_size_mm:p.cols*p.pitch},
         min_elevation_m:range.min,max_elevation_m:range.max,approx_max_height_mm:maxHeight,
-        dem_zoom:dem.zoom??null,source:p.s.source==='demo'?'SYNTHETIC TEST DATA':'Mapzen Terrarium DEM',tiles:[]
+        dem_zoom:dem.zoom??null,dem_tiles:dem.tileCount??null,requested_raster_pixel_m:dem.pixelResolution??null,source:p.s.source==='demo'?'SYNTHETIC TEST DATA':'Mapzen Terrarium DEM',tiles:[]
       };
       for(let r=0;r<p.cols;r++)for(let c=0;c<p.cols;c++){
         say('Генерация STL: '+(r*p.cols+c+1)+' из '+p.total+'…');

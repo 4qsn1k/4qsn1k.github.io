@@ -82,8 +82,8 @@ function quality(){
  const mb=tri*50/1048576;
  $('qualityWarning').textContent='Оценка: '+(tri/1e6).toFixed(2)+' млн треугольников; '+Math.round(mb)+' МБ несжатых STL. '+'Шаг сетки '+p.s.mesh_step+' мм; данные высот не становятся точнее при сгущении сетки.';
 }
-function resetTerrain(){lastDEM=null;lastRange=null;lastKey='';quality();window.dispatchEvent(new Event('terrain:invalidate'));}
-['lat1','lat2','lon1','lon2','scale','tile_size','exaggeration','mesh_step','smooth_m','puzzle'].forEach(id=>
+function resetTerrain(){lastDEM=null;lastRange=null;lastKey='';quality();const box=document.getElementById('demQuality');if(box){box.innerHTML='<strong>Качество высот не проверено</strong><p>Проверь источник и размер пикселя выбранного участка.</p><button type="button" class="ghost" id="checkDEM">Проверить данные высот</button>';document.getElementById('checkDEM').onclick=checkDEM;}window.dispatchEvent(new Event('terrain:invalidate'));}
+['lat1','lat2','lon1','lon2','scale','tile_size','exaggeration','mesh_step','smooth_m','puzzle','source'].forEach(id=>
  $(id).addEventListener('change',()=>{resetTerrain();}));
 function mapLayer(code){
  if(!window.L||!api.map())return;
@@ -128,6 +128,29 @@ async function loadPreview(){
  finally{loading=false;$('refreshPreview').disabled=false;}
 }
 $('refreshPreview').onclick=loadPreview;
+function displaySource(o){
+ const x=document.getElementById('demQuality'),source=o.dem;
+ if(!x)return;
+ if(source.demo){
+   x.innerHTML='<strong>Демонстрационные высоты</strong><p>Синтетическая модель; географической точности нет.</p>'+
+    '<button type="button" class="ghost" id="checkDEM">Проверить данные высот</button>';
+ }else{
+   const px=source.pixelResolution,chosen=o.p.s.mesh_step*o.p.s.scale/1000;
+   x.innerHTML='<strong>Качество исходных высот</strong>'+
+     '<p>Источник: Mapzen / AWS Terrain Tiles · уровень Z'+source.zoom+' · '+source.tileCount+' файлов.</p>'+
+     '<p>Размер пикселя запрошенного растра: ≈ '+px.toFixed(1)+' м. Расстояние между вершинами STL по земле: ≈ '+chosen.toFixed(1)+' м.</p>'+
+     '<p><b>Важно:</b> размер пикселя растра — не измеренная точность высот. Источник может использовать DEM с шагом 30 м и интерполировать его на Z15. Для более точного рельефа нужны данные более высокого разрешения.</p>'+
+     '<button type="button" class="ghost" id="checkDEM">Проверить ещё раз</button>';
+ }
+ document.getElementById('checkDEM').onclick=checkDEM;
+}
+async function checkDEM(){
+ const btn=document.getElementById('checkDEM');if(btn){btn.disabled=true;btn.textContent='Загрузка высот…';}
+ try{const o=await elevations();displaySource(o);api.say('Источник высот проверен: '+(o.dem.sourceName||'демо')+'.','good');}
+ catch(e){api.say('Ошибка проверки DEM: '+e.message,'error');if(btn){btn.disabled=false;btn.textContent='Повторить проверку';}}
+}
+document.getElementById('checkDEM').onclick=checkDEM;
+
 $('exportTileMaps').onclick=async()=>{
  const button=$('exportTileMaps');button.disabled=true;
  try{let o=await elevations();await window.TerrainMaps.downloadTiles(o.p,o.dem,o.range,api.zip,msg=>$('paperStatus').textContent=msg);}
