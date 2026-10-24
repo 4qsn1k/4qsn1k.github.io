@@ -173,83 +173,11 @@
      sourceResolutionUnknown:true,pixelResolution:Math.cos(p.lat0*RD)*2*Math.PI*EARTH/(256*2**z),
      height:smoothHeight(sample,p)};
   }
-  function getRange(p,dem) {
-    let min=Infinity,max=-Infinity;
-    for(let j=0;j<=80;j++)for(let i=0;i<=80;i++){
-      const h=dem.height(p.minx+p.coverage*i/80,p.miny+p.coverage*j/80);
-      min=Math.min(min,h);max=Math.max(max,h);
-    }
-    return {min,max};
+  async function getRange(p,dem) {
+    const frame=await window.TerrainGeometry.createHeightFrameAsync(p,dem,q=>say('Общее поле высот: '+Math.round(q*100)+'%…')); 
+    return frame;
   }
-  const seam=(side,r,c,n)=>{
-    if(side==='bottom'&&r<n-1)return (r+c)%2===0?1:-1;
-    if(side==='right'&&c<n-1)return (r+c)%2===0?1:-1;
-    if(side==='top'&&r>0)return (r-1+c)%2===0?-1:1;
-    if(side==='left'&&c>0)return (r+c-1)%2===0?-1:1;
-    return 0;
-  };
-  function warped(u,v,p,row,col) {
-    const pitch=p.pitch,n=p.cols,d=p.tab;
-    function bump(t) {
-      const a=(t-(pitch/2-13))/26;
-      return a<=0||a>=1?0:Math.sin(Math.PI*a)**2;
-    }
-    const sx= u/pitch,sy=v/pitch;
-    const left=-seam('left',row,col,n)*d*bump(v)+(col>0?.1:0);
-    const right=seam('right',row,col,n)*d*bump(v)-(col<n-1?.1:0);
-    const bottom=-seam('bottom',row,col,n)*d*bump(u)+(row<n-1?.1:0);
-    const top=seam('top',row,col,n)*d*bump(u)-(row>0?.1:0);
-    return [u+left*(1-sx)+right*sx,v+bottom*(1-sy)+top*sy];
-  }
-  function makeSTL(p,dem,range,row,col) {
-    const count=Math.ceil(p.pitch/p.s.mesh_step), m=count+1,nv=m*m;
-    const vertices=new Float32Array(nv*3),k=p.s.scale/1000,ampl=(1000/p.s.scale)*p.s.exaggeration;
-    const xorigin=p.minx+col*p.pitch*k, yorigin=p.maxy-(row+1)*p.pitch*k;
-    for(let j=0;j<m;j++)for(let i=0;i<m;i++){
-      const [x,y]=warped(i*p.pitch/count,j*p.pitch/count,p,row,col);
-      const id=3*(j*m+i);
-      vertices[id]=x;
-      vertices[id+1]=y;
-      vertices[id+2]=3+Math.max(0,dem.height(xorigin+x*k,yorigin+y*k)-range.min)*ampl;
-    }
-    // All triangles are explicitly indexed; side faces follow the exact deformed perimeter.
-    const top=[];
-    for(let j=0;j<count;j++)for(let i=0;i<count;i++){
-      const a=j*m+i,b=a+1,c=a+m,d=c+1;
-      top.push([a,b,d],[a,d,c]);
-    }
-    const border=[];
-    for(let i=0;i<count;i++)border.push([i,i+1]);
-    for(let j=0;j<count;j++)border.push([j*m+count,(j+1)*m+count]);
-    for(let i=count;i>0;i--)border.push([count*m+i,count*m+i-1]);
-    for(let j=count;j>0;j--)border.push([j*m,(j-1)*m]);
-    const faces=[];
-    for(const t of top)faces.push([t[0],t[1],t[2],true],[t[2],t[1],t[0],false]);
-    for(const [a,b] of border)faces.push([a,a,b,false,'wall'],[b,a,b,false,'wall2']);
-    const array=new ArrayBuffer(84+faces.length*50),view=new DataView(array);
-    const label=new TextEncoder().encode('Terrain Puzzle STL - '+(row+1)+' '+(col+1));
-    new Uint8Array(array,0,label.length).set(label);view.setUint32(80,faces.length,true);
-    const location=(i,topface)=>[vertices[i*3],vertices[i*3+1],topface?vertices[i*3+2]:0];
-    let at=84;
-    function triangle(a,b,c) {
-      const ax=b[0]-a[0],ay=b[1]-a[1],az=b[2]-a[2];
-      const bx=c[0]-a[0],by=c[1]-a[1],bz=c[2]-a[2];
-      let nx=ay*bz-az*by,ny=az*bx-ax*bz,nz=ax*by-ay*bx;
-      const len=Math.hypot(nx,ny,nz)||1;nx/=len;ny/=len;nz/=len;
-      for(const q of [nx,ny,nz,...a,...b,...c]){view.setFloat32(at,q,true);at+=4;}
-      view.setUint16(at,0,true);at+=2;
-    }
-    for(const f of faces){
-      if(f.length===4) {
-        triangle(location(f[0],f[3]),location(f[1],f[3]),location(f[2],f[3]));
-      }else if(f[4]==='wall') {
-        triangle(location(f[0],true),location(f[1],false),location(f[2],true));
-      }else{
-        triangle(location(f[0],true),location(f[1],false),location(f[2],false));
-      }
-    }
-    return new Uint8Array(array);
-  }
+  const {makeSTL}=window.TerrainGeometry;
   function assemblyImage(p,dem,range){
     const canvas=document.createElement('canvas'),sz=540;canvas.width=sz;canvas.height=sz;
     const ctx=canvas.getContext('2d'),img=ctx.createImageData(sz,sz),heights=new Float32Array(sz*sz);
@@ -310,7 +238,7 @@
     try{
       const p=plan(inputs()); drawSelection(p);
       say('Получаю реальные высоты и рассчитываю модель…');
-      const dem=await demData(p),range=getRange(p,dem);
+      const sourceDEM=await demData(p),range=await getRange(p,sourceDEM),dem={...sourceDEM,height:range.height};
       const maxHeight=3+(range.max-range.min)*1000/p.s.scale*p.s.exaggeration;
       if(maxHeight>210)throw Error('Высота модели '+maxHeight.toFixed(1)+' мм больше 210 мм. Уменьши высоты × или масштаб.');
       const files=[],metadata={
@@ -318,6 +246,11 @@
         settings:p.s,plan:{corners:p.corners,selected_m:p.selected,coverage_m:p.coverage,cols:p.cols,total:p.total,
           tile_pitch_mm:p.pitch,printed_size_mm:p.cols*p.pitch},
         min_elevation_m:range.min,max_elevation_m:range.max,approx_max_height_mm:maxHeight,
+        z_min:range.min,z_max:range.max,
+        geometry:{height_field:range.rangeMethod,samples:range.sampleCount,segments:range.count,
+          range_margin_m:range.marginMeters,interpolation:'bilinear',base_mm:3,
+          seam:{profile:'sin-squared',amplitude_mm:p.tab,width_mm:26,gap_mm:.2},
+          projection:'local-equirectangular',vertical_reference:'source DEM; not normalized'},
         dem_zoom:dem.zoom??null,dem_tiles:dem.tileCount??null,requested_raster_pixel_m:dem.pixelResolution??null,source:p.s.source==='demo'?'SYNTHETIC TEST DATA':'Mapzen Terrarium DEM',tiles:[]
       };
       for(let r=0;r<p.cols;r++)for(let c=0;c<p.cols;c++){
@@ -326,7 +259,9 @@
         const binary=makeSTL(p,dem,range,r,c);
         const filename='STL/'+id+'_row'+(r+1)+'_col'+(c+1)+'.stl';
         files.push([filename,binary]);
-        metadata.tiles.push({id,filename,triangles:(binary.length-84)/50});
+        const bounds=window.TerrainGeometry.stlBounds(binary);
+        metadata.tiles.push({id,filename,triangles:(binary.length-84)/50,
+          bounds_mm:bounds,extents_mm:bounds.map(([a,b])=>b-a),finite:true});
         await new Promise(resolve=>setTimeout(resolve,0));
       }
       files.push(['ASSEMBLY_PLAN.png',await assemblyImage(p,dem,range)]);

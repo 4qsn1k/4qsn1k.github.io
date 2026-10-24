@@ -102,14 +102,14 @@ function tab(which){
  $('tabMap').classList.toggle('active',map);$('tab3d').classList.toggle('active',!map);
  $('refreshPreview').style.display=map?'none':'inline-block';
  if(map)setTimeout(()=>api.map()?.invalidateSize(),60);
- else {window.TerrainViewer?.resize();let key='';try{let p=api.plan();key=JSON.stringify(p.corners)+p.s.source+'|'+p.s.smooth_m;}catch(e){api.say(e.message,'error');return;}if(!lastDEM||key!==lastKey)loadPreview();}
+ else {window.TerrainViewer?.resize();let key='';try{let p=api.plan();key=JSON.stringify(p.corners)+p.s.source+'|'+p.s.smooth_m+'|'+p.s.mesh_step+'|'+p.cols+'|'+p.pitch;}catch(e){api.say(e.message,'error');return;}if(!lastDEM||key!==lastKey)loadPreview();}
 }
 $('tabMap').onclick=()=>tab('map');$('tab3d').onclick=()=>tab('preview');
 async function elevations(){
  const p=api.plan();
- const key=JSON.stringify(p.corners)+p.s.source+'|'+p.s.smooth_m;
+ const key=JSON.stringify(p.corners)+p.s.source+'|'+p.s.smooth_m+'|'+p.s.mesh_step+'|'+p.cols+'|'+p.pitch;
  if(lastDEM&&key===lastKey)return{p,dem:lastDEM,range:lastRange};
- const dem=await api.demData(p),range=api.getRange(p,dem);
+ const sourceDEM=await api.demData(p),range=await api.getRange(p,sourceDEM),dem={...sourceDEM,height:range.height};
  lastDEM=dem;lastRange=range;lastKey=key;
  window.dispatchEvent(new CustomEvent('terrain:elevations',{detail:{range,dem}}));
  return {p,dem,range};
