@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),canvas=$('previewCanvas');
-let gl,prog,surface,lines,wire,yaw=-.85,tilt=.58,zoom=1.65,span=200,midz=0;
+let gl,prog,surface,lines,wire,routeLines=null,lastModel=null,yaw=-.85,tilt=.58,zoom=1.65,span=200,midz=0;
 let panX=0,panY=0,panZ=0,bordersOn=true,wireOn=false,modelH=20;
 const vs='attribute vec3 pos;attribute vec3 col;attribute vec3 nor;uniform mat4 mvp;varying vec3 c;varying float light;void main(){gl_Position=mvp*vec4(pos,1.);c=col;light=clamp(dot(normalize(nor),normalize(vec3(-.38,-.62,.87))),.40,1.);}',
 fs='precision mediump float;varying vec3 c;varying float light;void main(){gl_FragColor=vec4(c*light,1.);}';
@@ -57,66 +57,82 @@ function draw(){
  gl.viewport(0,0,canvas.width,canvas.height);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
  const r=Math.max(span*zoom,modelH*1.35),eye=[panX+r*Math.cos(yaw)*Math.cos(tilt),panY+r*Math.sin(yaw)*Math.cos(tilt),midz+panZ+r*Math.sin(tilt)];
  gl.uniformMatrix4fv(gl.getUniformLocation(prog,'mvp'),false,mul(perspective(canvas.width/canvas.height,Math.max(span*80,r*10)),lookAt(eye,[panX,panY,midz+panZ])));
- drawPart(surface,gl.TRIANGLES);
+ for(const part of surface)drawPart(part,gl.TRIANGLES);
  if(bordersOn)drawPart(lines,gl.LINES);
  if(wireOn)drawPart(wire,gl.LINES);
+ if(routeLines)drawPart(routeLines,gl.LINES);
+}
+function refreshRoute(){
+ if(routeLines&&gl){gl.deleteBuffer(routeLines.v);gl.deleteBuffer(routeLines.i);}
+ routeLines=null;
+ if(!lastModel||!gl||!window.TerrainProject)return;
+ const {p,dem,range}=lastModel;
+ const samples=window.TerrainProject.getRoute();
+ if(samples.length<2)return;
+ const coordinates=[],ids=[],W=p.cols*p.pitch,gain=1000/p.s.scale*p.s.exaggeration;
+ let previous=null;
+ const stride=Math.max(1,Math.ceil(samples.length/15000));
+ for(let k=0;k<samples.length;k+=stride){
+   const o=samples[k];
+   const xy=window.terrainPuzzleDebug.pointXY(o.lat,o.lon,p.lat0,p.lon0);
+   if(xy[0]<p.minx||xy[0]>p.maxx||xy[1]<p.miny||xy[1]>p.maxy){previous=null;continue;}
+   const z=3+(dem.height(xy[0],xy[1])-range.min)*gain+1.2;
+   const pt=[(xy[0]-p.minx)/p.coverage*W-W/2,(xy[1]-p.miny)/p.coverage*W-W/2,z];
+   if(previous){
+     for(const q of [previous,pt]){
+       const i=coordinates.length/9;
+       coordinates.push(...q,.98,.14,.07,0,0,1);ids.push(i);
+     }
+   }
+   previous=pt;
+ }
+ if(ids.length)routeLines=upload(coordinates,ids);
+ draw();
 }
 function render(p,dem,range){
  init();
- if(surface){gl.deleteBuffer(surface.v);gl.deleteBuffer(surface.i);}
+ if(surface)for(const part of surface){gl.deleteBuffer(part.v);gl.deleteBuffer(part.i);}
  if(lines){gl.deleteBuffer(lines.v);gl.deleteBuffer(lines.i);}
  if(wire){gl.deleteBuffer(wire.v);gl.deleteBuffer(wire.i);}
- const segments=125,n=segments+1,W=p.cols*p.pitch,gain=1000/p.s.scale*p.s.exaggeration;
- const z=new Float32Array(n*n),v=[],idx=[],maxHeight=Math.max(1,(range.max-range.min)*gain);
- const sample=(u,t)=>3+Math.max(0,dem.height(p.minx+p.coverage*u,p.maxy-p.coverage*t)-range.min)*gain;
- const id=(i,j)=>j*n+i;
- for(let j=0;j<n;j++)for(let i=0;i<n;i++)z[id(i,j)]=sample(i/segments,j/segments);
- for(let j=0;j<n;j++)for(let i=0;i<n;i++){
-  const k=id(i,j),height=z[k],l=z[id(Math.max(0,i-1),j)],r=z[id(Math.min(segments,i+1),j)],
-  a=z[id(i,Math.max(0,j-1))],b=z[id(i,Math.min(segments,j+1))];
-  const no=normal([-(r-l),-(a-b),2*W/segments]);
-  v.push((i/segments-.5)*W,(.5-j/segments)*W,height,...color((height-3)/maxHeight),...no);
- }
- for(let j=0;j<segments;j++)for(let i=0;i<segments;i++){
-  const a=id(i,j),b=a+1,c=a+n,d=c+1;idx.push(a,c,d,a,d,b);
- }
- // perimeter walls to the base
- const edges=[Array.from({length:n},(_,i)=>id(i,0)),Array.from({length:n},(_,i)=>id(segments,i)),
- Array.from({length:n},(_,i)=>id(segments-i,segments)),Array.from({length:n},(_,i)=>id(0,segments-i))];
- for(const group of edges){
-  const below=group.map(k=>{const j=k*9,q=v.length/9;v.push(v[j],v[j+1],0,.20,.28,.29,0,0,1);return q;});
-  for(let i=0;i<group.length-1;i++)idx.push(group[i],below[i],below[i+1],group[i],below[i+1],group[i+1]);
- }
- surface=upload(v,idx);
- const meshLines=[],meshIds=[];
- for(let j=0;j<=segments;j+=4)for(let i=0;i<segments;i+=4){
-   const t=id(i,j),u=id(Math.min(segments,i+4),j),start=meshLines.length/9;
-   for(const k of [t,u]){
-     const a=k*9;meshLines.push(v[a],v[a+1],v[a+2]+.25,.08,.09,.11,0,0,1);
+ if(routeLines){gl.deleteBuffer(routeLines.v);gl.deleteBuffer(routeLines.i);routeLines=null;}
+ const W=p.cols*p.pitch,gain=1000/p.s.scale*p.s.exaggeration;
+ const maxHeight=Math.max(1,(range.max-range.min)*gain);
+ // LOD changes sampling density only; tile warping, datum and topology share STL core.
+ const segments=Math.max(2,Math.min(Math.ceil(p.pitch/p.s.mesh_step),Math.floor(120/p.cols)));
+ const lv=[],wv=[];
+ surface=[];
+ const addLine=(target,a,b)=>{
+   for(const q of [a,b])target.push(q[0],q[1],q[2]+.25,.03,.17,.20,0,0,1);
+ };
+ for(let row=0;row<p.rows;row++)for(let col=0;col<p.cols;col++){
+   const mesh=window.TerrainGeometry.buildTileMesh(p,dem,range,row,col,{segments});
+   const v=[],idx=[],n=segments+1,positions=mesh.positions;
+   const point=k=>[positions[k*3]+col*p.pitch-W/2,positions[k*3+1]+(p.rows-row-1)*p.pitch-W/2,positions[k*3+2]];
+   // Flat normals and bounded per-tile uploads work on WebGL 1 without uint32 indices.
+   for(const face of mesh.faces){
+     const pts=face.map(point),a=pts[0],b=pts[1],c=pts[2];
+     const no=normal(cross(b.map((x,i)=>x-a[i]),c.map((x,i)=>x-a[i])));
+     for(const q of pts){idx.push(v.length/9);v.push(...q,...color((q[2]-3)/maxHeight),...no);}
    }
-   meshIds.push(start,start+1);
+   // Keep each draw's indices within Uint16, including at high single-tile LOD.
+   const limit=65535;
+   for(let offset=0;offset<idx.length;offset+=limit){
+     const size=Math.min(limit,idx.length-offset);
+     surface.push(upload(v.slice(offset*9,(offset+size)*9),Array.from({length:size},(_,i)=>i)));
+   }
+   for(let j=0;j<=segments;j++)for(let i=0;i<=segments;i++){
+     const k=j*n+i;
+     if(i<segments){if(j===0||j===segments)addLine(lv,point(k),point(k+1));else if(j%4===0)addLine(wv,point(k),point(k+1));}
+     if(j<segments){if(i===0||i===segments)addLine(lv,point(k),point(k+n));else if(i%4===0)addLine(wv,point(k),point(k+n));}
+   }
  }
- for(let i=0;i<=segments;i+=4)for(let j=0;j<segments;j+=4){
-   const t=id(i,j),u=id(i,Math.min(segments,j+4)),start=meshLines.length/9;
-   for(const k of [t,u]){const a=k*9;meshLines.push(v[a],v[a+1],v[a+2]+.25,.08,.09,.11,0,0,1);}
-   meshIds.push(start,start+1);
- }
- wire=upload(meshLines,meshIds);
- const lv=[];
- const add=(x,y,h)=>lv.push(x,y,h+.85,.03,.17,.20,0,0,1);
- for(let t=0;t<=p.cols;t++){
-  const q=t/p.cols;
-  for(let i=0;i<150;i++){
-    const x=i/150,y=(i+1)/150;
-    add((q-.5)*W,(.5-x)*W,sample(q,x));add((q-.5)*W,(.5-y)*W,sample(q,y));
-    add((x-.5)*W,(.5-q)*W,sample(x,q));add((y-.5)*W,(.5-q)*W,sample(y,q));
-  }
- }
+ wire=upload(wv,Array.from({length:wv.length/9},(_,i)=>i));
  lines=upload(lv,Array.from({length:lv.length/9},(_,i)=>i));
  span=Math.max(W,3*(maxHeight+5));midz=Math.min(maxHeight,80)/2;modelH=maxHeight+3;
  fitView();
  const details=document.querySelector('#preview3d .overlayTip');
  if(details)details.textContent='Размер '+Math.round(W)+' × '+Math.round(W)+' × '+(maxHeight+3).toFixed(1)+' мм · '+p.cols+'×'+p.cols+' плиток · перетащи для поворота · колесо — масштаб';
+ lastModel={p,dem,range};refreshRoute();
  $('preview3d').dataset.shape=p.total;
 }
 // Camera controls: orbit, pan, pinch zoom, wheel, fit/top/isometric.
@@ -192,6 +208,6 @@ document.querySelectorAll('#viewerToolbar [data-view]').forEach(b=>b.addEventLis
 $('viewerBorders')?.addEventListener('change',e=>{bordersOn=e.target.checked;draw();});
 $('viewerWire')?.addEventListener('change',e=>{wireOn=e.target.checked;draw();});
 window.addEventListener('resize',draw);
-window.TerrainViewer={render,resize:draw,fit:fitView,top:topView,iso:isoView,zoomBy,
+window.TerrainViewer={render,resize:draw,fit:fitView,top:topView,iso:isoView,zoomBy,refreshRoute,
  state:()=>({yaw,tilt,zoom,panX,panY,panZ,bordersOn,wireOn})};
 })();

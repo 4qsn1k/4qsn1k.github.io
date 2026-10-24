@@ -1,0 +1,26 @@
+name: Terrain Puzzle CI
+on:
+  push:
+    paths:
+      - 'terrain-puzzle/**'
+      - '.github/workflows/terrain-puzzle-ci.yml'
+  pull_request:
+    paths:
+      - 'terrain-puzzle/**'
+      - '.github/workflows/terrain-puzzle-ci.yml'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Geometry, projection, DEM adapter tests
+        run: |
+          node --test terrain-puzzle/tests/geometry-core.test.js terrain-puzzle/tests/projection.test.js
+          node terrain-puzzle/tests/elevation-providers.test.js
+      - name: JavaScript syntax
+        run: |
+          for f in terrain-puzzle/*.js; do node --check "$f"; done
