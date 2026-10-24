@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),canvas=$('previewCanvas');
-let gl,prog,surface,lines,wire,routeLines=null,lastModel=null,yaw=-.85,tilt=.58,zoom=1.65,span=200,midz=0;
+let gl,prog,surface,lines,wire,routeLines=null,landscapeDraw=[],lastModel=null,yaw=-.85,tilt=.58,zoom=1.65,span=200,midz=0;
 let panX=0,panY=0,panZ=0,bordersOn=true,wireOn=false,modelH=20;
 const vs='attribute vec3 pos;attribute vec3 col;attribute vec3 nor;uniform mat4 mvp;varying vec3 c;varying float light;void main(){gl_Position=mvp*vec4(pos,1.);c=col;light=clamp(dot(normalize(nor),normalize(vec3(-.38,-.62,.87))),.40,1.);}',
 fs='precision mediump float;varying vec3 c;varying float light;void main(){gl_FragColor=vec4(c*light,1.);}';
@@ -61,6 +61,7 @@ function draw(){
  if(bordersOn)drawPart(lines,gl.LINES);
  if(wireOn)drawPart(wire,gl.LINES);
  if(routeLines)drawPart(routeLines,gl.LINES);
+ for(const group of landscapeDraw)drawPart(group,gl.TRIANGLES);
 }
 function refreshRoute(){
  if(routeLines&&gl){gl.deleteBuffer(routeLines.v);gl.deleteBuffer(routeLines.i);}
@@ -89,12 +90,35 @@ function refreshRoute(){
  if(ids.length)routeLines=upload(coordinates,ids);
  draw();
 }
+function refreshLandcover(){
+ if(gl)for(const part of landscapeDraw){gl.deleteBuffer(part.v);gl.deleteBuffer(part.i);}
+ landscapeDraw=[];
+ if(!lastModel||!gl||!window.TerrainOSMLayers||!window.TerrainLandscape)return;
+ const {p,dem,range}=lastModel,api=window.TerrainOSMLayers,
+   features=api.getFeatures(),trees=api.getTrees(p);
+ if(!features.length){draw();return;}
+ const colored=window.TerrainLandscape.build(p,dem,range,features,trees,{
+   forest:document.getElementById('layerForest').checked&&document.getElementById('layer3DTrees').checked,
+   river:document.getElementById('layerRivers').checked,
+   road:document.getElementById('layerRoads').checked
+ });
+ for(const buffer of [colored.forest,colored.water,colored.road]){
+  // WebGL1 UNSIGNED_SHORT indices: <= 64k vertices per draw call, triangle aligned.
+  const limit=60000;
+  for(let from=0;from<buffer.length;from+=limit*9){
+   const chunk=buffer.slice(from,from+limit*9),n=chunk.length/9;
+   if(n>0)landscapeDraw.push(upload(chunk,Array.from({length:n},(_,i)=>i)));
+  }
+ }
+ draw();
+}
 function render(p,dem,range){
  init();
  if(surface)for(const part of surface){gl.deleteBuffer(part.v);gl.deleteBuffer(part.i);}
  if(lines){gl.deleteBuffer(lines.v);gl.deleteBuffer(lines.i);}
  if(wire){gl.deleteBuffer(wire.v);gl.deleteBuffer(wire.i);}
  if(routeLines){gl.deleteBuffer(routeLines.v);gl.deleteBuffer(routeLines.i);routeLines=null;}
+ for(const part of landscapeDraw){gl.deleteBuffer(part.v);gl.deleteBuffer(part.i);}landscapeDraw=[];
  const W=p.cols*p.pitch,gain=1000/p.s.scale*p.s.exaggeration;
  const maxHeight=Math.max(1,(range.max-range.min)*gain);
  // LOD changes sampling density only; tile warping, datum and topology share STL core.
@@ -132,7 +156,7 @@ function render(p,dem,range){
  fitView();
  const details=document.querySelector('#preview3d .overlayTip');
  if(details)details.textContent='Размер '+Math.round(W)+' × '+Math.round(W)+' × '+(maxHeight+3).toFixed(1)+' мм · '+p.cols+'×'+p.cols+' плиток · перетащи для поворота · колесо — масштаб';
- lastModel={p,dem,range};refreshRoute();
+ lastModel={p,dem,range};refreshRoute();refreshLandcover();
  $('preview3d').dataset.shape=p.total;
 }
 // Camera controls: orbit, pan, pinch zoom, wheel, fit/top/isometric.
@@ -208,6 +232,6 @@ document.querySelectorAll('#viewerToolbar [data-view]').forEach(b=>b.addEventLis
 $('viewerBorders')?.addEventListener('change',e=>{bordersOn=e.target.checked;draw();});
 $('viewerWire')?.addEventListener('change',e=>{wireOn=e.target.checked;draw();});
 window.addEventListener('resize',draw);
-window.TerrainViewer={render,resize:draw,fit:fitView,top:topView,iso:isoView,zoomBy,refreshRoute,
+window.TerrainViewer={render,resize:draw,fit:fitView,top:topView,iso:isoView,zoomBy,refreshRoute,refreshLandcover,
  state:()=>({yaw,tilt,zoom,panX,panY,panZ,bordersOn,wireOn})};
 })();

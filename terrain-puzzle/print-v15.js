@@ -79,7 +79,8 @@ function pdf(doc){
   const boxW=pts(page.w-2*page.pad),boxH=pts(page.h-2*page.pad);
   cmd.push('q 0.3 w 0.18 0.28 0.3 RG '+pad.toFixed(3)+' '+pad.toFixed(3)+' '+boxW.toFixed(3)+' '+boxH.toFixed(3)+' re S Q');
   cmd.push('BT /F1 7 Tf '+pad.toFixed(3)+' '+(H-pad/2).toFixed(3)+' Td ('+safe('TERRAIN PUZZLE  |  '+page.label)+') Tj ET');
-  const foot='100% PRINT SIZE | Mapzen DEM | Topographic elevation colors | RGB';
+  const hasOSM=window.TerrainOSMLayers?.getFeatures()?.length>0;
+  const foot='100% PRINT SIZE | Mapzen DEM | '+(hasOSM?'(c) OpenStreetMap contributors (ODbL) | ':'')+'RGB';
   cmd.push('BT /F1 7 Tf '+pad.toFixed(3)+' '+(pad/2).toFixed(3)+' Td ('+safe(foot)+') Tj ET');
   const content=E.encode(cmd.join('\n')+'\n');
   const stream=add({dict:'<< /Length '+content.length+' >>',data:content});

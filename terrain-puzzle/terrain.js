@@ -231,7 +231,7 @@
       const maxHeight=3+(range.max-range.min)*1000/p.s.scale*p.s.exaggeration;
       if(maxHeight>210)throw Error('Высота модели '+maxHeight.toFixed(1)+' мм больше 210 мм. Уменьши высоты × или масштаб.');
       const files=[],metadata={
-        app:'Terrain Puzzle Generator',version:'2.0.0',generated:new Date().toISOString(),
+        app:'Terrain Puzzle Generator',version:'2.1.0',generated:new Date().toISOString(),
         settings:p.s,plan:{corners:p.corners,selected_m:p.selected,coverage_m:p.coverage,cols:p.cols,total:p.total,
           tile_pitch_mm:p.pitch,printed_size_mm:p.cols*p.pitch},
         min_elevation_m:range.min,max_elevation_m:range.max,approx_max_height_mm:maxHeight,
@@ -258,8 +258,44 @@
           bounds_mm:bounds,extents_mm:bounds.map(([a,b])=>b-a),finite:true});
         await new Promise(resolve=>setTimeout(resolve,0));
       }
-      metadata.color3mf=p.s.export_3mf?{enabled:true,bands:6,
-        meaning:'elevation categories, not surveyed land cover; slicer compatibility not verified'}:{enabled:false};
+      metadata.color3mf=p.s.export_3mf?{enabled:true,bands:11,
+        meaning:'elevation colors plus optional OSM forest, river and road categories; botanical species not guaranteed, slicer compatibility not verified'}:{enabled:false};
+      // Geographic layers: include source-derived GeoJSON and optional printable
+      // individual tree miniatures. These pieces sit flat on the printer bed and
+      // are GLUED manually at positions supplied in FOREST/placements.json.
+      const landscape=window.TerrainOSMLayers;
+      if(landscape?.getFeatures()?.length){
+        files.push(['GEO/landcover.geojson',encoder.encode(JSON.stringify(
+          window.TerrainLandcover.toGeoJSON(landscape.getFeatures())))]);
+        const allTrees=landscape.getTrees(p,true);
+        metadata.geographic_layers={
+          count:landscape.getFeatures().length,trees:allTrees.length,
+          source:'OpenStreetMap or user-provided GeoJSON',
+          species:'species/genus tags only; otherwise illustrative, not surveyed',
+          waterways:'surface color ribbons; not carved in relief'};
+        if($('forestExport')?.value==='stl'&&allTrees.length){
+          const catalogue=[];
+          for(let row=0;row<p.rows;row++)for(let col=0;col<p.cols;col++){
+            const subset=allTrees.filter(t=>t.row===row&&t.col===col);
+            if(!subset.length)continue;
+            const meshes=subset.map(t=>window.TerrainLandcover.treeMesh(
+              t.mmx-col*p.pitch,t.mmy-(p.rows-row-1)*p.pitch,0,t.size,t.type));
+            const id=String.fromCharCode(65+row)+(col+1);
+            files.push(['FOREST/'+id+'_TREES_SEPARATE_PRINT.stl',
+              window.TerrainLandcover.meshSTL(meshes,'Terrain Forest '+id)]);
+            for(const t of subset)catalogue.push({tile:id,x_mm:+(t.mmx-col*p.pitch).toFixed(2),
+              y_mm:+(t.mmy-(p.rows-row-1)*p.pitch).toFixed(2),
+              type:t.type,mapped_species:t.reportedSpecies,
+              tree_height_mm:+t.size.toFixed(2),note:'glue after printing; not a survey of forest stocking'});
+          }
+          files.push(['FOREST/placements.json',encoder.encode(JSON.stringify(catalogue,null,2))]);
+          files.push(['FOREST/PRINT_README.txt',encoder.encode(
+            'These are separate miniature tree models laid out by tile coordinates. They are not fused to the terrain.\\n'+
+            'Use 0.4 mm or smaller nozzle, inspect with slicer, print separately, then glue in place.\\n'+
+            'The botanical type is only factual when mapped in OSM; unknown forest uses symbolic shapes.\\n')]);
+          metadata.geographic_layers.forest_stl='separate unattached tree models, separate print and glue';
+        }
+      }
       files.push(['ASSEMBLY_PLAN.png',await assemblyImage(p,dem,range)]);
       const project=window.TerrainProject;
       if(project?.getRouteInfo()){
