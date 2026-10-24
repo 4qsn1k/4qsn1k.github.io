@@ -174,7 +174,7 @@
      height:smoothHeight(sample,p)};
   }
   async function getRange(p,dem) {
-    const frame=await window.TerrainGeometry.createHeightFrameAsync(p,dem,q=>say('Общее поле высот: '+Math.round(q*100)+'%…')); 
+    const frame=await window.TerrainGeometry.createHeightFrameAsync(p,dem,q=>say('Общее поле высот: '+Math.round(q*100)+'%…'));
     return frame;
   }
   const {makeSTL}=window.TerrainGeometry;
