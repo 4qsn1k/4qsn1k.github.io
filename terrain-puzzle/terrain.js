@@ -267,6 +267,7 @@
       if(landscape?.getFeatures()?.length){
         files.push(['GEO/landcover.geojson',encoder.encode(JSON.stringify(
           window.TerrainLandcover.toGeoJSON(landscape.getFeatures())))]);
+        files.push(['GEO/DATA_SOURCES.txt',encoder.encode('Layers may include OpenStreetMap (c) OpenStreetMap contributors, ODbL.\nhttps://www.openstreetmap.org/copyright\nCheck independent licences for user-supplied GeoJSON.\n')]);
         const allTrees=landscape.getTrees(p,true);
         metadata.geographic_layers={
           count:landscape.getFeatures().length,trees:allTrees.length,

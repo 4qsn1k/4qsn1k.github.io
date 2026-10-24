@@ -28,6 +28,7 @@ test('OSM data parses river, forest, road and geotagged birch',()=>{
 test('geojson roundtrip keeps geographic objects',()=>{
  const a=L.parseOverpass(payload),b=L.parseGeoJSON(L.toGeoJSON(a));
  assert.equal(b.length,4);
+ assert.ok(b.every(f=>f.source==='OpenStreetMap'));
  assert.equal(b.find(x=>x.kind==='forest').subtype,'pine');
 });
 test('polygon inclusion works for concave mapped forests',()=>{

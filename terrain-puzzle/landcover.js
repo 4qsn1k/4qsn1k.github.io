@@ -86,7 +86,7 @@ function parseGeoJSON(input,max=1400){
    if(area&&coords.length<4)continue;
    if(result.length>=max)throw Error('GeoJSON exceeds feature limit');
    const spec=forestSpecies(t);
-   result.push({id:'geojson/'+id++,kind,coords,area,subtype:spec.type,verified:spec.verified,label:spec.label,tags:t,source:'GeoJSON'});
+   result.push({id:'geojson/'+id++,kind,coords,area,subtype:spec.type,verified:spec.verified,label:spec.label,tags:t,source:t.source==='OpenStreetMap'?'OpenStreetMap':'GeoJSON'});
   }
  }
  return result;

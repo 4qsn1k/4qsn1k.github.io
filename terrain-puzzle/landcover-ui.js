@@ -28,7 +28,9 @@ function redraw(){
   else if(f.area)shape=L.polygon(coords,opts).addTo(layer);
   else shape=L.polyline(coords,opts).addTo(layer);
   const name=String(f.tags?.name||f.label||f.kind).slice(0,130);
-  shape.bindTooltip(name+(f.verified?' · определённая порода':'')+' · '+(f.source||'Геоданные'),{sticky:true});
+  const caption=document.createElement('span');
+  caption.textContent=name+(f.verified?' · определённая порода':'')+' · '+(f.source||'Геоданные');
+  shape.bindTooltip(caption,{sticky:true});
  }
  window.TerrainViewer?.refreshLandcover?.();
  updateStats();
