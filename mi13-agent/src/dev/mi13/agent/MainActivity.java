@@ -113,7 +113,7 @@ public final class MainActivity extends Activity {
         log.setTextSize(12);
         log.setTextIsSelectable(true);
         panel.addView(log);
-        panel.addView(label("Версия 0.1 • экран и жесты доступны только после согласия в системных настройках • не использовать для банковских операций"));
+        panel.addView(label("Версия 0.2 • Амина работает без API • не использовать ИИ для банковских операций"));
         setContentView(view);
     }
     private void manual(String json){
