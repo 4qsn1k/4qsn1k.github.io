@@ -38,9 +38,9 @@ if(!(Test-Path $ks)){
     & "$jbin\keytool.exe" -genkeypair -keystore $ks -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=MI13 Agent Debug,O=Personal Lab,C=US"
 }
 Write-Host "SIGN..."
-& "$bt\apksigner.bat" sign --ks $ks --ks-pass pass:android --key-pass pass:android --ks-key-alias androiddebugkey --out "$root\MI13-Agent-v0.1.apk" "$out\aligned.apk"
+& "$bt\apksigner.bat" sign --ks $ks --ks-pass pass:android --key-pass pass:android --ks-key-alias androiddebugkey --out "$root\MI13-Agent-v0.2.apk" "$out\aligned.apk"
 if($LASTEXITCODE -ne 0){throw "sign failed"}
 Write-Host "VERIFY..."
-& "$bt\apksigner.bat" verify --verbose --print-certs "$root\MI13-Agent-v0.1.apk"
+& "$bt\apksigner.bat" verify --verbose --print-certs "$root\MI13-Agent-v0.2.apk"
 if($LASTEXITCODE -ne 0){throw "verify failed"}
-Get-Item "$root\MI13-Agent-v0.1.apk" | Select-Object FullName,Length,LastWriteTime
+Get-Item "$root\MI13-Agent-v0.2.apk" | Select-Object FullName,Length,LastWriteTime

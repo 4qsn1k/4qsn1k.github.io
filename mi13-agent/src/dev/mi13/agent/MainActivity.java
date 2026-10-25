@@ -40,6 +40,8 @@ public final class MainActivity extends Activity {
         panel.addView(title);
         TextView subtitle=label("Автоматическое управление Xiaomi через ИИ.\nБез root, ПК и внешних плат.");
         panel.addView(subtitle);
+        Button amina=button("АМИНА — ежедневная проверка бесплатно",panel);
+        amina.setOnClickListener(v->startActivity(new Intent(this,AminaMonitorActivity.class)));
         status=label("Проверка службы...");
         status.setTextColor(Color.rgb(20,95,85));
         status.setTypeface(null,Typeface.BOLD);
@@ -47,7 +49,8 @@ public final class MainActivity extends Activity {
         Button enable=button("1. Открыть специальные возможности",panel);
         enable.setOnClickListener(v->startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)));
         panel.addView(label("В разделе «Загруженные приложения» включите MI13 Agent. Для приложения из APK HyperOS может потребовать разрешить ограниченные настройки."));
-        panel.addView(section("2. Настройки API"));
+        panel.addView(section("2. Дополнительный режим: ИИ через платный API"));
+        panel.addView(label("Для проверки Амины ключ OpenAI API не нужен. Откройте раздел «АМИНА» выше."));
         key=new EditText(this);
         key.setHint("Ключ OpenAI API: sk-...");
         key.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);

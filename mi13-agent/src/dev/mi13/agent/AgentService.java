@@ -62,6 +62,21 @@ public final class AgentService extends AccessibilityService {
         Engine.stop("Служба отключена.");
         super.onDestroy();
     }
+    public void captureTreeOnly(java.util.function.Consumer<Snapshot> callback) {
+        main.post(() -> {
+            Snapshot s=new Snapshot();
+            Point p=new Point();
+            ((WindowManager)getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getRealSize(p);
+            s.width=p.x;s.height=p.y;
+            AccessibilityNodeInfo root=getRootInActiveWindow();
+            if(root!=null){
+                CharSequence pkg=root.getPackageName();
+                s.packageName=pkg==null?"":pkg.toString();
+                addNode(root,s,0,new int[]{0});
+            }else s.tree="(интерфейс не читается)";
+            callback.accept(s);
+        });
+    }
     public void capture(java.util.function.Consumer<Snapshot> callback) {
         main.post(() -> {
             final Snapshot s = new Snapshot();
