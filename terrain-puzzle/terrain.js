@@ -273,7 +273,9 @@
           count:landscape.getFeatures().length,trees:allTrees.length,
           source:'OpenStreetMap or user-provided GeoJSON',
           species:'species/genus tags only; otherwise illustrative, not surveyed',
-          waterways:'surface color ribbons; not carved in relief'};
+          waterways:'continuous 3D preview strip, not carved in STL',
+          preview_water_width_m:Number($('riverWidth')?.value||60),
+          preview_water_width_note:'visual assumption where no mapped banks; not flood extent, not used in exported STL'};
         if($('forestExport')?.value==='stl'&&allTrees.length){
           const catalogue=[];
           for(let row=0;row<p.rows;row++)for(let col=0;col<p.cols;col++){

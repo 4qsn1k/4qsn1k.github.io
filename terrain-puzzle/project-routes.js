@@ -4,7 +4,7 @@
 const $=id=>document.getElementById(id),api=window.terrainPuzzleDebug;
 let route=null,layer=null,lastFile='';
 const IDs=['lat1','lon1','lat2','lon2','scale','tile_size','exaggeration','mesh_step','smooth_m',
- 'puzzle','export3mf','source','printerLimit','gridCount','paper_scale','paper_format','paper_orientation','paper_dpi','contour_interval','forestSpacing','forestExport','layerForest','layerRivers','layerRoads','layer3DTrees'];
+ 'puzzle','export3mf','source','printerLimit','gridCount','paper_scale','paper_format','paper_orientation','paper_dpi','contour_interval','forestSpacing','forestExport','layerForest','layerRivers','layerRoads','layer3DTrees','riverWidth','previewTopo'];
 function safePoint(lat,lon,ele){
  lat=Number(lat);lon=Number(lon);
  if(!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>85||Math.abs(lon)>180)
@@ -101,7 +101,7 @@ function applyState(doc){
  window.TerrainGridEditor?.enable();
  if(doc.settings.gridCount)$('gridCount').value=String(doc.settings.gridCount);
  draw();
- for(const id of ['source','paper_format','mesh_step'])$(id).dispatchEvent(new Event('change',{bubbles:true}));
+ for(const id of ['source','paper_format','mesh_step','riverWidth','previewTopo'])$(id).dispatchEvent(new Event('change',{bubbles:true}));
  api.say('Проект загружен: '+p.total+' деталей.','good');
 }
 $('saveProject').onclick=()=>bytes(new Blob([JSON.stringify(snapshot(),null,2)],{type:'application/json'}),'terrain_puzzle_project.json');
