@@ -1,4 +1,4 @@
-/* Landscape preview geometry: true mapped water/roads, symbolic forest trees.
+﻿/* Landscape preview geometry: true mapped water/roads, symbolic forest trees.
  * Coordinates and heights share the terrain generator's UTM projection.
  */
 (function(root,factory){
@@ -47,6 +47,49 @@ function ribbons(output,feature,p,dem,range,color,widthMm){
   prev=v;if(++count>8000)break;
  }
 }
+// A continuous river strip with shared cross-sections, not disconnected quads.
+// If OSM mapped a water polygon it remains the primary shoreline source.
+// Without mapped banks, riverWidthMeters is explicitly a display assumption.
+function continuousRiver(output,feature,p,dem,range,riverWidthMeters=50){
+ const pts=feature.coords.map(c=>projected(c,p)),line=[];
+ const userWidth=Number(riverWidthMeters);
+ const mappedWidth=Number(String(feature.tags.width||'').replace(',','.'));
+ // The user requested deliberately *full-looking* water. The selected width
+ // is a visualization minimum, not a hydrological flood extent.
+ const width=Math.max(userWidth,Number.isFinite(mappedWidth)&&mappedWidth>=2&&mappedWidth<=300?mappedWidth:0);
+ // The width selector is an illustrative river surface for ALL linear watercourses,
+ // even when OSM classifies the way as stream. It is not a mapped floodplain.
+ const half=width/2,step=Math.max(5,Math.min(18,width/3));
+ for(let i=0;i<pts.length-1;i++){
+  const a=pts[i],b=pts[i+1],distance=Math.hypot(b[0]-a[0],b[1]-a[1]);
+  if(distance<.01)continue;
+  const n=Math.max(1,Math.min(500,Math.ceil(distance/step)));
+  for(let j=0;j<n;j++){const t=j/n;line.push([a[0]*(1-t)+b[0]*t,a[1]*(1-t)+b[1]*t]);}
+ }
+ if(pts.length>1)line.push(pts[pts.length-1]);
+ if(line.length>2500)line.splice(0,line.length,...line.filter((x,i)=>i%Math.ceil(line.length/2400)===0));
+ let last=null;
+ for(let i=0;i<line.length;i++){
+  const curr=line[i],a=line[Math.max(0,i-1)],b=line[Math.min(line.length-1,i+1)],
+   dx=b[0]-a[0],dy=b[1]-a[1],d=Math.hypot(dx,dy)||1,
+   sx=-dy/d*half,sy=dx/d*half,
+   left=[curr[0]+sx,curr[1]+sy],right=[curr[0]-sx,curr[1]-sy];
+  const riverX=curr[0],riverY=curr[1];
+  if(riverX<p.minx-half||riverX>p.maxx+half||riverY<p.miny-half||riverY>p.maxy+half){last=null;continue;}
+  // A locally level bank-to-bank surface (visualization only, no flood simulation).
+  // Guard against rendering below sampled land; make water clearly visible.
+  // Preview overlay conforms to the DEM surface. It must not hover over slopes
+  // or protrude beyond the selected area, even with a deliberately broad width.
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+  const leftClamped=[clamp(left[0],p.minx,p.maxx),clamp(left[1],p.miny,p.maxy)];
+  const rightClamped=[clamp(right[0],p.minx,p.maxx),clamp(right[1],p.miny,p.maxy)];
+  const l=scalePoint(...leftClamped,zAt(dem,range,p,...leftClamped,1.7),p);
+  const r=scalePoint(...rightClamped,zAt(dem,range,p,...rightClamped,1.7),p);
+  if(last){addTriangle(output,last.l,last.r,l,[.035,.47,.91]);
+    addTriangle(output,last.r,r,l,[.035,.47,.91]);}
+  last={l,r};
+ }
+}
 function filledWater(output,feature,p,dem,range,color){
  const ring=feature.coords.map(pt=>projected(pt,p));
  if(ring.length<4)return;
@@ -66,7 +109,7 @@ function filledWater(output,feature,p,dem,range,color){
    if(++n>maxGrid)return;
  }
 }
-function build(p,dem,range,features,trees,flags={forest:true,river:true,road:true}){
+function build(p,dem,range,features,trees,flags={forest:true,river:true,road:true,riverWidthMeters:50}){
  const wood=[],water=[],road=[];
  if(flags.forest)for(const t of trees){
    const h=dem.height(t.x,t.y);
@@ -81,12 +124,12 @@ function build(p,dem,range,features,trees,flags={forest:true,river:true,road:tru
    }
  }
  if(flags.river)for(const f of features){
-  if(f.kind==='river')ribbons(water,f,p,dem,range,[.10,.57,.92],f.tags.waterway==='stream'?1.2:3.5);
+  if(f.kind==='river')continuousRiver(water,f,p,dem,range,flags.riverWidthMeters||50);
   if(f.kind==='water')filledWater(water,f,p,dem,range,[.10,.61,.92]);
  }
  if(flags.road)for(const f of features)if(f.kind==='road')
    ribbons(road,f,p,dem,range,[.68,.48,.30],f.tags.highway==='path'?1.0:1.9);
  return {forest:wood,water,road};
 }
-return {build,addTriangle,projected};
+return {build,addTriangle,projected,continuousRiver};
 });

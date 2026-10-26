@@ -19,7 +19,7 @@ jobs:
           node-version: '24'
       - name: Geometry, projection, DEM adapter tests
         run: |
-          node --test terrain-puzzle/tests/geometry-core.test.js terrain-puzzle/tests/projection.test.js terrain-puzzle/tests/landcover.test.js terrain-puzzle/tests/ui-structure.test.js
+          node --test terrain-puzzle/tests/geometry-core.test.js terrain-puzzle/tests/projection.test.js terrain-puzzle/tests/landcover.test.js terrain-puzzle/tests/ui-structure.test.js terrain-puzzle/tests/topography-water.test.js
           node terrain-puzzle/tests/elevation-providers.test.js
       - name: JavaScript syntax
         run: |

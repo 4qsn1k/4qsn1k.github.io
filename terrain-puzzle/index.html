@@ -73,7 +73,7 @@ select option:disabled{color:#8895a5;background:#202a35}
 .helpPanelHead button{background:#314c5d;color:white;border:0;border-radius:8px;font-size:22px;cursor:pointer;width:34px;height:34px}
 .maparea{position:relative}
 
-/* v2.2 navigation: always reveal principal stages; advanced features are opt-in. */
+/* v2.3 navigation: always reveal principal stages; advanced features are opt-in. */
 .quickSteps{border:1px solid #315e61;border-radius:13px;padding:14px;background:#17303a;margin-bottom:18px;line-height:1.55}
 .quickSteps strong{color:#90ebd1;font-size:14px}.quickSteps p{font-size:12px;margin:7px 0 0;color:#c4dedb}
 aside>section{padding:12px;border:1px solid #2d4150;border-radius:13px;background:#172432;margin-bottom:13px}
@@ -99,8 +99,28 @@ aside>section{padding:12px;border:1px solid #2d4150;border-radius:13px;backgroun
 html{scroll-behavior:smooth}
 @media(min-width:921px){main{grid-template-columns:400px minmax(0,1fr)}aside{padding:15px}}
 @media(max-width:920px){.osmTopSummary{max-width:unset}aside{padding:12px}}
+
+#previewLabels{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;z-index:2}
+#viewerToolbar{z-index:5;display:flex;align-items:center;flex-wrap:wrap;gap:5px;max-width:calc(100% - 24px)}
+#viewerToolbar .topoCheck{display:flex;gap:7px;align-items:center;margin:0;padding:4px 9px;border:1px solid #416c79;border-radius:8px;background:#224552;font-size:12px;color:#e6fff8}
+#viewerToolbar .topoCheck input{width:17px;min-height:0;height:17px}
+.riverWidthLabel{display:flex;gap:6px;align-items:center;margin:0;padding:4px 9px;border-radius:8px;border:1px solid #356c99;color:#c5e9ff;background:#193448}
+.riverWidthLabel select{font-size:12px;width:75px;min-height:28px;padding:3px}
+.riverWidthLabel span{font-size:12px}
+.topoStatus{position:absolute;bottom:60px;left:14px;z-index:4;border:1px solid #415f68;border-radius:7px;padding:5px 9px;background:#0e2534d8;font-size:11px;color:#cbe9e2;pointer-events:none;max-width:65%}
+.topoAttribution{position:absolute;right:9px;bottom:7px;z-index:4;font-size:10px;color:#a7c9d5;background:#0e2534dc;padding:4px 7px;border-radius:6px;pointer-events:none}
+#preview3d .overlayTip{bottom:13px;max-width:65%}
+@media(max-width:720px){.topoStatus{bottom:96px;max-width:95%}#viewerToolbar .topoCheck{font-size:11px}.topoAttribution{font-size:8px}}
+
+.previewLegend{position:absolute;right:12px;top:72px;z-index:4;display:flex;flex-direction:column;gap:6px;background:#0c2334de;border:1px solid #496479;border-radius:9px;padding:9px 12px;font-size:11px;color:#e7f5f6;pointer-events:none;max-width:230px}
+.previewLegend span{display:flex;align-items:center;gap:6px}
+.previewLegend b{display:inline-block;width:18px;height:8px;border-radius:3px;flex:none}
+.waterMark{background:#087fe0}.forestMark{background:#5aab6e}.roadMark{background:#c48b53}
+#refreshPreview{display:none!important}
+#preview3d:not([style*="display: none"]) ~ #gridHelp{display:none}
+@media(max-width:900px){.previewLegend{top:110px;font-size:10px;max-width:170px}}
 </style></head><body>
-<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v2.2</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
+<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v2.3</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
 <main><aside>
 <section><div class="heading">01 · Выбор местности</div><p class="hint" style="margin-bottom:12px">Нажми на карте два раза: сначала первый угол, затем противоположный. Либо введи координаты вручную (широта, долгота).</p>
 <div class="topPaste"><div class="panelTitle">Вставить координаты или ссылку</div>
@@ -198,8 +218,17 @@ html{scroll-behavior:smooth}
 <div class="mapSwitch"><button data-layer="osm" class="active">Схема</button><button data-layer="topo">Топо</button><button data-layer="sat">Спутник</button></div>
 <button id="helpToggle" class="ghost" type="button" title="Описание каждой функции и порядок создания макета">? Как пользоваться</button><button class="ghost" id="refreshPreview" style="display:none">Обновить 3D</button>
 </div><div id="map"></div><div id="gridHelp" aria-live="polite">Тяни угол — изменить размер · центр или сетку — переместить · каждый квадрат помещается на стол принтера</div>
-<div id="preview3d"><canvas id="previewCanvas"></canvas>
+<div id="preview3d"><canvas id="previewCanvas"></canvas><canvas id="previewLabels" aria-hidden="true"></canvas>
+<div id="previewLegend" class="previewLegend" role="status">
+<span><b class="waterMark"></b> Водоток · ширина приблизительная</span>
+<span><b class="forestMark"></b> Лесные контуры</span>
+<span><b class="roadMark"></b> Дороги и тропы</span>
+</div>
+<div id="previewTopoStatus" class="topoStatus" role="status">Топографическая подложка: загрузка…</div>
+<div class="topoAttribution">3D-топокарта: © OpenTopoMap / © OpenStreetMap contributors</div>
 <div id="viewerToolbar" role="toolbar" aria-label="Управление 3D-макетом">
+<label class="topoCheck" title="Наложить топографическую карту с подписями и горизонталями прямо на объёмную поверхность"><input id="previewTopo" type="checkbox" checked> Топографическая карта на 3D</label>
+<label class="riverWidthLabel" title="Если в OpenStreetMap нет береговых контуров и ширины, эта настройка задаёт УСЛОВНУЮ ширину реки"><span>Ширина реки (условная)*</span><select id="riverWidth"><option value="20">20 м</option><option value="40">40 м</option><option selected value="60">60 м</option><option value="100">100 м</option><option value="150">150 м</option></select></label>
 <button type="button" data-view="fit" title="Уместить весь макет в окно">Весь макет</button>
 <button type="button" data-view="iso" title="Показать изометрический вид">Изометрия</button>
 <button type="button" data-view="top" title="Посмотреть строго сверху">Сверху</button>
@@ -221,4 +250,4 @@ html{scroll-behavior:smooth}
  <p><b>Точность.</b> Число пикселей PDF не равно точности исходных высот. Это цветной рельеф, не кадастровая или геодезическая карта. Для типографии используется RGB, согласуй преобразование CMYK с печатником.</p>
  </div><div id="status" class="status">При экспорте загружаются настоящие высоты. Расчёт STL выполняется на устройстве; Python и внешний сервер не нужны.</div></div></main>
 <script src="./vendor/leaflet.js"></script>
-<script src="./vendor/proj4.js"></script><script src="./terrain-projection.js"></script><script src="./geometry.js"></script><script src="./elevation-providers.js"></script><script src="./terrain.js"></script><script src="./landcover.js"></script><script src="./landcover-3d.js"></script><script src="./preview.js"></script><script src="./maps-print.js"></script><script src="./enhancements.js"></script><script src="./grid-editor.js"></script><script src="./availability.js"></script><script src="./print-v15.js"></script><script src="./help-v15.js"></script><script src="./export3mf.js"></script><script src="./project-routes.js"></script><script src="./landcover-ui.js"></script><script src="./landcover-print.js"></script><script src="./ui-v22.js"></script></body></html>
+<script src="./vendor/proj4.js"></script><script src="./terrain-projection.js"></script><script src="./geometry.js"></script><script src="./elevation-providers.js"></script><script src="./terrain.js"></script><script src="./landcover.js"></script><script src="./landcover-3d.js"></script><script src="./topography-3d.js"></script><script src="./preview.js"></script><script src="./maps-print.js"></script><script src="./enhancements.js"></script><script src="./grid-editor.js"></script><script src="./availability.js"></script><script src="./print-v15.js"></script><script src="./help-v15.js"></script><script src="./export3mf.js"></script><script src="./project-routes.js"></script><script src="./landcover-ui.js"></script><script src="./landcover-print.js"></script><script src="./ui-v22.js"></script></body></html>

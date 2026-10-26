@@ -46,7 +46,7 @@ function parseOverpass(payload,max=1400){
   const species=forestSpecies(tags);
   result.push({id:k,kind,coords,area,subtype:species.type,verified:species.verified,
     label:species.label,tags:{name:tags.name||'',species:tags.species||'',genus:tags.genus||'',
-      leaf_type:tags.leaf_type||'',waterway:tags.waterway||'',highway:tags.highway||'',
+      leaf_type:tags.leaf_type||'',waterway:tags.waterway||'',highway:tags.highway||'',width:tags.width||'',
       natural:tags.natural||'',landuse:tags.landuse||'',water:tags.water||''},source:'OpenStreetMap'});
  }
  for(const e of payload.elements){

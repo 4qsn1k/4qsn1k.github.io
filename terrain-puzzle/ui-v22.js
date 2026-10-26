@@ -99,6 +99,8 @@ if(smooth){
  info.textContent='1–2 мм — поверхность гладкая; 4–8 мм — быстрее, но заметны грани. Точность исходных высот не меняется.';
  smooth.closest('.field')?.appendChild(info);
 }
+$('tab3d')?.addEventListener('click',()=>{const h=$('gridHelp');if(h)h.style.display='none';});
+$('tabMap')?.addEventListener('click',()=>{const h=$('gridHelp');if(h)h.style.display='';});
 const dem=$('demQuality');
 if(dem)dem.setAttribute('title','Источник DEM — числовые высоты местности, не слой леса или рек OSM.');
 // User must see an explicit explanation before/after data extraction.

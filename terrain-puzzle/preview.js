@@ -4,6 +4,42 @@
 const $=id=>document.getElementById(id),canvas=$('previewCanvas');
 let gl,prog,surface,lines,wire,routeLines=null,landscapeDraw=[],lastModel=null,yaw=-.85,tilt=.58,zoom=1.65,span=200,midz=0;
 let panX=0,panY=0,panZ=0,bordersOn=true,wireOn=false,modelH=20;
+let topo=null,topoTexture=null,topoEpoch=0,topoStatus='Не загружена';
+const topoToggle=document.getElementById('previewTopo');
+const labelsCanvas=document.getElementById('previewLabels');
+let mapLabels=[];
+function statusTopo(value){
+ topoStatus=value;
+ const label=document.getElementById('previewTopoStatus');
+ if(label)label.textContent=value;
+}
+async function requestTopo(){
+ if(!lastModel||!topoToggle?.checked)return;
+ const epoch=++topoEpoch,p=lastModel.p;
+ statusTopo('Загружаю топокарту…');
+ try{
+  const data=await window.TerrainTopoAtlas.load(p,{
+   maxTiles:12,onStatus:(n,total)=>{if(epoch===topoEpoch)statusTopo('Топокарта '+n+'/'+total);}
+  });
+  if(epoch!==topoEpoch)return;
+  topo=data;
+  if(topoTexture)gl.deleteTexture(topoTexture);
+  topoTexture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,topoTexture);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,data.canvas);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  statusTopo('Топографическая карта · Z'+data.z+' · '+data.loaded+' плиток'+(data.failed?' ('+data.failed+' недоступно)':''));
+  draw();
+ }catch(error){
+  if(epoch!==topoEpoch)return;
+  topo=null;statusTopo('Топокарта недоступна: '+error.message+'. Использую окраску рельефа.');
+  draw();
+ }
+}
+
 let targetYaw=yaw,targetTilt=tilt,targetZoom=zoom,targetPanX=panX,targetPanY=panY;
 let cameraFrame=0,cameraLast=0,velocityYaw=0,velocityTilt=0;
 function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
@@ -25,8 +61,8 @@ function animateCamera(now){
 }
 function scheduleCamera(){if(!cameraFrame)cameraFrame=requestAnimationFrame(animateCamera);}
 
-const vs='attribute vec3 pos;attribute vec3 col;attribute vec3 nor;uniform mat4 mvp;varying vec3 c;varying float light;void main(){gl_Position=mvp*vec4(pos,1.);c=col;light=clamp(dot(normalize(nor),normalize(vec3(-.38,-.62,.87))),.40,1.);}',
-fs='precision mediump float;varying vec3 c;varying float light;void main(){gl_FragColor=vec4(c*light,1.);}';
+const vs='attribute vec3 pos;attribute vec3 col;attribute vec3 nor;uniform mat4 mvp;varying vec3 c;varying float light;varying vec2 xy;varying float up;void main(){gl_Position=mvp*vec4(pos,1.);c=col;xy=pos.xy;up=nor.z;light=clamp(dot(normalize(nor),normalize(vec3(-.38,-.62,.87))),.48,1.);}',
+fs='precision mediump float;varying vec3 c;varying float light;varying vec2 xy;varying float up;uniform sampler2D topoMap;uniform float showTopo;uniform vec2 uvCenter;uniform vec2 uvX;uniform vec2 uvY;void main(){vec3 col=c;if(showTopo>.5&&up>.24){vec2 uv=uvCenter+xy.x*uvX+xy.y*uvY;vec3 tile=texture2D(topoMap,uv).rgb;col=mix(c,tile,.93);}gl_FragColor=vec4(col*light,1.);}';
 function init(){
  if(gl)return;
  gl=canvas.getContext('webgl',{antialias:true,alpha:false});
@@ -77,12 +113,26 @@ function draw(){
  if(canvas.width!==Math.round(w*dpi)||canvas.height!==Math.round(h*dpi)){canvas.width=Math.round(w*dpi);canvas.height=Math.round(h*dpi);}
  gl.viewport(0,0,canvas.width,canvas.height);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
  const r=Math.max(span*zoom,modelH*1.35),eye=[panX+r*Math.cos(yaw)*Math.cos(tilt),panY+r*Math.sin(yaw)*Math.cos(tilt),midz+panZ+r*Math.sin(tilt)];
- gl.uniformMatrix4fv(gl.getUniformLocation(prog,'mvp'),false,mul(perspective(canvas.width/canvas.height,Math.max(span*80,r*10)),lookAt(eye,[panX,panY,midz+panZ])));
+ const mvp=mul(perspective(canvas.width/canvas.height,Math.max(span*80,r*10)),lookAt(eye,[panX,panY,midz+panZ]));
+ gl.uniformMatrix4fv(gl.getUniformLocation(prog,'mvp'),false,mvp);
+ if(topoTexture&&topoToggle?.checked&&topo&&lastModel){
+  const p=lastModel.p,W=p.cols*p.pitch;
+  const a=topo.uv(p.minx,p.miny),x=topo.uv(p.maxx,p.miny),y=topo.uv(p.minx,p.maxy);
+  const u=[(x[0]-a[0])/W,(x[1]-a[1])/W],v=[(y[0]-a[0])/W,(y[1]-a[1])/W];
+  gl.uniform2f(gl.getUniformLocation(prog,'uvCenter'),a[0]+(x[0]-a[0]+y[0]-a[0])/2,a[1]+(x[1]-a[1]+y[1]-a[1])/2);
+  gl.uniform2f(gl.getUniformLocation(prog,'uvX'),...u);
+  gl.uniform2f(gl.getUniformLocation(prog,'uvY'),...v);
+  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,topoTexture);
+  gl.uniform1i(gl.getUniformLocation(prog,'topoMap'),0);
+  gl.uniform1f(gl.getUniformLocation(prog,'showTopo'),1);
+ }else gl.uniform1f(gl.getUniformLocation(prog,'showTopo'),0);
  for(const part of surface)drawPart(part,gl.TRIANGLES);
+ gl.uniform1f(gl.getUniformLocation(prog,'showTopo'),0);
  if(bordersOn)drawPart(lines,gl.LINES);
  if(wireOn)drawPart(wire,gl.LINES);
  if(routeLines)drawPart(routeLines,gl.LINES);
  for(const group of landscapeDraw)drawPart(group,gl.TRIANGLES);
+ drawLabels(mvp,canvas.width,canvas.height);
 }
 function refreshRoute(){
  if(routeLines&&gl){gl.deleteBuffer(routeLines.v);gl.deleteBuffer(routeLines.i);}
@@ -111,17 +161,87 @@ function refreshRoute(){
  if(ids.length)routeLines=upload(coordinates,ids);
  draw();
 }
+function drawLabels(m,pxW,pxH){
+ if(!labelsCanvas)return;
+ if(labelsCanvas.width!==pxW)labelsCanvas.width=pxW;
+ if(labelsCanvas.height!==pxH)labelsCanvas.height=pxH;
+ const ctx=labelsCanvas.getContext('2d');ctx.clearRect(0,0,pxW,pxH);
+ if(!mapLabels.length||!lastModel)return;
+ const size=Math.max(12,Math.min(17,pxW/95));ctx.font='600 '+size+'px system-ui,Arial';
+ ctx.textBaseline='middle';
+ const positions=[];
+ for(const item of mapLabels){
+  const [x,y,z]=item.point;
+  const clip=[
+   m[0]*x+m[4]*y+m[8]*z+m[12],
+   m[1]*x+m[5]*y+m[9]*z+m[13],
+   m[3]*x+m[7]*y+m[11]*z+m[15]
+  ];
+  if(clip[2]<=0)continue;
+  const sx=(clip[0]/clip[2]+1)*pxW/2,sy=(1-clip[1]/clip[2])*pxH/2;
+  if(sx<65||sx>pxW-65||sy<30||sy>pxH-30)continue;
+  const width=Math.min(270,ctx.measureText(item.label).width+24);
+  if(positions.some(p=>Math.abs(p.x-sx)<(p.w+width)/2+12&&Math.abs(p.y-sy)<27))continue;
+  positions.push({x:sx,y:sy,w:width});
+  ctx.fillStyle='rgba(10,25,36,.88)';
+  ctx.beginPath();ctx.roundRect(sx-width/2,sy-12,width,24,6);ctx.fill();
+  ctx.strokeStyle='rgba(233,246,238,.75)';ctx.lineWidth=1;ctx.stroke();
+  ctx.fillStyle=item.color;ctx.fillRect(sx-width/2+4,sy-7,4,14);
+  ctx.fillStyle='#f6fcf8';ctx.fillText(item.label,sx-width/2+13,sy,Math.max(40,width-17));
+  if(positions.length>=14)break;
+ }
+}
+function refreshLabels(){
+ mapLabels=[];
+ if(!lastModel||!window.TerrainOSMLayers)return;
+ const {p,dem,range}=lastModel,W=p.cols*p.pitch,gain=1000/p.s.scale*p.s.exaggeration;
+ const seen=new Set(),features=window.TerrainOSMLayers.getFeatures();
+ for(const f of features){
+  if(!f.coords?.length)continue;
+  if(!((f.kind==='river'||f.kind==='water')&&document.getElementById('layerRivers')?.checked||
+        f.kind==='forest'&&document.getElementById('layerForest')?.checked||
+        f.kind==='road'&&document.getElementById('layerRoads')?.checked))continue;
+  const type=f.kind==='water'||f.kind==='river'?'Река':f.kind==='forest'?'Лес':'Дорога';
+  const label=f.tags?.name?type+' · '+String(f.tags.name).slice(0,28):type;
+  if(seen.has(label))continue;
+  // OSM ways can extend many kilometres beyond the selected area. A midpoint
+  // of the full way is often outside the model even if the river crosses it.
+  const candidates=f.coords.map(q=>{
+    const xy=p.projectionContext.toLocal(q.lat,q.lon);return {q,x:xy[0],y:xy[1]};
+  }).filter(o=>o.x>=p.minx&&o.x<=p.maxx&&o.y>=p.miny&&o.y<=p.maxy);
+  if(!candidates.length)continue;
+  seen.add(label);
+  const visible=candidates[Math.floor(candidates.length/2)];
+  const x=visible.x,y=visible.y;
+  const z=3+(dem.height(x,y)-range.min)*gain+6;
+  mapLabels.push({label,point:[(x-p.minx)/p.coverage*W-W/2,(y-p.miny)/p.coverage*W-W/2,z],
+    color:type==='Река'?'#5ac9ff':type==='Лес'?'#78df83':'#efb67c'});
+ }
+ mapLabels.sort((a,b)=>a.label.startsWith('Река')?-1:b.label.startsWith('Река')?1:0);
+}
 function refreshLandcover(){
  if(gl)for(const part of landscapeDraw){gl.deleteBuffer(part.v);gl.deleteBuffer(part.i);}
  landscapeDraw=[];
  if(!lastModel||!gl||!window.TerrainOSMLayers||!window.TerrainLandscape)return;
+ refreshLabels();
+ const waterways=window.TerrainOSMLayers.getFeatures().filter(f=>f.kind==='river');
+ const waters=window.TerrainOSMLayers.getFeatures().filter(f=>f.kind==='water');
+ const legend=document.getElementById('previewLegend');
+ if(legend){
+  const visual=document.getElementById('riverWidth')?.value||'60';
+  const text=legend.querySelector('span');
+  if(text)text.lastChild.textContent=waters.length?
+    'Вода: '+waters.length+' полигонов берегов, '+waterways.length+' линий':
+    'Водотоки: '+waterways.length+' линий · ширина '+visual+' м условная';
+ }
  const {p,dem,range}=lastModel,api=window.TerrainOSMLayers,
    features=api.getFeatures(),trees=api.getTrees(p);
  if(!features.length){draw();return;}
  const colored=window.TerrainLandscape.build(p,dem,range,features,trees,{
    forest:document.getElementById('layerForest').checked&&document.getElementById('layer3DTrees').checked,
    river:document.getElementById('layerRivers').checked,
-   road:document.getElementById('layerRoads').checked
+   road:document.getElementById('layerRoads').checked,
+   riverWidthMeters:Number(document.getElementById('riverWidth')?.value||60)
  });
  for(const buffer of [colored.forest,colored.water,colored.road]){
   // WebGL1 UNSIGNED_SHORT indices: <= 64k vertices per draw call, triangle aligned.
@@ -190,7 +310,7 @@ function render(p,dem,range){
  fitView();
  const details=document.querySelector('#preview3d .overlayTip');
  if(details)details.textContent='Размер '+Math.round(W)+' × '+Math.round(W)+' × '+(maxHeight+3).toFixed(1)+' мм · '+p.cols+'×'+p.cols+' плиток · перетащи для поворота · колесо — масштаб';
- lastModel={p,dem,range};refreshRoute();refreshLandcover();
+ lastModel={p,dem,range};refreshRoute();refreshLandcover();topo=null;requestTopo();
  $('preview3d').dataset.shape=p.total;
 }
 // Camera controls: orbit, pan, pinch zoom, wheel, fit/top/isometric.
@@ -281,6 +401,11 @@ document.querySelectorAll('#viewerToolbar [data-view]').forEach(b=>b.addEventLis
 $('viewerBorders')?.addEventListener('change',e=>{bordersOn=e.target.checked;draw();});
 $('viewerWire')?.addEventListener('change',e=>{wireOn=e.target.checked;draw();});
 window.addEventListener('resize',draw);
+document.getElementById('riverWidth')?.addEventListener('change',refreshLandcover);
+topoToggle?.addEventListener('change',()=>{
+ if(topoToggle.checked){if(!topo)requestTopo();else draw();}
+ else{++topoEpoch;draw();}
+});
 window.TerrainViewer={render,resize:draw,fit:fitView,top:topView,iso:isoView,zoomBy,refreshRoute,refreshLandcover,
  state:()=>({yaw,tilt,zoom,targetYaw,targetTilt,targetZoom,panX,panY,panZ,bordersOn,wireOn,smoothing:cameraFrame!==0})};
 })();

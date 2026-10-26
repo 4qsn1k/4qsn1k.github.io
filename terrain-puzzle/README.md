@@ -1,4 +1,4 @@
-# Terrain Puzzle Generator v2.2
+# Terrain Puzzle Generator v2.3
 
 **Рабочий сайт:** https://4qsn1k.github.io/terrain-puzzle/
 
@@ -90,6 +90,16 @@ Mapterhorn в тестовой точке (53.96,58.30) Z10 и Z12 доступ�
 - Для текущей ручной выборки около Белорецка (1200×1200 м; 53.9625 N, 58.305 E) ответ официального OSM API получен в браузере за ~0,5 с: 4 лесных контура, 3 реки/ручья, 4 дороги. Данные актуальны только для времени проверки; это не воспроизводимый обещанный API SLA.
 
 **Ограничения:** публичные API могут не отвечать и имеют правила допустимой нагрузки. Для больших территорий нужна подготовленная OSM-выгрузка или собственный сервер. Многоконтурные полигоны с дырками и точная ботаника OSM не гарантированы. Интерфейс теперь уведомляет, что при перемещении сетки геослои относятся к старой области.
+
+## v2.3 — topographic map draped on 3D, wide watercourses, readable labels
+
+- A small *on-demand* OpenTopoMap raster atlas (max 12 tiles, no bulk download) is projected directly onto the WebGL model in UTM coordinates. Contours, topographic symbols and cartographic names appear on the surface. A fallback altitude tint is shown if the provider is unavailable. Texture is cached in this browser session; source attribution is visible.
+- Local 3D labels are projected from actual OSM features: waterways, forests and roads.
+- OSM \`natural=water\` closed ways are polygon surface objects. OSM \`waterway=river/stream\` linear geometry becomes a continuous connected strip rather than separate quad fragments.
+- If mapped banks are absent, a clearly labelled **illustrative** watercourse width is configurable (20–150 m in geographic units) for 3D **preview only**. This also applies if OSM marks it as \`stream\`. No physical flood extent, hydrology or water level is inferred. Only actual polygons are factual mapped banks.
+- Optional topo imagery and supplementary river width are display settings; **3D-printed STL terrain geometry is unchanged**. Colour-3MF continues to use vector OSM classes. PDF maps retain their separate DEM-derived raster plus vector overlays.
+- Topographic tiles load asynchronously *after* the basic terrain appears; 2 concurrent requests, 35 s timeout, cache of recent atlases. Requires network access to the third-party tile provider.
+- More informative 3D legend and source notice; irrelevant grid help is hidden while viewing 3D. Added offline tests for atlas tile budget, width control and continuous ribbon geometry.
 
 ## Возможности
 
