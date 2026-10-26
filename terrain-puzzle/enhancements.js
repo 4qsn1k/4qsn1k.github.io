@@ -99,8 +99,9 @@ function tab(which){
  const map=which==='map';
  $('map').style.display=map?'block':'none';
  $('preview3d').style.display=map?'none':'block';
+ document.querySelector('.maparea')?.classList.toggle('previewMode',!map);
  $('tabMap').classList.toggle('active',map);$('tab3d').classList.toggle('active',!map);
- $('refreshPreview').style.display=map?'none':'inline-block';
+ $('refreshPreview').style.display=map?'none':'inline-flex';
  if(map)setTimeout(()=>api.map()?.invalidateSize(),60);
  else {window.TerrainViewer?.resize();let key='';try{let p=api.plan();key=JSON.stringify(p.corners)+p.s.source+'|'+p.s.smooth_m+'|'+p.s.mesh_step+'|'+p.cols+'|'+p.pitch;}catch(e){api.say(e.message,'error');return;}if(!lastDEM||key!==lastKey)loadPreview();}
 }

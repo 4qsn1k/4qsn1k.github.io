@@ -28,7 +28,8 @@ function mappedSurface(p,mesh){
  const cells=features.filter(f=>['water','river','road','forest'].includes(f.kind)).map(f=>{
    const points=f.coords.map(pt=>projection.toLocal(pt.lat,pt.lon));
    const xs=points.map(pt=>pt[0]),ys=points.map(pt=>pt[1]);
-   return {f,points,minx:Math.min(...xs),maxx:Math.max(...xs),miny:Math.min(...ys),maxy:Math.max(...ys)};
+   return {f,points,holes:(f.holes||[]).map(r=>r.map(pt=>projection.toLocal(pt.lat,pt.lon))),
+     minx:Math.min(...xs),maxx:Math.max(...xs),miny:Math.min(...ys),maxy:Math.max(...ys)};
  });
  const cm=window.TerrainLandcover;
  const dist2=(p,a,b)=>{
@@ -44,8 +45,10 @@ function mappedSurface(p,mesh){
        Math.max(f.kind==='river'?(f.tags.waterway==='stream'?.65:1.75):.9,p.s.mesh_step*.55)*p.s.scale/1000:0;
      if(geo[0]<item.minx-half||geo[0]>item.maxx+half||
         geo[1]<item.miny-half||geo[1]>item.maxy+half)continue;
-     if(f.kind==='water'&&cm.containsPolygon(...geo,item.points))return 6;
-     if(f.kind==='forest'&&cm.containsPolygon(...geo,item.points)){
+     if(f.kind==='water'&&cm.containsPolygon(...geo,item.points)&&
+       !item.holes.some(h=>cm.containsPolygon(...geo,h)))return 6;
+     if(f.kind==='forest'&&cm.containsPolygon(...geo,item.points)&&
+       !item.holes.some(h=>cm.containsPolygon(...geo,h))){
        forest=f.subtype==='spruce'||f.subtype==='pine'||f.subtype==='conifer'?7:
           f.subtype==='birch'||f.subtype==='deciduous'?8:10;
      }

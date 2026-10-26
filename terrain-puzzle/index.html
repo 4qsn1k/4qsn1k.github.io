@@ -73,7 +73,7 @@ select option:disabled{color:#8895a5;background:#202a35}
 .helpPanelHead button{background:#314c5d;color:white;border:0;border-radius:8px;font-size:22px;cursor:pointer;width:34px;height:34px}
 .maparea{position:relative}
 
-/* v2.4 navigation: always reveal principal stages; advanced features are opt-in. */
+/* v2.5 navigation: always reveal principal stages; advanced features are opt-in. */
 .quickSteps{border:1px solid #315e61;border-radius:13px;padding:14px;background:#17303a;margin-bottom:18px;line-height:1.55}
 .quickSteps strong{color:#90ebd1;font-size:14px}.quickSteps p{font-size:12px;margin:7px 0 0;color:#c4dedb}
 aside>section{padding:12px;border:1px solid #2d4150;border-radius:13px;background:#172432;margin-bottom:13px}
@@ -116,7 +116,7 @@ html{scroll-behavior:smooth}
 .previewLegend span{display:flex;align-items:center;gap:6px}
 .previewLegend b{display:inline-block;width:18px;height:8px;border-radius:3px;flex:none}
 .waterMark{background:#087fe0}.forestMark{background:#5aab6e}.roadMark{background:#c48b53}
-#refreshPreview{display:none!important}
+#refreshPreview{display:inline-flex;align-items:center;gap:5px}
 #preview3d:not([style*="display: none"]) ~ #gridHelp{display:none}
 @media(max-width:900px){.previewLegend{top:110px;font-size:10px;max-width:170px}}
 
@@ -127,8 +127,24 @@ html{scroll-behavior:smooth}
 .viewScaleLabel output{min-width:38px;text-align:right;color:#a9f5d5;font-size:12px}
 .detailInfo{position:absolute;z-index:5;bottom:83px;left:14px;max-width:min(560px,80%);padding:6px 10px;border:1px solid #456979;border-radius:7px;background:#0b263be8;font-size:11px;color:#d2e8e9;pointer-events:none}
 @media(max-width:720px){.detailInfo{bottom:114px;max-width:95%}.viewScaleLabel input{width:70px}}
+
+/* Full use of the screen in 3D mode, without affecting the settings/map tab. */
+.maparea.previewMode .gridEditorToolbar,.maparea.previewMode .mapSwitch,
+.maparea.previewMode #osmToolbarButton,.maparea.previewMode #helpToggle,
+.maparea.previewMode #gridHelp,.maparea.previewMode .stats{display:none!important}
+.maparea.previewMode #preview3d{min-height:0;flex:1;position:relative}
+.maparea.previewMode .toolbar{padding:8px 12px;min-height:48px;flex:none}
+.maparea.fullscreen3d{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
+ min-height:0!important;z-index:9999!important;background:#0e1822;display:flex;flex-direction:column;
+ overflow:hidden!important}
+.maparea.fullscreen3d #preview3d{flex:1!important;min-height:0!important}
+.maparea.fullscreen3d .status{padding:6px 12px;min-height:28px}
+.maparea.fullscreen3d .stats{display:none!important}
+.maparea.fullscreen3d #viewerToolbar{max-height:30%;overflow:auto}
+#expandViewer,#refreshPreview{background:#23495b!important;border-color:#4b788b!important}
+@media(max-width:920px){.maparea.previewMode{height:85dvh;min-height:570px}}
 </style></head><body>
-<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v2.4</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
+<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v2.5</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
 <main><aside>
 <section><div class="heading">01 · Выбор местности</div><p class="hint" style="margin-bottom:12px">Нажми на карте два раза: сначала первый угол, затем противоположный. Либо введи координаты вручную (широта, долгота).</p>
 <div class="topPaste"><div class="panelTitle">Вставить координаты или ссылку</div>
@@ -224,7 +240,7 @@ html{scroll-behavior:smooth}
 <div id="osmTopSummary" class="osmTopSummary" hidden role="status">OSM: данные не загружены</div>
 <div class="tabs"><button id="tabMap" class="active" title="Карта и редактор квадратной сетки">Карта</button><button id="tab3d" title="3D-просмотр с масштабом, поворотом и перемещением модели">3D-просмотр макета</button></div>
 <div class="mapSwitch"><button data-layer="osm" class="active">Схема</button><button data-layer="topo">Топо</button><button data-layer="sat">Спутник</button></div>
-<button id="helpToggle" class="ghost" type="button" title="Описание каждой функции и порядок создания макета">? Как пользоваться</button><button class="ghost" id="refreshPreview" style="display:none">Обновить 3D</button>
+<button id="helpToggle" class="ghost" type="button" title="Описание каждой функции и порядок создания макета">? Как пользоваться</button>
 </div><div id="map"></div><div id="gridHelp" aria-live="polite">Тяни угол — изменить размер · центр или сетку — переместить · каждый квадрат помещается на стол принтера</div>
 <div id="preview3d"><canvas id="previewCanvas"></canvas><canvas id="previewLabels" aria-hidden="true"></canvas>
 <div id="previewLegend" class="previewLegend" role="status">
@@ -236,6 +252,8 @@ html{scroll-behavior:smooth}
 <div id="previewTopoStatus" class="topoStatus" role="status">Топографическая подложка: загрузка…</div>
 <div class="topoAttribution">3D-топокарта: © OpenTopoMap / © OpenStreetMap contributors</div>
 <div id="viewerToolbar" role="toolbar" aria-label="Управление 3D-макетом">
+<button type="button" id="refreshPreview" class="ghost" title="Перестроить макет после изменения участка, высот или параметров">↻ Обновить 3D</button>
+<button type="button" id="expandViewer" class="ghost" title="Развернуть 3D на всю площадь экрана">⛶ На весь экран</button>
 <label class="topoCheck" title="Наложить топографическую карту с подписями и горизонталями прямо на объёмную поверхность"><input id="previewTopo" type="checkbox" checked> Топографическая карта на 3D</label>
 <label class="topoDetailLabel" title="Реальная детализация плиток OpenTopoMap. Недоступные варианты отключены автоматически."><span>Детализация топокарты</span>
 <select id="topoDetail" aria-label="Детализация карты"><option value="auto" selected>Авто</option><option value="detail">Подробнее</option><option value="max">Максимум</option></select></label>
@@ -259,7 +277,9 @@ html{scroll-behavior:smooth}
  <p><b>Масштаб.</b> 1:5000 даёт крупный рельеф, но больше плиток. Недоступные варианты отключены. Рядом написано, сколько деталей потребуется.</p>
  <p><b>Высоты ×.</b> Вертикальное преувеличение. Для горного рельефа часто подходит ×3–×8. Превышение 210 мм блокируется.</p>
  <p><b>Шаг сетки STL.</b> 0,5–1 мм — плавнее, файлы больше. Это не повышает точность исходных DEM.</p>
- <p><b>3D-макет.</b> Перетащи для вращения. Внизу горизонтальное направление инвертировано. Колесо мыши / два пальца — приближение. Shift+мышь / два пальца — сдвиг. Кнопки «Изометрия», «Сверху», «Весь макет» изменяют камеру.</p>
+ <p><b>Обновление.</b> Ctrl+F5 обновляет сам сайт. «Загрузить природу» повторно получает географические объекты. Видимая кнопка «↻ Обновить 3D» перестраивает макет после изменения параметров. «⛶ На весь экран» разворачивает область просмотра; Esc возвращает обычный размер.</p>
+<p><b>Водохранилища.</b> OSM должен содержать замкнутый контур берегов. Составные полигоны и острова поддержаны. Если объект не входит в выбранную область или в API нет его полного контура, импортируй .osm/GeoJSON с полным водоёмом. Условная ширина реки не является моделированием половодья.</p>
+<p><b>3D-макет.</b> Перетащи для вращения. Внизу горизонтальное направление инвертировано. Колесо мыши / два пальца — приближение. Shift+мышь / два пальца — сдвиг. Кнопки «Изометрия», «Сверху», «Весь макет» изменяют камеру.</p>
  <p><b>PDF для типографии.</b> A4–A0, 150–600 DPI. Установи масштаб, ориентацию и DPI. Неактивные значения превышают лимит обработки. PDF имеет реальные размеры страницы. Печатай 100%, без автоматической подгонки.</p>
  <p><b>Точность.</b> Число пикселей PDF не равно точности исходных высот. Это цветной рельеф, не кадастровая или геодезическая карта. Для типографии используется RGB, согласуй преобразование CMYK с печатником.</p>
  </div><div id="status" class="status">При экспорте загружаются настоящие высоты. Расчёт STL выполняется на устройстве; Python и внешний сервер не нужны.</div></div></main>

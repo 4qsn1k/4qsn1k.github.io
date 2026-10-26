@@ -93,6 +93,7 @@ function continuousRiver(output,feature,p,dem,range,riverWidthMeters=50){
 function filledWater(output,feature,p,dem,range,color){
  const ring=feature.coords.map(pt=>projected(pt,p));
  if(ring.length<4)return;
+ const holes=(feature.holes||[]).map(h=>h.map(pt=>projected(pt,p)));
  const lx=Math.max(p.minx,Math.min(...ring.map(x=>x[0]))),
   ly=Math.max(p.miny,Math.min(...ring.map(x=>x[1]))),
   rx=Math.min(p.maxx,Math.max(...ring.map(x=>x[0]))),
@@ -101,7 +102,8 @@ function filledWater(output,feature,p,dem,range,color){
  let n=0;
  for(let y=ly;y<ry;y+=cell)for(let x=lx;x<rx;x+=cell){
    const cx=x+cell/2,cy=y+cell/2;
-   if(!TerrainLandcover.containsPolygon(cx,cy,ring))continue;
+   if(!TerrainLandcover.containsPolygon(cx,cy,ring)||
+      holes.some(h=>TerrainLandcover.containsPolygon(cx,cy,h)))continue;
    const corners=[[x,y],[x+cell,y],[x,y+cell],[x+cell,y+cell]].map(q=>
       scalePoint(q[0],q[1],zAt(dem,range,p,q[0],q[1],.7),p));
    addTriangle(output,corners[0],corners[1],corners[3],color);

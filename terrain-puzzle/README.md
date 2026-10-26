@@ -1,4 +1,4 @@
-# Terrain Puzzle Generator v2.4
+# Terrain Puzzle Generator v2.5
 
 **Рабочий сайт:** https://4qsn1k.github.io/terrain-puzzle/
 
@@ -111,6 +111,17 @@ Mapterhorn в тестовой точке (53.96,58.30) Z10 и Z12 доступ�
 - Projection, terrain mesh, STL, PDF/A0, tile count and geographic selection **remain independent** of these visualization controls. Topo detail persists in project JSON. Added Node tests for unavailable options, dynamic texture limits and zoom budget.
 
 Third-party map service restrictions and source detail still apply. This release does not generate higher precision DEM, and raster overzoom is not substituted for actual map detail.
+
+## v2.5 — large reservoirs, model refresh, 3D workspace
+
+- OSM XML now reads multipolygon relations referencing ways and nodes. Fragmented/reversed outer and inner ways are joined only when they form genuinely closed loops. Incomplete geometry is **not** converted to invented shorelines.
+- Overpass JSON relations with segmented outer and inner members are joined by geographic endpoints. Island holes remain holes in Leaflet map, WebGL water overlay, PDF/PNG print and 3MF materials.
+- Reservoir tags \`natural=water\`, \`water=reservoir\` and legacy \`landuse=reservoir\` are supported, with \`relation\` or \`way\` elements queried. A visible counter distinguishes reservoirs from other water polygons.
+- A manual, visible **«↻ Обновить 3D»** control rebuilds the model. Previously the control was hidden by CSS. Browser \`Ctrl+F5\` reloads the code; the OSM reload button is separate.
+- The 3D workspace hides irrelevant map-editing controls and summary cards, giving more height to the model. **«На весь экран»** expands the 3D area to the full viewport and **Escape** returns to regular mode. It does not change STL dimensions or geography.
+- When the small official OSM API responds without a water polygon, a separate targeted Overpass query attempts to recover complete reservoir multipolygons **without delaying initial map rendering**. The interface explicitly reports failure; no artificial shoreline polygon is generated.
+- The XML/Overpass parser preserves OSM factual shorelines and holes, but a reservoir whose complete outer boundary cannot be retrieved still will not be rendered. If a reservoir is outside the current selected footprint it cannot appear. For very large relations, use an appropriate Overpass extraction or manually imported complete GeoJSON/OSM.
+- The configured river-width slider remains an **illustrative preview setting** when mapped shorelines are unavailable, not a hydraulic flood simulation.
 
 ## Возможности
 

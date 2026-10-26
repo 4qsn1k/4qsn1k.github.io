@@ -28,13 +28,21 @@ function overlay(ctx,p,x,y,w,h,W,H){
    if(Math.max(...xs)<-6||Math.min(...xs)>W+6||Math.max(...ys)<-6||Math.min(...ys)>H+6)continue;
    ctx.beginPath();ctx.moveTo(...pts[0]);
    for(let i=1;i<pts.length;i++)ctx.lineTo(...pts[i]);
-   if(f.area)ctx.closePath();
+   if(f.area){
+     ctx.closePath();
+     for(const h of f.holes||[]){
+       if(!h.length)continue;
+       const hole=h.map(xy);
+       ctx.moveTo(...hole[0]);for(let j=1;j<hole.length;j++)ctx.lineTo(...hole[j]);
+       ctx.closePath();
+     }
+   }
    if(kind==='forest'){
     ctx.fillStyle=f.subtype==='conifer'||f.subtype==='spruce'||f.subtype==='pine'?'rgba(26,106,74,0.28)':
       f.subtype==='deciduous'||f.subtype==='birch'?'rgba(146,198,88,0.28)':'rgba(50,133,77,0.22)';
-    ctx.fill();ctx.strokeStyle='rgba(35,102,61,.50)';ctx.lineWidth=Math.max(1,W/1100);ctx.stroke();
+    ctx.fill('evenodd');ctx.strokeStyle='rgba(35,102,61,.50)';ctx.lineWidth=Math.max(1,W/1100);ctx.stroke();
    }else if(kind==='water'){
-    ctx.fillStyle='rgba(24,149,230,0.67)';ctx.fill();ctx.strokeStyle='#167ec7';ctx.lineWidth=Math.max(1.2,W/900);ctx.stroke();
+    ctx.fillStyle='rgba(24,149,230,0.67)';ctx.fill('evenodd');ctx.strokeStyle='#167ec7';ctx.lineWidth=Math.max(1.2,W/900);ctx.stroke();
    }else if(kind==='river'){
     ctx.strokeStyle='#168ad4';ctx.lineWidth=Math.max(1.8,W/470);ctx.stroke();
    }else if(kind==='road'){
