@@ -1,4 +1,4 @@
-# Terrain Puzzle Generator v2.3
+# Terrain Puzzle Generator v2.4
 
 **Рабочий сайт:** https://4qsn1k.github.io/terrain-puzzle/
 
@@ -100,6 +100,17 @@ Mapterhorn в тестовой точке (53.96,58.30) Z10 и Z12 доступ�
 - Optional topo imagery and supplementary river width are display settings; **3D-printed STL terrain geometry is unchanged**. Colour-3MF continues to use vector OSM classes. PDF maps retain their separate DEM-derived raster plus vector overlays.
 - Topographic tiles load asynchronously *after* the basic terrain appears; 2 concurrent requests, 35 s timeout, cache of recent atlases. Requires network access to the third-party tile provider.
 - More informative 3D legend and source notice; irrelevant grid help is hidden while viewing 3D. Added offline tests for atlas tile budget, width control and continuous ribbon geometry.
+
+## v2.4 — independent 3D view scale and truthful topographic detail
+
+- Two different controls: **3D view scale** (40–220% of fit) adjusts only the camera, allowing the full model to fit without changing geographic area/physical STL sizes. \`Весь макет\` recalculates the camera distance using the viewport aspect ratio and bounding sphere (including vertical exaggeration).
+- **Topo map detail** is a separate raster source selection: Auto ≤12 tiles, Detail ≤24, Maximum ≤36 tiles, up to source zoom 15 and at most 2048px per mosaic side. It never downloads several zoom levels automatically; only the explicitly viewed topographic layer is fetched.
+- For each option, the interface shows actual zoom Z and planned tile count. A higher detail mode is **disabled** when it would use the same map zoom as Auto or exceeds atlas/GPU limits; do not falsely suggest more DEM accuracy.
+- A status field gives geographic footprint in km, raster map pixel ground spacing (which is NOT elevation accuracy), and reports tiles actually loaded. It does not claim new cartographic features if the map provider has no higher zoom.
+- Previous atlas imagery stays visible if a more detailed request fails, and network error is reported. Session cache is capped to three recent mosaics; explicit choices respect third-party tile-service capacity.
+- Projection, terrain mesh, STL, PDF/A0, tile count and geographic selection **remain independent** of these visualization controls. Topo detail persists in project JSON. Added Node tests for unavailable options, dynamic texture limits and zoom budget.
+
+Third-party map service restrictions and source detail still apply. This release does not generate higher precision DEM, and raster overzoom is not substituted for actual map detail.
 
 ## Возможности
 
