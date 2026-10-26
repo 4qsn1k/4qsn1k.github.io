@@ -13,18 +13,33 @@ function slippy(lat,lon,z){
  const n=Math.pow(2,z)*256,phi=Math.max(-MAX,Math.min(MAX,lat))*DEG;
  return [(lon+180)/360*n,(1-Math.asinh(Math.tan(phi))/Math.PI)*n/2];
 }
-function choice(p,limit=12){
+const LIMITS=Object.freeze({auto:12,detail:24,max:36});
+function choice(p,limit=12,maxZoom=15,maxSidePx=2048){
  const c=p.corners;
- for(let z=15;z>=5;z--){
+ for(let z=Math.min(15,maxZoom);z>=5;z--){
   const corners=c.map(q=>slippy(q[0],q[1],z));
   const x0=Math.floor(Math.min(...corners.map(q=>q[0]))/256),
    x1=Math.floor(Math.max(...corners.map(q=>q[0]))/256),
    y0=Math.floor(Math.min(...corners.map(q=>q[1]))/256),
    y1=Math.floor(Math.max(...corners.map(q=>q[1]))/256);
-  const tiles=(x1-x0+1)*(y1-y0+1);
-  if(tiles<=limit)return {z,x0,x1,y0,y1,tiles};
+  const tiles=(x1-x0+1)*(y1-y0+1),columns=x1-x0+1,rows=y1-y0+1;
+  if(tiles<=limit&&columns*256<=maxSidePx&&rows*256<=maxSidePx)
+   return {z,x0,x1,y0,y1,tiles,columns,rows,
+    approxPixelMeters:Math.cos((p.lat0||c[0][0])*DEG)*2*Math.PI*6378137/(256*2**z)};
  }
- throw Error('Preview area too large for 12 map tiles');
+ throw Error('Размер участка превышает доступный бюджет топографических плиток');
+}
+function options(p,maxSidePx=2048){
+ const modes=Object.entries(LIMITS).map(([id,limit])=>{
+  try{
+   const q=choice(p,limit,15,maxSidePx);
+   return {id,limit,zoom:q.z,tiles:q.tiles,approxPixelMeters:q.approxPixelMeters,
+    available:true,columns:q.columns,rows:q.rows};
+  }catch(e){return {id,limit,available:false,reason:e.message};}
+ });
+ const base=modes[0];
+ return modes.map(o=>({...o,improved:!!(o.available&&base.available&&o.zoom>base.zoom),
+   selectable:o.id==='auto'?o.available:!!(o.available&&base.available&&o.zoom>base.zoom)}));
 }
 async function fetchOne(z,x,y,signal){
  const uri='https://'+(['a','b','c'][(x+y)%3])+'.tile.opentopomap.org/'+z+'/'+x+'/'+y+'.png';
@@ -34,8 +49,8 @@ async function fetchOne(z,x,y,signal){
  if(blob.size<100)throw Error('Empty topographic tile');
  return await createImageBitmap(blob);
 }
-async function load(p,{maxTiles=12,onStatus=()=>{}}={}){
- const q=choice(p,maxTiles);
+async function load(p,{maxTiles=12,maxSidePx=2048,onStatus=()=>{}}={}){
+ const q=choice(p,maxTiles,15,maxSidePx);
  const cols=q.x1-q.x0+1,rows=q.y1-q.y0+1;
  const key=[q.z,q.x0,q.x1,q.y0,q.y1].join('/');
  const cached=atlasCache.get(key);
@@ -65,7 +80,7 @@ async function load(p,{maxTiles=12,onStatus=()=>{}}={}){
  }finally{clearTimeout(timeout);}
  if(!cached&&ok){
   atlasCache.set(key,{canvas,loaded:ok,failed});
-  if(atlasCache.size>8)atlasCache.delete(atlasCache.keys().next().value);
+  if(atlasCache.size>3)atlasCache.delete(atlasCache.keys().next().value);
  }
  if(cached)clearTimeout(timeout);
  if(!ok)throw Error('Топографические плитки недоступны: '+errors.slice(0,2).join(' / '));
@@ -78,10 +93,10 @@ async function load(p,{maxTiles=12,onStatus=()=>{}}={}){
  const a=xy(px[0]),b=xy(px[1]),c1=xy(px[2]);
  const du=[b[0]-a[0],b[1]-a[1]],dv=[c1[0]-a[0],c1[1]-a[1]];
  return {
-   canvas,z:q.z,loaded:ok,failed,count:q.tiles,attribution:'© OpenTopoMap contributors, © OpenStreetMap contributors',
+   canvas,z:q.z,loaded:ok,failed,count:q.tiles,approxPixelMeters:q.approxPixelMeters,attribution:'© OpenTopoMap contributors, © OpenStreetMap contributors',
    uv(x,y){const u=(x-p.minx)/p.coverage,v=(y-p.miny)/p.coverage;
      return [a[0]+du[0]*u+dv[0]*v,a[1]+du[1]*u+dv[1]*v];}
  };
 }
-return {load,slippy,choice};
+return {load,slippy,choice,options,LIMITS};
 });

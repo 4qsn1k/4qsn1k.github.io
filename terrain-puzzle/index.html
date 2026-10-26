@@ -73,7 +73,7 @@ select option:disabled{color:#8895a5;background:#202a35}
 .helpPanelHead button{background:#314c5d;color:white;border:0;border-radius:8px;font-size:22px;cursor:pointer;width:34px;height:34px}
 .maparea{position:relative}
 
-/* v2.3 navigation: always reveal principal stages; advanced features are opt-in. */
+/* v2.4 navigation: always reveal principal stages; advanced features are opt-in. */
 .quickSteps{border:1px solid #315e61;border-radius:13px;padding:14px;background:#17303a;margin-bottom:18px;line-height:1.55}
 .quickSteps strong{color:#90ebd1;font-size:14px}.quickSteps p{font-size:12px;margin:7px 0 0;color:#c4dedb}
 aside>section{padding:12px;border:1px solid #2d4150;border-radius:13px;background:#172432;margin-bottom:13px}
@@ -119,8 +119,16 @@ html{scroll-behavior:smooth}
 #refreshPreview{display:none!important}
 #preview3d:not([style*="display: none"]) ~ #gridHelp{display:none}
 @media(max-width:900px){.previewLegend{top:110px;font-size:10px;max-width:170px}}
+
+.topoDetailLabel,.viewScaleLabel{display:flex;gap:7px;align-items:center;background:#193b48;border:1px solid #3f7283;border-radius:8px;padding:3px 8px;margin:0;color:#ccebec;font-size:12px}
+.topoDetailLabel select{width:115px;font-size:12px;min-height:27px;padding:3px}
+.topoDetailLabel option:disabled{color:#7a8790}
+.viewScaleLabel input{width:95px;accent-color:#5bcbb2}
+.viewScaleLabel output{min-width:38px;text-align:right;color:#a9f5d5;font-size:12px}
+.detailInfo{position:absolute;z-index:5;bottom:83px;left:14px;max-width:min(560px,80%);padding:6px 10px;border:1px solid #456979;border-radius:7px;background:#0b263be8;font-size:11px;color:#d2e8e9;pointer-events:none}
+@media(max-width:720px){.detailInfo{bottom:114px;max-width:95%}.viewScaleLabel input{width:70px}}
 </style></head><body>
-<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v2.3</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
+<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v2.4</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
 <main><aside>
 <section><div class="heading">01 · Выбор местности</div><p class="hint" style="margin-bottom:12px">Нажми на карте два раза: сначала первый угол, затем противоположный. Либо введи координаты вручную (широта, долгота).</p>
 <div class="topPaste"><div class="panelTitle">Вставить координаты или ссылку</div>
@@ -224,10 +232,16 @@ html{scroll-behavior:smooth}
 <span><b class="forestMark"></b> Лесные контуры</span>
 <span><b class="roadMark"></b> Дороги и тропы</span>
 </div>
+<div id="previewDetailInfo" class="detailInfo" role="status">Детализация топокарты рассчитывается по размеру выделения.</div>
 <div id="previewTopoStatus" class="topoStatus" role="status">Топографическая подложка: загрузка…</div>
 <div class="topoAttribution">3D-топокарта: © OpenTopoMap / © OpenStreetMap contributors</div>
 <div id="viewerToolbar" role="toolbar" aria-label="Управление 3D-макетом">
 <label class="topoCheck" title="Наложить топографическую карту с подписями и горизонталями прямо на объёмную поверхность"><input id="previewTopo" type="checkbox" checked> Топографическая карта на 3D</label>
+<label class="topoDetailLabel" title="Реальная детализация плиток OpenTopoMap. Недоступные варианты отключены автоматически."><span>Детализация топокарты</span>
+<select id="topoDetail" aria-label="Детализация карты"><option value="auto" selected>Авто</option><option value="detail">Подробнее</option><option value="max">Максимум</option></select></label>
+<label class="viewScaleLabel" title="Масштаб изображения 3D. Не меняет физический размер и охват макета"><span>Масштаб вида</span>
+<input id="viewScale" type="range" min="40" max="220" step="5" value="100">
+<output id="viewScaleValue" for="viewScale">100%</output></label>
 <label class="riverWidthLabel" title="Если в OpenStreetMap нет береговых контуров и ширины, эта настройка задаёт УСЛОВНУЮ ширину реки"><span>Ширина реки (условная)*</span><select id="riverWidth"><option value="20">20 м</option><option value="40">40 м</option><option selected value="60">60 м</option><option value="100">100 м</option><option value="150">150 м</option></select></label>
 <button type="button" data-view="fit" title="Уместить весь макет в окно">Весь макет</button>
 <button type="button" data-view="iso" title="Показать изометрический вид">Изометрия</button>
