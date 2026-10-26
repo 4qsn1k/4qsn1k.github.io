@@ -4,6 +4,27 @@
 const $=id=>document.getElementById(id),canvas=$('previewCanvas');
 let gl,prog,surface,lines,wire,routeLines=null,landscapeDraw=[],lastModel=null,yaw=-.85,tilt=.58,zoom=1.65,span=200,midz=0;
 let panX=0,panY=0,panZ=0,bordersOn=true,wireOn=false,modelH=20;
+let targetYaw=yaw,targetTilt=tilt,targetZoom=zoom,targetPanX=panX,targetPanY=panY;
+let cameraFrame=0,cameraLast=0,velocityYaw=0,velocityTilt=0;
+function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+function animateCamera(now){
+ cameraFrame=0;
+ const elapsed=Math.max(8,Math.min(56,now-(cameraLast||now-16)));
+ cameraLast=now;
+ const factor=1-Math.exp(-elapsed/78);
+ yaw+=(targetYaw-yaw)*factor;tilt+=(targetTilt-tilt)*factor;
+ zoom+=(targetZoom-zoom)*factor;
+ panX+=(targetPanX-panX)*factor;panY+=(targetPanY-panY)*factor;
+ draw();
+ if(Math.abs(targetYaw-yaw)>.0003||Math.abs(targetTilt-tilt)>.0003||
+ Math.abs(targetZoom-zoom)>.0003||Math.abs(targetPanX-panX)>.01||Math.abs(targetPanY-panY)>.01)
+  cameraFrame=requestAnimationFrame(animateCamera);
+ else{
+  yaw=targetYaw;tilt=targetTilt;zoom=targetZoom;panX=targetPanX;panY=targetPanY;draw();
+ }
+}
+function scheduleCamera(){if(!cameraFrame)cameraFrame=requestAnimationFrame(animateCamera);}
+
 const vs='attribute vec3 pos;attribute vec3 col;attribute vec3 nor;uniform mat4 mvp;varying vec3 c;varying float light;void main(){gl_Position=mvp*vec4(pos,1.);c=col;light=clamp(dot(normalize(nor),normalize(vec3(-.38,-.62,.87))),.40,1.);}',
 fs='precision mediump float;varying vec3 c;varying float light;void main(){gl_FragColor=vec4(c*light,1.);}';
 function init(){
@@ -122,7 +143,7 @@ function render(p,dem,range){
  const W=p.cols*p.pitch,gain=1000/p.s.scale*p.s.exaggeration;
  const maxHeight=Math.max(1,(range.max-range.min)*gain);
  // LOD changes sampling density only; tile warping, datum and topology share STL core.
- const segments=Math.max(2,Math.min(Math.ceil(p.pitch/p.s.mesh_step),Math.floor(120/p.cols)));
+ const segments=Math.max(2,Math.min(Math.ceil(p.pitch/p.s.mesh_step),Math.floor(220/p.cols)));
  const lv=[],wv=[];
  surface=[];
  const addLine=(target,a,b)=>{
@@ -132,11 +153,24 @@ function render(p,dem,range){
    const mesh=window.TerrainGeometry.buildTileMesh(p,dem,range,row,col,{segments});
    const v=[],idx=[],n=segments+1,positions=mesh.positions;
    const point=k=>[positions[k*3]+col*p.pitch-W/2,positions[k*3+1]+(p.rows-row-1)*p.pitch-W/2,positions[k*3+2]];
-   // Flat normals and bounded per-tile uploads work on WebGL 1 without uint32 indices.
+   // Smooth vertex normals on the terrain surface. Keep base/walls sharp.
+   // Exported STL geometry is unchanged; only preview lighting is interpolated.
+   const topCount=mesh.topVertexCount,topNormal=new Float64Array(topCount*3);
+   for(const f of mesh.faces){
+     if(f[0]>=topCount||f[1]>=topCount||f[2]>=topCount)continue;
+     const a=point(f[0]),b=point(f[1]),c=point(f[2]);
+     const n=cross(b.map((x,i)=>x-a[i]),c.map((x,i)=>x-a[i]));
+     for(const vertex of f)for(let axis=0;axis<3;axis++)topNormal[vertex*3+axis]+=n[axis];
+   }
    for(const face of mesh.faces){
      const pts=face.map(point),a=pts[0],b=pts[1],c=pts[2];
-     const no=normal(cross(b.map((x,i)=>x-a[i]),c.map((x,i)=>x-a[i])));
-     for(const q of pts){idx.push(v.length/9);v.push(...q,...color((q[2]-3)/maxHeight),...no);}
+     const flat=normal(cross(b.map((x,i)=>x-a[i]),c.map((x,i)=>x-a[i])));
+     for(let q=0;q<3;q++){
+       const position=pts[q],index=face[q];
+       const no=index<topCount?normal(Array.from(topNormal.subarray(index*3,index*3+3))):flat;
+       idx.push(v.length/9);
+       v.push(...position,...color((position[2]-3)/maxHeight),...no);
+     }
    }
    // Keep each draw's indices within Uint16, including at high single-tile LOD.
    const limit=65535;
@@ -160,10 +194,13 @@ function render(p,dem,range){
  $('preview3d').dataset.shape=p.total;
 }
 // Camera controls: orbit, pan, pinch zoom, wheel, fit/top/isometric.
-function fitView(){yaw=-.85;tilt=.68;panX=0;panY=0;panZ=0;zoom=1.45;draw();}
-function isoView(){yaw=-Math.PI/4;tilt=.64;draw();}
-function topView(){yaw=-Math.PI/2;tilt=1.566;draw();}
-function zoomBy(factor){zoom=Math.max(.12,Math.min(10,zoom*factor));draw();}
+function fitView(){
+ targetYaw=yaw=-.85;targetTilt=tilt=.68;targetPanX=panX=0;targetPanY=panY=0;
+ panZ=0;targetZoom=zoom=1.45;draw();
+}
+function isoView(){targetYaw=-Math.PI/4;targetTilt=.64;scheduleCamera();}
+function topView(){targetYaw=-Math.PI/2;targetTilt=1.566;scheduleCamera();}
+function zoomBy(factor){targetZoom=clamp(targetZoom*factor,.12,10);scheduleCamera();}
 const pointers=new Map();
 let lastPointer=null,gesture=null;
 function point(e){return {x:e.clientX,y:e.clientY};}
@@ -171,9 +208,9 @@ function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
 function panBy(dx,dy){
  // Screen movement follows the cursor in the current horizontal view.
  const pxScale=Math.max(1,span*zoom)*Math.tan(.78/2)*2/Math.max(200,canvas.clientHeight);
- panX+=(-Math.sin(yaw)*dx+Math.cos(yaw)*dy)*pxScale;
- panY+=(Math.cos(yaw)*dx+Math.sin(yaw)*dy)*pxScale;
- draw();
+ targetPanX+=(-Math.sin(yaw)*dx+Math.cos(yaw)*dy)*pxScale;
+ targetPanY+=(Math.cos(yaw)*dx+Math.sin(yaw)*dy)*pxScale;
+ scheduleCamera();
 }
 canvas.addEventListener('pointerdown',e=>{
  if(!surface)return;
@@ -181,8 +218,10 @@ canvas.addEventListener('pointerdown',e=>{
  pointers.set(e.pointerId,point(e));
  canvas.setPointerCapture(e.pointerId);
  if(pointers.size===1){
-  lastPointer={...point(e),mode:e.shiftKey||e.button===1||e.button===2?'pan':'rotate',
-   // At the lower edge the model follows the movement of the hand.
+  velocityYaw=0;velocityTilt=0;
+  lastPointer={...point(e),time:performance.now(),
+   mode:e.shiftKey||e.button===1||e.button===2?'pan':'rotate',
+   // Preserve lower-half drag inversion requested by the user.
    invert:e.offsetY>canvas.clientHeight/2?-1:1};
  }else if(pointers.size===2){
   const a=[...pointers.values()];
@@ -208,17 +247,27 @@ canvas.addEventListener('pointermove',e=>{
  const dx=e.clientX-lastPointer.x,dy=e.clientY-lastPointer.y;
  if(lastPointer.mode==='pan')panBy(dx,dy);
  else{
-   yaw+=dx*.008*lastPointer.invert;
-   tilt=Math.max(.08,Math.min(1.57,tilt+dy*.007));
-   draw();
+   const dt=clamp(performance.now()-(lastPointer.time||performance.now()-16),9,60);
+   const dYaw=dx*.006*lastPointer.invert,dTilt=dy*.005;
+   targetYaw+=dYaw;targetTilt=clamp(targetTilt+dTilt,.07,1.55);
+   velocityYaw=velocityYaw*.45+dYaw*(16/dt)*.55;
+   velocityTilt=velocityTilt*.45+dTilt*(16/dt)*.55;
+   scheduleCamera();
  }
- lastPointer.x=e.clientX;lastPointer.y=e.clientY;
+ lastPointer.x=e.clientX;lastPointer.y=e.clientY;lastPointer.time=performance.now();
 });
 function endPointer(e){
  pointers.delete(e.pointerId);
  try{canvas.releasePointerCapture(e.pointerId);}catch(_){}
  if(pointers.size===1){const p=[...pointers.values()][0];lastPointer={...p,mode:'pan',invert:1};gesture=null;}
- else if(!pointers.size){lastPointer=null;gesture=null;}
+ else if(!pointers.size){
+   if(lastPointer?.mode==='rotate'){
+     targetYaw+=clamp(velocityYaw*4,-.33,.33);
+     targetTilt=clamp(targetTilt+clamp(velocityTilt*3,-.17,.17),.07,1.55);
+     scheduleCamera();
+   }
+   lastPointer=null;gesture=null;velocityYaw=0;velocityTilt=0;
+ }
 }
 canvas.addEventListener('pointerup',endPointer);
 canvas.addEventListener('pointercancel',endPointer);
@@ -233,5 +282,5 @@ $('viewerBorders')?.addEventListener('change',e=>{bordersOn=e.target.checked;dra
 $('viewerWire')?.addEventListener('change',e=>{wireOn=e.target.checked;draw();});
 window.addEventListener('resize',draw);
 window.TerrainViewer={render,resize:draw,fit:fitView,top:topView,iso:isoView,zoomBy,refreshRoute,refreshLandcover,
- state:()=>({yaw,tilt,zoom,panX,panY,panZ,bordersOn,wireOn})};
+ state:()=>({yaw,tilt,zoom,targetYaw,targetTilt,targetZoom,panX,panY,panZ,bordersOn,wireOn,smoothing:cameraFrame!==0})};
 })();
