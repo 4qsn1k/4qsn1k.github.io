@@ -101,6 +101,20 @@ if(smooth){
 }
 $('tab3d')?.addEventListener('click',()=>{const h=$('gridHelp');if(h)h.style.display='none';});
 $('tabMap')?.addEventListener('click',()=>{const h=$('gridHelp');if(h)h.style.display='';});
+const expand=$('expandViewer'),area=document.querySelector('.maparea');
+function expand3D(state){
+ area?.classList.toggle('fullscreen3d',state);
+ if(expand)expand.textContent=state?'⤢ В обычный размер':'⛶ На весь экран';
+ requestAnimationFrame(()=>setTimeout(()=>{
+   window.TerrainViewer?.resize?.();
+   if(state)window.TerrainViewer?.fit?.();
+ },90));
+}
+expand?.addEventListener('click',()=>expand3D(!area?.classList.contains('fullscreen3d')));
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&area?.classList.contains('fullscreen3d'))expand3D(false);
+});
+$('tabMap')?.addEventListener('click',()=>{if(area?.classList.contains('fullscreen3d'))expand3D(false);});
 const dem=$('demQuality');
 if(dem)dem.setAttribute('title','Источник DEM — числовые высоты местности, не слой леса или рек OSM.');
 // User must see an explicit explanation before/after data extraction.

@@ -1,4 +1,4 @@
-/* Real geographic objects, OSM provenance, and deterministic SYMBOLIC forest miniatures.
+﻿/* Real geographic objects, OSM provenance, and deterministic SYMBOLIC forest miniatures.
  * Overpass data describes mapped extents; species are NOT guessed from satellite pixels.
  * This module is pure JS and can be tested with node.
  */
@@ -28,15 +28,56 @@ function classify(tags={}){
  if(['forest','river','water','road','tree'].includes(tags.kind))return tags.kind;
  if(tags.natural==='tree')return 'tree';
  if(tags.natural==='wood'||tags.landuse==='forest')return 'forest';
- if(tags.waterway==='riverbank'||tags.natural==='water')return 'water';
+ if(tags.waterway==='riverbank'||tags.natural==='water'||tags.water==='reservoir'||tags.landuse==='reservoir')return 'water';
  if(['river','stream','canal'].includes(tags.waterway))return 'river';
  if(typeof tags.highway==='string'&&!['proposed','construction'].includes(tags.highway))return 'road';
  return null;
 }
+// Build closed multipolygon rings from OSM relation ways. Member ways can be
+// open segments and can point in either direction. Never invent missing links.
+function closed(pts){
+ return pts.length>=4&&pts[0].lat===pts.at(-1).lat&&pts[0].lon===pts.at(-1).lon;
+}
+function joinSegments(parts){
+ const rings=[],pending=parts.filter(p=>p?.length>=2).map(p=>p.map(coord));
+ const eq=(a,b)=>a.lat===b.lat&&a.lon===b.lon;
+ while(pending.length){
+  let ring=pending.pop();
+  let advanced=true;
+  while(!closed(ring)&&advanced){
+   advanced=false;
+   for(let i=0;i<pending.length;i++){
+    const q=pending[i],first=ring[0],last=ring.at(-1);
+    if(eq(last,q[0]))ring.push(...q.slice(1));
+    else if(eq(last,q.at(-1)))ring.push(...q.slice(0,-1).reverse());
+    else if(eq(first,q.at(-1)))ring.unshift(...q.slice(0,-1));
+    else if(eq(first,q[0]))ring.unshift(...q.slice(1).reverse());
+    else continue;
+    pending.splice(i,1);advanced=true;break;
+   }
+  }
+  if(closed(ring))rings.push(ring);
+ }
+ return rings;
+}
+function pointInPolygon(x,y,vertices){
+ let inside=false;
+ for(let i=0,j=vertices.length-1;i<vertices.length;j=i++){
+  const a=vertices[i],b=vertices[j];
+  if(((a[1]>y)!==(b[1]>y))&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])inside=!inside;
+ }return inside;
+}
+function assembleMultipolygon(members){
+ const outer=joinSegments(members.filter(m=>m.role==='outer').map(m=>m.geometry));
+ const inner=joinSegments(members.filter(m=>m.role==='inner').map(m=>m.geometry));
+ return outer.map(ring=>({
+  ring,holes:inner.filter(h=>pointInPolygon(h[0].lon,h[0].lat,ring.map(pt=>[pt.lon,pt.lat])))
+ }));
+}
 function parseOverpass(payload,max=1400){
  if(!payload||!Array.isArray(payload.elements))throw Error('Overpass JSON response is invalid');
  const result=[]; const dedup=new Set();
- function collect(raw,kind,tags,points,area){
+ function collect(raw,kind,tags,points,area,holes=[]){
   if(!Array.isArray(points)||points.length<(area?4:1))return;
   let coords;
   try{coords=points.map(coord);}catch{return;}
@@ -45,7 +86,7 @@ function parseOverpass(payload,max=1400){
   if(result.length>=max)throw Error('Слишком много объектов OSM. Уменьши участок (лимит '+max+').');
   const species=forestSpecies(tags);
   result.push({id:k,kind,coords,area,subtype:species.type,verified:species.verified,
-    label:species.label,tags:{name:tags.name||'',species:tags.species||'',genus:tags.genus||'',
+    label:species.label,holes, tags:{name:tags.name||'',species:tags.species||'',genus:tags.genus||'',
       leaf_type:tags.leaf_type||'',waterway:tags.waterway||'',highway:tags.highway||'',width:tags.width||'',
       natural:tags.natural||'',landuse:tags.landuse||'',water:tags.water||''},source:'OpenStreetMap'});
  }
@@ -59,12 +100,9 @@ function parseOverpass(payload,max=1400){
     if(!area||closed)collect('way/'+e.id,kind,t,points,area);
   }
   if(e.type==='relation'&&Array.isArray(e.members)&&(kind==='water'||kind==='forest')){
-    let index=0;
-    for(const m of e.members)if(m.role==='outer'&&Array.isArray(m.geometry)){
-      const points=m.geometry,closed=points.length>3&&points[0].lat===points.at(-1).lat&&points[0].lon===points.at(-1).lon;
-      if(closed)collect('relation/'+e.id+'/outer/'+index++,kind,t,points,true);
+    for(const [index,polygon] of assembleMultipolygon(e.members).entries()){
+      collect('relation/'+e.id+'/outer/'+index,kind,t,polygon.ring,true,polygon.holes);
     }
-    // Multipolygons with holes: incomplete support; the importer should not claim exact occupancy.
   }
  }
  return result;
@@ -86,7 +124,9 @@ function parseGeoJSON(input,max=1400){
    if(area&&coords.length<4)continue;
    if(result.length>=max)throw Error('GeoJSON exceeds feature limit');
    const spec=forestSpecies(t);
-   result.push({id:'geojson/'+id++,kind,coords,area,subtype:spec.type,verified:spec.verified,label:spec.label,tags:t,source:t.source==='OpenStreetMap'?'OpenStreetMap':'GeoJSON'});
+   const polygonRings=g.type==='Polygon'?g.coordinates:g.type==='MultiPolygon'?g.coordinates[rings.indexOf(ring)]:null;
+   const holes=area&&polygonRings?polygonRings.slice(1).map(h=>h.map(x=>coord({lat:x[1],lon:x[0]}))):[];
+   result.push({id:'geojson/'+id++,kind,coords,holes,area,subtype:spec.type,verified:spec.verified,label:spec.label,tags:t,source:t.source==='OpenStreetMap'?'OpenStreetMap':'GeoJSON'});
   }
  }
  return result;
@@ -94,29 +134,38 @@ function parseGeoJSON(input,max=1400){
 function parseOSMXML(source){
  if(typeof DOMParser==='undefined')throw Error('OSM XML decoder works only in a browser');
  const doc=new DOMParser().parseFromString(source,'application/xml');
- if(doc.querySelector('parsererror')||doc.documentElement.nodeName!=='osm')throw Error('Invalid OSM XML');
- const nodes=new Map(),features=[];
+ if(doc.querySelector('parsererror')||doc.documentElement.localName!=='osm')throw Error('Invalid OSM XML');
+ const nodes=new Map(),ways=new Map(),elements=[];
  const children=(el,name)=>[...el.children].filter(n=>n.localName===name);
  const tags=el=>Object.fromEntries(children(el,'tag').map(n=>[n.getAttribute('k'),n.getAttribute('v')]));
  for(const n of doc.querySelectorAll('node')){
    const o={type:'node',id:n.getAttribute('id'),lat:Number(n.getAttribute('lat')),
      lon:Number(n.getAttribute('lon')),tags:tags(n)};
-   nodes.set(n.getAttribute('id'),o);if(o.tags.natural==='tree')features.push(o);
+   nodes.set(n.getAttribute('id'),o);
+   if(classify(o.tags)==='tree')elements.push(o);
  }
  for(const w of doc.querySelectorAll('way')){
-   const attr=tags(w);
-   if(!classify(attr))continue;
-   const geometry=children(w,'nd').map(n=>nodes.get(n.getAttribute('ref')))
-     .filter(Boolean).map(o=>({lat:o.lat,lon:o.lon}));
-   features.push({type:'way',id:w.getAttribute('id'),tags:attr,geometry});
+   const attr=tags(w),refs=children(w,'nd').map(n=>n.getAttribute('ref'));
+   const geometry=refs.map(ref=>nodes.get(ref)).filter(Boolean).map(o=>({lat:o.lat,lon:o.lon}));
+   const item={type:'way',id:w.getAttribute('id'),tags:attr,geometry,complete:geometry.length===refs.length};
+   ways.set(w.getAttribute('id'),item);
+   if(classify(attr))elements.push(item);
  }
- return parseOverpass({elements:features});
+ for(const rel of doc.querySelectorAll('relation')){
+   const attr=tags(rel),kind=classify(attr);
+   if(!['water','forest'].includes(kind))continue;
+   const members=children(rel,'member').filter(m=>m.getAttribute('type')==='way')
+    .map(m=>({role:m.getAttribute('role')||'outer',ref:m.getAttribute('ref')}))
+    .map(m=>({...m,geometry:ways.get(m.ref)?.complete?ways.get(m.ref).geometry:[]}));
+   elements.push({type:'relation',id:rel.getAttribute('id'),tags:attr,members});
+ }
+ return parseOverpass({elements});
 }
 function toGeoJSON(features){
  return {type:'FeatureCollection',features:features.map(f=>({type:'Feature',
   properties:{...f.tags,kind:f.kind,subtype:f.subtype,verified:f.verified,source:f.source},
   geometry:{type:f.area?'Polygon':f.kind==='tree'?'Point':'LineString',
-    coordinates:f.area?[f.coords.map(p=>[p.lon,p.lat])]:f.kind==='tree'?[f.coords[0].lon,f.coords[0].lat]:f.coords.map(p=>[p.lon,p.lat])}}))};
+    coordinates:f.area?[f.coords.map(p=>[p.lon,p.lat]),...(f.holes||[]).map(r=>r.map(p=>[p.lon,p.lat]))]:f.kind==='tree'?[f.coords[0].lon,f.coords[0].lat]:f.coords.map(p=>[p.lon,p.lat])}}))};
 }
 function containsPolygon(x,y,vertices){
  let inside=false;
@@ -231,5 +280,5 @@ function meshSTL(meshes,title='Terrain forest trees'){
  }
  return new Uint8Array(output);
 }
-return {forestSpecies,classify,parseOverpass,parseOSMXML,parseGeoJSON,toGeoJSON,containsPolygon,placements,treeMesh,meshSTL};
+return {forestSpecies,classify,parseOverpass,parseOSMXML,parseGeoJSON,toGeoJSON,containsPolygon,placements,treeMesh,meshSTL,assembleMultipolygon,joinSegments};
 });

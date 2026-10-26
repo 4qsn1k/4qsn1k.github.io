@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),core=window.TerrainLandcover,api=window.terrainPuzzleDebug;
-let features=[],layer=null,source='',loading=false;
+let features=[],layer=null,source='',loading=false,version=0;
 const map=api.map();
 function status(s,err=false){const e=$('landcoverStatus');e.textContent=s;e.style.color=err?'#f5ba92':'#9ae1cd';}
 function enabled(kind){
@@ -25,7 +25,7 @@ function redraw(){
   const coords=f.coords.map(c=>[c.lat,c.lon]),opts=style(f);
   let shape;
   if(f.kind==='tree')shape=L.circleMarker(coords[0],{radius:3,color:'#24764e',fillOpacity:.9}).addTo(layer);
-  else if(f.area)shape=L.polygon(coords,opts).addTo(layer);
+  else if(f.area)shape=L.polygon([coords,...(f.holes||[]).map(r=>r.map(c=>[c.lat,c.lon]))],opts).addTo(layer);
   else shape=L.polyline(coords,opts).addTo(layer);
   const name=String(f.tags?.name||f.label||f.kind).slice(0,130);
   const caption=document.createElement('span');
@@ -41,7 +41,8 @@ function updateStats(){
  const unknown=features.filter(f=>(f.kind==='forest'||f.kind==='tree')&&!f.verified).length;
  const b=$('landcoverCounts');
  b.textContent='Лесных контуров: '+cnt('forest')+' · Рек и ручьёв: '+cnt('river')+
-  ' · Водоёмов: '+cnt('water')+' · Дорог: '+cnt('road')+
+  ' · Водоёмов: '+cnt('water')+' (водохранилищ: '+features.filter(f=>f.kind==='water'&&
+    (f.tags.water==='reservoir'||f.tags.landuse==='reservoir')).length+') · Дорог: '+cnt('road')+
   ' · Отдельных деревьев: '+cnt('tree')+'. Порода известна в '+known+' объектах; неизвестна в '+unknown+'.';
 }
 function toBox(){
@@ -57,9 +58,13 @@ function query(box){
   'way["landuse"="forest"]('+w+');',
   'way["waterway"~"^(river|stream|canal|riverbank)$"]('+w+');',
   'way["natural"="water"]('+w+');',
+  'way["water"="reservoir"]('+w+');',
+  'way["landuse"="reservoir"]('+w+');',
+  'relation["natural"="water"]('+w+');',
+  'relation["water"="reservoir"]('+w+');',
+  'relation["landuse"="reservoir"]('+w+');',
   'way["highway"~"^(motorway|trunk|primary|secondary|tertiary|residential|unclassified|track|path|footway)$"]('+w+');',
   'node["natural"="tree"]('+w+');',
-  'relation["natural"="water"]('+w+');'
  ].join('')+');out body geom;';
 }
 const dataStats={status:'idle',source:'',downloaded:0,expected:null,message:'Данные не загружены',bbox:null,checkedAt:''};
@@ -139,9 +144,46 @@ async function queryOverpass(box){
  try{return await Promise.any(attempts)}
  catch(e){throw Error('Серверы Overpass не ответили: '+(e.errors||[]).map(x=>String(x.message||x)).join('; ').slice(0,230));}
 }
+// A reservoir can be a large multipolygon whose complete member ways fall
+// outside the small /api/0.6/map bbox. Do a targeted relation query separately.
+// It must not delay showing the normal OSM result or overwrite a newer request.
+async function recoverLargeWater(box,requestVersion){
+ const w=[box.south,box.west,box.north,box.east].map(v=>v.toFixed(7)).join(',');
+ const q='[out:json][timeout:15];('+
+  'relation["natural"="water"]('+w+');'+
+  'relation["water"="reservoir"]('+w+');'+
+  'relation["landuse"="reservoir"]('+w+');'+
+  'way["natural"="water"]('+w+');'+
+  'way["water"="reservoir"]('+w+');'+
+  'way["landuse"="reservoir"]('+w+');'+
+  ');out body geom;';
+ const hosts=['https://overpass.private.coffee/api/interpreter',
+  'https://overpass-api.de/api/interpreter'];
+ for(const host of hosts){
+  try{
+   const body=await requestWithTimeout(host+'?data='+encodeURIComponent(q),9000);
+   const payload=JSON.parse(body);
+   const polygons=core.parseOverpass(payload).filter(f=>f.kind==='water'&&f.area);
+   if(requestVersion!==version)return;
+   const ids=new Set(features.map(f=>f.id));
+   let added=0;
+   for(const f of polygons)if(!ids.has(f.id)){features.push(f);ids.add(f.id);added++;}
+   if(added){
+    source=source+' + Overpass водоёмы';redraw();
+    mark(source,box,dataStats.downloaded+payload.elements.length);
+    status('Добавлено '+added+' реальных водных полигонов из составных границ OSM. Всего объектов: '+features.length+'.');
+   }else{
+    status('Основные объекты загружены. Дополнительных замкнутых береговых контуров в OSM не найдено. Большое водохранилище можно импортировать как полный GeoJSON.');
+   }
+   return;
+  }catch(e){if(requestVersion!==version)return;}
+ }
+ if(requestVersion===version)status('Основные данные OSM загружены. Полный береговой контур водохранилища не получен из Overpass. Для него используй импорт GeoJSON.');
+}
 async function requestOSM(){
  if(loading)return;
  loading=true;$('loadOSM').disabled=true;
+ const current=++version;
  let box=null;
  const started=performance.now();
  try{
@@ -164,12 +206,16 @@ async function requestOSM(){
   mark(result.source,box,result.raw);
   const sec=((performance.now()-started)/1000).toFixed(1);
   status('Готово за '+sec+' с: '+features.length+' объектов. '+result.source+'. '+(features.length?'Они показаны на карте.':'В этом участке в OSM нет нужных объектов.'));
+  if(result.source==='OpenStreetMap API'&&!features.some(f=>f.kind==='water')){
+   // Async follow-up: no UI blocking and no fabricated water geometry.
+   void recoverLargeWater(box,current);
+  }
  }catch(e){errorReport(e.message,box);}
  finally{loading=false;$('loadOSM').disabled=false;}
 }
 
 function setFeatures(next,label='GeoJSON'){
- features=next;source=label;redraw();
+ ++version;features=next;source=label;redraw();
  status('Импортировано '+features.length+' объектов ('+label+'). Лес с неизвестными породами показан условно.');
  mark(label,toBox(),features.length);
 }
@@ -189,7 +235,7 @@ $('osmFile').addEventListener('change',async e=>{
  finally{e.target.value='';}
 });
 $('exportOSM').onclick=saveGeoJSON;
-$('clearOSM').onclick=()=>{features=[];source='';redraw();status('Слои OSM очищены.');dataStats.status='idle';dataStats.bbox=null;
+$('clearOSM').onclick=()=>{++version;features=[];source='';redraw();status('Слои OSM очищены.');dataStats.status='idle';dataStats.bbox=null;
  $('osmTopSummary').hidden=true;$('osmAudit').hidden=true;
  $('osmShow3d').disabled=true;$('exportOSM').disabled=true;};
 for(const id of ['layerForest','layerRivers','layerRoads','layer3DTrees'])
@@ -208,6 +254,7 @@ $('osmShow3d')?.addEventListener('click',()=>{
  document.getElementById('tab3d')?.click();
 });
 window.addEventListener('terrain:gridchange',()=>{
+ version++;
  if(dataStats.status==='ready'&&dataStats.bbox){
   try{
    const cur=toBox();
