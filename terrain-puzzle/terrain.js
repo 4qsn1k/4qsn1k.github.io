@@ -231,7 +231,7 @@
       const maxHeight=3+(range.max-range.min)*1000/p.s.scale*p.s.exaggeration;
       if(maxHeight>210)throw Error('Высота модели '+maxHeight.toFixed(1)+' мм больше 210 мм. Уменьши высоты × или масштаб.');
       const files=[],metadata={
-        app:'Terrain Puzzle Generator',version:'2.1.0',generated:new Date().toISOString(),
+        app:'Terrain Puzzle Generator',version:'2.2.0',generated:new Date().toISOString(),
         settings:p.s,plan:{corners:p.corners,selected_m:p.selected,coverage_m:p.coverage,cols:p.cols,total:p.total,
           tile_pitch_mm:p.pitch,printed_size_mm:p.cols*p.pitch},
         min_elevation_m:range.min,max_elevation_m:range.max,approx_max_height_mm:maxHeight,

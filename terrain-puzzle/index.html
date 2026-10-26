@@ -72,8 +72,35 @@ select option:disabled{color:#8895a5;background:#202a35}
 .helpPanelHead{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .helpPanelHead button{background:#314c5d;color:white;border:0;border-radius:8px;font-size:22px;cursor:pointer;width:34px;height:34px}
 .maparea{position:relative}
+
+/* v2.2 navigation: always reveal principal stages; advanced features are opt-in. */
+.quickSteps{border:1px solid #315e61;border-radius:13px;padding:14px;background:#17303a;margin-bottom:18px;line-height:1.55}
+.quickSteps strong{color:#90ebd1;font-size:14px}.quickSteps p{font-size:12px;margin:7px 0 0;color:#c4dedb}
+aside>section{padding:12px;border:1px solid #2d4150;border-radius:13px;background:#172432;margin-bottom:13px}
+#advancedSidebar{border:1px solid #355063;border-radius:13px;padding:10px 12px;background:#192a37}
+#advancedSidebar summary,.expertModel summary,.precisionDetails summary,.viewerExtras summary{cursor:pointer;color:#9be6d4;font-size:13px;font-weight:650;padding:7px 5px}
+.expertModel{border-top:1px solid #34475a;padding-top:9px;margin-top:10px}
+#advancedSidebar section{margin:11px 0;padding:12px 0 0;border-top:1px solid #34475a}
+#advancedSidebar section .heading{margin-bottom:8px}
+.osmAudit{display:flex;flex-direction:column;gap:4px;font-size:12px;line-height:1.45;border:1px solid #3b6b61;padding:10px;background:#17372f;border-radius:10px;margin:10px 0}
+.osmAudit[hidden],.osmTopSummary[hidden]{display:none}
+.osmAudit strong{color:#a3f7d4}
+#osmShow3d{width:100%;min-height:36px;background:#346e60;border-color:#4f9d81;font-weight:bold;margin:7px 0}
+#osmShow3d:disabled,#exportOSM:disabled{opacity:.4;cursor:not-allowed}
+.osmTopSummary{color:#9ee5ce;background:#1b473e;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:650;max-width:270px}
+#landcoverPanel .heading{color:#80e0c7}
+#landcoverPanel .check{padding:4px 0}
+#landcoverPanel .tools button{min-height:36px}
+.precisionDetails{max-width:250px}
+.precisionDetails .gridNudge{margin:5px 0}
+.viewerExtras{display:inline-block;color:#e6eef7}
+.viewerExtras label{font-size:12px}
+#viewerToolbar [data-view="reset"]{display:none!important}
+html{scroll-behavior:smooth}
+@media(min-width:921px){main{grid-template-columns:400px minmax(0,1fr)}aside{padding:15px}}
+@media(max-width:920px){.osmTopSummary{max-width:unset}aside{padding:12px}}
 </style></head><body>
-<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v2.1</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
+<header><div class="icon">◭</div><div><h1>Terrain Puzzle <span style="font-size:12px;color:#73d7bf">v2.2</span></h1><small>Рельеф из реальных высот · 3D-просмотр · STL-пазлы · печать топокарт</small></div></header>
 <main><aside>
 <section><div class="heading">01 · Выбор местности</div><p class="hint" style="margin-bottom:12px">Нажми на карте два раза: сначала первый угол, затем противоположный. Либо введи координаты вручную (широта, долгота).</p>
 <div class="topPaste"><div class="panelTitle">Вставить координаты или ссылку</div>
@@ -121,6 +148,8 @@ select option:disabled{color:#8895a5;background:#202a35}
 <div class="field"><label for="forestExport">Отдельные деревья для печати</label>
 <select id="forestExport"><option selected value="none">Только визуализация</option><option value="stl">Добавить STL с деревьями</option></select></div></div>
 <p class="hint">Ель, сосна и берёза различаются только по тегам species/genus. Без этих данных деревья условные. STL с деревьями печатается отдельно и затем приклеивается к макету.</p>
+<div id="osmAudit" class="osmAudit" hidden aria-live="polite"></div>
+<button id="osmShow3d" class="ghost" type="button" disabled title="Открыть 3D-макет с реальными загруженными объектами">Посмотреть лес и реку в 3D</button>
 <div id="landcoverStatus" class="hint" aria-live="polite">Нажми «Загрузить OSM». Если сервер недоступен, импортируй GeoJSON.</div>
 <div id="landcoverCounts" class="hint"></div>
 <div class="tools"><button id="exportOSM" class="ghost" type="button">Скачать слои GeoJSON</button>
@@ -164,6 +193,7 @@ select option:disabled{color:#8895a5;background:#202a35}
 <select id="nudgeStep" aria-label="Шаг перемещения" title="Расстояние перемещения сетки"><option value="10">10 м</option><option selected value="50">50 м</option><option value="100">100 м</option><option value="500">500 м</option></select>
 
 </div>
+<div id="osmTopSummary" class="osmTopSummary" hidden role="status">OSM: данные не загружены</div>
 <div class="tabs"><button id="tabMap" class="active" title="Карта и редактор квадратной сетки">Карта</button><button id="tab3d" title="3D-просмотр с масштабом, поворотом и перемещением модели">3D-просмотр макета</button></div>
 <div class="mapSwitch"><button data-layer="osm" class="active">Схема</button><button data-layer="topo">Топо</button><button data-layer="sat">Спутник</button></div>
 <button id="helpToggle" class="ghost" type="button" title="Описание каждой функции и порядок создания макета">? Как пользоваться</button><button class="ghost" id="refreshPreview" style="display:none">Обновить 3D</button>
@@ -179,7 +209,7 @@ select option:disabled{color:#8895a5;background:#202a35}
 <label title="Показать или скрыть границы деталей"><input type="checkbox" id="viewerBorders" checked> Границы</label>
 <label title="Показать сеточную структуру модели"><input type="checkbox" id="viewerWire"> Каркас</label>
 </div>
-<div class="overlayTip">Вращение: перетащи · в нижней части направление инвертировано · два пальца: масштаб и сдвиг · Shift+мышь: сдвиг</div></div><div class="stats"><div class="stat"><small>Выбранный участок</small><b id="selected">—</b></div><div class="stat"><small>Фактический охват</small><b id="coverage">—</b></div><div class="stat"><small>Плитки</small><b id="tiles">—</b></div><div class="stat"><small>Размер макета</small><b id="dimensions">—</b></div></div><div id="helpPanel" class="helpPanel" hidden>
+<div class="overlayTip">Плавное вращение: тяни модель · колесо/два пальца: приближение · Shift+мышь: перемещение</div></div><div class="stats"><div class="stat"><small>Выбранный участок</small><b id="selected">—</b></div><div class="stat"><small>Фактический охват</small><b id="coverage">—</b></div><div class="stat"><small>Плитки</small><b id="tiles">—</b></div><div class="stat"><small>Размер макета</small><b id="dimensions">—</b></div></div><div id="helpPanel" class="helpPanel" hidden>
  <div class="helpPanelHead"><strong>Как пользоваться генератором</strong><button id="helpClose" type="button" aria-label="Закрыть справку">×</button></div>
  <p><b>Редактор сетки.</b> Перемещай всю сетку за центр или любое место внутри квадрата. Тяни белые углы для изменения охвата. Стрелки сдвигают сетку точно на 10–500 м.</p>
  <p><b>Размер детали.</b> Размер одного квадрата для принтера. Ограниченные варианты становятся неактивными. Число плиток и доступные масштабы пересчитываются.</p>
@@ -191,4 +221,4 @@ select option:disabled{color:#8895a5;background:#202a35}
  <p><b>Точность.</b> Число пикселей PDF не равно точности исходных высот. Это цветной рельеф, не кадастровая или геодезическая карта. Для типографии используется RGB, согласуй преобразование CMYK с печатником.</p>
  </div><div id="status" class="status">При экспорте загружаются настоящие высоты. Расчёт STL выполняется на устройстве; Python и внешний сервер не нужны.</div></div></main>
 <script src="./vendor/leaflet.js"></script>
-<script src="./vendor/proj4.js"></script><script src="./terrain-projection.js"></script><script src="./geometry.js"></script><script src="./elevation-providers.js"></script><script src="./terrain.js"></script><script src="./landcover.js"></script><script src="./landcover-3d.js"></script><script src="./preview.js"></script><script src="./maps-print.js"></script><script src="./enhancements.js"></script><script src="./grid-editor.js"></script><script src="./availability.js"></script><script src="./print-v15.js"></script><script src="./help-v15.js"></script><script src="./export3mf.js"></script><script src="./project-routes.js"></script><script src="./landcover-ui.js"></script><script src="./landcover-print.js"></script></body></html>
+<script src="./vendor/proj4.js"></script><script src="./terrain-projection.js"></script><script src="./geometry.js"></script><script src="./elevation-providers.js"></script><script src="./terrain.js"></script><script src="./landcover.js"></script><script src="./landcover-3d.js"></script><script src="./preview.js"></script><script src="./maps-print.js"></script><script src="./enhancements.js"></script><script src="./grid-editor.js"></script><script src="./availability.js"></script><script src="./print-v15.js"></script><script src="./help-v15.js"></script><script src="./export3mf.js"></script><script src="./project-routes.js"></script><script src="./landcover-ui.js"></script><script src="./landcover-print.js"></script><script src="./ui-v22.js"></script></body></html>
