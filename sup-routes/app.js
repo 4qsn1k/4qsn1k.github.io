@@ -134,6 +134,25 @@ function exportGpx(){const r=track();if(!r)return;if(isOutline()){alert("По Б
 function exportJson(){if(isOutline()){alert("По Белой сейчас доступна только схема ориентиров, не точный водный трек. Для экспорта маршрута загрузите GPX.");return;}const r=geoLine();const obj={...r,features:r.features.concat(pointFeatures().features.filter(f=>!["km","day","stone"].includes(f.properties.kind)))};download(selected+"-route.geojson",JSON.stringify(obj),"application/geo+json;charset=utf-8");}
 async function importFile(file){const txt=await file.text();const xml=new DOMParser().parseFromString(txt,"application/xml");if(xml.querySelector("parsererror"))throw Error("Ошибка XML");let pts=[...xml.getElementsByTagNameNS("*","trkpt")];if(!pts.length)pts=[...xml.getElementsByTagNameNS("*","rtept")];const coords=pts.map(el=>[Number(el.getAttribute("lon")),Number(el.getAttribute("lat"))]).filter(p=>p.every(Number.isFinite));if(coords.length<2)throw Error("В файле нет маршрута");custom[selected]=makeLine({type:"FeatureCollection",features:[{type:"Feature",properties:{river:"Мой GPX",color:"#66f0bc"},geometry:{type:"LineString",coordinates:coords}}]});setRoute(selected);$("map-status").textContent="Загружен пользовательский GPX · "+coords.length+" точек";}
 function bind(){document.querySelectorAll(".route-btn").forEach(el=>el.addEventListener("click",()=>setRoute(el.dataset.route)));$("belaya-end").addEventListener("change",e=>{belayaFinish=e.target.value==="kutanovo"?"kutanovo":"full";localStorage.setItem("sup-belaya-finish",belayaFinish);setRoute("belaya");});$("day-count").addEventListener("input",()=>{renderDays();drawMap();});$("reserve-days").addEventListener("input",renderDays);["toggle-km","toggle-days","toggle-pois","toggle-stones"].forEach(id=>$(id).addEventListener("change",()=>{renderPois();drawMap();}));$("poi-filter").addEventListener("input",renderPois);$("style-map").onclick=()=>setStyle("map");$("style-sat").onclick=()=>setStyle("sat");$("style-scheme").onclick=()=>setStyle("scheme");$("btn-fit").onclick=fit;$("btn-export").onclick=exportGpx;$("btn-json").onclick=exportJson;$("btn-reset").onclick=()=>{custom[selected]=null;setRoute(selected);};$("gpx-file").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{await importFile(f);}catch(err){alert("Не удалось прочитать GPX: "+err.message);}e.target.value="";});$("point-dialog").addEventListener("close",()=>{if($("point-dialog").returnValue!=="save"||!noteTarget)return;const name=$("point-name").value.trim();if(!name)return;pointsData[selected].push({name:name,type:$("point-type").value,km:noteTarget.km,coord:noteTarget.coord});storageSave();renderPois();drawMap();noteTarget=null;});}
-async function init(){bind();for(const name of ["chus","ugra","belaya"]){try{const res=await fetch(CONFIG[name].file);if(!res.ok)throw Error("HTTP "+res.status);routeData[name]=makeLine(await res.json());if(name==="belaya"){const br=routeData[name],linear=br.length;br.dist=br.dist.map(d=>d/linear*CONFIG.belaya.sourceKm);br.length=CONFIG.belaya.sourceKm;routeData[name].approximate=true;}}catch(e){$("map-status").textContent="Ошибка GPX "+name+": "+e.message;}}try{let r=await fetch("data/stones.json");if(r.ok)stones=(await r.json()).stones||[];}catch(_){}for(const name of ["chus","ugra","belaya"]){selected=name;pointsData[name]=storageRead();}selected=routeData[localStorage.getItem("sup-selected-route")]?localStorage.getItem("sup-selected-route"):(routeData.chus?"chus":"ugra");if(routeData[selected])setRoute(selected);initMap();if(!window.maplibregl)setStyle("scheme");}
+async function init(){
+ bind();belayaFinish=localStorage.getItem("sup-belaya-finish")==="kutanovo"?"kutanovo":"full";
+ for(const name of ["chus","ugra","belaya"]){
+  try{const res=await fetch(CONFIG[name].file);if(!res.ok)throw Error("HTTP "+res.status);routeData[name]=makeLine(await res.json());}
+  catch(e){$("map-status").textContent="Ошибка GPX "+name+": "+e.message;}
+ }
+ if(routeData.belaya){
+  const full=routeData.belaya,target=[57.040393,52.982522];let best=Infinity,index=0;
+  full.coords.forEach((p,i)=>{const d=hav(p,target);if(d<best){best=d;index=i;}});
+  if(index>1){
+   const fc={type:"FeatureCollection",features:[{type:"Feature",properties:{river:"Белая · до Кутаново",color:"#f0bb61"},geometry:{type:"LineString",coordinates:full.coords.slice(0,index+1)}}]};
+   routeData.belayaShort=makeLine(fc);
+  }
+ }
+ try{const res=await fetch("data/belaya-landmarks.json");if(res.ok)belayaLandmarks=(await res.json()).landmarks||[];}catch(e){$("map-status").textContent="Ошибка ориентиров Белой: "+e.message;}
+ try{const res=await fetch("data/stones.json");if(res.ok)stones=(await res.json()).stones||[];}catch(_){}
+ for(const name of ["chus","ugra","belaya"]){selected=name;pointsData[name]=storageRead();}
+ selected=routeData[localStorage.getItem("sup-selected-route")]?localStorage.getItem("sup-selected-route"):(routeData.chus?"chus":"belaya");
+ if(routeData[selected])setRoute(selected);initMap();if(!window.maplibregl)setStyle("scheme");
+}
 document.addEventListener("DOMContentLoaded",init);
 })();
