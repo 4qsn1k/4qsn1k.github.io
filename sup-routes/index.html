@@ -86,9 +86,10 @@
 <form method="dialog" id="point-form">
 <h2>Добавить метку</h2>
 <p id="point-coords" class="footnote"></p>
-<label>Название<input id="point-name" maxlength="80" required placeholder="Стоянка, источник, препятствие..."></label>
-<label>Тип<select id="point-type"><option value="camp">Стоянка</option><option value="hazard">Препятствие</option><option value="water">Вода</option><option value="poi">Интересное место</option></select></label>
-<div class="dialog-actions"><button value="cancel">Отмена</button><button value="save" class="save">Сохранить</button></div>
+<label>Название метки <span class="optional">(можно изменить)</span><input id="point-name" maxlength="80" required autocomplete="off" placeholder="Название появится автоматически"></label>
+<label>Тип метки<select id="point-type"><option value="camp">Стоянка</option><option value="hazard">Препятствие</option><option value="water">Источник воды</option><option value="poi">Интересное место</option></select></label>
+<p class="point-hint">Название и километраж заполняются автоматически. Проверьте их перед сохранением.</p>
+<div class="dialog-actions"><button id="point-cancel" type="button" value="cancel">Отмена</button><button id="point-save" type="submit" value="save" class="save">Сохранить</button></div>
 </form>
 </dialog>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
