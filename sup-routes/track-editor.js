@@ -45,7 +45,22 @@ function fromGeoJson(text){
  if(!paths.length)throw Error("В GeoJSON нет линии маршрута.");
  return pickLongest(paths);
 }
-function pickLongest(paths){const list=paths.map(p=>{try{return clean(p);}catch(_){return null;}}).filter(Boolean);if(!list.length)throw Error("В файле нет корректного трека.");list.sort((a,b)=>lengthKm(b)-lengthKm(a));return {coords:list[0],skipped:list.length-1};}
+function pickLongest(paths){
+ const list=paths.map(p=>{try{return clean(p);}catch(_){return null;}}).filter(Boolean);
+ if(!list.length)throw Error("В файле нет корректного трека.");
+ // A GeoJSON export can contain one connected segment per river.
+ // Preserve adjacent segments instead of dropping everything except the longest.
+ const chains=[];
+ for(const part of list){
+   const last=chains[chains.length-1];
+   if(last&&lengthMeters(last[last.length-1],part[0])<=300){
+     const same=lengthMeters(last[last.length-1],part[0])<=2;
+     last.push(...(same?part.slice(1):part));
+   }else chains.push(part.slice());
+ }
+ chains.sort((a,b)=>lengthKm(b)-lengthKm(a));
+ return {coords:chains[0],skipped:chains.length-1};
+}
 function nearestSegment(coords,pos){
  const refY=pos[1]*rad,scaleX=111320*Math.cos(refY),scaleY=111195;
  let best={index:-1,dist:Infinity,t:0};
@@ -142,9 +157,9 @@ class SUPRouteEditor{
     const raw=await file.text(),type=ext==="kml"?"kml":ext==="geojson"||ext==="json"?"geojson":ext==="gpx"||ext==="xml"?"gpx":null;
     if(!type)throw Error("Нужен GPX, KML или GeoJSON.");
     const parsed=type==="geojson"?fromGeoJson(raw):fromXml(raw,type);
-    const entry=this.createCopy(file.name.replace(/\.[^.]+$/,""));
-    if(!entry){failed.push(file.name+": превышен предел.");continue;}
-    entry.coords=parsed.coords;this.history[entry.id]=[];this.future[entry.id]=[];
+    const entry={id:"route-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8),name:file.name.replace(/\.[^.]+$/,"").slice(0,90),coords:parsed.coords};
+    this.data[this.route].push(entry);this.active[this.route]=entry.id;this.enabled=false;this.mode="select";this.selectedIndex=-1;
+    this.history[entry.id]=[];this.future[entry.id]=[];
     this.updateGeometry(false);done++;
     if(parsed.skipped)this.message(file.name+": взята самая длинная линия из "+(parsed.skipped+1)+". Остальные линии не импортированы.");
    }catch(err){failed.push(file.name+": "+err.message);}
