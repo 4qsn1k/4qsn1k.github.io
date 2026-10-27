@@ -1,0 +1,84 @@
+/* Terrain Puzzle HUD 2.7. Map and 3D receive the same anchored overlay. */
+body.tp-v26 .maparea{isolation:isolate}
+body.tp-v26 .tp-hud{
+ position:absolute;inset:0;pointer-events:none;z-index:850;
+ display:block;overflow:hidden;
+}
+body.tp-v26 .tp-area-card{
+ position:absolute;top:87px;left:14px;width:max-content;max-width:min(360px,calc(100% - 28px));
+ display:flex;flex-direction:column;gap:5px;
+ padding:15px 18px 13px;
+ background:rgba(14,33,44,.90);
+ border:1px solid rgba(112,180,184,.45);border-radius:14px;
+ box-shadow:0 8px 26px rgba(0,0,0,.30);backdrop-filter:blur(8px);
+}
+body.tp-v26 .tp-hud-kicker{font-size:12px;color:#acd4d8;font-weight:600;letter-spacing:.03em}
+body.tp-v26 .tp-hud-value{font-size:31px;line-height:1.12;color:#f2fefa;letter-spacing:-.04em;font-weight:800;font-variant-numeric:tabular-nums}
+body.tp-v26 .tp-hud-sub{font-size:11px;line-height:1.4;color:#aed1ce;max-width:300px}
+body.tp-v26 .tp-area-empty{opacity:.75}
+body.tp-v26 .tp-progress-card{
+ position:absolute;right:15px;top:87px;
+ min-width:190px;max-width:min(250px,45%);
+ display:flex;align-items:center;gap:12px;padding:12px 14px 12px 9px;
+ background:rgba(15,38,49,.93);
+ border:1px solid rgba(94,168,173,.55);border-radius:17px;
+ box-shadow:0 8px 24px rgba(0,0,0,.34);backdrop-filter:blur(9px);
+}
+body.tp-v26 .tp-progress-card[hidden]{display:none!important}
+body.tp-v26 .tp-ring{width:80px;height:80px;min-width:80px;display:grid;place-items:center;position:relative}
+body.tp-v26 .tp-ring svg{width:80px;height:80px;grid-area:1/1}
+body.tp-v26 .tp-ring-digits{grid-area:1/1;color:#edfffa;font-weight:800;font-size:24px;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+body.tp-v26 .tp-progress-words{min-width:0;display:flex;flex-direction:column;gap:5px;max-width:132px}
+body.tp-v26 .tp-progress-stage{color:#f2fff9;font-size:12px;font-weight:750;line-height:1.4}
+body.tp-v26 .tp-progress-note{font-size:10.5px;line-height:1.4;color:#b9cdd0;overflow-wrap:anywhere}
+body.tp-v26 .tp-progress-wait .tp-ring svg{animation:tp-ring-spin 2s linear infinite}
+body.tp-v26 .tp-progress-card[data-state=success]{border-color:rgba(94,225,174,.55)}
+body.tp-v26 .tp-progress-card[data-state=error]{border-color:rgba(248,146,103,.80)}
+@keyframes tp-ring-spin{to{transform:rotate(360deg)}}
+body.tp-v26 .maparea.previewMode .tp-area-card{top:79px}
+body.tp-v26 .maparea.previewMode .tp-progress-card{top:79px}
+body.tp-v26 .maparea.previewMode .previewLegend{top:180px!important}
+body.tp-v26 .maparea .stats{display:none!important}
+body.tp-v26 .maparea #status{min-height:33px!important;max-height:54px!important}
+@media(max-width:1100px){
+ body.tp-v26 .tp-area-card{top:124px;max-width:230px;padding:11px 13px}
+ body.tp-v26 .tp-hud-value{font-size:27px}
+ body.tp-v26 .tp-progress-card{top:124px;max-width:220px;padding:6px}
+ body.tp-v26 .tp-ring{width:66px;height:66px;min-width:66px}
+ body.tp-v26 .tp-ring svg{width:66px;height:66px}
+ body.tp-v26 .maparea.previewMode .tp-progress-card,body.tp-v26 .maparea.previewMode .tp-area-card{top:88px}
+}
+@media(max-width:760px){
+ body.tp-v26 .tp-area-card{top:132px;left:8px;padding:9px 11px;max-width:calc(100% - 145px)}
+ body.tp-v26 .tp-hud-value{font-size:23px}
+ body.tp-v26 .tp-hud-kicker{font-size:10px}
+ body.tp-v26 .tp-hud-sub{font-size:9px;max-width:200px}
+ body.tp-v26 .tp-progress-card{top:132px;right:8px;min-width:0;width:130px;gap:4px;padding:6px;border-radius:12px}
+ body.tp-v26 .tp-ring{width:61px;height:61px;min-width:61px}
+ body.tp-v26 .tp-ring svg{width:61px;height:61px}
+ body.tp-v26 .tp-ring-digits{font-size:17px}
+ body.tp-v26 .tp-progress-stage{font-size:10px}
+ body.tp-v26 .tp-progress-note{font-size:9px}
+ body.tp-v26 .maparea.previewMode .tp-area-card{top:105px}
+ body.tp-v26 .maparea.previewMode .tp-progress-card{top:105px}
+ body.tp-v26 .maparea.previewMode .previewLegend{top:210px!important}
+}
+@media(prefers-reduced-motion:reduce){body.tp-v26 .tp-progress-wait .tp-ring svg{animation:none!important}}
+
+/* Keep the HUD below variable-height map and camera toolbars. */
+body.tp-v26 .tp-area-card,body.tp-v26 .tp-progress-card,
+body.tp-v26 .maparea.previewMode .tp-area-card,body.tp-v26 .maparea.previewMode .tp-progress-card{
+ top:var(--tp-hud-top,125px);
+}
+body.tp-v26 .tp-area-card{left:64px}
+body.tp-v26 #map .leaflet-top.leaflet-left{top:111px}
+body.tp-v26 .maparea.previewMode .previewLegend{top:calc(var(--tp-hud-top,125px) + 110px)!important}
+body.tp-v26 .maparea.tp-progress-active #status{
+ position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;
+ clip-path:inset(50%);white-space:nowrap;border:0!important;padding:0!important;margin:0!important
+}
+@media(max-width:760px){
+ body.tp-v26 .tp-area-card{left:8px;max-width:calc(100% - 148px)}
+ body.tp-v26 #map .leaflet-top.leaflet-left{top:111px}
+ body.tp-v26 .tp-progress-card{right:8px;width:128px}
+}
