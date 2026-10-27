@@ -154,7 +154,7 @@ class SUPRouteEditor{
    if(file.size>10*1024*1024){failed.push(file.name+": файл больше 10 МБ.");continue;}
    try{
     const ext=(file.name.split(".").pop()||"").toLowerCase();
-    const raw=await file.text(),type=ext==="kml"?"kml":ext==="geojson"||ext==="json"?"geojson":ext==="gpx"||ext==="xml"?"gpx":null;
+    const raw=await file.text(),type=ext==="kml"?"kml":ext==="geojson"||ext==="json"?"geojson":ext==="xml"&&/<kml(?:\\s|>)/i.test(raw)?"kml":ext==="gpx"||ext==="xml"?"gpx":null;
     if(!type)throw Error("Нужен GPX, KML или GeoJSON.");
     const parsed=type==="geojson"?fromGeoJson(raw):fromXml(raw,type);
     const entry={id:"route-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8),name:file.name.replace(/\.[^.]+$/,"").slice(0,90),coords:parsed.coords};
@@ -299,6 +299,8 @@ class SUPRouteEditor{
   id("btn-delete-vertex").onclick=()=>this.deleteVertex();
   id("btn-undo").onclick=()=>this.undoRedo(false);
   id("btn-redo").onclick=()=>this.undoRedo(true);
+  id("track-upload-label").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();id("gpx-file").click();}});
+  document.addEventListener("mouseup",()=>{if(this.drag&&this.api.map())this.onMouseUp(this.api.map());});
   document.addEventListener("keydown",e=>{
    if(!this.enabled||!this.current()||["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName))return;
    if(e.key==="Escape"){if(this.mode==="insert"){this.mode="select";this.updateControls();this.message("Добавление вершины отменено.");}return;}
