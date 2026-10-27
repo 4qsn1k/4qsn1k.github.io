@@ -40,6 +40,10 @@ function storageRead(){try{const x=JSON.parse(localStorage.getItem("sup-route-no
 function storageSave(){try{localStorage.setItem("sup-route-notes-v1",JSON.stringify({...JSON.parse(localStorage.getItem("sup-route-notes-v1")||"{}"),[selected]:pointsData[selected]}));}catch(_){}}
 function basePois(){
  const r=track();
+ if(custom[selected]){
+  const notes=pointsData[selected].map((p,i)=>({...p,id:"note"+i,details:"Ваша метка. Хранится в браузере."}));
+  return [{name:"Начало личного трека",type:"start",km:0,coord:r.coords[0],id:"custom-start",details:"Начальная точка импортированного или отредактированного маршрута."},{name:"Конец личного трека",type:"finish",km:r.length,coord:r.coords[r.coords.length-1],id:"custom-finish",details:"Конечная точка импортированного или отредактированного маршрута."}].concat(notes);
+ }
  if(selected==="belaya"){
  const full=routeData.belaya;
  const kmOnFull=point=>{let d=Infinity,i=0;for(let k=0;k<full.coords.length;k++){const h=hav(full.coords[k],point);if(h<d){d=h;i=k;}}return full.dist[i];};
@@ -108,8 +112,8 @@ function setRoute(name){
  $("metric-distance-label").textContent="По геометрии GPX";$("metric-distance-unit").textContent="км по координатам";
  $("metric-source-label").textContent="По маршрутизатору";$("metric-source-unit").textContent="км, исходный файл";
  $("metric-distance").textContent=kmFmt(r.length);
- $("metric-source").textContent=name==="belaya"&&belayaFinish==="kutanovo"&&!custom.belaya?"—":cfg.sourceKm.toLocaleString("ru-RU");
- $("distance-explainer").textContent=name==="belaya"?
+ $("metric-source").textContent=custom[name]?"—":name==="belaya"&&belayaFinish==="kutanovo"?"—":cfg.sourceKm.toLocaleString("ru-RU");
+ $("distance-explainer").textContent=custom[name]?"Редактируемый личный трек: "+kmFmt(r.length)+" км по его текущей геометрии. Исходные маршруты остаются без изменений.":name==="belaya"?
    (belayaFinish==="kutanovo"&&!custom.belaya?"Маршрут сокращён до ближайшей точки русла напротив Кутаново. Необходимо проверить фактический выход на берег.":"Загружен ваш расчётный GPX BRouter: 2 024 точки. Длина по координатам 347,2 км; расчёт маршрутизатора 347,9 км. Не путать с записанным GPS-треком.") :
    "Трек: "+cfg.source+". Геометрия по координатам: "+kmFmt(r.length)+" км; значение маршрутизатора "+cfg.sourceKm+" км. Эти числа не обязаны совпадать.";
  $("route-warning").hidden=name!=="belaya";
