@@ -59,14 +59,31 @@
 <div id="trains"></div>
 </div>
 <div class="section">
-<span class="eyebrow">05 / СКАЧАТЬ ИЛИ ЗАГРУЗИТЬ</span>
+<span class="eyebrow">05 / ТРЕКИ И РЕДАКТИРОВАНИЕ</span>
+<label for="track-select" class="editor-label">Активный трек</label>
+<select id="track-select" class="editor-select" aria-label="Выбор загруженного трека"></select>
+<div class="action-grid">
+<label class="action upload primary" tabindex="0" id="track-upload-label">Загрузить GPX / KML / GeoJSON<input type="file" id="gpx-file" accept=".gpx,.kml,.geojson,.json,.xml,application/gpx+xml,application/vnd.google-earth.kml+xml,application/geo+json" multiple hidden></label>
+<button id="btn-track-delete" class="action quiet">Удалить свою копию</button>
+</div>
+<div class="editor-panel">
+<div class="editor-heading"><strong>Редактор линии маршрута</strong><span id="editor-state" class="editor-state">Выключен</span></div>
+<div class="editor-controls">
+<button id="btn-edit" class="action">Редактировать</button>
+<button id="btn-add-vertex" class="action" disabled>+ Точка на линии</button>
+<button id="btn-delete-vertex" class="action" disabled>− Удалить точку</button>
+<button id="btn-undo" class="action" disabled>↶ Отменить</button>
+<button id="btn-redo" class="action" disabled>↷ Повторить</button>
+</div>
+<p id="edit-hint" class="editor-hint">Загрузите трек или создайте редактируемую копию исходного. Затем выберите вершину на карте и перетащите её.</p>
+<p id="editor-save-state" class="footnote">Изменения личных треков сохраняются в этом браузере. Для переноса на другое устройство скачайте GPX.</p>
+</div>
 <div class="action-grid">
 <button id="btn-export" class="action primary">Скачать GPX с метками</button>
 <button id="btn-json" class="action">Скачать GeoJSON</button>
-<label class="action upload">Открыть свой GPX <input type="file" id="gpx-file" accept=".gpx,.xml,application/gpx+xml" hidden></label>
 <button id="btn-reset" class="action quiet">Вернуть исходный трек</button>
 </div>
-<p class="footnote">Выгрузка использует геометрию выбранного трека. Пользовательские отметки не уходят на сервер.</p>
+<p class="footnote">Исходные маршруты не изменяются. Импорт GPX, KML и GeoJSON выполняется локально в браузере. Редактирование не выполняет автоматическую привязку к руслу.</p>
 </div>
 </aside>
 <main class="map-shell">
@@ -93,6 +110,7 @@
 </form>
 </dialog>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="track-editor.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
