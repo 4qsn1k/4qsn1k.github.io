@@ -25,3 +25,6 @@ dialog{background:#122b31;color:#e5f4f3;border:1px solid #50868b;border-radius:1
 
 /* Belaya planning mode */
 .route-warning{margin:0 0 13px;padding:11px 12px;border:1px solid #b6854b;background:#493923;color:#ffe4b4;border-radius:9px;line-height:1.55;font-size:11px}.route-warning[hidden]{display:none}.day-item:disabled{cursor:default;opacity:.75;background:#15282d}.switch .route-btn:last-child:nth-child(3){grid-column:1 / -1;min-height:51px}.switch .route-btn:last-child:nth-child(3) small{display:inline;margin-left:8px}
+
+/* Marker editor: auto-generated name and predictable actions */
+.optional{color:#8fb5b7;font-weight:400;font-size:11px}.point-hint{margin:7px 0 0;color:#a5c7c9;font-size:11px;line-height:1.5}.dialog-actions button{min-height:39px}.dialog-actions button:hover{filter:brightness(1.13)}
