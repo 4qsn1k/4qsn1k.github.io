@@ -184,7 +184,8 @@ async function init(){
    },
    refresh:()=>setRoute(selected),
    redraw:()=>{drawMap();renderScheme();},
-   zoom:()=>map?map.getZoom():12
+   zoom:()=>map?map.getZoom():12,
+   map:()=>map
   });
  }
  if(routeData[selected])setRoute(selected);initMap();if(!window.maplibregl)setStyle("scheme");
