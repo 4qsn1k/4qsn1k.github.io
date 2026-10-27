@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="top"><a class="brand" href="./" aria-label="Главная планировщика"><span class="logo">≈</span><span><b>SUP Маршруты</b><small>Полевой планировщик · Чусовая / Воря / Угра / Ока</small></span></a><a class="repo" target="_blank" rel="noopener" href="https://github.com/4qsn1k/4qsn1k.github.io/tree/main/sup-routes">Исходники ↗</a></header>
+<header class="top"><a class="brand" href="./" aria-label="Главная планировщика"><span class="logo">≈</span><span><b>SUP Маршруты</b><small>Полевой планировщик · Чусовая / Воря / Угра / Ока / Белая</small></span></a><a class="repo" target="_blank" rel="noopener" href="https://github.com/4qsn1k/4qsn1k.github.io/tree/main/sup-routes">Исходники ↗</a></header>
 <div class="layout">
 <aside class="panel">
 <div class="section">
@@ -18,13 +18,15 @@
 <div class="switch" role="group" aria-label="Маршрут">
 <button class="route-btn selected" id="btn-chus" data-route="chus">Чусовая <small>Коуровка → Чусовой</small></button>
 <button class="route-btn" id="btn-ugra" data-route="ugra">Воря · Угра · Ока <small>Ивановское → Калуга</small></button>
+<button class="route-btn" id="btn-belaya" data-route="belaya">Белая <small>Белорецк → гидроузел</small></button>
 </div>
 <h1 id="route-title">Чусовая</h1>
 <p class="subtitle" id="route-description">Загрузка трека...</p>
+<p id="route-warning" class="route-warning" hidden></p>
 <div id="river-pills" class="river-pills" aria-label="Отдельные речные участки"></div>
 <div class="metric-grid">
-<div class="metric"><span>По геометрии GPX</span><b id="metric-distance">—</b><small>км по точкам</small></div>
-<div class="metric"><span>По маршрутизатору</span><b id="metric-source">—</b><small>км, исходный файл</small></div>
+<div class="metric"><span id="metric-distance-label">По геометрии GPX</span><b id="metric-distance">—</b><small id="metric-distance-unit">км по точкам</small></div>
+<div class="metric"><span id="metric-source-label">По маршрутизатору</span><b id="metric-source">—</b><small id="metric-source-unit">км, исходный файл</small></div>
 <div class="metric"><span>Ходовых дней</span><b id="metric-days">—</b><small>по выбранному плану</small></div>
 </div>
 <p class="footnote" id="distance-explainer">Дистанция по точкам может отличаться от значения маршрутизатора.</p>
@@ -51,8 +53,8 @@
 <details class="help"><summary>Как добавить свою стоянку?</summary><p>Нажмите на карту. Введите название точки и тип. Метка сохранится только в этом браузере. Затем экспортируйте GPX с метками.</p></details>
 </div>
 <div class="section">
-<span class="eyebrow">04 / ДОРОГА ПО ЖЕЛЕЗНОЙ ДОРОГЕ</span>
-<p class="footnote">Стыковки по присланным расписаниям октября 2026 г. Для будущих дат нужно проверить перевозчика.</p>
+<span class="eyebrow">04 / ЗАБРОСКА И ВОЗВРАЩЕНИЕ</span>
+<p class="footnote">Транспортные данные предварительные. Расписание октября 2026 года не подтверждает движение летом 2027.</p>
 <div id="trains"></div>
 </div>
 <div class="section">
@@ -75,7 +77,7 @@
 <button id="style-scheme" class="tool">Схема</button>
 <button id="btn-fit" class="tool" title="Показать весь маршрут">Весь маршрут</button>
 </div>
-<div class="map-credit"><span id="map-status">Загрузка…</span><span>Данные OSM / OpenFreeMap · Esri (спутник)</span></div>
+<div class="map-credit"><span id="map-status">Загрузка…</span><span>OpenFreeMap · Esri (спутник) · схема Белой не является GPS-треком</span></div>
 <div class="tip" id="tip">Кликните по линии или карте, чтобы отметить стоянку.</div>
 </main>
 </div>
