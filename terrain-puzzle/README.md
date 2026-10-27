@@ -1,4 +1,4 @@
-# Terrain Puzzle Generator v2.5
+# Terrain Puzzle Generator v2.6
 
 **Рабочий сайт:** https://4qsn1k.github.io/terrain-puzzle/
 
@@ -122,6 +122,20 @@ Third-party map service restrictions and source detail still apply. This release
 - When the small official OSM API responds without a water polygon, a separate targeted Overpass query attempts to recover complete reservoir multipolygons **without delaying initial map rendering**. The interface explicitly reports failure; no artificial shoreline polygon is generated.
 - The XML/Overpass parser preserves OSM factual shorelines and holes, but a reservoir whose complete outer boundary cannot be retrieved still will not be rendered. If a reservoir is outside the current selected footprint it cannot appear. For very large relations, use an appropriate Overpass extraction or manually imported complete GeoJSON/OSM.
 - The configured river-width slider remains an **illustrative preview setting** when mapped shorelines are unavailable, not a hydraulic flood simulation.
+
+## v2.6 — переработанный интерфейс
+
+Переработана организация генератора без изменения геометрии STL и API данных.
+
+- **Шесть рабочих этапов** в боковой навигации: «Участок», «Рельеф», «Природа», «3D и STL», «Карта PDF», «Проект». Вместо длинной общей панели одновременно открыты настройки только одного этапа.
+- **Рабочая область — главная.** На десктопе экран состоит из узкого меню (76 px), настроек (328 px) и большой карты/3D-сцены. Навигацию и панель можно свернуть.
+- Сокращено количество постоянно видимых элементов 3D-панели. Дополнительные «Топографическая карта», «Детализация», «Масштаб вида», «Ширина реки», «Каркас/Границы» перенесены в **«Вид и слои»**. Основные действия: «Обновить 3D», «На весь экран», «Весь макет», «Изометрия», «Сверху».
+- В разделе «Участок» есть крупные действия «Рамка по карте» и «Показать участок». В «Рельефе» — «Подобрать масштаб» и «3D-проверка». В «Экспорте» — быстрый переход к просмотру и генерации STL.
+- Контекстный статус OSM открывает этап «Природа» по нажатию и позволяет прочитать фактическую ошибку вместо недоступного сообщения.
+- На телефонах **карта открывается первой**. Навигация превращается в горизонтальные закладки, а настройки открываются по выбору этапа. Лишние карточки статистики скрыты.
+- Ничего не удалено: все старые формы STL, PDF A0, точного перемещения сетки, проектов JSON, GPX, OSM и экспорта доступны.
+- Переходы переключают реальные элементы DOM, без клонирования контролов. События, привязанные к ним, сохранены. Выбранный этап сохраняется в рамках вкладки браузера.
+- Ctrl+F5 / Ctrl+Shift+R — обновить веб-версию; «Обновить 3D» — перестроить текущий макет; «Загрузить природу» — обновить слой OSM.
 
 ## Возможности
 
