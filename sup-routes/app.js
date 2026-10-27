@@ -41,13 +41,21 @@ function storageSave(){try{localStorage.setItem("sup-route-notes-v1",JSON.string
 function basePois(){
  const r=track();
  if(selected==="belaya"){
- const landmarks=routeData.belaya.fc.landmarks||[];
- const anchors=landmarks.map((p,i)=>({name:p.name,type:p.type,km:isOutline()?r.dist[i]:nearestKm([p.lon,p.lat]).km,coord:[p.lon,p.lat],id:"belaya"+i,details:p.notes+" Точка объекта, не подтверждённый стапель или антистапель."}));
+ const full=routeData.belaya;
+ const kmOnFull=point=>{let d=Infinity,i=0;for(let k=0;k<full.coords.length;k++){const h=hav(full.coords[k],point);if(h<d){d=h;i=k;}}return full.dist[i];};
+ const anchors=belayaLandmarks.map((p,i)=>{
+   const origin=[p.lon,p.lat],km=custom.belaya?nearestKm(origin).km:kmOnFull(origin);
+   if(!custom.belaya&&belayaFinish==="kutanovo"&&km>r.length+0.5)return null;
+   let type=p.type;
+   if(!custom.belaya&&belayaFinish==="kutanovo"&&p.name.includes("Кутаново"))type="finish";
+   const pos=type==="start"?r.coords[0]:(type==="finish"?r.coords[r.coords.length-1]:origin);
+   return {name:p.name,type,km:Math.min(km,r.length),coord:pos,id:"belaya"+i,details:p.notes+" Географический ориентир; точка высадки не проверена."};
+ }).filter(Boolean);
  return anchors.concat(pointsData.belaya.map((p,i)=>({...p,id:"note"+i,details:"Ваша метка. Сохранена в браузере."})));
  }
-const base=CONFIG[selected].waypoints.map((w,i)=>{const km=selected==="chus"?w[1]/358*r.length:Math.min(w[1],r.length);return {name:w[0],type:w[2],km,guideKm:w[1],coord:coordAt(km),id:"base"+i,details:"Ориентир по километражу, требует проверки места выхода к берегу."};});
+ const base=CONFIG[selected].waypoints.map((w,i)=>{const km=selected==="chus"?w[1]/358*r.length:Math.min(w[1],r.length);return {name:w[0],type:w[2],km,guideKm:w[1],coord:coordAt(km),id:"base"+i,details:"Ориентир по километражу, требует проверки места выхода к берегу."};});
  if(selected==="chus"&&$("toggle-stones").checked&&!custom[selected]){
-  for(const s of stones){const km=s.guideKm/358*r.length;base.push({name:s.name,type:"stone",km,guideKm:s.guideKm,coord:coordAt(km),id:s.id,details:"Километр из путеводителя. Положение на GPX рассчитано пропорционально. Точная GPS-точка камня НЕ подтверждена."});}
+ for(const p of stones){const km=p.guideKm/358*r.length;base.push({name:p.name,type:"stone",km,guideKm:p.guideKm,coord:coordAt(km),id:p.id,details:"Километр из путеводителя. Положение рассчитано пропорционально GPX. Точная GPS-точка камня НЕ подтверждена."});}
  }
  return base.concat(pointsData[selected].map((n,i)=>({...n,id:"note"+i,type:n.type||"camp",details:"Ваша метка. Хранится в браузере."})));
 }
@@ -70,7 +78,7 @@ function renderRivers(){
  host.append(btn);
  }
 }
-function renderDays(){const r=track();if(!r)return;const ds=days();$("days-label").textContent=ds.length;$("reserve-label").textContent=$("reserve-days").value;$("metric-days").textContent=ds.length+" + "+$("reserve-days").value;$("day-summary").textContent=isOutline()?"Ориентир по водохозяйственным данным: до 364 км от Белорецка до гидроузла. От выбранного моста расстояние меньше. Точного GPX нет. Дневные рубежи на карте не строятся.":"Средний переход: "+kmFmt(r.length/ds.length)+" км/день. Рубежи расчётные, не проверенные стоянки. На Воре возможны завалы и обносы.";const list=$("day-list");list.replaceChildren();ds.forEach(d=>{let b=document.createElement("button");b.className="day-item";let t=document.createElement("span");t.textContent="День "+d.n+" · км "+kmFmt(d.start)+"–"+kmFmt(d.end);let v=document.createElement("span");v.textContent=kmFmt(d.km)+" км";b.append(t,v);b.disabled=isOutline();if(!isOutline())b.onclick=()=>fly(d.coord,11);list.append(b);});}
+function renderDays(){const r=track();if(!r)return;const ds=days();$("days-label").textContent=ds.length;$("reserve-label").textContent=$("reserve-days").value;$("metric-days").textContent=ds.length+" + "+$("reserve-days").value;$("day-summary").textContent=selected==="belaya"?"Средний переход: "+kmFmt(r.length/ds.length)+" км/день. На Белой в мае возможны сильное течение и холодная вода. На водохранилище — встречный ветер. Дневные рубежи не являются проверенными стоянками.":"Средний переход: "+kmFmt(r.length/ds.length)+" км/день. Рубежи расчётные, не проверенные стоянки. На Воре возможны завалы и обносы.";const list=$("day-list");list.replaceChildren();ds.forEach(d=>{let b=document.createElement("button");b.className="day-item";let t=document.createElement("span");t.textContent="День "+d.n+" · км "+kmFmt(d.start)+"–"+kmFmt(d.end);let v=document.createElement("span");v.textContent=kmFmt(d.km)+" км";b.append(t,v);b.disabled=isOutline();if(!isOutline())b.onclick=()=>fly(d.coord,11);list.append(b);});}
 function renderPois(){const filter=$("poi-filter").value.toLocaleLowerCase("ru"),list=$("poi-list");list.replaceChildren();const pois=basePois().filter(p=>p.name.toLocaleLowerCase("ru").includes(filter));pois.sort((a,b)=>a.km-b.km);const visible=pois.slice(0,160);for(const p of visible){const b=document.createElement("button");b.className="poi-item";b.textContent=p.name;const sm=document.createElement("small");sm.textContent=isOutline()?"Географический ориентир · без водного километража":"≈ "+kmFmt(p.km)+" км по GPX"+(p.type==="stone"?" · ориентир по лоции":"");b.append(sm);b.addEventListener("click",()=>{fly(p.coord,12);showPopup(p);});list.append(b);}if(pois.length>160){const p=document.createElement("p");p.className="footnote";p.textContent="Найдено "+pois.length+" точек. Уточните название для поиска.";list.append(p);}}
 function renderTrains(){
  const host=$("trains");host.replaceChildren();const key="sup-trains-"+selected;
