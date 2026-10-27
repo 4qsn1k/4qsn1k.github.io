@@ -28,3 +28,19 @@ dialog{background:#122b31;color:#e5f4f3;border:1px solid #50868b;border-radius:1
 
 /* Marker editor: auto-generated name and predictable actions */
 .optional{color:#8fb5b7;font-weight:400;font-size:11px}.point-hint{margin:7px 0 0;color:#a5c7c9;font-size:11px;line-height:1.5}.dialog-actions button{min-height:39px}.dialog-actions button:hover{filter:brightness(1.13)}
+
+/* Track library and geometry editing */
+.editor-label{display:block;color:#b9d6d7;font-size:12px;margin:5px 0 8px}
+.editor-select{display:block;width:100%;background:#122c33;color:#e6f7f6;border:1px solid #3f6970;border-radius:10px;padding:11px;font-size:12px;margin-bottom:10px;min-height:42px}
+.editor-panel{border:1px solid #2b6669;border-radius:12px;background:#122c32;margin:14px 0;padding:13px 12px}
+.editor-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;margin-bottom:11px}
+.editor-state{font-size:10px;font-weight:650;color:#accacc;border:1px solid #416b70;border-radius:15px;padding:5px 8px}
+.editor-controls{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.editor-controls button:first-child{grid-column:1 / -1;font-size:12px;padding:12px 10px}
+.editor-controls .action.active{background:#1d7771;color:#fff;border-color:#60e5d9}
+.editor-controls button:disabled,.action:disabled{opacity:.38;cursor:not-allowed;filter:none}
+.editor-hint{font-size:11px;line-height:1.55;color:#b9d1d4;margin:12px 0}
+.editor-panel .footnote{margin-bottom:0}
+#track-upload-label{display:flex;align-items:center;justify-content:center;min-height:43px;line-height:1.3;text-align:center;font-weight:700}
+#track-select option{color:#e7f2f0;background:#152b30}
+@media(max-width:810px){.editor-panel{padding:12px}.editor-controls .action{min-height:38px}}
