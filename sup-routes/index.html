@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101d20">
+<meta name="description" content="Интерактивные маршруты SUP по Чусовой, Воре, Угре и Оке. GPX, дневные переходы и железнодорожная логистика.">
+<title>SUP Маршруты — Чусовая, Воря, Угра, Ока</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top"><a class="brand" href="./" aria-label="Главная планировщика"><span class="logo">≈</span><span><b>SUP Маршруты</b><small>Полевой планировщик · Чусовая / Воря / Угра / Ока</small></span></a><a class="repo" target="_blank" rel="noopener" href="https://github.com/4qsn1k/4qsn1k.github.io/tree/main/sup-routes">Исходники ↗</a></header>
+<div class="layout">
+<aside class="panel">
+<div class="section">
+<span class="eyebrow">01 / ВЫБОР МАРШРУТА</span>
+<div class="switch" role="group" aria-label="Маршрут">
+<button class="route-btn selected" id="btn-chus" data-route="chus">Чусовая <small>Коуровка → Чусовой</small></button>
+<button class="route-btn" id="btn-ugra" data-route="ugra">Воря · Угра · Ока <small>Ивановское → Калуга</small></button>
+</div>
+<h1 id="route-title">Чусовая</h1>
+<p class="subtitle" id="route-description">Загрузка трека...</p>
+<div class="metric-grid">
+<div class="metric"><span>По геометрии GPX</span><b id="metric-distance">—</b><small>км по точкам</small></div>
+<div class="metric"><span>По маршрутизатору</span><b id="metric-source">—</b><small>км, исходный файл</small></div>
+<div class="metric"><span>Ходовых дней</span><b id="metric-days">—</b><small>по выбранному плану</small></div>
+</div>
+<p class="footnote" id="distance-explainer">Дистанция по точкам может отличаться от значения маршрутизатора.</p>
+</div>
+<div class="section">
+<span class="eyebrow">02 / РАСЧЁТ ПЕРЕХОДОВ</span>
+<div class="fieldrow"><label for="day-count">Ходовых дней</label><strong id="days-label">—</strong></div>
+<input id="day-count" type="range" min="2" max="20" value="8" step="1">
+<div class="fieldrow"><label for="reserve-days">Резервных дней</label><strong id="reserve-label">2</strong></div>
+<input id="reserve-days" type="range" min="0" max="5" value="2" step="1">
+<p id="day-summary" class="info">Дневные ориентиры рассчитываются по GPX. Они не означают, что в этом месте разрешена ночёвка.</p>
+<div id="day-list" class="day-list"></div>
+</div>
+<div class="section">
+<span class="eyebrow">03 / МЕТКИ И ОБЪЕКТЫ</span>
+<div class="row-controls">
+<label class="check"><input type="checkbox" id="toggle-km" checked> Каждые 25 км</label>
+<label class="check"><input type="checkbox" id="toggle-days" checked> Дни</label>
+<label class="check"><input type="checkbox" id="toggle-pois" checked> Объекты</label>
+</div>
+<div class="row-controls"><label class="check"><input type="checkbox" id="toggle-stones" checked> Камни Чусовой <small>(приблизительные отметки)</small></label></div>
+<input class="filter" id="poi-filter" type="search" placeholder="Найти камень или точку на маршруте..." aria-label="Поиск точек">
+<div id="poi-list" class="poi-list"></div>
+<details class="help"><summary>Как добавить свою стоянку?</summary><p>Нажмите на карту. Введите название точки и тип. Метка сохранится только в этом браузере. Затем экспортируйте GPX с метками.</p></details>
+</div>
+<div class="section">
+<span class="eyebrow">04 / ДОРОГА ПО ЖЕЛЕЗНОЙ ДОРОГЕ</span>
+<p class="footnote">Стыковки по присланным расписаниям октября 2026 г. Для будущих дат нужно проверить перевозчика.</p>
+<div id="trains"></div>
+</div>
+<div class="section">
+<span class="eyebrow">05 / СКАЧАТЬ ИЛИ ЗАГРУЗИТЬ</span>
+<div class="action-grid">
+<button id="btn-export" class="action primary">Скачать GPX с метками</button>
+<button id="btn-json" class="action">Скачать GeoJSON</button>
+<label class="action upload">Открыть свой GPX <input type="file" id="gpx-file" accept=".gpx,.xml,application/gpx+xml" hidden></label>
+<button id="btn-reset" class="action quiet">Вернуть исходный трек</button>
+</div>
+<p class="footnote">Выгрузка использует геометрию выбранного трека. Пользовательские отметки не уходят на сервер.</p>
+</div>
+</aside>
+<main class="map-shell">
+<div id="map" aria-label="Карта маршрута"></div>
+<div id="fallback" class="fallback hidden"><div class="fallback-title">Схема маршрута без картографической подложки</div><svg id="route-svg" viewBox="0 0 900 650" preserveAspectRatio="xMidYMid meet" aria-label="Схема трека"></svg><p>Линия GPX показывается даже при блокировке картографических серверов.</p></div>
+<div class="map-tools" aria-label="Вид карты">
+<button id="style-map" class="tool active">Карта</button>
+<button id="style-sat" class="tool">Спутник</button>
+<button id="style-scheme" class="tool">Схема</button>
+<button id="btn-fit" class="tool" title="Показать весь маршрут">Весь маршрут</button>
+</div>
+<div class="map-credit"><span id="map-status">Загрузка…</span><span>Данные OSM / OpenFreeMap · Esri (спутник)</span></div>
+<div class="tip" id="tip">Кликните по линии или карте, чтобы отметить стоянку.</div>
+</main>
+</div>
+<dialog id="point-dialog">
+<form method="dialog" id="point-form">
+<h2>Добавить метку</h2>
+<p id="point-coords" class="footnote"></p>
+<label>Название<input id="point-name" maxlength="80" required placeholder="Стоянка, источник, препятствие..."></label>
+<label>Тип<select id="point-type"><option value="camp">Стоянка</option><option value="hazard">Препятствие</option><option value="water">Вода</option><option value="poi">Интересное место</option></select></label>
+<div class="dialog-actions"><button value="cancel">Отмена</button><button value="save" class="save">Сохранить</button></div>
+</form>
+</dialog>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
