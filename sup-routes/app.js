@@ -2,6 +2,11 @@
 (function(){
 const $=id=>document.getElementById(id);
 const CONFIG={
+ belaya:{title:"Белая (Агидель)",desc:"Белорецк → Кага → Старосубхангулово → Кутаново → Юмагузинский гидроузел. Май 2027, SUP.",file:"data/belaya-outline.geojson",sourceKm:364,days:8,planningOnly:true,source:"водохозяйственные данные: от города до гидроузла ≈364 км",url:"https://www.ufa-prokat.ru/splav_po_beloy/",color:"#f0bb61",waypoints:[],trains:[
+ {group:"Туда",name:"Белорецк → точка старта за мостом Р316",sub:"Автобус / автомобиль, расписание не подтверждено",timeline:"Заброска до Белорецка → трансфер к автомосту Р316\nОриентир начала: 53.909722, 58.377472",time:"не рассчитано",safe:"От автовокзала Белорецка до указанного моста порядка 12 км. Подъезд к берегу проверить."},
+ {group:"Обратно",name:"Вариант А: выход в Кутаново",sub:"Кутаново → Мелеуз → дальнейшая дорога",timeline:"Кутаново: 52.982522, 57.040393\nАвтомобиль до Мелеуза → автобус / поезд",time:"не рассчитано",safe:"Финиш перед зоной подпора. На конкретном берегу требуется подтвердить выход и заказ транспорта."},
+ {group:"Обратно",name:"Вариант Б: Юмагузинский гидроузел",sub:"Только после согласования доступа к водохранилищу",timeline:"Юмагузинская ГЭС — ориентир, а не точка антистапеля\nТочное место безопасного выхода нужно согласовать заранее",time:"не рассчитано",safe:"Водохранилище: десятки километров стоячей воды; требуется проверка разрешений и режима доступа."}
+ ]},
  chus:{title:"Чусовая",desc:"Коуровка → Чусовой. Скалы, лес и полный маршрут до города Чусового.",file:"data/chusovaya.geojson",sourceKm:366.9,days:8,source:"GPX пользователя / Яндекс Конструктор",url:"https://rekachusovaya.ru/",color:"#39a7ff",
  waypoints:[["Коуровка · стапель",0,"start"],["Староуткинск",50,"poi"],["Село Чусовое",78,"poi"],["Мартьяновская дуга",93,"poi"],["Усть-Утка",155,"poi"],["Кын",228,"poi"],["Верхняя Ослянка · №58",247,"poi"],["Усть-Койва",325,"poi"],["Город Чусовой · финиш",358,"finish"]],
  trains:[
@@ -20,11 +25,12 @@ const CONFIG={
  {group:"Обратно",name:"Поздний выезд",sub:"6117/6118 → 6502",timeline:"Калуга-1 21:05 → Киевский 00:10\nЛенинградский 04:19 → Подсолнечная 05:16",time:"8 ч 11 мин",safe:"Ночное ожидание в Москве 4 ч 09 мин."}
  ]}
 };
-const routeData={},pointsData={chus:[],ugra:[]};let stones=[],selected="chus",map=null,baseStyle="map",forceScheme=false,routeReady=false,noteTarget=null,custom={chus:null,ugra:null};
+const routeData={},pointsData={chus:[],ugra:[],belaya:[]};let stones=[],selected="chus",map=null,baseStyle="map",forceScheme=false,routeReady=false,noteTarget=null,custom={chus:null,ugra:null,belaya:null};
 const hav=(a,b)=>{const R=6371,rad=Math.PI/180,dlat=(b[1]-a[1])*rad,dlon=(b[0]-a[0])*rad,q=Math.sin(dlat/2)**2+Math.cos(a[1]*rad)*Math.cos(b[1]*rad)*Math.sin(dlon/2)**2;return 2*R*Math.asin(Math.sqrt(q));};
 const boundsOf=coords=>{let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;coords.forEach(p=>{minX=Math.min(minX,p[0]);maxX=Math.max(maxX,p[0]);minY=Math.min(minY,p[1]);maxY=Math.max(maxY,p[1]);});return [[minX,minY],[maxX,maxY]];};
 const makeLine=function(fc){let coords=[],segments=[],s=0;for(const f of fc.features){const p=f.geometry;if(!p||p.type!=="LineString")continue;const arr=p.coordinates.filter(v=>v.length>=2&&v.every(Number.isFinite));if(!arr.length)continue;segments.push({startIndex:coords.length?coords.length-1:0,river:f.properties.river||"Река",color:f.properties.color||"#42d6bb"});if(coords.length&&hav(coords[coords.length-1],arr[0])<.001)coords.push(...arr.slice(1));else coords.push(...arr);}const dist=[0];for(let i=1;i<coords.length;i++)dist.push(dist[i-1]+hav(coords[i-1],coords[i]));return {coords,dist,length:dist[dist.length-1]||0,fc};};
 const track=()=>custom[selected]||routeData[selected];
+const isOutline=()=>selected==="belaya"&&!custom.belaya;
 const coordAt=(km)=>{const r=track();if(!r||!r.coords.length)return [0,0];const d=Math.max(0,Math.min(km,r.length));let lo=0,hi=r.dist.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(r.dist[mid]<d)lo=mid+1;else hi=mid;}const k=lo;if(k===0)return r.coords[0];const t=(d-r.dist[k-1])/Math.max(.00001,r.dist[k]-r.dist[k-1]);return [r.coords[k-1][0]+(r.coords[k][0]-r.coords[k-1][0])*t,r.coords[k-1][1]+(r.coords[k][1]-r.coords[k-1][1])*t];};
 const nearestKm=p=>{const r=track();let d=Infinity,idx=0;for(let i=0;i<r.coords.length;i++){const dx=(r.coords[i][0]-p[0])*Math.cos(p[1]*Math.PI/180),dy=r.coords[i][1]-p[1],dist=dx*dx+dy*dy;if(dist<d){d=dist;idx=i;}}return {km:r.dist[idx],coord:r.coords[idx]};};
 const kmFmt=n=>Number(n.toFixed(1)).toLocaleString("ru-RU",{maximumFractionDigits:1});
@@ -33,7 +39,13 @@ function download(name,body,type){const blob=new Blob([body],{type}),url=URL.cre
 function storageRead(){try{const x=JSON.parse(localStorage.getItem("sup-route-notes-v1")||"{}");return Array.isArray(x[selected])?x[selected]:[];}catch(_){return [];}}
 function storageSave(){try{localStorage.setItem("sup-route-notes-v1",JSON.stringify({...JSON.parse(localStorage.getItem("sup-route-notes-v1")||"{}"),[selected]:pointsData[selected]}));}catch(_){}}
 function basePois(){
- const r=track();const base=CONFIG[selected].waypoints.map((w,i)=>{const km=selected==="chus"?w[1]/358*r.length:Math.min(w[1],r.length);return {name:w[0],type:w[2],km,guideKm:w[1],coord:coordAt(km),id:"base"+i,details:"Ориентир по километражу, требует проверки места выхода к берегу."};});
+ const r=track();
+ if(selected==="belaya"){
+ const landmarks=routeData.belaya.fc.landmarks||[];
+ const anchors=landmarks.map((p,i)=>({name:p.name,type:p.type,km:isOutline()?r.dist[i]:nearestKm([p.lon,p.lat]).km,coord:[p.lon,p.lat],id:"belaya"+i,details:p.notes+" Точка объекта, не подтверждённый стапель или антистапель."}));
+ return anchors.concat(pointsData.belaya.map((p,i)=>({...p,id:"note"+i,details:"Ваша метка. Сохранена в браузере."})));
+ }
+const base=CONFIG[selected].waypoints.map((w,i)=>{const km=selected==="chus"?w[1]/358*r.length:Math.min(w[1],r.length);return {name:w[0],type:w[2],km,guideKm:w[1],coord:coordAt(km),id:"base"+i,details:"Ориентир по километражу, требует проверки места выхода к берегу."};});
  if(selected==="chus"&&$("toggle-stones").checked&&!custom[selected]){
   for(const s of stones){const km=s.guideKm/358*r.length;base.push({name:s.name,type:"stone",km,guideKm:s.guideKm,coord:coordAt(km),id:s.id,details:"Километр из путеводителя. Положение на GPX рассчитано пропорционально. Точная GPS-точка камня НЕ подтверждена."});}
  }
@@ -68,7 +80,7 @@ function renderTrains(){
  let inbound=CONFIG[selected].trains[chosen["Туда"]],outbound=CONFIG[selected].trains[chosen["Обратно"]];
  const parseTime=x=>{const a=(x||"").match(/(\d+)\s*ч(?:\s*(\d+)\s*мин)?/);return a?Number(a[1])*60+Number(a[2]||0):0;};
  const minutes=parseTime(inbound?.time)+parseTime(outbound?.time);
- const total=document.createElement("p");total.className="train-sum";total.textContent="Выбранная дорога туда + обратно: "+Math.floor(minutes/60)+" ч "+String(minutes%60).padStart(2,"0")+" мин · по расписаниям 2026 г.";host.append(total);
+ const total=document.createElement("p");total.className="train-sum";total.textContent=selected==="belaya"?"Заброска на Белую: расписание и стоимость ещё не подтверждены.": "Выбранная дорога туда + обратно: "+Math.floor(minutes/60)+" ч "+String(minutes%60).padStart(2,"0")+" мин · по расписаниям 2026 г.";host.append(total);
  CONFIG[selected].trains.forEach((tr,i)=>{const isChosen=chosen[tr.group]===i;
  const el=document.createElement("article");el.className="train"+(isChosen?" selected":"");
  const tag=document.createElement("div");tag.className="tag";tag.textContent=tr.group+" · "+tr.time;
