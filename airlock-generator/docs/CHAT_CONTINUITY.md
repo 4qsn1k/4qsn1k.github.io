@@ -1,3 +1,37 @@
+# 21.10.2026 — Issue #28: продолжение от b0b1280
+
+Рабочая ветка `codex/airlock-28-st-native-acceptance`. Техническая ревизия:
+[ISSUE28-ST-REVIEW-2026-10-21.md](ISSUE28-ST-REVIEW-2026-10-21.md).
+Исправлена гонка invalid State + свежий Reset, добавлен воспроизводимый
+двухдверный OWLE source-only кандидат с сохранением vendor-структуры и
+11 проводов. Подготовлены семидверный ST из CAD-топологии, шесть независимых
+10 s групп, 30 s тревоги, ранние резервы, 128 масок/1792 занятых комбинации,
+Windows-протокол и симуляторный ST-стимулятор. Это подготовка по новому заданию,
+не native PASS; **ST_NATIVE_NOT_VERIFIED / NEEDS_OWEN_VALIDATION**.
+Нет доступного HOME-PC GUI tool и подтверждённого PR102+PRM envelope.
+Оригинальные OWLE/fbst и frozen oracle сохранены. Только airlock-generator;
+без доступа к приборам, push, нового PR, merge или deploy.
+Хеши и фактическая валидация: `experimental/issue28/st-acceptance/review-validation.json`.
+Исторические записи ниже сохранены.
+
+---
+
+# 21.10.2026 — Issue #28: ST acceptance branch
+
+Current work: `codex/airlock-28-st-native-acceptance`, baseline `6dc6481`.
+**ST_NATIVE_NOT_VERIFIED / NEEDS_OWEN_VALIDATION.**
+[Current report](ISSUE28-ST-STATUS-2026-10-21.md),
+[exact native procedure](ISSUE28-ST-NATIVE-ACCEPTANCE.md).
+Two-door ST source and timer probe prepared; actual-source host checks 27/27,
+full offline check exit 0, MODEL 8/8. Host checks do not prove Owen execution.
+HOME-PC remote GUI is available; Stage 0 genuine PR102 Save As is archived
+with exact ST source and 3 wires; a native fresh-edge output was observed.
+Full timer/reset/compile evidence is still pending. Seven-door ST work has not started; it requires two-door native
+acceptance. Old OWLE and frozen vectors unchanged; PR #29/#30 unchanged.
+No physical equipment access, push, PR, merge or deploy. Historical entries follow.
+
+---
+
 # 20.10.2026 — Issue #28: reserved native FBD test generator
 
 New task branch `codex/airlock-28-native-fbd-generator` from `codex/airlock-multidoor-adjacent-qa`; PR #25 unchanged. Full status: [ISSUE28-NATIVE-FBD-STATUS-2026-10-20.md](ISSUE28-NATIVE-FBD-STATUS-2026-10-20.md).

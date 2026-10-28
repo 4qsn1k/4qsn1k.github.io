@@ -1,0 +1,49 @@
+{
+  "schema": "airlock-st-offline-validation/1",
+  "date": "2026-10-21",
+  "branch": "codex/airlock-28-st-native-acceptance",
+  "baselineCommit": "6dc6481",
+  "qualification": "HOST_ST_SUBSET_ONLY_NOT_OWEN",
+  "commands": [
+    {
+      "command": "bash scripts/codex-check.sh",
+      "exitCode": 0,
+      "result": "Full offline suite PASS; MODEL 8/8; includes 27 source tests",
+      "log": "offline-check-linux.txt"
+    },
+    {
+      "command": "npm run test:st-source",
+      "exitCode": 0,
+      "result": "27/27; immutable 11 vectors; intermediate scans and behavioral mutations",
+      "log": "source-qa-linux.txt"
+    },
+    {
+      "command": "node tests/st-reference-vectors.test.js",
+      "exitCode": 0,
+      "result": "11_TRACE_STEPS 128_SEVEN_MASKS 6_GROUPS OFFLINE_ONLY"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "linuxRuntime": {
+    "node": "24.19.0",
+    "python": "3.12.14"
+  },
+  "homeSourceTests": {
+    "command": "python -B tests/st-airlock2-source.py",
+    "exitCode": 0,
+    "result": "27/27 HOST ST SOURCE; PowerShell 5 stdout runner corrected after stderr progress caused wrapper exit1",
+    "sourceUnchanged": true
+  },
+  "nativeAcceptanceImplied": false,
+  "physicalDeviceWrites": 0,
+  "files": {
+    "FB_ST_TimerProbe.st": "55c4c0c98b3d2ff4b021b683e543ecf273c5d1deae95d12cdca3012ba8e100cf",
+    "FB_Airlock2.st": "06acc6e6cc81b480c0fab9f057c3a6165cb47bc4983a9690a77009a4e4710c0c",
+    "offline-check-linux.txt": "cabac16016d8b1931cf8c49b6008eaac4cd153511710564aae5dfcddc876ca9f",
+    "source-qa-linux.txt": "de693b7361816d9db7898ce4054b4db82a8aa1e911af089637904a5e30e83edd",
+    "immutable-inputs.json": "048dace326079ab747077b9ea2da7e8ea62b9125890f7601606ab6f37d7fc881"
+  }
+}

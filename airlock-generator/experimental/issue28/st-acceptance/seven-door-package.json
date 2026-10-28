@@ -1,0 +1,116 @@
+{
+  "schema": "airlock-st-reservation-package/1",
+  "qualification": "ST_NATIVE_NOT_VERIFIED",
+  "fixtureSha256": "a5118efd5693787d46af9934882eb2d5d5c71cdd518c7d1cab33aea65fdc2ffb",
+  "sourceSha256": "11e105be1221c6cc1b79677aaa96b0386bac7e0b96fd9e3e13c867d5b95a9527",
+  "priority": [
+    "D_CNC_1257",
+    "D_1257_1256",
+    "D_1256_1254",
+    "D_1254_1252",
+    "D_1257_1255",
+    "D_1255_1253",
+    "D_1253_1252"
+  ],
+  "groups": {
+    "R1252": [
+      "D_1254_1252",
+      "D_1253_1252"
+    ],
+    "R1253": [
+      "D_1255_1253",
+      "D_1253_1252"
+    ],
+    "R1254": [
+      "D_1256_1254",
+      "D_1254_1252"
+    ],
+    "R1255": [
+      "D_1257_1255",
+      "D_1255_1253"
+    ],
+    "R1256": [
+      "D_1257_1256",
+      "D_1256_1254"
+    ],
+    "R1257": [
+      "D_CNC_1257",
+      "D_1257_1256",
+      "D_1257_1255"
+    ]
+  },
+  "holdMs": 10000,
+  "openAlarmMs": 30000,
+  "grantWindowTestOnlyMs": 5000,
+  "busyOutputs": 0,
+  "requestCnc": "ISOLATED_OBSERVED_K1_REQUIRED",
+  "normalUnlockCnc": "K1_authorization AND PLC_permit (external engineering gate)",
+  "budget": {
+    "singleButtonDI": 16,
+    "doubleButtonDI": 22,
+    "DOWithLamps": 15
+  },
+  "target": "PR102-24.2416.03.1 + PRM-1.24; capacity shortlist only",
+  "nativeEnvelope": null,
+  "nativeBlocker": "MISSING_VENDOR_PR102_PRM_ENVELOPE_AND_GUI_COMPILE",
+  "channels": [
+    {
+      "door": "D_CNC_1257",
+      "reed": "CLOSED_D_CNC_1257",
+      "request": "REQUEST_D_CNC_1257",
+      "permit": "PERMIT_D_CNC_1257",
+      "lamp": "GREEN_D_CNC_1257",
+      "terminal": null
+    },
+    {
+      "door": "D_1257_1256",
+      "reed": "CLOSED_D_1257_1256",
+      "request": "REQUEST_D_1257_1256",
+      "permit": "PERMIT_D_1257_1256",
+      "lamp": "GREEN_D_1257_1256",
+      "terminal": null
+    },
+    {
+      "door": "D_1256_1254",
+      "reed": "CLOSED_D_1256_1254",
+      "request": "REQUEST_D_1256_1254",
+      "permit": "PERMIT_D_1256_1254",
+      "lamp": "GREEN_D_1256_1254",
+      "terminal": null
+    },
+    {
+      "door": "D_1254_1252",
+      "reed": "CLOSED_D_1254_1252",
+      "request": "REQUEST_D_1254_1252",
+      "permit": "PERMIT_D_1254_1252",
+      "lamp": "GREEN_D_1254_1252",
+      "terminal": null
+    },
+    {
+      "door": "D_1257_1255",
+      "reed": "CLOSED_D_1257_1255",
+      "request": "REQUEST_D_1257_1255",
+      "permit": "PERMIT_D_1257_1255",
+      "lamp": "GREEN_D_1257_1255",
+      "terminal": null
+    },
+    {
+      "door": "D_1255_1253",
+      "reed": "CLOSED_D_1255_1253",
+      "request": "REQUEST_D_1255_1253",
+      "permit": "PERMIT_D_1255_1253",
+      "lamp": "GREEN_D_1255_1253",
+      "terminal": null
+    },
+    {
+      "door": "D_1253_1252",
+      "reed": "CLOSED_D_1253_1252",
+      "request": "REQUEST_D_1253_1252",
+      "permit": "PERMIT_D_1253_1252",
+      "lamp": "GREEN_D_1253_1252",
+      "terminal": null
+    }
+  ],
+  "dataHealthy": "VIRTUAL_QUALITY_INPUT_NOT_EXTRA_FIELD_DI",
+  "physicalAccess": "NOT_PERFORMED"
+}

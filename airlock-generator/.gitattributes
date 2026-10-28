@@ -1,0 +1,9 @@
+# Pin exact line endings for immutable Issue #28 ST reference fixtures.
+experimental/issue28/ST_REFERENCE_VECTORS_OFFLINE.json text eol=lf
+experimental/issue28/st-acceptance/*.st text eol=lf
+experimental/issue28/st-acceptance/*.owle binary
+experimental/issue28/st-acceptance/*.fbst binary
+# Keep hash-covered CAD input and review artifacts identical on Windows.
+experimental/fixtures/real-cad-1252-1274-candidate.json text eol=lf
+experimental/issue28/st-acceptance/*.json text eol=lf
+experimental/issue28/st-acceptance/*.csv text eol=lf

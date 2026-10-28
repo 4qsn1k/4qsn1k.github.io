@@ -77,3 +77,17 @@ Before opening a PR:
 3. Explicitly define fire-restoration, power-loss and sensor-fault requirements before allowing hardware work.
 
 See `docs/CODEX-ENVIRONMENT.md` for setup and `docs/CODEX-TASKS.md` for an initial task.
+
+
+## Current override for Issue #28 ST acceptance (20 October 2026)
+
+This newer task-specific section supersedes only conflicting historical FBD-only and BUSY instructions above. Preserve all historical QA and safety constraints.
+
+- Start by reading docs/CODEX-ST-START-HERE-2026-10-20.md in full and its linked docs/CODEX-ST-NATIVE-QA-MATRIX.csv. Source baseline is PR #30 at 1a27bf4; current isolated branch is codex/airlock-28-st-native-acceptance.
+- **Operator explicitly permits ST** inside native user function blocks. Goal is working vendor-saved and vendor-compiled Owen Logic, first two doors then all seven. Prior FBD-only Issue #28 text is superseded by its latest operator comments.
+- No BUSY for this topology. CNC door requires an *isolated observed* K1 request DI to reserve before reed opening. With seven lamp channels and one button on each of six internal doors, engineering budget is 16 DI / 15 DO; two local buttons raises DI to 22. Actual wiring and terminals remain unapproved.
+- Confirmed topology: CNC->1257->1256->1254->1252 and CNC->1257->1255->1253->1252; six incident groups, seven physical doors, 1274 excluded. Full 10s group hold starts after all group doors close and restarts on reopening; no transitive cascade.
+- DO NOT access any COM, Modbus, PLC firmware/program download, S2000-2 settings, physical relays, VPN or production system. Original vendor OWLE captures must be immutable.
+- Proof requires actual Owen Logic GUI Save As, Compile (zero errors) and Simulator output with recorded evidence. Model JS PASS is not native acceptance; use ST_NATIVE_NOT_VERIFIED until actual validation.
+- Baseline already passed on HOME-PC: node tests/native-airlock-fbd.test.js (16/16) and node tests/reserved-fbd-export.test.js. The old unrelated TCP tests/tcp-faults.test.js:54 fails a 650ms timing assertion on HOME-PC (Issue #31); report independently instead of masking it.
+- Do not push, merge, deploy or open new PR on your own. The operator plans to initiate Codex tomorrow; keep all changes inside the dedicated branch until requested.

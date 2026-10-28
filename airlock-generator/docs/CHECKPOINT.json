@@ -1,6 +1,6 @@
 {
   "schema": "airlock-generator-continuity/1",
-  "savedDate": "2026-10-20",
+  "savedDate": "2026-10-21",
   "project": "Airlock Generator — граф помещений, блокировки дверей, красно-зелёные светофоры, HMI, Owen Logic ST",
   "repository": "4qsn1k/4qsn1k.github.io",
   "projectPath": "airlock-generator",
@@ -904,5 +904,32 @@
     "nextAction": "Resolve native feedback/delay-line ordering and complete two-door compiler/simulator acceptance; obtain a genuine PR102/PR103+PRM GUI device envelope before seven-door native serialization.",
     "nativeSaveAsPassed": true,
     "nativeGuiRoundtrip": "experimental/issue28/Airlock_2DOOR_GUI_ROUNDTRIP_UNVERIFIED.owle"
+  },
+  "issue28ST": {
+    "branch": "codex/airlock-28-st-native-acceptance",
+    "baselineCommit": "b0b1280",
+    "status": "ST_NATIVE_NOT_VERIFIED",
+    "report": "docs/ISSUE28-ST-STATUS-2026-10-21.md",
+    "nativeProcedure": "docs/ISSUE28-ST-NATIVE-ACCEPTANCE.md",
+    "stage0": "VENDOR_SAVE_CONFIRMED_NATIVE_TIMER_QA_PENDING",
+    "stageA": "WIRED_SOURCE_ONLY_REVIEW_CANDIDATE_NATIVE_NOT_VERIFIED",
+    "stageB": "SEVEN_DOOR_SOURCE_HOST_TESTED_NATIVE_ENVELOPE_MISSING",
+    "source": "experimental/issue28/st-acceptance/FB_Airlock2.st",
+    "sourceSha256": "c0f831eb74330ec95cb2230af159013c085e5763f6e1dc2c447aa78126e11a5c",
+    "hostSourceTests": "28 two-door + 15 seven-door + 5 container structure PASS; HOST_ONLY_NOT_OWEN",
+    "fullOfflineCheckExit": 0,
+    "nativeCompileVerified": false,
+    "nativeSimulationVerified": false,
+    "originalEvidenceUnchanged": true,
+    "physicalDeviceWrites": 0,
+    "pushPerformed": false,
+    "mergePerformed": false,
+    "nextAction": "Windows: validate ST00 then recompile and Save As two-door review candidate; execute full A matrix. Capture genuine PR102+PRM envelope, import seven-door ST and validate B including all128 native masks. No physical access.",
+    "stage0VendorSave": "experimental/issue28/st-acceptance/Airlock_ST00_TimerProbe_VENDOR_20261021.owle",
+    "stage0VendorSaveSha256": "59e5bea9403c1a6e26724ece4e3791e6505aabb6cd7132c6bb8e9f8b73162336",
+    "reviewReport": "docs/ISSUE28-ST-REVIEW-2026-10-21.md",
+    "sevenDoorSource": "experimental/issue28/st-acceptance/FB_Airlock7.st",
+    "twoDoorReviewCandidate": "experimental/issue28/st-acceptance/Airlock_2DOOR_ST_REVIEW_UNVERIFIED_20261021.owle",
+    "reviewValidation": "experimental/issue28/st-acceptance/review-validation.json"
   }
 }
